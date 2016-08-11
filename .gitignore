@@ -6,4 +6,6 @@
 .idea/
 #Maven output
 target/
+#Maven file
+dependency-reduced-pom.xml
 

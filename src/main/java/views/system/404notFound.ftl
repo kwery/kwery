@@ -1,5 +1,5 @@
-<#import "../layout/defaultLayout.ftl.html" as layout>
-<@layout.myLayout "Error. Forbidden.">
+<#import "../layout/defaultLayout.ftl" as layout>
+<@layout.myLayout "Error. Not found.">
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -7,9 +7,9 @@
                 <h1>
                     Oops!</h1>
                 <h2>
-                    403 Forbidden</h2>
+                    404 Not Found</h2>
                 <div class="error-details">
-                    Sorry, an error has occured. Requested page is forbidden!
+                    Sorry, an error has occured. Requested page not found!
                 </div>
             </div>
         </div>

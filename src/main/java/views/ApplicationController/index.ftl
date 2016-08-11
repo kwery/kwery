@@ -1,4 +1,4 @@
-<#import "../layout/defaultLayout.ftl.html" as layout> 
+<#import "../layout/defaultLayout.ftl" as layout>
 <@layout.myLayout "Home page">    
 
 
