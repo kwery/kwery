@@ -17,6 +17,7 @@
 package conf;
 
 
+import controllers.UserController;
 import ninja.AssetsController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
@@ -31,8 +32,10 @@ public class Routes implements ApplicationRoutes {
     public void init(Router router) {  
         router.GET().route(INDEX).with(ApplicationController.class, "index");
         router.GET().route(WELCOME).with(ApplicationController.class, "welcome");
-        router.GET().route(CREATE_ADMIN_USER).with(ApplicationController.class, "createAdminUserGet");
-        router.POST().route(CREATE_ADMIN_USER).with(ApplicationController.class, "createAdminUserPost");
+
+        //User method
+        router.GET().route(CREATE_ADMIN_USER).with(UserController.class, "createAdminUserGet");
+        router.POST().route(CREATE_ADMIN_USER).with(UserController.class, "createAdminUserPost");
 
         router.GET().route("/hello_world.json").with(ApplicationController.class, "helloWorldJson");
         

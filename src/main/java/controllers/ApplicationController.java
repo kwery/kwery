@@ -34,14 +34,6 @@ public class ApplicationController {
         return html;
     }
 
-    public Result createAdminUserGet() {
-        return Results.html();
-    }
-
-    public Result createAdminUserPost(@Param("userName") String userName, @Param("password") String password) {
-        return Results.html();
-    }
-    
     public Result helloWorldJson() {
         SimplePojo simplePojo = new SimplePojo();
         simplePojo.content = "Hello World! Hello Json!";
