@@ -9,9 +9,8 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="/assets/webjars/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="/assets/webjars/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <link href="/assets/webjars/normalize.css/3.0.2/normalize.css" rel="stylesheet">
+      <link href="/assets/webjars/skeleton-css/2.0.4/css/skeleton.css" rel="stylesheet">
 
     <!-- Latest compiled and minified JavaScript -->
     
@@ -32,7 +31,7 @@
 
     <div class="container">
         
-        <#include "header.ftl.html"/>
+        <#include "header.ftl"/>
         
         <#if (flash.error)??>
             <div class="alert alert-danger">
@@ -48,11 +47,10 @@
 
         <#nested/>
 
-        <#include "footer.ftl.html"/>
+        <#include "footer.ftl"/>
         
     </div> <!-- /container -->
-    <script type="text/javascript" src="/assets/webjars/jquery/2.1.3/jquery.js"></script>
-    <script type="text/javascript" src="/assets/webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/assets/webjars/jquery/3.1.0/jquery.js"></script>
 </body>
 </html>
 </#macro>
