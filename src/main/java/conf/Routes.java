@@ -23,11 +23,17 @@ import ninja.application.ApplicationRoutes;
 import controllers.ApplicationController;
 
 public class Routes implements ApplicationRoutes {
+    public static final String INDEX = "/";
+    public static final String WELCOME = "/welcome";
+    public static final String CREATE_ADMIN_USER = "/create-admin-user";
 
     @Override
     public void init(Router router) {  
-        
-        router.GET().route("/").with(ApplicationController.class, "index");
+        router.GET().route(INDEX).with(ApplicationController.class, "index");
+        router.GET().route(WELCOME).with(ApplicationController.class, "welcome");
+        router.GET().route(CREATE_ADMIN_USER).with(ApplicationController.class, "createAdminUserGet");
+        router.POST().route(CREATE_ADMIN_USER).with(ApplicationController.class, "createAdminUserPost");
+
         router.GET().route("/hello_world.json").with(ApplicationController.class, "helloWorldJson");
         
  
