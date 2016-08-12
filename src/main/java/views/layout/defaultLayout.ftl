@@ -10,6 +10,7 @@
 
     <link href="/assets/webjars/normalize.css/3.0.2/normalize.css" rel="stylesheet">
     <link href="/assets/webjars/skeleton-css/2.0.4/css/skeleton.css" rel="stylesheet">
+      <link href="/assets/css/custom.css" rel="stylesheet">
 
   </head>
 <body>
@@ -17,13 +18,13 @@
         <#include "header.ftl"/>
         
         <#if (flash.error)??>
-            <div class="alert alert-danger">
+            <div class="isa_error">
                 ${flash.error}
             </div>
         </#if>
         
         <#if (flash.success)??>
-            <div class="alert alert-success">
+            <div class="isa_info">
                 ${flash.success}
             </div>
         </#if>

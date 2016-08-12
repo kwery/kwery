@@ -5,7 +5,7 @@
     <div class="row">
         <div class="twelve columns">
             <h1>
-            ${i18n("admin.user.creation.success")}
+                Foo
             </h1>
         </div>
     </div>
