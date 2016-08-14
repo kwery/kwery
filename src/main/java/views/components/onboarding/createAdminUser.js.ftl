@@ -3,8 +3,9 @@ define(["knockout", "jquery", "text!/onboarding/create-admin-user.html"], functi
         var self = this;
         self.username = ko.observable();
         self.password = ko.observable();
-        self.sM = ko.observable("");
-        self.fM = ko.observable("");
+
+        self.status = ko.observable("");
+        self.message = ko.observable("");
 
         self.save = function() {
             //This is done if someone tries to create the user again
@@ -12,11 +13,11 @@ define(["knockout", "jquery", "text!/onboarding/create-admin-user.html"], functi
                 data: ko.toJSON({username: self.username, password: self.password}),
                 type: "post", contentType: "application/json",
                 success: function(result) {
-                    if (result.status) {
-                        self.sM(result.message);
-                    } else {
-                        self.fM(result.message);
-                    }
+                    //Clear previous set value
+                    self.status("");
+                    self.message("");
+                    self.status(result.status);
+                    self.message(result.message);
                 }
             });
         };

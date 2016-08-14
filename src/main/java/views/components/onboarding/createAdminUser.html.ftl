@@ -1,5 +1,5 @@
 <div class="container">
-    <actionresult params="{successMessage: sM, failureMessage: fM}"></actionresult>
+    <actionresult params="status: status, message: message"></actionresult>
     <div class="row">
         <div class="six columns">
             <label for="userName">${i18n("user.name")}</label>

@@ -29,11 +29,11 @@ public class UserController {
             userDao.save(user);
             String message = messages.get("admin.user.creation.success", context, Optional.of(json),
                     user.getUsername()).get();
-            actionResult = new ActionResult(message, true);
+            actionResult = new ActionResult(ActionResult.Status.success, message);
         } else {
             String message = messages.get("admin.user.creation.failure", context, Optional.of(json),
                     user.getUsername()).get();
-            actionResult = new ActionResult(message, false);
+            actionResult = new ActionResult(ActionResult.Status.failure, message);
         }
 
         return json.render(actionResult);
