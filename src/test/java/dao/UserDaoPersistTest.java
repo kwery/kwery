@@ -10,7 +10,7 @@ import javax.persistence.PersistenceException;
 
 import static org.junit.Assert.assertTrue;
 
-public class UserDaoTest extends NinjaDaoTestBase {
+public class UserDaoPersistTest extends NinjaDaoTestBase {
     private UserDao userDao;
 
     @Before
