@@ -10,13 +10,7 @@ import java.util.concurrent.TimeUnit;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
-public class IndexControllerFluentLeniumTest extends NinjaFluentLeniumTest {
-    @Override
-    public WebDriver getDefaultDriver() {
-        System.setProperty("webdriver.chrome.driver", "/usr/lib/chromium-browser/chromedriver");
-        return new ChromeDriver();
-    }
-
+public class IndexControllerFluentLeniumTest extends DashRepoFluentLeniumTest {
     @Test
     public void index() {
         goTo(getServerAddress());

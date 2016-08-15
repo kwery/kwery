@@ -12,7 +12,7 @@
     </div>
     <div class="row">
         <div class="twelve columns">
-            <button data-bind="click: save" class="button-primary">${i18n("create")}</button>
+            <button data-bind="click: save" class="button-primary" id="createAdminUser">${i18n("create")}</button>
         </div>
     </div>
 </div>
