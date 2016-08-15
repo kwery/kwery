@@ -25,7 +25,7 @@ import ninja.params.Param;
 @Singleton
 public class ApplicationController {
     public Result index() {
-        return Results.redirectTemporary(Routes.WELCOME);
+        return Results.html();
     }
 
     public Result welcome() {

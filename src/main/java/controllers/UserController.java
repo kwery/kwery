@@ -3,14 +3,13 @@ package controllers;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import conf.Routes;
 import dao.UserDao;
 import models.User;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
-import ninja.params.Param;
+import views.ActionResult;
 
 @Singleton
 public class UserController {
@@ -20,21 +19,23 @@ public class UserController {
     @Inject
     private Messages messages;
 
-    public Result createAdminUserGet() {
-        return Results.html();
-    }
+    public Result createAdminUser(User user, Context context) {
+        User existingUser = userDao.getByUsername(user.getUsername());
 
-    public Result createAdminUserPost(@Param("username") String username, @Param("password") String password, Context context) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
+        Result json = Results.json();
+        ActionResult actionResult = null;
 
-        userDao.save(user);
+        if (existingUser == null) {
+            userDao.save(user);
+            String message = messages.get("admin.user.creation.success", context, Optional.of(json),
+                    user.getUsername()).get();
+            actionResult = new ActionResult(ActionResult.Status.success, message);
+        } else {
+            String message = messages.get("admin.user.creation.failure", context, Optional.of(json),
+                    user.getUsername()).get();
+            actionResult = new ActionResult(ActionResult.Status.failure, message);
+        }
 
-        Result result = Results.html();
-        String successMessage = messages.get("admin.user.creation.success", context, Optional.of(result), user.getUsername()).get();
-        context.getFlashScope().success(successMessage);
-
-        return result;
+        return json.render(actionResult);
     }
 }
