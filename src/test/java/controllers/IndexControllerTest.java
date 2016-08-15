@@ -16,31 +16,23 @@
 
 package controllers;
 
-import com.google.inject.Singleton;
 import conf.Routes;
-import ninja.Result;
-import ninja.Results;
-import ninja.params.Param;
+import ninja.NinjaDocTester;
+import org.doctester.testbrowser.Request;
+import org.doctester.testbrowser.Response;
+import org.junit.Test;
 
-@Singleton
-public class ApplicationController {
-    public Result index() {
-        return Results.html();
-    }
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-    public Result welcome() {
-        Result html = Results.html();
-        html.render("path", Routes.CREATE_ADMIN_USER);
-        return html;
-    }
+public class IndexControllerTest extends NinjaDocTester {
+    @Test
+    public void testIndex() {
+        Response response = makeRequest(
+                Request.GET().url(testServerUrl().path(Routes.INDEX))
+        );
 
-    public Result helloWorldJson() {
-        SimplePojo simplePojo = new SimplePojo();
-        simplePojo.content = "Hello World! Hello Json!";
-        return Results.json().render(simplePojo);
-    }
-    
-    public static class SimplePojo {
-        public String content;
+        assertTrue("Got an HTML response for index page request", ControllerTestUtil.isHtmlResponse(response));
+        assertEquals("Got a 200 HTTP status code for index page request", 200, response.httpStatus);
     }
 }

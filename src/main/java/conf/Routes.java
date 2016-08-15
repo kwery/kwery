@@ -23,31 +23,37 @@ import controllers.UserController;
 import ninja.AssetsController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
-import controllers.ApplicationController;
+import controllers.IndexController;
 
 public class Routes implements ApplicationRoutes {
     public static final String INDEX = "/";
     public static final String WELCOME = "/welcome";
     public static final String CREATE_ADMIN_USER = "/create-admin-user";
+    public static final String ONBOARDING_WELCOME = "/onboarding/welcome";
+    public static final String ONBOARDING_CREATE_ADMIN_USER_HTML = "/onboarding/create-admin-user.html";
+    public static final String ONBOARDING_CREATE_ADMIN_USER_JS = "/onboarding/create-admin-user";
+    public static final String ONBOARDING_CREATE_ADMIN_USER = "/onboarding/create-admin-user";
+    public static final String ACTION_RESULT_COMPONENT_JS = "/component/actionresultcomponent";
+    public static final String ACTION_RESULT_COMPONENT_HTML = "/component/actionresultcomponent.html";
 
     @Override
     public void init(Router router) {  
-        router.GET().route(INDEX).with(ApplicationController.class, "index");
+        router.GET().route(INDEX).with(IndexController.class, "index");
 
         //Application onboarding
-        router.GET().route("/onboarding/welcome").with(OnboardingController.class, "welcome");
-        router.GET().route("/onboarding/create-admin-user.html").with(OnboardingController.class, "createAdminUserHtml");
-        router.GET().route("/onboarding/create-admin-user").with(OnboardingController.class, "createAdminUserJs");
-        router.POST().route("/onboarding/create-admin-user").with(UserController.class, "createAdminUser");
+        router.GET().route(ONBOARDING_WELCOME).with(OnboardingController.class, "welcome");
+        router.GET().route(ONBOARDING_CREATE_ADMIN_USER_HTML).with(OnboardingController.class, "createAdminUserHtml");
+        router.GET().route(ONBOARDING_CREATE_ADMIN_USER_JS).with(OnboardingController.class, "createAdminUserJs");
+        router.POST().route(ONBOARDING_CREATE_ADMIN_USER).with(UserController.class, "createAdminUser");
 
         //Custom component
-        router.GET().route("/component/actionresultcomponent").with(ActionResultComponentController.class, "actionResultComponentJs");
-        router.GET().route("/component/actionresultcomponent.html").with(ActionResultComponentController.class, "actionResultComponentHtml");
+        router.GET().route(ACTION_RESULT_COMPONENT_JS).with(ActionResultComponentController.class, "actionResultComponentJs");
+        router.GET().route(ACTION_RESULT_COMPONENT_HTML).with(ActionResultComponentController.class, "actionResultComponentHtml");
 
         //Static asset
         router.GET().route("/assets/{fileName: .*}").with(AssetsController.class, "serveStatic");
 
         // Index / Catchall
-        router.GET().route("/.*").with(ApplicationController.class, "index");
+        router.GET().route("/.*").with(IndexController.class, "index");
     }
 }
