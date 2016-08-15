@@ -1,8 +1,13 @@
 package views;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ActionResult {
     private Status status;
     private String message;
+
+    public ActionResult() {
+    }
 
     public ActionResult(Status status, String message) {
         this.status = status;
@@ -34,6 +39,7 @@ public class ActionResult {
     }
 
     public enum Status{
-        success, failure
+        success,
+        failure
     }
 }
