@@ -41,18 +41,4 @@ public class OnboardingControllerTest extends NinjaDocTester {
         assertEquals("Got 200 HTTP status code for create admin user js component request", 200, response.httpStatus);
     }
 
-    @Test
-    public void testCreateAdminUser() {
-        Response response = makeRequest(
-                Request.POST().url(testServerUrl().path(Routes.ONBOARDING_CREATE_ADMIN_USER)).formParameters(
-                        ImmutableMap.of(
-                                "username", "foo",
-                                "password", "password"
-                        )
-                )
-        );
-
-        assertTrue("Got a JSON response for create admin user post request", ControllerTestUtil.isJsonResponse(response));
-        assertEquals("Got a 200 HTTP status code for create admin user post request", 200, response.httpStatus);
-    }
 }
