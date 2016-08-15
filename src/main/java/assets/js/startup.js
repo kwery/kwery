@@ -8,6 +8,10 @@ define(["jquery", "knockout", "./router", "knockout-projections"], function ($, 
     ko.components.register("settings", {
         template: { require: "text!components/settings/settings.html" }
     });
+    ko.components.register("actionresult", {
+            require: "/component/actionresultcomponent"
+        }
+    );
     ko.components.register("onboardingCreateAdminUser", {
         require: "/onboarding/create-admin-user"
     });

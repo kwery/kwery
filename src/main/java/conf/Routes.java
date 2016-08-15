@@ -17,6 +17,7 @@
 package conf;
 
 
+import controllers.ActionResultComponentController;
 import controllers.OnboardingController;
 import controllers.UserController;
 import ninja.AssetsController;
@@ -33,15 +34,20 @@ public class Routes implements ApplicationRoutes {
     public void init(Router router) {  
         router.GET().route(INDEX).with(ApplicationController.class, "index");
 
+        //Application onboarding
         router.GET().route("/onboarding/welcome").with(OnboardingController.class, "welcome");
         router.GET().route("/onboarding/create-admin-user.html").with(OnboardingController.class, "createAdminUserHtml");
         router.GET().route("/onboarding/create-admin-user").with(OnboardingController.class, "createAdminUserJs");
         router.POST().route("/onboarding/create-admin-user").with(UserController.class, "createAdminUser");
 
+        //Custom component
+        router.GET().route("/component/actionresultcomponent").with(ActionResultComponentController.class, "actionResultComponentJs");
+        router.GET().route("/component/actionresultcomponent.html").with(ActionResultComponentController.class, "actionResultComponentHtml");
+
+        //Static asset
         router.GET().route("/assets/{fileName: .*}").with(AssetsController.class, "serveStatic");
 
-        // Index / Catchall shows index page
+        // Index / Catchall
         router.GET().route("/.*").with(ApplicationController.class, "index");
     }
-
 }

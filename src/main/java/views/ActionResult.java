@@ -1,13 +1,13 @@
 package views;
 
 public class ActionResult {
-    public ActionResult(String message, boolean status) {
-        this.message = message;
-        this.status = status;
-    }
-
+    private Status status;
     private String message;
-    private boolean status;
+
+    public ActionResult(Status status, String message) {
+        this.status = status;
+        this.message = message;
+    }
 
     public String getMessage() {
         return message;
@@ -17,11 +17,11 @@ public class ActionResult {
         this.message = message;
     }
 
-    public boolean getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -31,5 +31,9 @@ public class ActionResult {
                 "message='" + message + '\'' +
                 ", status=" + status +
                 '}';
+    }
+
+    public enum Status{
+        success, failure
     }
 }
