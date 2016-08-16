@@ -19,7 +19,7 @@ public class UserController {
     @Inject
     private Messages messages;
 
-    public Result createAdminUser(User user, Context context) {
+    public Result createAdminUser(User user) {
         User existingUser = userDao.getByUsername(user.getUsername());
 
         Result json = Results.json();
@@ -27,15 +27,21 @@ public class UserController {
 
         if (existingUser == null) {
             userDao.save(user);
-            String message = messages.get("admin.user.creation.success", context, Optional.of(json),
-                    user.getUsername()).get();
+            String message = messages.get(MessageKeys.ADMIN_USER_CREATION_SUCCESS, Optional.absent(), user.getUsername()).get();
             actionResult = new ActionResult(ActionResult.Status.success, message);
         } else {
-            String message = messages.get("admin.user.creation.failure", context, Optional.of(json),
-                    user.getUsername()).get();
+            String message = messages.get(MessageKeys.ADMIN_USER_CREATION_FAILURE, Optional.absent(), user.getUsername()).get();
             actionResult = new ActionResult(ActionResult.Status.failure, message);
         }
 
         return json.render(actionResult);
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public void setMessages(Messages messages) {
+        this.messages = messages;
     }
 }

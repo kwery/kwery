@@ -20,27 +20,11 @@ import com.google.inject.Singleton;
 import conf.Routes;
 import ninja.Result;
 import ninja.Results;
-import ninja.params.Param;
 
 @Singleton
-public class ApplicationController {
+public class IndexController {
     public Result index() {
         return Results.html();
     }
 
-    public Result welcome() {
-        Result html = Results.html();
-        html.render("path", Routes.CREATE_ADMIN_USER);
-        return html;
-    }
-
-    public Result helloWorldJson() {
-        SimplePojo simplePojo = new SimplePojo();
-        simplePojo.content = "Hello World! Hello Json!";
-        return Results.json().render(simplePojo);
-    }
-    
-    public static class SimplePojo {
-        public String content;
-    }
 }
