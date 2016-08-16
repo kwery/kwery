@@ -8,4 +8,7 @@
 target/
 #Maven file
 dependency-reduced-pom.xml
+#Derby db file, has to be fixed later
+#TODO - Fix this
+derby.log
 

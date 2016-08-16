@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import models.User;
+import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -23,6 +24,7 @@ public class UserDao {
         m.flush();
     }
 
+    @UnitOfWork
     public User getByUsername(String username) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder cb = m.getCriteriaBuilder();

@@ -3,7 +3,7 @@ package models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "dash_repo_user")
 public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

@@ -35,8 +35,4 @@ public class DashRepoFluentLeniumTest extends NinjaFluentLeniumTest {
         Collections.addAll(l, htmlTags);
         return Joiner.on(" ").join(l);
     }
-
-    public static void main(String[] args) {
-        System.out.println(new DashRepoFluentLeniumTest().htmlClassExpression("foo", "goo", "moo"));
-    }
 }
