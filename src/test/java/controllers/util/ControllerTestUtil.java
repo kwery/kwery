@@ -1,4 +1,4 @@
-package controllers;
+package controllers.util;
 
 import org.doctester.testbrowser.HttpConstants;
 import org.doctester.testbrowser.Response;

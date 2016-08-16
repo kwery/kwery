@@ -1,18 +1,13 @@
 package controllers;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import conf.Routes;
+import controllers.util.ControllerTestUtil;
 import ninja.NinjaDocTester;
-import ninja.i18n.Messages;
 import org.doctester.testbrowser.Request;
 import org.doctester.testbrowser.Response;
 import org.junit.Test;
 
-import java.util.Map;
-
-import static conf.Routes.CREATE_ADMIN_USER;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;

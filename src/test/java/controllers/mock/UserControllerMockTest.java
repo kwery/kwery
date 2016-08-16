@@ -1,11 +1,11 @@
-package controllers;
+package controllers.mock;
 
 import com.google.common.base.Optional;
+import controllers.MessageKeys;
+import controllers.UserController;
 import dao.UserDao;
 import models.User;
-import ninja.Context;
 import ninja.Result;
-import ninja.Results;
 import ninja.i18n.Messages;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class UserControllerMockTest {
         doNothing().when(userDao).save(user);
 
         String successMessage = "success";
-        when(messages.get("admin.user.creation.success", Optional.absent(), username)).thenReturn(Optional.of(successMessage));
+        when(messages.get(MessageKeys.ADMIN_USER_CREATION_SUCCESS, Optional.absent(), username)).thenReturn(Optional.of(successMessage));
 
 
         Result creationResult = userController.createAdminUser(user);
@@ -66,7 +66,7 @@ public class UserControllerMockTest {
         when(userDao.getByUsername(username)).thenReturn(user);
 
         String message = "failure";
-        when(messages.get("admin.user.creation.failure", Optional.absent(), username)).thenReturn(Optional.of(message));
+        when(messages.get(MessageKeys.ADMIN_USER_CREATION_FAILURE, Optional.absent(), username)).thenReturn(Optional.of(message));
 
         Result creationResult = userController.createAdminUser(user);
 

@@ -27,10 +27,10 @@ public class UserController {
 
         if (existingUser == null) {
             userDao.save(user);
-            String message = messages.get("admin.user.creation.success", Optional.absent(), user.getUsername()).get();
+            String message = messages.get(MessageKeys.ADMIN_USER_CREATION_SUCCESS, Optional.absent(), user.getUsername()).get();
             actionResult = new ActionResult(ActionResult.Status.success, message);
         } else {
-            String message = messages.get("admin.user.creation.failure", Optional.absent(), user.getUsername()).get();
+            String message = messages.get(MessageKeys.ADMIN_USER_CREATION_FAILURE, Optional.absent(), user.getUsername()).get();
             actionResult = new ActionResult(ActionResult.Status.failure, message);
         }
 
