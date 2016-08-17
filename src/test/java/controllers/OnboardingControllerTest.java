@@ -24,7 +24,7 @@ public class OnboardingControllerTest extends NinjaDocTester {
     @Test
     public void testCreateAdminUserHtml() {
         Response response = makeRequest(
-                Request.GET().url(testServerUrl().path(Routes.ONBOARDING_CREATE_ADMIN_USER_HTML))
+                Request.GET().url(testServerUrl().path(Routes.ONBOARDING_ADD_ADMIN_USER_HTML))
         );
 
         assertTrue("Got an HTML response for create admin user html component request", ControllerTestUtil.isHtmlResponse(response));
@@ -34,7 +34,7 @@ public class OnboardingControllerTest extends NinjaDocTester {
     @Test
     public void testCreateAdminUserJs() {
         Response response = makeRequest(
-                Request.GET().url(testServerUrl().path(Routes.ONBOARDING_CREATE_ADMIN_USER_JS))
+                Request.GET().url(testServerUrl().path(Routes.ONBOARDING_ADD_ADMIN_USER_JS))
         );
 
         assertTrue("Got an HTML response for create admin user js component request", ControllerTestUtil.isJavascriptResponse(response));

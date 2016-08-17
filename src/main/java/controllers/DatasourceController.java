@@ -44,15 +44,15 @@ public class DatasourceController {
         String createButtonText = messages.get(CREATE, context, of(html)).get();
         html.render("createButtonM", createButtonText);
 
-        html.template("views/components/onboarding/createDatasource.html.ftl");
+        html.template("views/components/onboarding/addDatasource.html.ftl");
         return html;
     }
 
     public Result addDatasourceJs() {
         Result js = Results.html();
-        js.template("views/components/onboarding/createDatasource.js.ftl");
+        js.template("views/components/onboarding/addDatasource.js.ftl");
 
-        js.render("componentPath", Routes.ONBOARDING_CREATE_DATASOURCE_HTML);
+        js.render("componentPath", Routes.ONBOARDING_ADD_DATASOURCE_HTML);
         js.render("apiPath", Routes.ONBOARDING_ADD_DATASOURCE);
 
         js.contentType("text/javascript");

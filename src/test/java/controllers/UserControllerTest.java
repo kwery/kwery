@@ -10,8 +10,8 @@ import views.ActionResult;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import static conf.Routes.ONBOARDING_CREATE_ADMIN_USER;
-import static controllers.util.Messages.ADMIN_USER_CREATION_FAILURE_M;
+import static conf.Routes.ONBOARDING_ADD_ADMIN_USER;
+import static controllers.util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static views.ActionResult.Status.failure;
@@ -34,7 +34,7 @@ public class UserControllerTest extends DashRepoNinjaTest {
         user.setUsername(username);
         user.setPassword(password);
 
-        String url = getUrl(ONBOARDING_CREATE_ADMIN_USER);
+        String url = getUrl(ONBOARDING_ADD_ADMIN_USER);
 
         String firstResponse = ninjaTestBrowser.postJson(url, user);
         ActionResult firstResult = new ObjectMapper().readValue(firstResponse, ActionResult.class);
@@ -53,7 +53,7 @@ public class UserControllerTest extends DashRepoNinjaTest {
         ActionResult secondResult = new ObjectMapper().readValue(secondResponse, ActionResult.class);
 
         assertEquals("Returned status is failure", failure, secondResult.getStatus());
-        String userExistsMessage = MessageFormat.format(ADMIN_USER_CREATION_FAILURE_M, username);
+        String userExistsMessage = MessageFormat.format(ADMIN_USER_ADDITION_FAILURE_M, username);
         assertEquals("Returned message matches", userExistsMessage, secondResult.getMessage());
 
         assertTrue("Only one user is present in the db with user name", userDao.getByUsername(username) != null);

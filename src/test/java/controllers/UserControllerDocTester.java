@@ -1,14 +1,12 @@
 package controllers;
 
 import com.google.common.collect.ImmutableMap;
-import conf.Routes;
-import controllers.util.ControllerTestUtil;
 import ninja.NinjaDocTester;
 import org.doctester.testbrowser.Request;
 import org.doctester.testbrowser.Response;
 import org.junit.Test;
 
-import static conf.Routes.ONBOARDING_CREATE_ADMIN_USER;
+import static conf.Routes.ONBOARDING_ADD_ADMIN_USER;
 import static controllers.util.ControllerTestUtil.isJsonResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -18,7 +16,7 @@ public class UserControllerDocTester extends NinjaDocTester {
     @Test
     public void testCreateAdminUser() {
         Response response = makeRequest(
-                Request.POST().url(testServerUrl().path(ONBOARDING_CREATE_ADMIN_USER)).formParameters(
+                Request.POST().url(testServerUrl().path(ONBOARDING_ADD_ADMIN_USER)).formParameters(
                         ImmutableMap.of(
                                 "username", "foo",
                                 "password", "password"

@@ -12,11 +12,11 @@ define(["jquery", "knockout", "./router", "knockout-projections"], function ($, 
             require: "/component/actionresultcomponent"
         }
     );
-    ko.components.register("onboardingCreateAdminUser", {
-        require: "/onboarding/create-admin-user"
+    ko.components.register("onboardingAddAdminUser", {
+        require: "/onboarding/add-admin-user"
     });
-    ko.components.register("onboardingCreateDatasource", {
-        require: "/onboarding/create-datasource"
+    ko.components.register("onboardingAddDatasource", {
+        require: "/onboarding/add-datasource"
     });
     ko.applyBindings({ route: router.currentRoute });
 });

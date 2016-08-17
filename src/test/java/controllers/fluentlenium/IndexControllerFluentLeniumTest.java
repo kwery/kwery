@@ -14,7 +14,7 @@ public class IndexControllerFluentLeniumTest extends DashRepoFluentLeniumTest {
     @Test
     public void index() {
         goTo(getServerAddress());
-        assertTrue(title().contains("Home page"));
+        assertTrue(title().contains(Messages.TITLE_M));
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId(HERO_TEXT_I)).isPresent();
         TestCase.assertEquals("Hero text is present in index page", Messages.INSTALLATION_WELCOME_M, $(htmlId(HERO_TEXT_I)).getText());
         assertEquals("Create admin user button present in index page", Messages.CREATE_ADMIN_USER_M.toUpperCase(), $(htmlId(CREATE_ADMIN_USER_I)).getText());
