@@ -24,8 +24,6 @@ import ninja.application.ApplicationRoutes;
 
 public class Routes implements ApplicationRoutes {
     public static final String INDEX = "/";
-    public static final String WELCOME = "/welcome";
-    public static final String CREATE_ADMIN_USER = "/create-admin-user";
     public static final String ONBOARDING_WELCOME = "/onboarding/welcome";
     public static final String ONBOARDING_CREATE_ADMIN_USER_HTML = "/onboarding/create-admin-user.html";
     public static final String ONBOARDING_CREATE_ADMIN_USER_JS = "/onboarding/create-admin-user";

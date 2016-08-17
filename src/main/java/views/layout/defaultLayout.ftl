@@ -1,4 +1,4 @@
-<#macro myLayout title="Layout example">
+<#macro myLayout title="${title}">
 <!DOCTYPE html>
 <html lang="en">
 <head>

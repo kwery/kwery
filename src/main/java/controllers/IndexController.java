@@ -16,15 +16,25 @@
 
 package controllers;
 
+import com.google.common.base.Optional;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import conf.Routes;
+import ninja.Context;
 import ninja.Result;
 import ninja.Results;
+import ninja.i18n.Messages;
 
 @Singleton
 public class IndexController {
-    public Result index() {
-        return Results.html();
+    @Inject
+    private Messages messages;
+
+    public Result index(Context context) {
+        Result html = Results.html();
+        String title = messages.get(MessageKeys.TITLE, context, Optional.of(html)).get();
+        html.render("title", title);
+        return html;
     }
 
 }
