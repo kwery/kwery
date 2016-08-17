@@ -15,5 +15,8 @@ define(["jquery", "knockout", "./router", "knockout-projections"], function ($, 
     ko.components.register("onboardingCreateAdminUser", {
         require: "/onboarding/create-admin-user"
     });
+    ko.components.register("onboardingCreateDatasource", {
+        require: "/onboarding/create-datasource"
+    });
     ko.applyBindings({ route: router.currentRoute });
 });

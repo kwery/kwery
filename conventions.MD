@@ -4,3 +4,9 @@
 4. Template files in camel case.
 6. Messages set in controller should be full name java style variables appended with M for example
 createAdminUserButtonTextM, not createAdmUsrBtnTxtM.
+7. Variable names can be small/single alphabet only if the scope of the variable is small, if the variable spans a
+large no of lines or is an instance variable, then use full names.
+8. Static imports as much as possible.
+9. Database table names in singular, user not users.
+10. If an action is creating something, name all variables associated with the action as add not create, for example, if an action created users in the table, name the
+corresponding controller method as addUser, http path as add-user etc.

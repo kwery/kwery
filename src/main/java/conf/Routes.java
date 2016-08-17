@@ -17,13 +17,10 @@
 package conf;
 
 
-import controllers.ActionResultComponentController;
-import controllers.OnboardingController;
-import controllers.UserController;
+import controllers.*;
 import ninja.AssetsController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
-import controllers.IndexController;
 
 public class Routes implements ApplicationRoutes {
     public static final String INDEX = "/";
@@ -33,8 +30,11 @@ public class Routes implements ApplicationRoutes {
     public static final String ONBOARDING_CREATE_ADMIN_USER_HTML = "/onboarding/create-admin-user.html";
     public static final String ONBOARDING_CREATE_ADMIN_USER_JS = "/onboarding/create-admin-user";
     public static final String ONBOARDING_CREATE_ADMIN_USER = "/onboarding/create-admin-user";
+    public static final String ONBOARDING_CREATE_DATASOURCE_HTML = "/onboarding/create-datasource.html";
+    public static final String ONBOARDING_CREATE_DATASOURCE_JS = "/onboarding/create-datasource";
     public static final String ACTION_RESULT_COMPONENT_JS = "/component/actionresultcomponent";
     public static final String ACTION_RESULT_COMPONENT_HTML = "/component/actionresultcomponent.html";
+    public static final String ONBOARDING_ADD_DATASOURCE = "/onboarding/add-datasource";
 
     @Override
     public void init(Router router) {  
@@ -45,6 +45,9 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(ONBOARDING_CREATE_ADMIN_USER_HTML).with(OnboardingController.class, "createAdminUserHtml");
         router.GET().route(ONBOARDING_CREATE_ADMIN_USER_JS).with(OnboardingController.class, "createAdminUserJs");
         router.POST().route(ONBOARDING_CREATE_ADMIN_USER).with(UserController.class, "createAdminUser");
+        router.GET().route(ONBOARDING_CREATE_DATASOURCE_HTML).with(DatasourceController.class, "addDatasourceHtml");
+        router.GET().route(ONBOARDING_CREATE_DATASOURCE_JS).with(DatasourceController.class, "addDatasourceJs");
+        router.POST().route(ONBOARDING_ADD_DATASOURCE).with(DatasourceController.class, "addDatasource");
 
         //Custom component
         router.GET().route(ACTION_RESULT_COMPONENT_JS).with(ActionResultComponentController.class, "actionResultComponentJs");

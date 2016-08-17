@@ -19,4 +19,6 @@ public class Messages {
     public static final String CREATE_M = "create";
     public static final String ADMIN_USER_CREATION_SUCCESS_M = "Admin user with user name {0} created successfully";
     public static final String ADMIN_USER_CREATION_FAILURE_M = "An admin user with user name {0} already exists, please choose a different username";
+    public static final String DATA_SOURCE_ADDITION_SUCCESS_M = "{0} datasource with label {1} created successfully";
+    public static final String DATA_SOURCE_ADDITION_FAILURE_M = "A {0} datasource with label {1} already exists, please choose a different label";
 }

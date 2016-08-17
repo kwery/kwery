@@ -4,7 +4,8 @@ define(["jquery","knockout", "crossroads", "hasher"], function ($, ko, crossroad
         routes: [
             { url: "", params: { page: "onboardingWelcome" } },
             { url: "settings", params: { page: "settings" } },
-            { url: "onboarding/create-admin-user", params: { page: "onboardingCreateAdminUser" } }
+            { url: "onboarding/create-admin-user", params: { page: "onboardingCreateAdminUser" } },
+            { url: "onboarding/create-datasource", params: { page: "onboardingCreateDatasource" } }
         ]
     });
 
