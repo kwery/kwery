@@ -1,9 +1,7 @@
 package controllers;
 
-import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.sun.corba.se.spi.orbutil.fsm.Action;
 import conf.Routes;
 import dao.DatasourceDao;
 import models.Datasource;
@@ -69,10 +67,10 @@ public class DatasourceController {
 
         if (existingDatasource == null) {
             datasourceDao.save(datasource);
-            String msg = messages.get(DATA_SOURCE_ADDITION_SUCCESS, context, of(json), MYSQL, datasource.getLabel()).get();
+            String msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL, datasource.getLabel()).get();
             actionResult = new ActionResult(success, msg);
         } else {
-            String msg = messages.get(DATA_SOURCE_ADDITION_FAILURE, context, of(json), MYSQL, datasource.getLabel()).get();
+            String msg = messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL, datasource.getLabel()).get();
             actionResult = new ActionResult(failure, msg);
         }
 

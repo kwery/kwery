@@ -7,8 +7,8 @@ import org.junit.Test;
 import static controllers.util.HtmlClass.ISA_ERROR_C;
 import static controllers.util.HtmlClass.ISA_INFO_C;
 import static controllers.util.HtmlId.CREATE_I;
-import static controllers.util.Messages.DATA_SOURCE_ADDITION_FAILURE_M;
-import static controllers.util.Messages.DATA_SOURCE_ADDITION_SUCCESS_M;
+import static controllers.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
+import static controllers.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static models.Datasource.Type.MYSQL;
@@ -41,14 +41,14 @@ public class CreateDatasourceFluentLeniumTest extends DashRepoFluentLeniumTest {
 
         click($(htmlId(CREATE_I)));
 
-        String successMessage = format(DATA_SOURCE_ADDITION_SUCCESS_M, MYSQL, "test");
+        String successMessage = format(DATASOURCE_ADDITION_SUCCESS_M, MYSQL, "test");
         String sucMsgExpr = htmlClassExpression(ISA_INFO_C, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(sucMsgExpr).hasText(successMessage);
 
         assertThat($(sucMsgExpr).getText(), is(successMessage));
 
         click($(htmlId(CREATE_I)));
-        String datasourceExistsMessage = format(DATA_SOURCE_ADDITION_FAILURE_M, MYSQL, "test");
+        String datasourceExistsMessage = format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, "test");
 
         String datasourceExistsMsgExpr = htmlClassExpression(ISA_ERROR_C, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(datasourceExistsMsgExpr).hasText(datasourceExistsMessage);

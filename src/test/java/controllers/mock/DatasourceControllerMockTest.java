@@ -14,8 +14,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import views.ActionResult;
 
-import static controllers.MessageKeys.DATA_SOURCE_ADDITION_FAILURE;
-import static controllers.MessageKeys.DATA_SOURCE_ADDITION_SUCCESS;
+import static controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
+import static controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
 import static models.Datasource.Type.MYSQL;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -51,7 +51,7 @@ public class DatasourceControllerMockTest {
         doNothing().when(dao).save(datasource);
 
         String message = "success";
-        when(messages.get(eq(DATA_SOURCE_ADDITION_SUCCESS), eq(context), any(Optional.class), eq(MYSQL), eq("label"))).thenReturn(Optional.of(message));
+        when(messages.get(eq(DATASOURCE_ADDITION_SUCCESS), eq(context), any(Optional.class), eq(MYSQL), eq("label"))).thenReturn(Optional.of(message));
 
         Result additionResult = controller.addDatasource(datasource, context);
 
@@ -66,7 +66,7 @@ public class DatasourceControllerMockTest {
         Datasource datasource = datasource();
         when(dao.getByLabel(datasource.getLabel())).thenReturn(datasource);
         String msg = "foo";
-        when(messages.get(eq(DATA_SOURCE_ADDITION_FAILURE), eq(context), any(Optional.class), eq(MYSQL), eq(datasource.getLabel()))).thenReturn(Optional.of(msg));
+        when(messages.get(eq(DATASOURCE_ADDITION_FAILURE), eq(context), any(Optional.class), eq(MYSQL), eq(datasource.getLabel()))).thenReturn(Optional.of(msg));
 
         Result additionResult = controller.addDatasource(datasource, context);
 

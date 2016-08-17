@@ -1,8 +1,6 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import controllers.util.Messages;
 import dao.DatasourceDao;
 import models.Datasource;
 import org.junit.Before;
@@ -13,8 +11,8 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 import static conf.Routes.ONBOARDING_ADD_DATASOURCE;
-import static controllers.util.Messages.DATA_SOURCE_ADDITION_FAILURE_M;
-import static controllers.util.Messages.DATA_SOURCE_ADDITION_SUCCESS_M;
+import static controllers.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
+import static controllers.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 import static models.Datasource.Type.MYSQL;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
@@ -47,14 +45,14 @@ public class DatasourceControllerTest extends DashRepoNinjaTest {
 
         assertTrue("Datasource added successfully", successResult.getStatus() == success);
 
-        String successMessage = MessageFormat.format(DATA_SOURCE_ADDITION_SUCCESS_M, MYSQL, "test");
+        String successMessage = MessageFormat.format(DATASOURCE_ADDITION_SUCCESS_M, MYSQL, "test");
         assertEquals("Datasource addition success message matches", successMessage, successResult.getMessage());
 
         String failureResponse = ninjaTestBrowser.postJson(url, datasource);
         ActionResult failureResult = new ObjectMapper().readValue(failureResponse, ActionResult.class);
         assertThat(failureResult.getStatus(), is(failure));
 
-        String failureMessage = MessageFormat.format(DATA_SOURCE_ADDITION_FAILURE_M, MYSQL, "test");
+        String failureMessage = MessageFormat.format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, "test");
         assertThat(failureResult.getMessage(), is(failureMessage));
 
         assertThat(dao.getByLabel("test"), notNullValue());
