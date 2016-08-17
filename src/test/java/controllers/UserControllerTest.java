@@ -1,20 +1,23 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import conf.Routes;
 import dao.UserDao;
 import models.User;
-import ninja.NinjaTest;
 import org.junit.Before;
 import org.junit.Test;
 import views.ActionResult;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
+import static conf.Routes.ONBOARDING_CREATE_ADMIN_USER;
+import static controllers.util.Messages.ADMIN_USER_CREATION_FAILURE_M;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static views.ActionResult.Status.failure;
+import static views.ActionResult.Status.success;
 
-public class UserControllerTest extends NinjaTest {
+public class UserControllerTest extends DashRepoNinjaTest {
     private UserDao userDao;
 
     @Before
@@ -31,13 +34,14 @@ public class UserControllerTest extends NinjaTest {
         user.setUsername(username);
         user.setPassword(password);
 
-        String url = getUrl(Routes.ONBOARDING_CREATE_ADMIN_USER);
+        String url = getUrl(ONBOARDING_CREATE_ADMIN_USER);
 
         String firstResponse = ninjaTestBrowser.postJson(url, user);
         ActionResult firstResult = new ObjectMapper().readValue(firstResponse, ActionResult.class);
 
-        assertEquals("Returned status is success", ActionResult.Status.success, firstResult.getStatus());
-        assertEquals("Returned message matches", String.format("Admin user with user name %s created successfully", username), firstResult.getMessage());
+        assertEquals("Returned status is success", success, firstResult.getStatus());
+        String userCreatedMessage = String.format("Admin user with user name %s created successfully", username);
+        assertEquals("Returned message matches", userCreatedMessage, firstResult.getMessage());
 
         User userFromDb = userDao.getByUsername(username);
 
@@ -48,16 +52,10 @@ public class UserControllerTest extends NinjaTest {
         String secondResponse = ninjaTestBrowser.postJson(url, user);
         ActionResult secondResult = new ObjectMapper().readValue(secondResponse, ActionResult.class);
 
-        assertEquals("Returned status is failure", ActionResult.Status.failure, secondResult.getStatus());
-        assertEquals("Returned message matches",
-                String.format("An admin user with user name %s already exists, please choose a different username", username), secondResult.getMessage());
+        assertEquals("Returned status is failure", failure, secondResult.getStatus());
+        String userExistsMessage = MessageFormat.format(ADMIN_USER_CREATION_FAILURE_M, username);
+        assertEquals("Returned message matches", userExistsMessage, secondResult.getMessage());
 
         assertTrue("Only one user is present in the db with user name", userDao.getByUsername(username) != null);
-    }
-
-    private String getUrl(String path) {
-        String a = getServerAddress();
-        a = a.substring(0, a.length() - 1);
-        return a + path;
     }
 }

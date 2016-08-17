@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import views.ActionResult;
 
+import static controllers.MessageKeys.ADMIN_USER_CREATION_SUCCESS;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -51,7 +52,7 @@ public class UserControllerMockTest {
         doNothing().when(userDao).save(user);
 
         String successMessage = "success";
-        when(messages.get(eq(MessageKeys.ADMIN_USER_CREATION_SUCCESS), eq(context), any(Optional.class), eq(username))).thenReturn(Optional.of(successMessage));
+        when(messages.get(eq(ADMIN_USER_CREATION_SUCCESS), eq(context), any(Optional.class), eq(username))).thenReturn(Optional.of(successMessage));
 
         Result creationResult = userController.createAdminUser(context, user);
 

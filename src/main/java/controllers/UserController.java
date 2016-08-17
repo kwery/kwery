@@ -12,8 +12,11 @@ import ninja.i18n.Messages;
 import views.ActionResult;
 import views.ActionResult.Status;
 
+import static com.google.common.base.Optional.of;
 import static controllers.MessageKeys.ADMIN_USER_CREATION_FAILURE;
 import static controllers.MessageKeys.ADMIN_USER_CREATION_SUCCESS;
+import static views.ActionResult.Status.failure;
+import static views.ActionResult.Status.success;
 
 @Singleton
 public class UserController {
@@ -31,11 +34,11 @@ public class UserController {
 
         if (existingUser == null) {
             userDao.save(user);
-            String message = messages.get(ADMIN_USER_CREATION_SUCCESS, context, Optional.of(json), user.getUsername()).get();
-            actionResult = new ActionResult(Status.success, message);
+            String message = messages.get(ADMIN_USER_CREATION_SUCCESS, context, of(json), user.getUsername()).get();
+            actionResult = new ActionResult(success, message);
         } else {
-            String message = messages.get(ADMIN_USER_CREATION_FAILURE, context, Optional.of(json), user.getUsername()).get();
-            actionResult = new ActionResult(Status.failure, message);
+            String message = messages.get(ADMIN_USER_CREATION_FAILURE, context, of(json), user.getUsername()).get();
+            actionResult = new ActionResult(failure, message);
         }
 
         return json.render(actionResult);

@@ -35,4 +35,12 @@ public class DashRepoFluentLeniumTest extends NinjaFluentLeniumTest {
         Collections.addAll(l, htmlTags);
         return Joiner.on(" ").join(l);
     }
+
+    public String htmlNamedTextInputExpression(String name) {
+        return String.format("input[type='text'][name='%s']", name);
+    }
+
+    public String htmlNamedPasswordInputExpression(String name) {
+        return String.format("input[type='password'][name='%s']", name);
+    }
 }
