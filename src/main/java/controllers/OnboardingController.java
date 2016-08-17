@@ -28,7 +28,7 @@ public class OnboardingController {
         return html;
     }
 
-    public Result createAdminUserHtml(Context context) {
+    public Result addAdminUserHtml(Context context) {
         Result html = Results.html();
 
         String usernameButtonText = messages.get(USER_NAME, context, Optional.of(html)).get();
@@ -40,13 +40,13 @@ public class OnboardingController {
         String createButtonText = messages.get(CREATE, context, Optional.of(html)).get();
         html.render("createButtonM", createButtonText);
 
-        html.template("views/components/onboarding/createAdminUser.html.ftl");
+        html.template("views/components/onboarding/addAdminUser.html.ftl");
         return html;
     }
 
-    public Result createAdminUserJs() {
+    public Result addAdminUserJs() {
         Result js = Results.html();
-        js.template("views/components/onboarding/createAdminUser.js.ftl");
+        js.template("views/components/onboarding/addAdminUser.js.ftl");
         js.contentType("text/javascript");
         return js;
     }

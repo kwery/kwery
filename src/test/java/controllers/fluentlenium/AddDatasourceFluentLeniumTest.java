@@ -16,10 +16,10 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class CreateDatasourceFluentLeniumTest extends DashRepoFluentLeniumTest {
+public class AddDatasourceFluentLeniumTest extends DashRepoFluentLeniumTest {
     @Test
     public void test() {
-        goTo(getServerAddress() + "#onboarding/create-datasource");
+        goTo(getServerAddress() + "#onboarding/add-datasource");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId("username")).isPresent();
 
         FluentList<FluentWebElement> username = $(htmlNamedTextInputExpression("username"));
