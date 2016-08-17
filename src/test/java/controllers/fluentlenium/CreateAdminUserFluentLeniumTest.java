@@ -11,6 +11,7 @@ import static controllers.util.HtmlId.PASSWORD_I;
 import static controllers.util.HtmlId.USERNAME_I;
 import static controllers.util.Messages.ADMIN_USER_CREATION_FAILURE_M;
 import static controllers.util.Messages.ADMIN_USER_CREATION_SUCCESS_M;
+import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
@@ -27,7 +28,7 @@ public class CreateAdminUserFluentLeniumTest extends DashRepoFluentLeniumTest {
         fill($(htmlId(PASSWORD_I))).with(password);
         click($(htmlId(CREATE_ADMIN_USER_I)));
 
-        String sucMsg = MessageFormat.format(ADMIN_USER_CREATION_SUCCESS_M, username);
+        String sucMsg = format(ADMIN_USER_CREATION_SUCCESS_M, username);
         String sucMsgExpr = htmlClassExpression(ISA_INFO_C, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(sucMsgExpr).hasText(sucMsg);
 
@@ -35,7 +36,7 @@ public class CreateAdminUserFluentLeniumTest extends DashRepoFluentLeniumTest {
 
         click($(htmlId(CREATE_ADMIN_USER_I)));
 
-        String usrExistsMsg = MessageFormat.format(ADMIN_USER_CREATION_FAILURE_M, username);
+        String usrExistsMsg = format(ADMIN_USER_CREATION_FAILURE_M, username);
 
         String usrExistsMsgExpr = htmlClassExpression(ISA_ERROR_C, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(usrExistsMsgExpr).hasText(usrExistsMsg);

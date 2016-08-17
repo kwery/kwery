@@ -5,6 +5,7 @@ import controllers.MessageKeys;
 import controllers.UserController;
 import dao.UserDao;
 import models.User;
+import ninja.Context;
 import ninja.Result;
 import ninja.i18n.Messages;
 import org.junit.Before;
@@ -15,6 +16,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import views.ActionResult;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +27,8 @@ public class UserControllerMockTest {
     private UserDao userDao;
     @Mock
     private Messages messages;
+    @Mock
+    private Context context;
     private UserController userController;
 
     private String username = "purvi";
@@ -46,10 +51,9 @@ public class UserControllerMockTest {
         doNothing().when(userDao).save(user);
 
         String successMessage = "success";
-        when(messages.get(MessageKeys.ADMIN_USER_CREATION_SUCCESS, Optional.absent(), username)).thenReturn(Optional.of(successMessage));
+        when(messages.get(eq(MessageKeys.ADMIN_USER_CREATION_SUCCESS), eq(context), any(Optional.class), eq(username))).thenReturn(Optional.of(successMessage));
 
-
-        Result creationResult = userController.createAdminUser(user);
+        Result creationResult = userController.createAdminUser(context, user);
 
         ActionResult actionResult = (ActionResult) creationResult.getRenderable();
 
@@ -66,9 +70,9 @@ public class UserControllerMockTest {
         when(userDao.getByUsername(username)).thenReturn(user);
 
         String message = "failure";
-        when(messages.get(MessageKeys.ADMIN_USER_CREATION_FAILURE, Optional.absent(), username)).thenReturn(Optional.of(message));
+        when(messages.get(eq(MessageKeys.ADMIN_USER_CREATION_FAILURE), eq(context), any(Optional.class), eq(username))).thenReturn(Optional.of(message));
 
-        Result creationResult = userController.createAdminUser(user);
+        Result creationResult = userController.createAdminUser(context, user);
 
         ActionResult actionResult = (ActionResult) creationResult.getRenderable();
 

@@ -10,6 +10,10 @@ import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
 import views.ActionResult;
+import views.ActionResult.Status;
+
+import static controllers.MessageKeys.ADMIN_USER_CREATION_FAILURE;
+import static controllers.MessageKeys.ADMIN_USER_CREATION_SUCCESS;
 
 @Singleton
 public class UserController {
@@ -19,7 +23,7 @@ public class UserController {
     @Inject
     private Messages messages;
 
-    public Result createAdminUser(User user) {
+    public Result createAdminUser(Context context, User user) {
         User existingUser = userDao.getByUsername(user.getUsername());
 
         Result json = Results.json();
@@ -27,11 +31,11 @@ public class UserController {
 
         if (existingUser == null) {
             userDao.save(user);
-            String message = messages.get(MessageKeys.ADMIN_USER_CREATION_SUCCESS, Optional.absent(), user.getUsername()).get();
-            actionResult = new ActionResult(ActionResult.Status.success, message);
+            String message = messages.get(ADMIN_USER_CREATION_SUCCESS, context, Optional.of(json), user.getUsername()).get();
+            actionResult = new ActionResult(Status.success, message);
         } else {
-            String message = messages.get(MessageKeys.ADMIN_USER_CREATION_FAILURE, Optional.absent(), user.getUsername()).get();
-            actionResult = new ActionResult(ActionResult.Status.failure, message);
+            String message = messages.get(ADMIN_USER_CREATION_FAILURE, context, Optional.of(json), user.getUsername()).get();
+            actionResult = new ActionResult(Status.failure, message);
         }
 
         return json.render(actionResult);
