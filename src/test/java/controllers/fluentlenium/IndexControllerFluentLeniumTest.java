@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static controllers.util.HtmlId.CREATE_ADMIN_USER_I;
 import static controllers.util.HtmlId.HERO_TEXT_I;
+import static controllers.util.HtmlId.USERNAME_I;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -20,6 +21,7 @@ public class IndexControllerFluentLeniumTest extends FluentLeniumTest {
         assertEquals("Create admin user button present in index page", Messages.CREATE_ADMIN_USER_M.toUpperCase(), $(htmlId(CREATE_ADMIN_USER_I)).getText());
         click($(htmlId(CREATE_ADMIN_USER_I)));
         await().atMost(TIMEOUT_SECONDS, SECONDS);
-        assertEquals("URL changed to create admin user fragment", getServerAddress() + "#onboarding/create-admin-user", url());
+        assertEquals("URL changed to create admin user fragment", getServerAddress() + "#onboarding/add-admin-user", url());
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId(USERNAME_I)).isPresent();
     }
 }
