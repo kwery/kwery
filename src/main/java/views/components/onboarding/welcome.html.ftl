@@ -4,7 +4,7 @@
             <h1 id="heroText">
                 ${onboardingWelcomeM}
             </h1>
-            <a class="button button-primary" href="#onboarding/create-admin-user" id="createAdminUser">
+            <a class="button button-primary" href="#onboarding/add-admin-user" id="createAdminUser">
                 ${createAdminUserButtonM}
             </a>
         </div>
