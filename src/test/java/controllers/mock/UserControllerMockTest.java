@@ -1,38 +1,25 @@
 package controllers.mock;
 
-import com.google.common.base.Optional;
-import controllers.MessageKeys;
 import controllers.UserController;
 import dao.UserDao;
 import models.User;
-import ninja.Context;
-import ninja.Result;
-import ninja.i18n.Messages;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import views.ActionResult;
 
+import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static controllers.util.TestUtil.user;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserControllerMockTest {
+public class UserControllerMockTest extends ControllerMockTest {
     @Mock
     private UserDao userDao;
-    @Mock
-    private Messages messages;
-    @Mock
-    private Context context;
     private UserController userController;
-
-    private String username = "purvi";
 
     @Before
     public void before() {
@@ -43,41 +30,18 @@ public class UserControllerMockTest {
 
     @Test
     public void testSuccess() {
-        when(userDao.getByUsername(username)).thenReturn(null);
-
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword("");
-
+        User user = user();
+        when(userDao.getByUsername(user.getUsername())).thenReturn(null);
         doNothing().when(userDao).save(user);
-
-        String successMessage = "success";
-        when(messages.get(eq(ADMIN_USER_ADDITION_SUCCESS), eq(context), any(Optional.class), eq(username))).thenReturn(Optional.of(successMessage));
-
-        Result creationResult = userController.addAdminUser(context, user);
-
-        ActionResult actionResult = (ActionResult) creationResult.getRenderable();
-
-        assertEquals("ActionResult message matches", successMessage, actionResult.getMessage());
-        assertEquals("ActionResult status matches", ActionResult.Status.success, actionResult.getStatus());
+        mockMessages(ADMIN_USER_ADDITION_SUCCESS, user.getUsername());
+        assertSuccess(actionResult(userController.addAdminUser(context, user)));
     }
 
     @Test
     public void testFailure() {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword("");
-
-        when(userDao.getByUsername(username)).thenReturn(user);
-
-        String message = "failure";
-        when(messages.get(eq(MessageKeys.ADMIN_USER_ADDITION_FAILURE), eq(context), any(Optional.class), eq(username))).thenReturn(Optional.of(message));
-
-        Result creationResult = userController.addAdminUser(context, user);
-
-        ActionResult actionResult = (ActionResult) creationResult.getRenderable();
-
-        assertEquals("ActionResult message matches", message, actionResult.getMessage());
-        assertEquals("ActionResult status matches", ActionResult.Status.failure, actionResult.getStatus());
+        User user = user();
+        when(userDao.getByUsername(user.getUsername())).thenReturn(user);
+        mockMessages(ADMIN_USER_ADDITION_FAILURE, user.getUsername());
+        assertFailure(actionResult(userController.addAdminUser(context, user)));
     }
 }

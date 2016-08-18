@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-public class DashRepoFluentLeniumTest extends NinjaFluentLeniumTest {
+public class FluentLeniumTest extends NinjaFluentLeniumTest {
     static final int TIMEOUT_SECONDS = 5;
 
     @Override

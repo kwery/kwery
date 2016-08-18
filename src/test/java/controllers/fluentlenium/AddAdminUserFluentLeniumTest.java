@@ -13,7 +13,7 @@ import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
-public class AddAdminUserFluentLeniumTest extends DashRepoFluentLeniumTest {
+public class AddAdminUserFluentLeniumTest extends FluentLeniumTest {
     @Test
     public void test() throws InterruptedException {
         String username = "purvi";

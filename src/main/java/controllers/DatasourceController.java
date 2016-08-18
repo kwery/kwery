@@ -67,10 +67,10 @@ public class DatasourceController {
 
         if (existingDatasource == null) {
             datasourceDao.save(datasource);
-            String msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL, datasource.getLabel()).get();
+            String msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
             actionResult = new ActionResult(success, msg);
         } else {
-            String msg = messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL, datasource.getLabel()).get();
+            String msg = messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get();
             actionResult = new ActionResult(failure, msg);
         }
 
