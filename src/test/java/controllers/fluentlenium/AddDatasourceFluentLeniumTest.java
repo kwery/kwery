@@ -16,7 +16,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AddDatasourceFluentLeniumTest extends DashRepoFluentLeniumTest {
+public class AddDatasourceFluentLeniumTest extends FluentLeniumTest {
     @Test
     public void test() {
         goTo(getServerAddress() + "#onboarding/add-datasource");

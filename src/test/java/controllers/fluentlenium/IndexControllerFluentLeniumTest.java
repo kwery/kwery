@@ -10,7 +10,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
-public class IndexControllerFluentLeniumTest extends DashRepoFluentLeniumTest {
+public class IndexControllerFluentLeniumTest extends FluentLeniumTest {
     @Test
     public void index() {
         goTo(getServerAddress());
