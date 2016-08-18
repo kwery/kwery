@@ -4,9 +4,7 @@ import com.google.common.base.Optional;
 import ninja.Context;
 import ninja.Result;
 import ninja.i18n.Messages;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import views.ActionResult;
 
 import static org.hamcrest.core.Is.is;
@@ -17,8 +15,7 @@ import static org.mockito.Mockito.when;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AbstractControllerMockTest {
+public class ControllerMockTest {
     @Mock
     protected Messages messages;
     @Mock

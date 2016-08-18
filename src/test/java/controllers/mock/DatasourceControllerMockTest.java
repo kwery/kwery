@@ -17,7 +17,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DatasourceControllerMockTest extends AbstractControllerMockTest {
+public class DatasourceControllerMockTest extends ControllerMockTest {
     @Mock
     private DatasourceDao dao;
     private DatasourceController controller;

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserControllerMockTest extends AbstractControllerMockTest {
+public class UserControllerMockTest extends ControllerMockTest {
     @Mock
     private UserDao userDao;
     private UserController userController;
