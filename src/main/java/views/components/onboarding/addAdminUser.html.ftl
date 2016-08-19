@@ -1,5 +1,5 @@
 <div class="container">
-    <actionresultdialog params="status: status, message: message, nextAction: nextAction, nextActionName: nextActionName, isOpen: isOpen"></actionresultdialog>
+    <actionresultdialog params="status: status, message: message, nextAction: nextAction, nextActionName: nextActionName"></actionresultdialog>
     <div class="row">
         <div class="six columns">
             <label for="userName">${usernameButtonM}</label>
