@@ -18,4 +18,17 @@ public class ActionResultComponentController {
         js.contentType("text/javascript");
         return js;
     }
+
+    public Result actionResultDialogComponentHtml() {
+        Result html = Results.html();
+        html.template("views/components/actionresultdialogcomponent/actionResultDialogComponent.html.ftl");
+        return html;
+    }
+
+    public Result actionResultDialogComponentJs() {
+        Result js = Results.html();
+        js.template("views/components/actionresultdialogcomponent/actionResultDialogComponent.js.ftl");
+        js.contentType("text/javascript");
+        return js;
+    }
 }

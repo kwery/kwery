@@ -19,4 +19,5 @@ public class MessageKeys {
     public static final String ADMIN_USER_ADDITION_FAILURE = "admin.user.addition.failure";
     public static final String DATASOURCE_ADDITION_SUCCESS = "datasource.addition.success";
     public static final String DATASOURCE_ADDITION_FAILURE = "datasource.addition.failure";
+    public static final String ADMIN_USER_ADDITION_NEXT_ACTION = "admin.user.addition.next.action";
 }

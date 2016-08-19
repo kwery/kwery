@@ -1,5 +1,7 @@
 package controllers.util;
 
+import models.Datasource;
+
 /**
  * Holds messages present in messages.properties file, this is done to ease testing. All messages present here
  * should have an equivalent entry in messages.properties file.
@@ -14,7 +16,8 @@ public class Messages {
     public static final String USER_NAME_M = "User Name";
     public static final String PASSWORD_M = "Password";
     public static final String CREATE_M = "create";
-    public static final String ADMIN_USER_ADDITION_SUCCESS_M = "Admin user with user name {0} created successfully";
+    public static final String ADMIN_USER_ADDITION_SUCCESS_M = "Admin user with user name {0} created successfully. Let us now create a datasource.";
+    public static final String ADMIN_USER_ADDITION_NEXT_STEP_M = "Create Datasource";
     public static final String ADMIN_USER_ADDITION_FAILURE_M = "An admin user with user name {0} already exists, please choose a different username";
     public static final String DATASOURCE_ADDITION_SUCCESS_M = "{0} datasource with label {1} created successfully";
     public static final String DATASOURCE_ADDITION_FAILURE_M = "A {0} datasource with label {1} already exists, please choose a different label";

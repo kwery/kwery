@@ -1,4 +1,4 @@
-define(["jquery","knockout", "crossroads", "hasher"], function ($, ko, crossroads, hasher) {
+define(["jquery", "knockout", "crossroads", "hasher"], function ($, ko, crossroads, hasher) {
 
     return new Router({
         routes: [

@@ -1,5 +1,5 @@
 <div class="container">
-    <actionresult params="status: status, message: message"></actionresult>
+    <actionresult params="status: status, message: message, isOpen: isOpen"></actionresult>
     <div class="row">
         <div class="twelve columns">
             <label for="url">${urlButtonM}</label>

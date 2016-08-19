@@ -12,12 +12,15 @@ import views.ActionResult;
 
 import static com.google.common.base.Optional.of;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
+import static controllers.MessageKeys.ADMIN_USER_ADDITION_NEXT_ACTION;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
 
 @Singleton
 public class UserController {
+    public static final String ONBOARDING_POST_ADMIN_USER_CREATION_ACTION = "#onboarding/add-datasource";
+
     @Inject
     private UserDao userDao;
 
@@ -33,7 +36,8 @@ public class UserController {
         if (existingUser == null) {
             userDao.save(user);
             String message = messages.get(ADMIN_USER_ADDITION_SUCCESS, context, of(json), user.getUsername()).get();
-            actionResult = new ActionResult(success, message);
+            String nextActionName = messages.get(ADMIN_USER_ADDITION_NEXT_ACTION, context, of(json)).get();
+            actionResult = new ActionResult(success, message, nextActionName, ONBOARDING_POST_ADMIN_USER_CREATION_ACTION);
         } else {
             String message = messages.get(ADMIN_USER_ADDITION_FAILURE, context, of(json), user.getUsername()).get();
             actionResult = new ActionResult(failure, message);
