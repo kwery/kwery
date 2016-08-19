@@ -9,8 +9,6 @@ define(["knockout", "jquery", "text!${componentPath}"], function (ko, $, templat
         self.status = ko.observable("");
         self.message = ko.observable("");
 
-        self.isOpen = ko.observable(false);
-
         self.save = function() {
             $.ajax("${apiPath}", {
                 data: ko.toJSON({
