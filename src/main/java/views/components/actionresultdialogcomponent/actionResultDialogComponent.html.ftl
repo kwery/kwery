@@ -1,8 +1,8 @@
 <div class="row">
     <div class="twelve columns">
-        <div data-bind="dialog: {isOpen: isOpen}">
+        <div id="actionResultDialog" data-bind="dialog: {isOpen: isOpen}">
             <p data-bind="text: message"></p>
-            <a data-bind="text: nextActionName, attr: {href: nextAction}"></a>
+            <a data-bind="text: nextActionName, attr: {href: nextAction}" id="nextAction"></a>
         </div>
 
         <div data-bind="visible: status() === 'failure'" class="isa_error">
