@@ -27,6 +27,12 @@ public class ApiTest extends NinjaTest {
         assertThat(actionResult.getStatus(), is(success));
     }
 
+    protected void assertSuccessNextAction(ActionResult actionResult, String message, String nextActionName, String nextAtion) {
+        assertSuccess(actionResult, message);
+        assertThat(actionResult.getNextActionName(), is(nextActionName));
+        assertThat(actionResult.getNextAction(), is(nextAtion));
+    }
+
     protected void assertFailure(ActionResult actionResult, String message) {
         assertThat(actionResult.getMessage(), is(message));
         assertThat(actionResult.getStatus(), is(failure));

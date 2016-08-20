@@ -6,6 +6,8 @@ define(["knockout", "jquery", "text!/onboarding/add-admin-user.html"], function 
 
         self.status = ko.observable("");
         self.message = ko.observable("");
+        self.nextAction = ko.observable("");
+        self.nextActionName = ko.observable("");
 
         self.save = function() {
             //This is done if someone tries to create the user again
@@ -16,8 +18,13 @@ define(["knockout", "jquery", "text!/onboarding/add-admin-user.html"], function 
                     //Clear previous set value
                     self.status("");
                     self.message("");
+                    self.nextAction("");
+                    self.nextActionName("");
+
                     self.status(result.status);
                     self.message(result.message);
+                    self.nextAction(result.nextAction);
+                    self.nextActionName(result.nextActionName);
                 }
             });
         };

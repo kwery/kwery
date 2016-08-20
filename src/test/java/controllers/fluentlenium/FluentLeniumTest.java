@@ -36,6 +36,12 @@ public class FluentLeniumTest extends NinjaFluentLeniumTest {
         return Joiner.on(" ").join(l);
     }
 
+    public String htmlIdExpression(String id, String... htmlTags) {
+        ArrayList<String> l = Lists.newArrayList(ImmutableList.of(htmlId(id)));
+        Collections.addAll(l, htmlTags);
+        return Joiner.on(" ").join(l);
+    }
+
     public String htmlNamedTextInputExpression(String name) {
         return String.format("input[type='text'][name='%s']", name);
     }

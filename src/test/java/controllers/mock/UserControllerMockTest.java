@@ -10,7 +10,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
+import static controllers.MessageKeys.ADMIN_USER_ADDITION_NEXT_ACTION;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
+import static controllers.UserController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
 import static controllers.util.TestUtil.user;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -34,7 +36,8 @@ public class UserControllerMockTest extends ControllerMockTest {
         when(userDao.getByUsername(user.getUsername())).thenReturn(null);
         doNothing().when(userDao).save(user);
         mockMessages(ADMIN_USER_ADDITION_SUCCESS, user.getUsername());
-        assertSuccess(actionResult(userController.addAdminUser(context, user)));
+        mockMessages(ADMIN_USER_ADDITION_NEXT_ACTION);
+        assertSuccessNextAction(actionResult(userController.addAdminUser(context, user)), ONBOARDING_POST_ADMIN_USER_CREATION_ACTION);
     }
 
     @Test

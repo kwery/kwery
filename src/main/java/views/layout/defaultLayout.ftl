@@ -11,6 +11,9 @@
     <link href="/assets/css/normalize.css" rel="stylesheet">
     <link href="/assets/css/skeleton.css" rel="stylesheet">
     <link href="/assets/css/custom.css" rel="stylesheet">
+    <link href="/assets/css/jquery-ui.css" rel="stylesheet">
+    <link href="/assets/css/jquery-ui.structure.css" rel="stylesheet">
+    <link href="/assets/css/jquery-ui.theme.css" rel="stylesheet">
 
 </head>
 <body>

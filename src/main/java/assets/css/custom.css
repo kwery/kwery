@@ -1,5 +1,8 @@
 @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
 
+/*
+For displaying success and failure messages.
+*/
 .isa_info, .isa_success, .isa_warning, .isa_error {
     margin: 10px 0px;
     padding:12px;
@@ -24,4 +27,13 @@
     margin:10px 22px;
     font-size:2em;
     vertical-align:middle;
+}
+
+/* For removing close button from JQuery UI modal dialog*/
+.action-result-dialog .ui-dialog-titlebar-close {
+    display: none;
+}
+/* For removing title bar from JQuery UI modal dialog*/
+.action-result-dialog .ui-dialog-titlebar {
+    display: none;
 }

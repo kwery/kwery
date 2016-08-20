@@ -21,14 +21,18 @@ public class ControllerMockTest {
     @Mock
     protected Context context;
 
-    protected String message = "foo";
+    protected String dummyString = "foo";
+
+    protected void mockMessages(String messageKey) {
+        when(messages.get(eq(messageKey), eq(context), any(Optional.class))).thenReturn(Optional.of(dummyString));
+    }
 
     protected void mockMessages(String messageKey, String str0) {
-       when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0))).thenReturn(Optional.of(message));
+       when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0))).thenReturn(Optional.of(dummyString));
     }
 
     protected void mockMessages(String messageKey, String str0, String str1) {
-        when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0), eq(str1))).thenReturn(Optional.of(message));
+        when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0), eq(str1))).thenReturn(Optional.of(dummyString));
     }
 
     protected ActionResult actionResult(Result result) {
@@ -36,12 +40,19 @@ public class ControllerMockTest {
     }
 
     protected void assertSuccess(ActionResult actionResult) {
-        assertThat(actionResult.getMessage(), is(message));
+        assertThat(actionResult.getMessage(), is(dummyString));
         assertThat(actionResult.getStatus(), is(success));
     }
 
+    protected void assertSuccessNextAction(ActionResult actionResult, String nextAction) {
+        assertThat(actionResult.getMessage(), is(dummyString));
+        assertThat(actionResult.getStatus(), is(success));
+        assertThat(actionResult.getNextActionName(), is(dummyString));
+        assertThat(actionResult.getNextAction(), is(nextAction));
+    }
+
     protected void assertFailure(ActionResult actionResult) {
-        assertThat(actionResult.getMessage(), is(message));
+        assertThat(actionResult.getMessage(), is(dummyString));
         assertThat(actionResult.getStatus(), is(failure));
     }
 }

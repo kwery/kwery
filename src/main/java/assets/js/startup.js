@@ -1,4 +1,4 @@
-define(["jquery", "knockout", "./router", "knockout-projections"], function ($, ko, router) {
+define(["jquery-migrate", "knockout", "./router", "knockout-projections"], function ($, ko, router) {
     ko.components.register("greeter", {
         require: "components/greeter/greeting"
     });
@@ -10,6 +10,10 @@ define(["jquery", "knockout", "./router", "knockout-projections"], function ($, 
     });
     ko.components.register("actionresult", {
             require: "/component/actionresultcomponent"
+        }
+    );
+    ko.components.register("actionresultdialog", {
+            require: "/component/actionresultdialogcomponent"
         }
     );
     ko.components.register("onboardingAddAdminUser", {
