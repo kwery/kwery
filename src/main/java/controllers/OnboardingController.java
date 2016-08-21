@@ -8,7 +8,14 @@ import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
 
-import static controllers.MessageKeys.*;
+import static conf.Routes.ADD_ADMIN_USER_API;
+import static conf.Routes.API_PATH;
+import static conf.Routes.ONBOARDING_ADD_ADMIN_USER_HTML;
+import static conf.Routes.TEMPLATE_PATH;
+import static controllers.MessageKeys.CREATE;
+import static controllers.MessageKeys.ONBOARDING_WELCOME;
+import static controllers.MessageKeys.PASSWORD;
+import static controllers.MessageKeys.USER_NAME;
 
 @Singleton
 public class OnboardingController {
@@ -47,6 +54,8 @@ public class OnboardingController {
     public Result addAdminUserJs() {
         Result js = Results.html();
         js.template("views/components/onboarding/addAdminUser.js.ftl");
+        js.render(TEMPLATE_PATH, ONBOARDING_ADD_ADMIN_USER_HTML);
+        js.render(API_PATH, ADD_ADMIN_USER_API);
         js.contentType("text/javascript");
         return js;
     }

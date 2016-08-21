@@ -1,6 +1,7 @@
 package controllers.apitest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import controllers.util.Messages;
 import ninja.NinjaTest;
 import views.ActionResult;
 
@@ -35,6 +36,11 @@ public class ApiTest extends NinjaTest {
 
     protected void assertFailure(ActionResult actionResult, String message) {
         assertThat(actionResult.getMessage(), is(message));
+        assertThat(actionResult.getStatus(), is(failure));
+    }
+
+    protected void assertLoginRequired(ActionResult actionResult) {
+        assertThat(actionResult.getMessage(), is(Messages.USER_NOT_LOGGED_IN_M));
         assertThat(actionResult.getStatus(), is(failure));
     }
 }

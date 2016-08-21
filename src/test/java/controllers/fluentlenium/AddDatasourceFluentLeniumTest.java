@@ -9,6 +9,7 @@ import static controllers.util.HtmlClass.ISA_INFO_C;
 import static controllers.util.HtmlId.CREATE_I;
 import static controllers.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static controllers.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
+import static controllers.util.TestUtil.usernameCookie;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static models.Datasource.Type.MYSQL;
@@ -20,6 +21,9 @@ public class AddDatasourceFluentLeniumTest extends FluentLeniumTest {
     @Test
     public void test() {
         goTo(getServerAddress() + "#onboarding/add-datasource");
+
+        getDriver().manage().addCookie(usernameCookie());
+
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId("username")).isPresent();
 
         FluentList<FluentWebElement> username = $(htmlNamedTextInputExpression("username"));

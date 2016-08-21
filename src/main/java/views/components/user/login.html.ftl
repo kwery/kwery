@@ -1,5 +1,5 @@
 <div class="container">
-    <action-result-dialog params="status: status, message: message, nextAction: nextAction, nextActionName: nextActionName"></action-result-dialog>
+    <actionresult params="status: status, message: message"></actionresult>
     <div class="row">
         <div class="six columns">
             <label for="userName">${usernameButtonM}</label>
@@ -12,7 +12,7 @@
     </div>
     <div class="row">
         <div class="twelve columns">
-            <button data-bind="click: save" class="button-primary" id="createAdminUser">${createButtonM}</button>
+            <button data-bind="click: login" class="button-primary" id="login">${loginButtonM}</button>
         </div>
     </div>
 </div>

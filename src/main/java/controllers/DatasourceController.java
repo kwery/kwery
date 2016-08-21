@@ -4,15 +4,25 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import conf.Routes;
 import dao.DatasourceDao;
+import filters.DashRepoSecureFilter;
 import models.Datasource;
 import ninja.Context;
+import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
 import views.ActionResult;
 
 import static com.google.common.base.Optional.of;
-import static controllers.MessageKeys.*;
+import static conf.Routes.API_PATH;
+import static conf.Routes.TEMPLATE_PATH;
+import static controllers.MessageKeys.CREATE;
+import static controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
+import static controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
+import static controllers.MessageKeys.LABEL;
+import static controllers.MessageKeys.PASSWORD;
+import static controllers.MessageKeys.URL;
+import static controllers.MessageKeys.USER_NAME;
 import static models.Datasource.Type.MYSQL;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
@@ -26,6 +36,7 @@ public class DatasourceController {
     @Inject
     private DatasourceDao datasourceDao;
 
+    @FilterWith(DashRepoSecureFilter.class)
     public Result addDatasourceHtml(Context context) {
         Result html = Results.html();
 
@@ -45,20 +56,23 @@ public class DatasourceController {
         html.render("createButtonM", createButtonText);
 
         html.template("views/components/onboarding/addDatasource.html.ftl");
+
         return html;
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
     public Result addDatasourceJs() {
         Result js = Results.html();
         js.template("views/components/onboarding/addDatasource.js.ftl");
 
-        js.render("componentPath", Routes.ONBOARDING_ADD_DATASOURCE_HTML);
-        js.render("apiPath", Routes.ONBOARDING_ADD_DATASOURCE);
+        js.render(TEMPLATE_PATH, Routes.ONBOARDING_ADD_DATASOURCE_HTML);
+        js.render(API_PATH, Routes.ADD_DATASOURCE_API);
 
         js.contentType("text/javascript");
         return js;
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
     public Result addDatasource(Datasource datasource, Context context) {
         Datasource existingDatasource = datasourceDao.getByLabel(datasource.getLabel());
 

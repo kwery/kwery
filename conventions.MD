@@ -10,3 +10,5 @@ large no of lines or is an instance variable, then use full names.
 9. Database table names in singular, user not users.
 10. If an action is creating something, name all variables associated with the action as add not create, for example, if an action created users in the table, name the
 corresponding controller method as addUser, http path as add-user etc.
+11. Package names should be plural.
+12. DAO method names are prefixed with get and not find for example getUser not findUser.

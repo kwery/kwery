@@ -2,10 +2,10 @@ define(["jquery", "knockout", "crossroads", "hasher"], function ($, ko, crossroa
 
     return new Router({
         routes: [
-            { url: "", params: { page: "onboardingWelcome" } },
+            { url: "", params: { page: "onboarding-welcome" } },
             { url: "settings", params: { page: "settings" } },
-            { url: "onboarding/add-admin-user", params: { page: "onboardingAddAdminUser" } },
-            { url: "onboarding/add-datasource", params: { page: "onboardingAddDatasource" } }
+            { url: "onboarding/add-admin-user", params: { page: "onboarding-add-admin-user" } },
+            { url: "onboarding/add-datasource", params: { page: "onboarding-add-datasource" } }
         ]
     });
 

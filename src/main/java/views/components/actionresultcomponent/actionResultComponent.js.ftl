@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!/component/actionresultcomponent.html"], function (ko, $, actionComponentTemplate) {
+define(["knockout", "jquery", "text!${templatePath}"], function (ko, $, template) {
     function viewModel(params) {
         var self = this;
         self.status = params.status;
@@ -14,5 +14,5 @@ define(["knockout", "jquery", "text!/component/actionresultcomponent.html"], fun
 
         return self;
     }
-    return { viewModel: viewModel, template: actionComponentTemplate };
+    return { viewModel: viewModel, template: template };
 });

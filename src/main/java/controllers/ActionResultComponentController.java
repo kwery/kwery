@@ -4,6 +4,10 @@ import com.google.inject.Singleton;
 import ninja.Result;
 import ninja.Results;
 
+import static conf.Routes.ACTION_RESULT_COMPONENT_HTML;
+import static conf.Routes.ACTION_RESULT_DIALOG_COMPONENT_HTML;
+import static conf.Routes.TEMPLATE_PATH;
+
 @Singleton
 public class ActionResultComponentController {
     public Result actionResultComponentHtml() {
@@ -15,6 +19,7 @@ public class ActionResultComponentController {
     public Result actionResultComponentJs() {
         Result js = Results.html();
         js.template("views/components/actionresultcomponent/actionResultComponent.js.ftl");
+        js.render(TEMPLATE_PATH, ACTION_RESULT_COMPONENT_HTML);
         js.contentType("text/javascript");
         return js;
     }
@@ -28,6 +33,7 @@ public class ActionResultComponentController {
     public Result actionResultDialogComponentJs() {
         Result js = Results.html();
         js.template("views/components/actionresultdialogcomponent/actionResultDialogComponent.js.ftl");
+        js.render(TEMPLATE_PATH, ACTION_RESULT_DIALOG_COMPONENT_HTML);
         js.contentType("text/javascript");
         return js;
     }

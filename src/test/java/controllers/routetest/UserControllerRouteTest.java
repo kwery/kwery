@@ -1,19 +1,30 @@
 package controllers.routetest;
 
-import com.google.common.collect.ImmutableMap;
+import controllers.util.TestUtil;
 import org.junit.Test;
 
-import static conf.Routes.ONBOARDING_ADD_ADMIN_USER;
+import static conf.Routes.LOGIN_API;
+import static conf.Routes.LOGIN_COMPONENT_HTML;
+import static conf.Routes.ADD_ADMIN_USER_API;
 
 public class UserControllerRouteTest extends RouteTest {
     @Test
     public void testCreateAdminUser() {
-        this.setUrl(ONBOARDING_ADD_ADMIN_USER);
-        this.setPostParams(
-                ImmutableMap.of(
-                        "username", "foo",
-                        "password", "password"
-                ));
+        this.setUrl(ADD_ADMIN_USER_API);
+        this.setPostParams(TestUtil.userParams());
         this.assertPostJson();
+    }
+
+    @Test
+    public void testLogin() {
+        this.setUrl(LOGIN_API);
+        this.setPostParams(TestUtil.userParams());
+        this.assertPostJson();
+    }
+
+    @Test
+    public void testLoginHtml() {
+        this.setUrl(LOGIN_COMPONENT_HTML);
+        this.assertGetHtml();
     }
 }

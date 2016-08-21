@@ -10,7 +10,7 @@ import static conf.Routes.ONBOARDING_ADD_DATASOURCE_JS;
 public class DatasourceControllerRouteTest extends RouteTest {
     @Test
     public void testAddDatasource() {
-        this.setUrl(Routes.ONBOARDING_ADD_DATASOURCE);
+        this.setUrl(Routes.ADD_DATASOURCE_API);
         this.setPostParams(
                 ImmutableMap.of(
                         "url", "url",
@@ -20,18 +20,18 @@ public class DatasourceControllerRouteTest extends RouteTest {
                         "type", "MYSQL"
                 )
         );
-        this.assertPostJson();
+        this.assertPostJsonPostLogin();
     }
 
     @Test
     public void testCreateDatasourceHtml() {
         this.setUrl(ONBOARDING_ADD_DATASOURCE_HTML);
-        this.assertGetHtml();
+        this.assertGetHtmlPostLogin();
     }
 
     @Test
     public void testCreateDatasourceJs() {
         this.setUrl(ONBOARDING_ADD_DATASOURCE_JS);
-        this.assertGetJs();
+        this.assertGetJsPostLogin();
     }
 }
