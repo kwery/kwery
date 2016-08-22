@@ -17,17 +17,17 @@ public class DashRepoFluentLeniumTestTest {
 
     @Test
     public void testHtmlClassExpression() {
-        assertEquals("Converts a string and html elements to a CSS class expression", ".foo p a", new FluentLeniumTest().htmlClassExpression("foo", "p", "a"));
+        assertEquals("Converts a string and html elements to a CSS class expression", ".foo p a", new FluentLeniumTest().clsSel("foo", "p", "a"));
     }
 
     @Test
     public void testHtmlNamedTextInputExpression() {
-        assertEquals("Returns a CSS expression with named text input type", "input[type='text'][name='foo']", new FluentLeniumTest().htmlNamedTextInputExpression("foo"));
+        assertEquals("Returns a CSS expression with named text input type", "input[type='text'][name='foo']", new FluentLeniumTest().inputTxtSel("foo"));
     }
 
     @Test
     public void testHtmlNamedPasswordInputExpression() {
-        assertEquals("Returns a CSS expression with named password input type", "input[type='password'][name='foo']", new FluentLeniumTest().htmlNamedPasswordInputExpression("foo"));
+        assertEquals("Returns a CSS expression with named password input type", "input[type='password'][name='foo']", new FluentLeniumTest().inputPasswdSel("foo"));
     }
 
 }

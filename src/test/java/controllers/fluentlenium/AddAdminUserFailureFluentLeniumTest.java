@@ -34,7 +34,7 @@ public class AddAdminUserFailureFluentLeniumTest extends FluentLeniumTest {
 
         String usrExistsMsg = format(ADMIN_USER_ADDITION_FAILURE_M, user.getUsername());
 
-        String usrExistsMsgExpr = htmlClassExpression(ISA_ERROR_C, "p");
+        String usrExistsMsgExpr = clsSel(ISA_ERROR_C, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(usrExistsMsgExpr).hasText(usrExistsMsg);
     }
 }

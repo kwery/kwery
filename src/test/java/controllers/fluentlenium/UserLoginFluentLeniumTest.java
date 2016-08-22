@@ -32,8 +32,8 @@ public class UserLoginFluentLeniumTest extends FluentLeniumTest {
         goTo(getServerAddress() + LOGIN_U);
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(htmlId(LOGIN_I))).isPresent();
 
-        fill($(htmlNamedTextInputExpression(USERNAME_F))).with(user.getUsername());
-        fill($(htmlNamedPasswordInputExpression(PASSWORD_F))).with(user.getPassword());
+        fill($(inputTxtSel(USERNAME_F))).with(user.getUsername());
+        fill($(inputPasswdSel(PASSWORD_F))).with(user.getPassword());
         click($(htmlId(LOGIN_I)));
 
         String successMessage = format(LOGIN_SUCCESS_M, user.getUsername());
@@ -47,8 +47,8 @@ public class UserLoginFluentLeniumTest extends FluentLeniumTest {
         goTo(getServerAddress() + LOGIN_U);
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(htmlId(LOGIN_I))).isPresent();
 
-        fill($(htmlNamedTextInputExpression(USERNAME_F))).with(user.getUsername() + "foo");
-        fill($(htmlNamedPasswordInputExpression(PASSWORD_F))).with(user.getPassword());
+        fill($(inputTxtSel(USERNAME_F))).with(user.getUsername() + "foo");
+        fill($(inputPasswdSel(PASSWORD_F))).with(user.getPassword());
         click($(htmlId(LOGIN_I)));
 
         String successMessage = format(LOGIN_FAILURE_M, user.getUsername());

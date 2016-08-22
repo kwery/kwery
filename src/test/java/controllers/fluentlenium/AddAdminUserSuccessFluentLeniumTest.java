@@ -31,7 +31,7 @@ public class AddAdminUserSuccessFluentLeniumTest extends FluentLeniumTest {
         click($(htmlId(CREATE_ADMIN_USER_I)));
 
         String sucMsg = format(ADMIN_USER_ADDITION_SUCCESS_M, username);
-        String sucMsgExpr = htmlIdExpression(ACTION_RESULT_DIALOG_I, "p");
+        String sucMsgExpr = idSel(ACTION_RESULT_DIALOG_I, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(sucMsgExpr).hasText(sucMsg);
 
         assertThat($(sucMsgExpr).getText(), is(sucMsg));
@@ -84,7 +84,7 @@ public class AddAdminUserSuccessFluentLeniumTest extends FluentLeniumTest {
         click($(htmlId(CREATE_ADMIN_USER_I)));
 
         String sucMsg = format(ADMIN_USER_ADDITION_SUCCESS_M, username);
-        String sucMsgExpr = htmlIdExpression(ACTION_RESULT_DIALOG_I, "p");
+        String sucMsgExpr = idSel(ACTION_RESULT_DIALOG_I, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(sucMsgExpr).hasText(sucMsg);
 
         click($(htmlId(NEXT_ACTION_I)));
@@ -92,6 +92,6 @@ public class AddAdminUserSuccessFluentLeniumTest extends FluentLeniumTest {
         await().atMost(TIMEOUT_SECONDS, SECONDS);
 
         assertThat(url(), is(getServerAddress() + ONBOARDING_POST_ADMIN_USER_CREATION_ACTION));
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlNamedTextInputExpression("username")).isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(inputTxtSel("username")).isPresent();
     }
 }
