@@ -39,6 +39,9 @@ public class Routes implements ApplicationRoutes {
     public static final String TEMPLATE_PATH = "templatePath";
     public static final String API_PATH = "apiPath";
 
+    public static final String MODULE_REQUEST_PREFIX = "/module";
+    public static final String API_REQUEST_PREFIX = "/api";
+
     @Override
     public void init(Router router) {  
         router.GET().route(INDEX).with(IndexController.class, "index");
