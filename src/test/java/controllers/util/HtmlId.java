@@ -14,4 +14,5 @@ public class HtmlId {
     public static final String CREATE_I = "create";
     public static final String ACTION_RESULT_DIALOG_I = "actionResultDialog";
     public static final String NEXT_ACTION_I = "nextAction";
+    public static final String LOGIN_I = "login";
 }

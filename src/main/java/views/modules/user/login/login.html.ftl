@@ -1,5 +1,5 @@
 <div class="container">
-    <actionresult params="status: status, message: message"></actionresult>
+    <action-result params="status: status, message: message"></action-result>
     <div class="row">
         <div class="six columns">
             <label for="userName">${usernameButtonM}</label>

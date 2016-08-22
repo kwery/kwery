@@ -7,7 +7,7 @@ define(["knockout", "jquery", "text!${templatePath}"], function (ko, $, template
         self.status = ko.observable("");
         self.message = ko.observable("");
 
-        self.save = function() {
+        self.login = function() {
             $.ajax("${apiPath}", {
                 data: ko.toJSON({username: self.username, password: self.password}),
                 type: "post", contentType: "application/json",

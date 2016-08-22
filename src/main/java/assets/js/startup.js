@@ -16,5 +16,8 @@ define(["jquery-migrate", "knockout", "./router", "knockout-projections"], funct
     ko.components.register("onboarding-add-datasource", {
         require: "/module/add-datasource"
     });
+    ko.components.register("user-login", {
+        require: "/module/user-login"
+    });
     ko.applyBindings({ route: router.currentRoute });
 });

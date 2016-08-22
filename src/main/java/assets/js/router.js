@@ -5,7 +5,8 @@ define(["jquery", "knockout", "crossroads", "hasher"], function ($, ko, crossroa
             { url: "", params: { page: "onboarding-welcome" } },
             { url: "settings", params: { page: "settings" } },
             { url: "onboarding/add-admin-user", params: { page: "onboarding-add-admin-user" } },
-            { url: "onboarding/add-datasource", params: { page: "onboarding-add-datasource" } }
+            { url: "onboarding/add-datasource", params: { page: "onboarding-add-datasource" } },
+            { url: "user/login", params: { page: "user-login" } }
         ]
     });
 

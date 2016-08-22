@@ -30,7 +30,8 @@ public class Routes implements ApplicationRoutes {
     public static final String ACTION_RESULT_DIALOG_COMPONENT_JS = "/module/action-result-dialog";
     public static final String ACTION_RESULT_DIALOG_COMPONENT_HTML = "/module/action-result-dialog.html";
 
-    public static final String LOGIN_COMPONENT_HTML = "/module/user/login.html";
+    public static final String LOGIN_COMPONENT_HTML = "/module/user-login.html";
+    public static final String LOGIN_COMPONENT_JS = "/module/user-login";
 
     public static final String ADD_ADMIN_USER_API = "/api/user/add-admin-user";
     public static final String ADD_DATASOURCE_API = "/api/datasource/add-datasource";
@@ -68,6 +69,7 @@ public class Routes implements ApplicationRoutes {
 
         //Login module
         router.GET().route(LOGIN_COMPONENT_HTML).with(UserLoginModuleController.class, "html");
+        router.GET().route(LOGIN_COMPONENT_JS).with(UserLoginModuleController.class, "js");
         //Module - End
 
         //Api - Start
