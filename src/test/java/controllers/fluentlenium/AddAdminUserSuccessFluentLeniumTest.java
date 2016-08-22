@@ -24,35 +24,35 @@ public class AddAdminUserSuccessFluentLeniumTest extends FluentLeniumTest {
         String password = "password";
 
         goTo(getServerAddress() + "#onboarding/add-admin-user");
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId(USERNAME_I)).isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel(USERNAME_I)).isPresent();
 
-        fill($(htmlId(USERNAME_I))).with(username);
-        fill($(htmlId(PASSWORD_I))).with(password);
-        click($(htmlId(CREATE_ADMIN_USER_I)));
+        fill($(idSel(USERNAME_I))).with(username);
+        fill($(idSel(PASSWORD_I))).with(password);
+        click($(idSel(CREATE_ADMIN_USER_I)));
 
         String sucMsg = format(ADMIN_USER_ADDITION_SUCCESS_M, username);
         String sucMsgExpr = idSel(ACTION_RESULT_DIALOG_I, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(sucMsgExpr).hasText(sucMsg);
 
         assertThat($(sucMsgExpr).getText(), is(sucMsg));
-        assertThat($(htmlId(NEXT_ACTION_I)).getText(), is(format(ADMIN_USER_ADDITION_NEXT_STEP_M).toUpperCase()));
+        assertThat($(idSel(NEXT_ACTION_I)).getText(), is(format(ADMIN_USER_ADDITION_NEXT_STEP_M).toUpperCase()));
 
         try {
-            fill($(htmlId(USERNAME_I))).with(username);
+            fill($(idSel(USERNAME_I))).with(username);
             fail("Action result dialog window is not covering user name text field");
         } catch (Exception e) {
             assertThat(e.getMessage().toLowerCase(), containsString("cannot focus element"));
         }
 
         try {
-            fill($(htmlId(PASSWORD_I))).with(username);
+            fill($(idSel(PASSWORD_I))).with(username);
             fail("Action result dialog window is not covering password text field");
         } catch (Exception e) {
             assertThat(e.getMessage().toLowerCase(), containsString("cannot focus element"));
         }
 
         try {
-            click($(htmlId(CREATE_ADMIN_USER_I)));
+            click($(idSel(CREATE_ADMIN_USER_I)));
             fail("Action result dialog window is not covering create user button");
         } catch (Exception e) {
             assertThat(e.getMessage().toLowerCase(), containsString("element is not clickable at point "));
@@ -67,7 +67,7 @@ public class AddAdminUserSuccessFluentLeniumTest extends FluentLeniumTest {
 
         await().atMost(TIMEOUT_SECONDS, SECONDS);
 
-        assertThat($(htmlClass("ui-dialog")).first().isDisplayed(), is(true));*/
+        assertThat($(clsSel("ui-dialog")).first().isDisplayed(), is(true));*/
 
     }
 
@@ -77,21 +77,21 @@ public class AddAdminUserSuccessFluentLeniumTest extends FluentLeniumTest {
         String password = "password";
 
         goTo(getServerAddress() + "#onboarding/add-admin-user");
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId(USERNAME_I)).isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel(USERNAME_I)).isPresent();
 
-        fill($(htmlId(USERNAME_I))).with(username);
-        fill($(htmlId(PASSWORD_I))).with(password);
-        click($(htmlId(CREATE_ADMIN_USER_I)));
+        fill($(idSel(USERNAME_I))).with(username);
+        fill($(idSel(PASSWORD_I))).with(password);
+        click($(idSel(CREATE_ADMIN_USER_I)));
 
         String sucMsg = format(ADMIN_USER_ADDITION_SUCCESS_M, username);
         String sucMsgExpr = idSel(ACTION_RESULT_DIALOG_I, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(sucMsgExpr).hasText(sucMsg);
 
-        click($(htmlId(NEXT_ACTION_I)));
+        click($(idSel(NEXT_ACTION_I)));
 
         await().atMost(TIMEOUT_SECONDS, SECONDS);
 
         assertThat(url(), is(getServerAddress() + ONBOARDING_POST_ADMIN_USER_CREATION_ACTION));
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(inputTxtSel("username")).isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(inTxtSel("username")).isPresent();
     }
 }

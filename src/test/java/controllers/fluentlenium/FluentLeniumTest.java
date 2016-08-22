@@ -22,31 +22,23 @@ public class FluentLeniumTest extends NinjaFluentLeniumTest {
         return chromeDriver;
     }
 
-    public String htmlClass(String className) {
-        return "." + className;
-    }
-
-    public String htmlId(String id) {
-        return "#" + id;
-    }
-
     public String clsSel(String className, String... htmlTags) {
-        ArrayList<String> l = Lists.newArrayList(ImmutableList.of(htmlClass(className)));
+        ArrayList<String> l = Lists.newArrayList(ImmutableList.of("." + className));
         Collections.addAll(l, htmlTags);
         return Joiner.on(" ").join(l);
     }
 
     public String idSel(String id, String... htmlTags) {
-        ArrayList<String> l = Lists.newArrayList(ImmutableList.of(htmlId(id)));
+        ArrayList<String> l = Lists.newArrayList(ImmutableList.of("#" + id));
         Collections.addAll(l, htmlTags);
         return Joiner.on(" ").join(l);
     }
 
-    public String inputTxtSel(String name) {
+    public String inTxtSel(String name) {
         return String.format("input[type='text'][name='%s']", name);
     }
 
-    public String inputPasswdSel(String name) {
+    public String inPwdSel(String name) {
         return String.format("input[type='password'][name='%s']", name);
     }
 }

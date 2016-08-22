@@ -30,30 +30,30 @@ public class UserLoginFluentLeniumTest extends FluentLeniumTest {
     @Test
     public void testSuccess() {
         goTo(getServerAddress() + LOGIN_U);
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(htmlId(LOGIN_I))).isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel(LOGIN_I)).isPresent();
 
-        fill($(inputTxtSel(USERNAME_F))).with(user.getUsername());
-        fill($(inputPasswdSel(PASSWORD_F))).with(user.getPassword());
-        click($(htmlId(LOGIN_I)));
+        fill($(inTxtSel(USERNAME_F))).with(user.getUsername());
+        fill($(inPwdSel(PASSWORD_F))).with(user.getPassword());
+        click($(idSel(LOGIN_I)));
 
         String successMessage = format(LOGIN_SUCCESS_M, user.getUsername());
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(htmlClass(ISA_INFO_C))).hasText(successMessage);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(clsSel(ISA_INFO_C)).hasText(successMessage);
 
-        assertThat($(htmlClass(ISA_INFO_C)).getText(), is(successMessage));
+        assertThat($(clsSel(ISA_INFO_C)).getText(), is(successMessage));
     }
 
     @Test
     public void testFailure() {
         goTo(getServerAddress() + LOGIN_U);
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(htmlId(LOGIN_I))).isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel(LOGIN_I)).isPresent();
 
-        fill($(inputTxtSel(USERNAME_F))).with(user.getUsername() + "foo");
-        fill($(inputPasswdSel(PASSWORD_F))).with(user.getPassword());
-        click($(htmlId(LOGIN_I)));
+        fill($(inTxtSel(USERNAME_F))).with(user.getUsername() + "foo");
+        fill($(inPwdSel(PASSWORD_F))).with(user.getPassword());
+        click($(idSel(LOGIN_I)));
 
         String successMessage = format(LOGIN_FAILURE_M, user.getUsername());
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(htmlClass(ISA_ERROR_C))).hasText(successMessage);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(clsSel(ISA_ERROR_C)).hasText(successMessage);
 
-        assertThat($(htmlClass(ISA_ERROR_C)).getText(), is(successMessage));
+        assertThat($(clsSel(ISA_ERROR_C)).getText(), is(successMessage));
     }
 }

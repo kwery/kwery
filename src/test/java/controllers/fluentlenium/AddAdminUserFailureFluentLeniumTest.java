@@ -26,11 +26,11 @@ public class AddAdminUserFailureFluentLeniumTest extends FluentLeniumTest {
         User user = TestUtil.user();
 
         goTo(getServerAddress() + "#onboarding/add-admin-user");
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId(USERNAME_I)).isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel(USERNAME_I)).isPresent();
 
-        fill($(htmlId(USERNAME_I))).with(user.getUsername());
-        fill($(htmlId(PASSWORD_I))).with(user.getPassword());
-        click($(htmlId(CREATE_ADMIN_USER_I)));
+        fill($(idSel(USERNAME_I))).with(user.getUsername());
+        fill($(idSel(PASSWORD_I))).with(user.getPassword());
+        click($(idSel(CREATE_ADMIN_USER_I)));
 
         String usrExistsMsg = format(ADMIN_USER_ADDITION_FAILURE_M, user.getUsername());
 
