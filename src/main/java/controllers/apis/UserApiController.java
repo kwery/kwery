@@ -12,11 +12,9 @@ import views.ActionResult;
 
 import static com.google.common.base.Optional.of;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
-import static controllers.MessageKeys.ADMIN_USER_ADDITION_NEXT_ACTION;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static controllers.MessageKeys.LOGIN_FAILURE;
 import static controllers.MessageKeys.LOGIN_SUCCESS;
-import static controllers.modules.user.addadmin.UserAddAdminModuleController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
 
@@ -42,8 +40,7 @@ public class UserApiController {
             context.getSession().put(SESSION_USERNAME_KEY, user.getUsername());
 
             String message = messages.get(ADMIN_USER_ADDITION_SUCCESS, context, of(json), user.getUsername()).get();
-            String nextActionName = messages.get(ADMIN_USER_ADDITION_NEXT_ACTION, context, of(json)).get();
-            actionResult = new ActionResult(success, message, nextActionName, ONBOARDING_POST_ADMIN_USER_CREATION_ACTION);
+            actionResult = new ActionResult(success, message);
         } else {
             String message = messages.get(ADMIN_USER_ADDITION_FAILURE, context, of(json), user.getUsername()).get();
             actionResult = new ActionResult(failure, message);

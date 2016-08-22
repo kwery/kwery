@@ -16,7 +16,6 @@ import static controllers.MessageKeys.ADMIN_USER_ADDITION_NEXT_ACTION;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static controllers.MessageKeys.LOGIN_SUCCESS;
 import static controllers.apis.UserApiController.SESSION_USERNAME_KEY;
-import static controllers.modules.user.addadmin.UserAddAdminModuleController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
 import static controllers.util.TestUtil.user;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -50,7 +49,7 @@ public class UserApiControllerMockTest extends ControllerMockTest {
 
         mockMessages(ADMIN_USER_ADDITION_SUCCESS, user.getUsername());
         mockMessages(ADMIN_USER_ADDITION_NEXT_ACTION);
-        assertSuccessNextAction(actionResult(userApiController.addAdminUser(context, user)), ONBOARDING_POST_ADMIN_USER_CREATION_ACTION);
+        assertSuccess(actionResult(userApiController.addAdminUser(context, user)));
     }
 
     @Test

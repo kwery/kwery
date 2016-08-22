@@ -7,9 +7,6 @@ define(["jquery-migrate", "knockout", "./router", "knockout-projections"], funct
     ko.components.register("action-result", {
         require: "/module/action-result"
     });
-    ko.components.register("action-result-dialog", {
-        require: "/module/action-result-dialog"
-    });
     ko.components.register("onboarding-add-admin-user", {
         require: "/module/add-admin-user"
     });

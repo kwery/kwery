@@ -4,7 +4,6 @@ import controllers.IndexController;
 import controllers.apis.DatasourceApiController;
 import controllers.apis.UserApiController;
 import controllers.modules.actionresult.ActionResultModuleController;
-import controllers.modules.actionresultdialog.ActionResultDialogModuleController;
 import controllers.modules.datasource.DatasourceAddModuleController;
 import controllers.modules.onboarding.OnboardingModuleController;
 import controllers.modules.user.addadmin.UserAddAdminModuleController;
@@ -26,9 +25,6 @@ public class Routes implements ApplicationRoutes {
 
     public static final String ACTION_RESULT_COMPONENT_JS = "/module/action-result";
     public static final String ACTION_RESULT_COMPONENT_HTML = "/module/action-result.html";
-
-    public static final String ACTION_RESULT_DIALOG_COMPONENT_JS = "/module/action-result-dialog";
-    public static final String ACTION_RESULT_DIALOG_COMPONENT_HTML = "/module/action-result-dialog.html";
 
     public static final String LOGIN_COMPONENT_HTML = "/module/user-login.html";
     public static final String LOGIN_COMPONENT_JS = "/module/user-login";
@@ -62,10 +58,6 @@ public class Routes implements ApplicationRoutes {
         //Action result module
         router.GET().route(ACTION_RESULT_COMPONENT_JS).with(ActionResultModuleController.class, "js");
         router.GET().route(ACTION_RESULT_COMPONENT_HTML).with(ActionResultModuleController.class, "html");
-
-        //Action result dialog module
-        router.GET().route(ACTION_RESULT_DIALOG_COMPONENT_JS).with(ActionResultDialogModuleController.class, "js");
-        router.GET().route(ACTION_RESULT_DIALOG_COMPONENT_HTML).with(ActionResultDialogModuleController.class, "html");
 
         //Login module
         router.GET().route(LOGIN_COMPONENT_HTML).with(UserLoginModuleController.class, "html");

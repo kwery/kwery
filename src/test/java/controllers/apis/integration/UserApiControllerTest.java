@@ -11,9 +11,7 @@ import java.io.IOException;
 
 import static conf.Routes.ADD_ADMIN_USER_API;
 import static conf.Routes.LOGIN_API;
-import static controllers.modules.user.addadmin.UserAddAdminModuleController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
 import static controllers.util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
-import static controllers.util.Messages.ADMIN_USER_ADDITION_NEXT_STEP_M;
 import static controllers.util.Messages.LOGIN_FAILURE_M;
 import static controllers.util.Messages.LOGIN_SUCCESS_M;
 import static java.text.MessageFormat.format;
@@ -34,11 +32,9 @@ public class UserApiControllerTest extends ApiTest {
 
         String url = getUrl(ADD_ADMIN_USER_API);
 
-        assertSuccessNextAction(
+        assertSuccess(
                 actionResult(ninjaTestBrowser.postJson(url, user)),
-                format(Messages.ADMIN_USER_ADDITION_SUCCESS_M, user.getUsername()),
-                ADMIN_USER_ADDITION_NEXT_STEP_M,
-                ONBOARDING_POST_ADMIN_USER_CREATION_ACTION
+                format(Messages.ADMIN_USER_ADDITION_SUCCESS_M, user.getUsername())
         );
 
         User userFromDb = userDao.getByUsername(user.getUsername());

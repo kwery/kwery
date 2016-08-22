@@ -1,5 +1,10 @@
 <div class="container">
-    <action-result-dialog params="status: status, message: message, nextAction: nextAction, nextActionName: nextActionName"></action-result-dialog>
+    <action-result params="status: status,
+                            message: message,
+                            onSuccessShowDialog: true,
+                            nextAction: '${nextAction}',
+                            nextActionName: '${nextActionName}'">
+    </action-result>
     <div class="row">
         <div class="six columns">
             <label for="userName">${usernameButtonM}</label>

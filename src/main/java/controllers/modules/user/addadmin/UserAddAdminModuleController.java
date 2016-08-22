@@ -1,6 +1,5 @@
 package controllers.modules.user.addadmin;
 
-import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import ninja.Context;
@@ -8,10 +7,12 @@ import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
 
+import static com.google.common.base.Optional.of;
 import static conf.Routes.ADD_ADMIN_USER_API;
 import static conf.Routes.ADD_ADMIN_USER_HTML;
 import static conf.Routes.API_PATH;
 import static conf.Routes.TEMPLATE_PATH;
+import static controllers.MessageKeys.ADMIN_USER_ADDITION_NEXT_ACTION;
 import static controllers.MessageKeys.CREATE;
 import static controllers.MessageKeys.PASSWORD;
 import static controllers.MessageKeys.USER_NAME;
@@ -26,14 +27,17 @@ public class UserAddAdminModuleController {
     public Result html(Context context) {
         Result html = Results.html();
 
-        String usernameButtonText = messages.get(USER_NAME, context, Optional.of(html)).get();
+        String usernameButtonText = messages.get(USER_NAME, context, of(html)).get();
         html.render("usernameButtonM", usernameButtonText);
 
-        String passwordButtonText = messages.get(PASSWORD, context, Optional.of(html)).get();
+        String passwordButtonText = messages.get(PASSWORD, context, of(html)).get();
         html.render("passwordButtonM", passwordButtonText);
 
-        String createButtonText = messages.get(CREATE, context, Optional.of(html)).get();
+        String createButtonText = messages.get(CREATE, context, of(html)).get();
         html.render("createButtonM", createButtonText);
+
+        html.render("nextAction", "#onboarding/add-datasource");
+        html.render("nextActionName", messages.get(ADMIN_USER_ADDITION_NEXT_ACTION, context, of(html)).get());
 
         html.template("views/modules/user/addadmin/addAdminUser.html.ftl");
         return html;

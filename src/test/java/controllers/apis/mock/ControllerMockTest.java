@@ -44,13 +44,6 @@ public class ControllerMockTest {
         assertThat(actionResult.getStatus(), is(success));
     }
 
-    protected void assertSuccessNextAction(ActionResult actionResult, String nextAction) {
-        assertThat(actionResult.getMessage(), is(dummyString));
-        assertThat(actionResult.getStatus(), is(success));
-        assertThat(actionResult.getNextActionName(), is(dummyString));
-        assertThat(actionResult.getNextAction(), is(nextAction));
-    }
-
     protected void assertFailure(ActionResult actionResult) {
         assertThat(actionResult.getMessage(), is(dummyString));
         assertThat(actionResult.getStatus(), is(failure));
