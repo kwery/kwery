@@ -1,4 +1,4 @@
-package controllers.apitest;
+package controllers.apis.integration;
 
 import controllers.util.TestUtil;
 import dao.DatasourceDao;
@@ -17,7 +17,7 @@ import static models.Datasource.Type.MYSQL;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class DatasourceControllerApiTest extends PostLoginApiTest {
+public class DatasoureApiControllerTest extends PostLoginApiTest {
     private DatasourceDao dao;
 
     @Before

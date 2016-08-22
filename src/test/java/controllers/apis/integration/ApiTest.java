@@ -1,4 +1,4 @@
-package controllers.apitest;
+package controllers.apis.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.util.Messages;

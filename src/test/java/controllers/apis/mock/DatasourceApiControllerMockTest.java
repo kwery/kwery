@@ -1,6 +1,6 @@
-package controllers.mock;
+package controllers.apis.mock;
 
-import controllers.DatasourceController;
+import controllers.apis.DatasourceApiController;
 import dao.DatasourceDao;
 import models.Datasource;
 import org.junit.Before;
@@ -17,14 +17,14 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DatasourceControllerMockTest extends ControllerMockTest {
+public class DatasourceApiControllerMockTest extends ControllerMockTest {
     @Mock
     private DatasourceDao dao;
-    private DatasourceController controller;
+    private DatasourceApiController controller;
 
     @Before
     public void before() {
-        controller = new DatasourceController();
+        controller = new DatasourceApiController();
         controller.setMessages(messages);
         controller.setDatasourceDao(dao);
     }

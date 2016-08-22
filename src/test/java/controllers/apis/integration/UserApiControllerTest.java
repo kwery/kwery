@@ -1,4 +1,4 @@
-package controllers.apitest;
+package controllers.apis.integration;
 
 import controllers.util.Messages;
 import controllers.util.TestUtil;
@@ -9,9 +9,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static conf.Routes.LOGIN_API;
 import static conf.Routes.ADD_ADMIN_USER_API;
-import static controllers.UserController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
+import static conf.Routes.LOGIN_API;
+import static controllers.modules.user.addadmin.UserAddAdminModuleController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
 import static controllers.util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
 import static controllers.util.Messages.ADMIN_USER_ADDITION_NEXT_STEP_M;
 import static controllers.util.Messages.LOGIN_FAILURE_M;
@@ -20,7 +20,7 @@ import static java.text.MessageFormat.format;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class UserControllerApiTest extends ApiTest {
+public class UserApiControllerTest extends ApiTest {
     private UserDao userDao;
 
     @Before

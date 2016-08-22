@@ -1,4 +1,4 @@
-package controllers.apitest;
+package controllers.apis.integration;
 
 import conf.Routes;
 import controllers.util.TestUtil;

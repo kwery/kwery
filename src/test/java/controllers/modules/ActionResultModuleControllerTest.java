@@ -1,4 +1,4 @@
-package controllers.routetest;
+package controllers.modules;
 
 import org.junit.Test;
 
@@ -7,7 +7,7 @@ import static conf.Routes.ACTION_RESULT_COMPONENT_JS;
 import static conf.Routes.ACTION_RESULT_DIALOG_COMPONENT_HTML;
 import static conf.Routes.ACTION_RESULT_DIALOG_COMPONENT_JS;
 
-public class ActionResultComponentControllerRouteTest extends RouteTest {
+public class ActionResultModuleControllerTest extends ModuleControllerTest {
     @Test
     public void testActionResultComponentHtml() {
         this.setUrl(ACTION_RESULT_COMPONENT_HTML);
@@ -20,15 +20,4 @@ public class ActionResultComponentControllerRouteTest extends RouteTest {
         this.assertGetJs();
     }
 
-    @Test
-    public void testActionResultDialogComponentHtml() {
-        this.setUrl(ACTION_RESULT_DIALOG_COMPONENT_HTML);
-        this.assertGetHtml();
-    }
-
-    @Test
-    public void testActionResultDialogComponentJs() {
-        this.setUrl(ACTION_RESULT_DIALOG_COMPONENT_JS);
-        this.assertGetJs();
-    }
 }

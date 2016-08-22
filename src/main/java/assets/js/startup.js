@@ -11,10 +11,10 @@ define(["jquery-migrate", "knockout", "./router", "knockout-projections"], funct
         require: "/module/action-result-dialog"
     });
     ko.components.register("onboarding-add-admin-user", {
-        require: "/module/onboarding/add-admin-user"
+        require: "/module/add-admin-user"
     });
     ko.components.register("onboarding-add-datasource", {
-        require: "/module/onboarding/add-datasource"
+        require: "/module/add-datasource"
     });
     ko.applyBindings({ route: router.currentRoute });
 });

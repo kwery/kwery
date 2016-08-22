@@ -1,6 +1,6 @@
-package controllers.mock;
+package controllers.apis.mock;
 
-import controllers.UserController;
+import controllers.apis.UserApiController;
 import controllers.util.TestSession;
 import dao.UserDao;
 import models.User;
@@ -15,8 +15,8 @@ import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_NEXT_ACTION;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static controllers.MessageKeys.LOGIN_SUCCESS;
-import static controllers.UserController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
-import static controllers.UserController.SESSION_USERNAME_KEY;
+import static controllers.apis.UserApiController.SESSION_USERNAME_KEY;
+import static controllers.modules.user.addadmin.UserAddAdminModuleController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
 import static controllers.util.TestUtil.user;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -24,18 +24,18 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserControllerMockTest extends ControllerMockTest {
+public class UserApiControllerMockTest extends ControllerMockTest {
     @Mock
     private UserDao userDao;
     @Mock
     private Session session;
-    private UserController userController;
+    private UserApiController userApiController;
 
     @Before
     public void before() {
-        userController = new UserController();
-        userController.setMessages(messages);
-        userController.setUserDao(userDao);
+        userApiController = new UserApiController();
+        userApiController.setMessages(messages);
+        userApiController.setUserDao(userDao);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class UserControllerMockTest extends ControllerMockTest {
 
         mockMessages(ADMIN_USER_ADDITION_SUCCESS, user.getUsername());
         mockMessages(ADMIN_USER_ADDITION_NEXT_ACTION);
-        assertSuccessNextAction(actionResult(userController.addAdminUser(context, user)), ONBOARDING_POST_ADMIN_USER_CREATION_ACTION);
+        assertSuccessNextAction(actionResult(userApiController.addAdminUser(context, user)), ONBOARDING_POST_ADMIN_USER_CREATION_ACTION);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class UserControllerMockTest extends ControllerMockTest {
         User user = user();
         when(userDao.getByUsername(user.getUsername())).thenReturn(user);
         mockMessages(ADMIN_USER_ADDITION_FAILURE, user.getUsername());
-        assertFailure(actionResult(userController.addAdminUser(context, user)));
+        assertFailure(actionResult(userApiController.addAdminUser(context, user)));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class UserControllerMockTest extends ControllerMockTest {
         when(context.getSession()).thenReturn(session);
 
         mockMessages(LOGIN_SUCCESS, user.getUsername());
-        assertSuccess(actionResult(userController.login(context, user)));
+        assertSuccess(actionResult(userApiController.login(context, user)));
 
         assertThat(session.get(SESSION_USERNAME_KEY), is(user.getUsername()));
     }

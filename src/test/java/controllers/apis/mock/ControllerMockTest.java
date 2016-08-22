@@ -1,4 +1,4 @@
-package controllers.mock;
+package controllers.apis.mock;
 
 import com.google.common.base.Optional;
 import ninja.Context;

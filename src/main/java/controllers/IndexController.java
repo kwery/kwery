@@ -20,6 +20,7 @@ import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import conf.Routes;
+import controllers.MessageKeys;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;

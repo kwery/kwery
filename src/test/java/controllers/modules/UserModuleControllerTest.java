@@ -1,4 +1,4 @@
-package controllers.routetest;
+package controllers.modules;
 
 import controllers.util.TestUtil;
 import org.junit.Test;
@@ -7,7 +7,7 @@ import static conf.Routes.LOGIN_API;
 import static conf.Routes.LOGIN_COMPONENT_HTML;
 import static conf.Routes.ADD_ADMIN_USER_API;
 
-public class UserControllerRouteTest extends RouteTest {
+public class UserModuleControllerTest extends ModuleControllerTest {
     @Test
     public void testCreateAdminUser() {
         this.setUrl(ADD_ADMIN_USER_API);

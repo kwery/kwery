@@ -1,4 +1,4 @@
-package controllers.routetest;
+package controllers.modules;
 
 import controllers.util.ControllerTestUtil;
 import ninja.NinjaDocTester;
@@ -11,7 +11,7 @@ import static controllers.util.TestUtil.COOKIE_STRING;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class RouteTest extends NinjaDocTester {
+public class ModuleControllerTest extends NinjaDocTester {
     protected String url;
     protected Map<String, String> postParams;
 
