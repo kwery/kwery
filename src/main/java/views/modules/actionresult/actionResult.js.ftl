@@ -8,7 +8,17 @@ define(["knockout", "jquery", "text!${templatePath}", "knockout-jqueryui/dialog"
         self.onSuccessShowDialog = params.onSuccessShowDialog;
 
         self.showSuccess = ko.computed(function(){
-            return (self.onSuccessShowDialog === undefined || self.onSuccessShowDialog === false) && self.status() === "success";
+            var onSuccessShowDialog = false;
+
+            if (self.onSuccessShowDialog !== undefined) {
+                if (ko.isObservable(self.onSuccessShowDialog)) {
+                    onSuccessShowDialog = self.onSuccessShowDialog();
+                } else {
+                    onSuccessShowDialog = self.onSuccessShowDialog;
+                }
+            }
+
+            return (self.onSuccessShowDialog === undefined || onSuccessShowDialog === false) && self.status() === "success";
         }, self);
 
         self.showFailure = ko.computed(function(){
@@ -16,7 +26,17 @@ define(["knockout", "jquery", "text!${templatePath}", "knockout-jqueryui/dialog"
         }, self);
 
         self.isOpen = ko.computed(function(){
-            return (self.onSuccessShowDialog !== undefined && self.onSuccessShowDialog === true) && self.status() === "success";
+            var onSuccessShowDialog = false;
+
+            if (self.onSuccessShowDialog !== undefined) {
+                if (ko.isObservable(self.onSuccessShowDialog)) {
+                    onSuccessShowDialog = self.onSuccessShowDialog();
+                } else {
+                    onSuccessShowDialog = self.onSuccessShowDialog;
+                }
+            }
+
+            return (self.onSuccessShowDialog !== undefined &&  onSuccessShowDialog === true) && self.status() === "success";
         }, self);
 
         return self;

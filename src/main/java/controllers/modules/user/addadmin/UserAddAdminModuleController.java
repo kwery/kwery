@@ -19,7 +19,7 @@ import static controllers.MessageKeys.USER_NAME;
 
 @Singleton
 public class UserAddAdminModuleController {
-    public static final String ONBOARDING_POST_ADMIN_USER_CREATION_ACTION = "#onboarding/add-datasource";
+    public static final String ONBOARDING_POST_ADMIN_USER_CREATION_ACTION = "#user/login";
 
     @Inject
     private Messages messages;
@@ -36,7 +36,7 @@ public class UserAddAdminModuleController {
         String createButtonText = messages.get(CREATE, context, of(html)).get();
         html.render("createButtonM", createButtonText);
 
-        html.render("nextAction", "#onboarding/add-datasource");
+        html.render("nextAction", "#user/login");
         html.render("nextActionName", messages.get(ADMIN_USER_ADDITION_NEXT_ACTION, context, of(html)).get());
 
         html.template("views/modules/user/addadmin/addAdminUser.html.ftl");

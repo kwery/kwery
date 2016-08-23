@@ -37,8 +37,6 @@ public class UserApiController {
         if (existingUser == null) {
             userDao.save(user);
 
-            context.getSession().put(SESSION_USERNAME_KEY, user.getUsername());
-
             String message = messages.get(ADMIN_USER_ADDITION_SUCCESS, context, of(json), user.getUsername()).get();
             actionResult = new ActionResult(success, message);
         } else {
