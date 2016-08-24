@@ -1,4 +1,4 @@
-define(["jquery-migrate", "knockout", "./router", "knockout-projections"], function ($, ko, router) {
+define(["jquery-migrate", "knockout", "router", "knockout-projections"], function ($, ko, router) {
     ko.components.register("onboarding-welcome", {
         template: {
             require: "text!/module/onboarding/welcome.html"
@@ -16,5 +16,6 @@ define(["jquery-migrate", "knockout", "./router", "knockout-projections"], funct
     ko.components.register("user-login", {
         require: "/module/user-login"
     });
+
     ko.applyBindings({ route: router.currentRoute });
 });

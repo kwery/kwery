@@ -1,5 +1,6 @@
-package controllers.apis.integration;
+package controllers.apis.integration.userapicontroller;
 
+import controllers.apis.integration.ApiTest;
 import controllers.util.Messages;
 import controllers.util.TestUtil;
 import dao.UserDao;

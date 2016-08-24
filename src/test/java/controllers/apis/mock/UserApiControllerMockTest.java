@@ -4,6 +4,7 @@ import controllers.apis.UserApiController;
 import controllers.util.TestSession;
 import dao.UserDao;
 import models.User;
+import ninja.Result;
 import ninja.session.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static controllers.MessageKeys.LOGIN_SUCCESS;
 import static controllers.apis.UserApiController.SESSION_USERNAME_KEY;
 import static controllers.util.TestUtil.user;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doNothing;
@@ -73,5 +75,28 @@ public class UserApiControllerMockTest extends ControllerMockTest {
         assertSuccess(actionResult(userApiController.login(context, user)));
 
         assertThat(session.get(SESSION_USERNAME_KEY), is(user.getUsername()));
+    }
+
+    @Test
+    public void testUser() {
+        User user = user();
+        user.setId(1);
+
+        when(userDao.getByUsername(user.getUsername())).thenReturn(user);
+
+        session = new TestSession();
+        session.put(SESSION_USERNAME_KEY, user.getUsername());
+
+        when(context.getSession()).thenReturn(session);
+
+        Result result = userApiController.user(context);
+
+        assertThat(result.getRenderable(), instanceOf(User.class));
+
+        User fromResult = (User) result.getRenderable();
+
+        assertThat(fromResult.getUsername(), is(user.getUsername()));
+        assertThat(fromResult.getPassword(), is(user.getPassword()));
+        assertThat(fromResult.getId(), is(1));
     }
 }

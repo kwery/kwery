@@ -3,8 +3,10 @@ package controllers.apis;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dao.UserDao;
+import filters.DashRepoSecureFilter;
 import models.User;
 import ninja.Context;
+import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
@@ -63,6 +65,15 @@ public class UserApiController {
         }
 
         return json.render(actionResult);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result user(Context context) {
+        String loggedInUserName = context.getSession().get(SESSION_USERNAME_KEY);
+        User user = userDao.getByUsername(loggedInUserName);
+        Result json = Results.json();
+        json.render(user);
+        return json;
     }
 
     public void setUserDao(UserDao userDao) {

@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!${templatePath}"], function (ko, $, template) {
+define(["knockout", "jquery", "dash-repo", "router", "text!${templatePath}"], function (ko, $, dashRepo, router, template) {
     function viewModel(params) {
         var self = this;
         self.username = ko.observable();
@@ -20,9 +20,16 @@ define(["knockout", "jquery", "text!${templatePath}"], function (ko, $, template
                     self.status("");
                     self.message("");
 
-                    //Reload the page if the intended action was not user login
-                    if (window.location.hash !== "#user/login") {
-                        window.location.reload();
+                    if (result.status === "success") {
+                        dashRepo.user.setAuthenticated(true);
+
+                        //Intended action was not login, but the user was not authenticated, hence login page was
+                        //shown. Now, post login success, route to the intended page.
+                        if (window.location.hash !== "#user/login") {
+                            var comp = dashRepo.componentMapping.component(params[0].previous);
+                            router.currentRoute({page: comp});
+                            //router.currentRoute({page: 'onboarding-add-datasource'});
+                        }
                     }
 
                     self.status(result.status);

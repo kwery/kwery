@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="userAuthenticated" content="${userAuthenticated}">
 
     <link href="/assets/css/normalize.css" rel="stylesheet">
     <link href="/assets/css/skeleton.css" rel="stylesheet">

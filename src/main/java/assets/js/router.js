@@ -1,24 +1,32 @@
-define(["jquery", "knockout", "crossroads", "hasher"], function ($, ko, crossroads, hasher) {
+define(["jquery", "knockout", "crossroads", "hasher", "dash-repo"], function ($, ko, crossroads, hasher, dashRepo) {
+    return new Router(dashRepo.componentMapping.mapping());
 
-    return new Router({
-        routes: [
-            { url: "", params: { page: "onboarding-welcome" } },
-            { url: "settings", params: { page: "settings" } },
-            { url: "onboarding/add-admin-user", params: { page: "onboarding-add-admin-user" } },
-            { url: "onboarding/add-datasource", params: { page: "onboarding-add-datasource" } },
-            { url: "user/login", params: { page: "user-login" } }
-        ]
-    });
-
-    function Router(config) {
+    function Router(componentMapping) {
         var currentRoute = this.currentRoute = ko.observable({});
 
-        ko.utils.arrayForEach(config.routes, function (route) {
-            crossroads.addRoute(route.url, function (requestParams) {
-                currentRoute(ko.utils.extend(requestParams, route.params));
+        ko.utils.arrayForEach(componentMapping, function (mapping) {
+            var addedRoute = crossroads.addRoute(mapping.url, function (requestParams) {
+                currentRoute(ko.utils.extend(requestParams, {page: mapping.component}));
             });
+
+            addedRoute.rules = {
+                request_ : function(request) {
+                    if (mapping.auth && !dashRepo.user.isAuthenticated()) {
+                        return false;
+                    }
+                    return true;
+                }
+            };
         });
+
         crossroads.routed.add(console.log, console);
+
+        //If a route is bypassed, it means that it did not meet the auth rules, hence redirect to auth
+        //Previous is appended so that post login intended page is shown
+        crossroads.bypassed.add(function(request){
+            crossroads.parse("user/login?previous=" + request);
+        });
+
         activateCrossroads();
     }
 

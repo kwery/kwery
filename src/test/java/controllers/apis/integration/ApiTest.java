@@ -2,6 +2,7 @@ package controllers.apis.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.util.Messages;
+import models.User;
 import ninja.NinjaTest;
 import views.ActionResult;
 
@@ -21,6 +22,10 @@ public class ApiTest extends NinjaTest {
 
     protected ActionResult actionResult(String actionResultJsonResponse) throws IOException {
         return new ObjectMapper().readValue(actionResultJsonResponse, ActionResult.class);
+    }
+
+    protected User user(String json) throws IOException {
+        return new ObjectMapper().readValue(json, User.class);
     }
 
     protected void assertSuccess(ActionResult actionResult, String message) {

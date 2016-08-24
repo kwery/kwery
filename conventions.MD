@@ -12,3 +12,4 @@ large no of lines or is an instance variable, then use full names.
 corresponding controller method as addUser, http path as add-user etc.
 11. Package names should be plural.
 12. DAO method names are prefixed with get and not find for example getUser not findUser.
+13. JavaScript module and file names in hyphen case.

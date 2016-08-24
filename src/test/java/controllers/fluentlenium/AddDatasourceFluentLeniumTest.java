@@ -9,7 +9,6 @@ import static controllers.util.HtmlClass.ISA_INFO_C;
 import static controllers.util.HtmlId.CREATE_I;
 import static controllers.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static controllers.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
-import static controllers.util.TestUtil.usernameCookie;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static models.Datasource.Type.MYSQL;
@@ -17,12 +16,10 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AddDatasourceFluentLeniumTest extends FluentLeniumTest {
+public class AddDatasourceFluentLeniumTest extends PostLoginTest {
     @Test
     public void test() {
         goTo(getServerAddress() + "#onboarding/add-datasource");
-
-        getDriver().manage().addCookie(usernameCookie());
 
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel("username")).isPresent();
 
