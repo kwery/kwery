@@ -16,9 +16,13 @@ public class Messages {
     public static final String USER_NAME_M = "User Name";
     public static final String PASSWORD_M = "Password";
     public static final String CREATE_M = "create";
-    public static final String ADMIN_USER_ADDITION_SUCCESS_M = "Admin user with user name {0} created successfully. Let us now create a datasource.";
-    public static final String ADMIN_USER_ADDITION_NEXT_STEP_M = "Create Datasource";
+    public static final String ADMIN_USER_ADDITION_SUCCESS_M = "Admin user with user name {0} created successfully. Please login with the newly created user name and password to complete onboarding.";
+    public static final String ADMIN_USER_ADDITION_NEXT_STEP_M = "Login";
     public static final String ADMIN_USER_ADDITION_FAILURE_M = "An admin user with user name {0} already exists, please choose a different username";
     public static final String DATASOURCE_ADDITION_SUCCESS_M = "{0} datasource with label {1} created successfully";
     public static final String DATASOURCE_ADDITION_FAILURE_M = "A {0} datasource with label {1} already exists, please choose a different label";
+    public static final String USER_NOT_LOGGED_IN_M = "You need to login to perform this action";
+    public static final String LOGIN_SUCCESS_M = "{0} logged in successfully";
+    public static final String LOGIN_FAILURE_M = "Please check your username and/or password";
+    public static final String LOGIN_M = "Login";
 }

@@ -20,4 +20,8 @@ public class MessageKeys {
     public static final String DATASOURCE_ADDITION_SUCCESS = "datasource.addition.success";
     public static final String DATASOURCE_ADDITION_FAILURE = "datasource.addition.failure";
     public static final String ADMIN_USER_ADDITION_NEXT_ACTION = "admin.user.addition.next.action";
+    public static final String USER_NOT_LOGGED_IN = "user.not.logged.in";
+    public static final String LOGIN_SUCCESS = "login.success";
+    public static final String LOGIN_FAILURE = "login.failure";
+    public static final String LOGIN = "login";
 }

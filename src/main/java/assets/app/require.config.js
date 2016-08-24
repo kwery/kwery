@@ -10,7 +10,9 @@ var require = {
         "hasher": "js/hasher",
         "text": "js/requirejs-text",
         "jquery-ui": "js/jquery-ui",
-        "knockout-jqueryui": "js/knockout-jqueryui"
+        "knockout-jqueryui": "js/knockout-jqueryui",
+        "repo-dash": "js/repo-dash",
+        "router": "js/router"
     },
     shim: {
         "jquery-migrate": {

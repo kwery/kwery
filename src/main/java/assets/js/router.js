@@ -1,23 +1,32 @@
-define(["jquery", "knockout", "crossroads", "hasher"], function ($, ko, crossroads, hasher) {
+define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($, ko, crossroads, hasher, repoDash) {
+    return new Router(repoDash.componentMapping.mapping());
 
-    return new Router({
-        routes: [
-            { url: "", params: { page: "onboardingWelcome" } },
-            { url: "settings", params: { page: "settings" } },
-            { url: "onboarding/add-admin-user", params: { page: "onboardingAddAdminUser" } },
-            { url: "onboarding/add-datasource", params: { page: "onboardingAddDatasource" } }
-        ]
-    });
-
-    function Router(config) {
+    function Router(componentMapping) {
         var currentRoute = this.currentRoute = ko.observable({});
 
-        ko.utils.arrayForEach(config.routes, function (route) {
-            crossroads.addRoute(route.url, function (requestParams) {
-                currentRoute(ko.utils.extend(requestParams, route.params));
+        ko.utils.arrayForEach(componentMapping, function (mapping) {
+            var addedRoute = crossroads.addRoute(mapping.url, function (requestParams) {
+                currentRoute(ko.utils.extend(requestParams, {page: mapping.component}));
             });
+
+            addedRoute.rules = {
+                request_ : function(request) {
+                    if (mapping.auth && !repoDash.user.isAuthenticated()) {
+                        return false;
+                    }
+                    return true;
+                }
+            };
         });
+
         crossroads.routed.add(console.log, console);
+
+        //If a route is bypassed, it means that it did not meet the auth rules, hence redirect to auth
+        //Previous is appended so that post login intended page is shown
+        crossroads.bypassed.add(function(request){
+            crossroads.parse("user/login?previous=" + request);
+        });
+
         activateCrossroads();
     }
 

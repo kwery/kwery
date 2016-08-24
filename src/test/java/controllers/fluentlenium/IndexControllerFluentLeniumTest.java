@@ -16,12 +16,12 @@ public class IndexControllerFluentLeniumTest extends FluentLeniumTest {
     public void index() {
         goTo(getServerAddress());
         assertTrue(title().contains(Messages.TITLE_M));
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId(HERO_TEXT_I)).isPresent();
-        TestCase.assertEquals("Hero text is present in index page", Messages.INSTALLATION_WELCOME_M, $(htmlId(HERO_TEXT_I)).getText());
-        assertEquals("Create admin user button present in index page", Messages.CREATE_ADMIN_USER_M.toUpperCase(), $(htmlId(CREATE_ADMIN_USER_I)).getText());
-        click($(htmlId(CREATE_ADMIN_USER_I)));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel(HERO_TEXT_I)).isPresent();
+        TestCase.assertEquals("Hero text is present in index page", Messages.INSTALLATION_WELCOME_M, $(idSel(HERO_TEXT_I)).getText());
+        assertEquals("Create admin user button present in index page", Messages.CREATE_ADMIN_USER_M.toUpperCase(), $(idSel(CREATE_ADMIN_USER_I)).getText());
+        click($(idSel(CREATE_ADMIN_USER_I)));
         await().atMost(TIMEOUT_SECONDS, SECONDS);
         assertEquals("URL changed to create admin user fragment", getServerAddress() + "#onboarding/add-admin-user", url());
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId(USERNAME_I)).isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel(USERNAME_I)).isPresent();
     }
 }

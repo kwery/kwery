@@ -2,29 +2,42 @@ package dao;
 
 import models.User;
 import ninja.NinjaDaoTestBase;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 public class UserDaoQueryTest extends NinjaDaoTestBase {
     private UserDao userDao;
 
     private String savedUsername = "purvi";
-    private String password = "password";
-    private String notSaveUsername = "foo";
+    private String savedPassword = "puttu";
+
+    private String notSavedUsername = "foo";
+    private String notSavedPassword = "goo";
 
     @Before
     public void before() {
         userDao = getInstance(UserDao.class);
         User user = new User();
         user.setUsername(savedUsername);
-        user.setPassword(password);
+        user.setPassword(savedPassword);
         userDao.save(user);
     }
 
     @Test
-    public void testQueryByUserName() {
-        Assert.assertNotNull(String.format("Getting user entity with user name %s", savedUsername), userDao.getByUsername(savedUsername));
-        Assert.assertNull(String.format("Getting user entity with user name %s", notSaveUsername), userDao.getByUsername(notSaveUsername));
+    public void testGetUserByUsername() {
+        assertThat(userDao.getByUsername(savedUsername), notNullValue());
+        assertThat(userDao.getByUsername(notSavedUsername), nullValue());
+    }
+
+    @Test
+    public void testGetUserByUsernameAndPassword() {
+        assertThat(userDao.getUser(savedUsername, savedPassword), notNullValue());
+        assertThat(userDao.getUser(savedUsername, notSavedPassword), nullValue());
+        assertThat(userDao.getUser(notSavedUsername, savedPassword), nullValue());
+        assertThat(userDao.getUser(notSavedUsername, notSavedPassword), nullValue());
     }
 }

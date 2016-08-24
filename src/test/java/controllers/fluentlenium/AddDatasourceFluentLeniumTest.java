@@ -16,22 +16,23 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AddDatasourceFluentLeniumTest extends FluentLeniumTest {
+public class AddDatasourceFluentLeniumTest extends PostLoginTest {
     @Test
     public void test() {
         goTo(getServerAddress() + "#onboarding/add-datasource");
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(htmlId("username")).isPresent();
 
-        FluentList<FluentWebElement> username = $(htmlNamedTextInputExpression("username"));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel("username")).isPresent();
+
+        FluentList<FluentWebElement> username = $(inTxtSel("username"));
         assertTrue("Text input box with name username is present", username.size() > 0);
 
-        FluentList<FluentWebElement> password = $(htmlNamedPasswordInputExpression("password"));
+        FluentList<FluentWebElement> password = $(inPwdSel("password"));
         assertTrue("Text input box with name password is present", password.size() > 0);
 
-        FluentList<FluentWebElement> url = $(htmlNamedTextInputExpression("url"));
+        FluentList<FluentWebElement> url = $(inTxtSel("url"));
         assertTrue("Text input box with name url is present", url.size() > 0);
 
-        FluentList<FluentWebElement> label = $(htmlNamedTextInputExpression("label"));
+        FluentList<FluentWebElement> label = $(inTxtSel("label"));
         assertTrue("Text input box with name label is present", label.size() > 0);
 
         fill(username).with("purvi");
@@ -39,18 +40,18 @@ public class AddDatasourceFluentLeniumTest extends FluentLeniumTest {
         fill(label).with("test");
         fill(url).with("foo.com");
 
-        click($(htmlId(CREATE_I)));
+        click($(idSel(CREATE_I)));
 
         String successMessage = format(DATASOURCE_ADDITION_SUCCESS_M, MYSQL, "test");
-        String sucMsgExpr = htmlClassExpression(ISA_INFO_C, "p");
+        String sucMsgExpr = clsSel(ISA_INFO_C, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(sucMsgExpr).hasText(successMessage);
 
         assertThat($(sucMsgExpr).getText(), is(successMessage));
 
-        click($(htmlId(CREATE_I)));
+        click($(idSel(CREATE_I)));
         String datasourceExistsMessage = format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, "test");
 
-        String datasourceExistsMsgExpr = htmlClassExpression(ISA_ERROR_C, "p");
+        String datasourceExistsMsgExpr = clsSel(ISA_ERROR_C, "p");
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(datasourceExistsMsgExpr).hasText(datasourceExistsMessage);
 
         assertThat($(datasourceExistsMsgExpr).getText(), is(datasourceExistsMessage));
