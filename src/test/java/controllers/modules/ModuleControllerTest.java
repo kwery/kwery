@@ -68,12 +68,4 @@ public class ModuleControllerTest extends NinjaDocTester {
         assertThat(ControllerTestUtil.isJsonResponse(response), is(true));
         assertThat(response.httpStatus, is(200));
     }
-
-    public void assertPostJsonPostLogin() {
-        Response response = makeRequest(
-                Request.POST().addHeader("Cookies", COOKIE_STRING).url(testServerUrl().path(this.getUrl())).formParameters(this.postParams)
-        );
-        assertThat(ControllerTestUtil.isJsonResponse(response), is(true));
-        assertThat(response.httpStatus, is(200));
-    }
 }

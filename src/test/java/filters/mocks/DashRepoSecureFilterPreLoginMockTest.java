@@ -16,7 +16,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import views.ActionResult;
 
 import static controllers.MessageKeys.USER_NOT_LOGGED_IN;
-import static filters.DashRepoSecureFilter.LOGIN_JS_VIEW;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -46,25 +45,10 @@ public class DashRepoSecureFilterPreLoginMockTest {
 
     @Test
     public void testApiRequest() {
-        when(context.getRequestPath()).thenReturn("/api/foo");
+        when(context.getRequestPath()).thenReturn("/foo");
         Result result = filter.filter(mock(FilterChain.class), context);
         ActionResult actionResult = (ActionResult) result.getRenderable();
         assertThat(actionResult.getStatus(), is(failure));
         assertThat(actionResult.getMessage(), is(message));
-    }
-
-    @Test
-    public void testModuleRequest() {
-        when(context.getRequestPath()).thenReturn("/module/foo");
-        Result result = filter.filter(mock(FilterChain.class), context);
-        assertThat(result.getTemplate(), is(LOGIN_JS_VIEW));
-        assertThat(result.getContentType(), is("text/javascript"));
-    }
-
-
-    @Test(expected = AssertionError.class)
-    public void testUnknownRequest() {
-        when(context.getRequestPath()).thenReturn("/foo");
-        filter.filter(mock(FilterChain.class), context);
     }
 }
