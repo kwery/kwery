@@ -11,7 +11,7 @@ define(["knockout", "jquery", "repo-dash", "router", "text!${templatePath}"], fu
         self.nextAction = ko.observable("");
         self.nextActionName = ko.observable("");
 
-        self.login = function() {
+        self.submit = function() {
             $.ajax("${apiPath}", {
                 data: ko.toJSON({username: self.username, password: self.password}),
                 type: "post", contentType: "application/json",
