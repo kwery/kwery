@@ -1,5 +1,5 @@
-define(["jquery", "knockout", "crossroads", "hasher", "dash-repo"], function ($, ko, crossroads, hasher, dashRepo) {
-    return new Router(dashRepo.componentMapping.mapping());
+define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($, ko, crossroads, hasher, repoDash) {
+    return new Router(repoDash.componentMapping.mapping());
 
     function Router(componentMapping) {
         var currentRoute = this.currentRoute = ko.observable({});
@@ -11,7 +11,7 @@ define(["jquery", "knockout", "crossroads", "hasher", "dash-repo"], function ($,
 
             addedRoute.rules = {
                 request_ : function(request) {
-                    if (mapping.auth && !dashRepo.user.isAuthenticated()) {
+                    if (mapping.auth && !repoDash.user.isAuthenticated()) {
                         return false;
                     }
                     return true;

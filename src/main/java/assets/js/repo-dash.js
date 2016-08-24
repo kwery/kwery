@@ -1,6 +1,6 @@
 ;(function(){
     var factory = function($){
-        var dashRepo = (function(){
+        var repoDash = (function(){
             var _userAuthenticated = false;
 
             if ($('meta[name="userAuthenticated"]').attr('content') === "true") {
@@ -39,14 +39,14 @@
                 }
             };
 
-            var dashRepo = {
+            var repoDash = {
                 "user": user,
                 "componentMapping": componentMapping
             };
-            return dashRepo;
+            return repoDash;
         })();
 
-        return dashRepo;
+        return repoDash;
     };
 
     if (typeof define === "function" && define.amd) {
@@ -55,6 +55,6 @@
         module.exports = factory(require("jquery"));
     } else {
         /*jshint sub:true */
-        window["dashRepo"] = factory(window["jquery"]);
+        window["repoDash"] = factory(window["jquery"]);
     }
 }());

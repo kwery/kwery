@@ -11,7 +11,7 @@ var require = {
         "text": "js/requirejs-text",
         "jquery-ui": "js/jquery-ui",
         "knockout-jqueryui": "js/knockout-jqueryui",
-        "dash-repo": "js/dash-repo",
+        "repo-dash": "js/repo-dash",
         "router": "js/router"
     },
     shim: {
