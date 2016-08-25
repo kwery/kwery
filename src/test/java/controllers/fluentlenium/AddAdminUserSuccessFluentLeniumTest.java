@@ -2,7 +2,6 @@ package controllers.fluentlenium;
 
 import org.junit.Test;
 
-import static controllers.modules.user.addadmin.UserAddAdminModuleController.ONBOARDING_POST_ADMIN_USER_CREATION_ACTION;
 import static controllers.util.HtmlId.ACTION_RESULT_DIALOG_I;
 import static controllers.util.HtmlId.CREATE_ADMIN_USER_I;
 import static controllers.util.HtmlId.NEXT_ACTION_I;
@@ -91,7 +90,7 @@ public class AddAdminUserSuccessFluentLeniumTest extends FluentLeniumTest {
 
         await().atMost(TIMEOUT_SECONDS, SECONDS);
 
-        assertThat(url(), is(getServerAddress() + ONBOARDING_POST_ADMIN_USER_CREATION_ACTION));
+        assertThat(url(), is(getServerAddress() + "#user/login"));
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(inTxtSel("username")).isPresent();
     }
 }

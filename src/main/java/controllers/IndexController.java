@@ -1,5 +1,7 @@
 package controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
@@ -9,6 +11,7 @@ import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
 
+import static com.google.common.base.Optional.of;
 import static controllers.apis.UserApiController.SESSION_USERNAME_KEY;
 
 @Singleton
@@ -16,11 +19,12 @@ public class IndexController {
     @Inject
     private Messages messages;
 
-    public Result index(Context context) {
+    public Result index(Context context) throws JsonProcessingException {
         Result html = Results.html();
-        String title = messages.get(MessageKeys.TITLE, context, Optional.of(html)).get();
+        String title = messages.get(MessageKeys.TITLE, context, of(html)).get();
         html.render("title", title);
         html.render("userAuthenticated", String.valueOf(isUserAuthenticated(context)));
+        html.render("allMessages", new ObjectMapper().writeValueAsString(messages.getAll(context, of(html))));
         return html;
     }
 

@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!${templatePath}", "knockout-jqueryui/dialog"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/action-result.html", "knockout-jqueryui/dialog"], function (ko, $, template) {
     function viewModel(params) {
         var self = this;
         self.status = params.status;

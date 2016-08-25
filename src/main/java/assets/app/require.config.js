@@ -1,18 +1,19 @@
 var require = {
-    baseUrl: "/assets",
+    baseUrl: "/assets/js",
     paths: {
-        "crossroads": "js/crossroads",
-        "jquery": "js/jquery",
-        "jquery-migrate": "js/jquery-migrate",
-        "knockout": "js/knockout",
-        "knockout-projections": "js/knockout-projections",
-        "signals": "js/signals",
-        "hasher": "js/hasher",
-        "text": "js/requirejs-text",
-        "jquery-ui": "js/jquery-ui",
-        "knockout-jqueryui": "js/knockout-jqueryui",
-        "repo-dash": "js/repo-dash",
-        "router": "js/router"
+        "crossroads": "crossroads",
+        "jquery": "jquery",
+        "jquery-migrate": "jquery-migrate",
+        "knockout": "knockout",
+        "knockout-projections": "knockout-projections",
+        "signals": "signals",
+        "hasher": "hasher",
+        "text": "requirejs-text",
+        "jquery-ui": "jquery-ui",
+        "knockout-jqueryui": "knockout-jqueryui",
+        "repo-dash": "repo-dash",
+        "router": "router",
+        "polyglot": "polyglot"
     },
     shim: {
         "jquery-migrate": {

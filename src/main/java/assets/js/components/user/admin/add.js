@@ -1,36 +1,26 @@
-define(["knockout", "jquery", "text!${templatePath}"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/user/admin/add.html"], function (ko, $, template) {
     function viewModel(params) {
         var self = this;
         self.username = ko.observable();
         self.password = ko.observable();
-        self.url = ko.observable();
-        self.label = ko.observable();
 
         self.status = ko.observable("");
         self.message = ko.observable("");
 
         self.submit = function() {
-            $.ajax("${apiPath}", {
-                data: ko.toJSON({
-                    url: self.url,
-                    username: self.username,
-                    password: self.password,
-                    label: self.label,
-                    type: "MYSQL"
-                }),
+            $.ajax("/api/user/add-admin-user", {
+                data: ko.toJSON({username: self.username, password: self.password}),
                 type: "post", contentType: "application/json",
                 success: function(result) {
-                    //Clear previous set value
-                    self.status("");
-                    self.message("");
                     self.status(result.status);
                     self.message(result.message);
+
+                    self.nextActionName = ko.i18n("admin.user.addition.next.action");
+                    self.nextAction = "#user/login";
                 }
             });
         };
-
         return self;
     }
     return { viewModel: viewModel, template: template };
 });
-
