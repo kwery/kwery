@@ -12,7 +12,8 @@ var require = {
         "jquery-ui": "js/jquery-ui",
         "knockout-jqueryui": "js/knockout-jqueryui",
         "repo-dash": "js/repo-dash",
-        "router": "js/router"
+        "router": "js/router",
+        "polyglot": "js/polyglot"
     },
     shim: {
         "jquery-migrate": {

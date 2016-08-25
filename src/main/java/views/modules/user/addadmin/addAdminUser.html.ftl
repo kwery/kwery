@@ -8,7 +8,7 @@
     <form data-bind="submit: submit">
         <div class="row">
             <div class="six columns">
-                <label for="userName">${usernameButtonM}</label>
+                <label data-bind="text: repoDash.i18n('user.name')" for="userName"></label>
                 <input data-bind="value: username" class="u-full-width" type="text" id="username" name="username">
             </div>
             <div class="six columns">
