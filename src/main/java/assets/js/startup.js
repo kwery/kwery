@@ -1,20 +1,20 @@
 define(["jquery-migrate", "knockout", "router", "polyglot", "knockout-projections"], function ($, ko, router, polyglot) {
     ko.components.register("onboarding-welcome", {
         template: {
-            require: "text!js/components/onboarding/welcome.html"
+            require: "text!components/onboarding/welcome.html"
         }
     });
     ko.components.register("action-result", {
-        require: "js/components/action-result"
+        require: "components/action-result"
     });
     ko.components.register("onboarding-add-admin-user", {
-        require: "js/components/user/admin/add"
+        require: "components/user/admin/add"
     });
     ko.components.register("onboarding-add-datasource", {
-        require: "js/components/datasource/add"
+        require: "components/datasource/add"
     });
     ko.components.register("user-login", {
-        require: "js/components/user/login"
+        require: "components/user/login"
     });
 
     ko.applyBindings({ route: router.currentRoute });

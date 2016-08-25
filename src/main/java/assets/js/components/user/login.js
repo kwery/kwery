@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "repo-dash", "router", "text!js/components/user/login.html"], function (ko, $, repoDash, router, template) {
+define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login.html"], function (ko, $, repoDash, router, template) {
     function viewModel(params) {
         var self = this;
         self.username = ko.observable();

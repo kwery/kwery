@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!js/components/user/admin/add.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/user/admin/add.html"], function (ko, $, template) {
     function viewModel(params) {
         var self = this;
         self.username = ko.observable();
