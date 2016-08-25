@@ -273,7 +273,7 @@
         // We create a new `RegExp` each time instead of using a more-efficient
         // string replace so that the same argument can be replaced multiple times
         // in the same phrase.
-        phrase = phrase.replace(new RegExp('%\\{'+arg+'\\}', 'g'), options[arg]);
+        phrase = phrase.replace(new RegExp('\\{'+arg+'\\}', 'g'), options[arg]);
       }
     }
     return phrase;

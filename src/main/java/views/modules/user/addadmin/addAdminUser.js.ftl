@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "repo-dash", "text!${templatePath}"], function (ko, $, repoDash, template) {
+define(["knockout", "jquery", "text!${templatePath}"], function (ko, $, template) {
     function viewModel(params) {
         var self = this;
         self.username = ko.observable();
@@ -6,8 +6,6 @@ define(["knockout", "jquery", "repo-dash", "text!${templatePath}"], function (ko
 
         self.status = ko.observable("");
         self.message = ko.observable("");
-
-        self.repoDash = repoDash;
 
         self.submit = function() {
             $.ajax("${apiPath}", {

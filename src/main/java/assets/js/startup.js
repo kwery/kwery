@@ -1,4 +1,4 @@
-define(["jquery-migrate", "knockout", "router", "knockout-projections"], function ($, ko, router) {
+define(["jquery-migrate", "knockout", "router", "polyglot", "knockout-projections"], function ($, ko, router, polyglot) {
     ko.components.register("onboarding-welcome", {
         template: {
             require: "text!/module/onboarding/welcome.html"
@@ -18,4 +18,16 @@ define(["jquery-migrate", "knockout", "router", "knockout-projections"], functio
     });
 
     ko.applyBindings({ route: router.currentRoute });
+
+    //Attach polyglot for i18n to ko
+    (function i18n(Polyglot) {
+        var polyglot = new Polyglot({phrases: dashRepoMessages});
+        ko.i18n = function(key, options) {
+            if (options === undefined) {
+                options = {};
+            }
+
+            return polyglot.t(key, options);
+        };
+    })(polyglot);
 });

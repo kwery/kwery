@@ -1,5 +1,5 @@
 ;(function(){
-    var factory = function($, Polyglot){
+    var factory = function($){
         var repoDash = (function(){
             var _userAuthenticated = false;
 
@@ -39,19 +39,9 @@
                 }
             };
 
-            var polyglot = new Polyglot({phrases: dashRepoMessages});
-            var i18n = function(key, options) {
-                if (options === undefined) {
-                    options = {};
-                }
-
-                return polyglot.t(key, options);
-            };
-
             var repoDash = {
                 "user": user,
-                "componentMapping": componentMapping,
-                "i18n": i18n
+                "componentMapping": componentMapping
             };
             return repoDash;
         })();
@@ -60,11 +50,11 @@
     };
 
     if (typeof define === "function" && define.amd) {
-        define(["jquery", "polyglot"], factory);
+        define(["jquery"], factory);
     } else if (typeof exports === "object") {
-        module.exports = factory(require("jquery", "polyglot"));
+        module.exports = factory(require("jquery"));
     } else {
         /*jshint sub:true */
-        window["repoDash"] = factory(window["jquery"], window["polyglot"]);
+        window["repoDash"] = factory(window["jquery"]);
     }
 }());
