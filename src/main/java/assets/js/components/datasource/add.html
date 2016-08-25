@@ -3,31 +3,31 @@
     <form data-bind="submit: submit">
         <div class="row">
             <div class="twelve columns">
-                <label for="url">${urlButtonM}</label>
+                <label data-bind="text: ko.i18n('url')" for="url"></label>
                 <input data-bind="value: url" class="u-full-width" type="text" id="url" name="url">
             </div>
         </div>
         <div class="row">
             <div class="twelve columns">
-                <label for="userName">${usernameButtonM}</label>
+                <label data-bind="text: ko.i18n('user.name')" for="userName"></label>
                 <input data-bind="value: username" class="u-full-width" type="text" id="username" name="username">
             </div>
         </div>
         <div class="row">
             <div class="twelve columns">
-                <label for="password">${passwordButtonM}</label>
+                <label data-bind="text: ko.i18n('password')" for="password"></label>
                 <input data-bind="value: password" class="u-full-width" type="password" id="password" name="password">
             </div>
         </div>
         <div class="row">
             <div class="twelve columns">
-                <label for="label">${labelButtonM}</label>
+                <label data-bind="text: ko.i18n('label')" for="label"></label>
                 <input data-bind="value: label" class="u-full-width" type="text" id="label" name="label">
             </div>
         </div>
         <div class="row">
             <div class="twelve columns">
-                <button data-bind="click: save" class="button-primary" id="create">${createButtonM}</button>
+                <button data-bind="text: ko.i18n('create')" data-bind="click: save" class="button-primary" id="create"></button>
             </div>
         </div>
     </form>

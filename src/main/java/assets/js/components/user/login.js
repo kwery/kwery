@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "repo-dash", "router", "text!${templatePath}"], function (ko, $, repoDash, router, template) {
+define(["knockout", "jquery", "repo-dash", "router", "text!js/components/user/login.html"], function (ko, $, repoDash, router, template) {
     function viewModel(params) {
         var self = this;
         self.username = ko.observable();
@@ -12,7 +12,7 @@ define(["knockout", "jquery", "repo-dash", "router", "text!${templatePath}"], fu
         self.nextActionName = ko.observable("");
 
         self.submit = function() {
-            $.ajax("${apiPath}", {
+            $.ajax("/api/user/login", {
                 data: ko.toJSON({username: self.username, password: self.password}),
                 type: "post", contentType: "application/json",
                 success: function(result) {

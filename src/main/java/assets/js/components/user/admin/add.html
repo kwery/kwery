@@ -2,8 +2,8 @@
     <action-result params="status: status,
                             message: message,
                             onSuccessShowDialog: true,
-                            nextAction: '${nextAction}',
-                            nextActionName: '${nextActionName}'">
+                            nextAction: '#user/login',
+                            nextActionName: ko.i18n('admin.user.addition.next.action')">
     </action-result>
     <form data-bind="submit: submit">
         <div class="row">
