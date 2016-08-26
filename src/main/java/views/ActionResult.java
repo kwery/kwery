@@ -1,23 +1,32 @@
 package views;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+
 public class ActionResult {
     private Status status;
-    private String message;
+    private List<String> messages;
 
     public ActionResult() {
     }
 
     public ActionResult(Status status, String message) {
         this.status = status;
-        this.message = message;
+        this.messages = ImmutableList.of(message);
     }
 
-    public String getMessage() {
-        return message;
+    public ActionResult(Status status, List<String> messages) {
+        this.status = status;
+        this.messages = messages;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<String> messages) {
+        this.messages = messages;
     }
 
     public Status getStatus() {
@@ -28,13 +37,6 @@ public class ActionResult {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "ActionResult{" +
-                "status=" + status +
-                ", message='" + message + '\'' +
-                '}';
-    }
 
     public enum Status{
         success,

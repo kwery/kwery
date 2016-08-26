@@ -2,11 +2,11 @@ package dao;
 
 import models.User;
 import ninja.NinjaDaoTestBase;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolationException;
 
 import static org.junit.Assert.assertTrue;
 
@@ -45,9 +45,23 @@ public class UserDaoPersistTest extends NinjaDaoTestBase {
         try {
             userDao.save(newUser);
         } catch (PersistenceException e) {
-            if (!(e.getCause() instanceof ConstraintViolationException)) {
+            if (!(e.getCause() instanceof org.hibernate.exception.ConstraintViolationException)) {
                 assertTrue("Unique user condition failed", false);
             }
         }
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testNullValuesValidation() {
+        User invalid = new User();
+        userDao.save(invalid);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testInvalidFieldLengthValidation() {
+        User invalid = new User();
+        invalid.setUsername("");
+        invalid.setPassword("");
+        userDao.save(invalid);
     }
 }

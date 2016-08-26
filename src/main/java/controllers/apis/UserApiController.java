@@ -10,7 +10,13 @@ import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
+import ninja.validation.FieldViolation;
+import ninja.validation.JSR303Validation;
+import ninja.validation.Validation;
 import views.ActionResult;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.google.common.base.Optional.of;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
@@ -30,20 +36,39 @@ public class UserApiController {
     @Inject
     private Messages messages;
 
-    public Result addAdminUser(Context context, User user) {
-        User existingUser = userDao.getByUsername(user.getUsername());
+    public Result addAdminUser(
+            Context context,
+            @JSR303Validation User user,
+            Validation validation) {
 
         Result json = Results.json();
         ActionResult actionResult = null;
 
-        if (existingUser == null) {
-            userDao.save(user);
+        if (validation.hasViolations()) {
+            List<String> validationMessages = new LinkedList<>();
 
-            String message = messages.get(ADMIN_USER_ADDITION_SUCCESS, context, of(json), user.getUsername()).get();
-            actionResult = new ActionResult(success, message);
+            for (User.Fields field : User.Fields.values()) {
+                List<FieldViolation> beanViolations = validation.getBeanViolations(field.name());
+                if (beanViolations != null) {
+                    for (FieldViolation fieldViolation : beanViolations) {
+                        validationMessages.add(messages.get(fieldViolation.constraintViolation.getMessageKey(), context, of(json)).get());
+                    }
+                }
+            }
+
+            actionResult = new ActionResult(failure, validationMessages);
         } else {
-            String message = messages.get(ADMIN_USER_ADDITION_FAILURE, context, of(json), user.getUsername()).get();
-            actionResult = new ActionResult(failure, message);
+            User existingUser = userDao.getByUsername(user.getUsername());
+
+            if (existingUser == null) {
+                userDao.save(user);
+
+                String message = messages.get(ADMIN_USER_ADDITION_SUCCESS, context, of(json), user.getUsername()).get();
+                actionResult = new ActionResult(success, message);
+            } else {
+                String message = messages.get(ADMIN_USER_ADDITION_FAILURE, context, of(json), user.getUsername()).get();
+                actionResult = new ActionResult(failure, message);
+            }
         }
 
         return json.render(actionResult);

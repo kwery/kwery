@@ -51,7 +51,7 @@ public class UserApiControllerMockTest extends ControllerMockTest {
 
         mockMessages(ADMIN_USER_ADDITION_SUCCESS, user.getUsername());
         mockMessages(ADMIN_USER_ADDITION_NEXT_ACTION);
-        assertSuccess(actionResult(userApiController.addAdminUser(context, user)));
+        assertSuccess(actionResult(userApiController.addAdminUser(context, user, null)));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class UserApiControllerMockTest extends ControllerMockTest {
         User user = user();
         when(userDao.getByUsername(user.getUsername())).thenReturn(user);
         mockMessages(ADMIN_USER_ADDITION_FAILURE, user.getUsername());
-        assertFailure(actionResult(userApiController.addAdminUser(context, user)));
+        assertFailure(actionResult(userApiController.addAdminUser(context, user, null)));
     }
 
     @Test

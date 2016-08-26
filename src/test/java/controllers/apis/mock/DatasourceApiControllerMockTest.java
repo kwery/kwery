@@ -34,7 +34,7 @@ public class DatasourceApiControllerMockTest extends ControllerMockTest {
         Datasource datasource = datasource();
         doNothing().when(dao).save(datasource);
         mockMessages(DATASOURCE_ADDITION_SUCCESS, MYSQL.name(), datasource.getLabel());
-        assertSuccess(actionResult(controller.addDatasource(datasource, context)));
+        assertSuccess(actionResult(controller.addDatasource(datasource, context, null)));
     }
 
     @Test
@@ -42,6 +42,6 @@ public class DatasourceApiControllerMockTest extends ControllerMockTest {
         Datasource datasource = datasource();
         when(dao.getByLabel(datasource.getLabel())).thenReturn(datasource);
         mockMessages(DATASOURCE_ADDITION_FAILURE, MYSQL.name(), datasource.getLabel());
-        assertFailure(actionResult(controller.addDatasource(datasource, context)));
+        assertFailure(actionResult(controller.addDatasource(datasource, context, null)));
     }
 }

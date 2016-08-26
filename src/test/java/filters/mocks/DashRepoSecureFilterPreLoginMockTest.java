@@ -16,6 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import views.ActionResult;
 
 import static controllers.MessageKeys.USER_NOT_LOGGED_IN;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -49,6 +50,6 @@ public class DashRepoSecureFilterPreLoginMockTest {
         Result result = filter.filter(mock(FilterChain.class), context);
         ActionResult actionResult = (ActionResult) result.getRenderable();
         assertThat(actionResult.getStatus(), is(failure));
-        assertThat(actionResult.getMessage(), is(message));
+        assertThat(actionResult.getMessages(), containsInAnyOrder(message));
     }
 }

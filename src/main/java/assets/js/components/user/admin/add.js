@@ -5,7 +5,7 @@ define(["knockout", "jquery", "text!components/user/admin/add.html"], function (
         self.password = ko.observable();
 
         self.status = ko.observable("");
-        self.message = ko.observable("");
+        self.messages = ko.observable("");
 
         self.submit = function() {
             $.ajax("/api/user/add-admin-user", {
@@ -13,7 +13,7 @@ define(["knockout", "jquery", "text!components/user/admin/add.html"], function (
                 type: "post", contentType: "application/json",
                 success: function(result) {
                     self.status(result.status);
-                    self.message(result.message);
+                    self.messages(result.messages);
 
                     self.nextActionName = ko.i18n("admin.user.addition.next.action");
                     self.nextAction = "#user/login";

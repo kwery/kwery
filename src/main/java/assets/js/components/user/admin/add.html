@@ -1,6 +1,6 @@
 <div class="container">
     <action-result params="status: status,
-                            message: message,
+                            messages: messages,
                             onSuccessShowDialog: true,
                             nextAction: '#user/login',
                             nextActionName: ko.i18n('admin.user.addition.next.action')">
@@ -8,7 +8,7 @@
     <form data-bind="submit: submit">
         <div class="row">
             <div class="six columns">
-                <label data-bind="text: ko.i18n('user.name')" for="userName"></label>
+                <label data-bind="text: ko.i18n('user.name')" for="username"></label>
                 <input data-bind="value: username" class="u-full-width" type="text" id="username" name="username">
             </div>
             <div class="six columns">
