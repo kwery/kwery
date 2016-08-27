@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import ninja.Context;
 import ninja.Result;
 import ninja.i18n.Messages;
+import ninja.validation.Validation;
 import org.mockito.Mock;
 import views.ActionResult;
 
@@ -21,6 +22,8 @@ public class ControllerMockTest {
     protected Messages messages;
     @Mock
     protected Context context;
+    @Mock
+    protected Validation validation;
 
     protected String dummyString = "foo";
 

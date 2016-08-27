@@ -1,12 +1,9 @@
 package controllers.apis.mock;
 
-import controllers.apis.UserApiController;
 import controllers.util.TestSession;
-import dao.UserDao;
 import models.User;
 import ninja.Result;
 import ninja.session.Session;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,19 +22,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserApiControllerMockTest extends ControllerMockTest {
-    @Mock
-    private UserDao userDao;
+public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest {
     @Mock
     private Session session;
-    private UserApiController userApiController;
-
-    @Before
-    public void before() {
-        userApiController = new UserApiController();
-        userApiController.setMessages(messages);
-        userApiController.setUserDao(userDao);
-    }
 
     @Test
     public void testAddUserSuccess() {
@@ -51,7 +38,7 @@ public class UserApiControllerMockTest extends ControllerMockTest {
 
         mockMessages(ADMIN_USER_ADDITION_SUCCESS, user.getUsername());
         mockMessages(ADMIN_USER_ADDITION_NEXT_ACTION);
-        assertSuccess(actionResult(userApiController.addAdminUser(context, user, null)));
+        assertSuccess(actionResult(userApiController.addAdminUser(context, user, validation)));
     }
 
     @Test
@@ -59,7 +46,7 @@ public class UserApiControllerMockTest extends ControllerMockTest {
         User user = user();
         when(userDao.getByUsername(user.getUsername())).thenReturn(user);
         mockMessages(ADMIN_USER_ADDITION_FAILURE, user.getUsername());
-        assertFailure(actionResult(userApiController.addAdminUser(context, user, null)));
+        assertFailure(actionResult(userApiController.addAdminUser(context, user, validation)));
     }
 
     @Test

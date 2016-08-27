@@ -10,15 +10,12 @@ import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
-import ninja.validation.FieldViolation;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import views.ActionResult;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import static com.google.common.base.Optional.of;
+import static controllers.ControllerUtil.fieldMessages;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static controllers.MessageKeys.LOGIN_FAILURE;
@@ -45,18 +42,7 @@ public class UserApiController {
         ActionResult actionResult = null;
 
         if (validation.hasViolations()) {
-            List<String> validationMessages = new LinkedList<>();
-
-            for (User.Fields field : User.Fields.values()) {
-                List<FieldViolation> beanViolations = validation.getBeanViolations(field.name());
-                if (beanViolations != null) {
-                    for (FieldViolation fieldViolation : beanViolations) {
-                        validationMessages.add(messages.get(fieldViolation.constraintViolation.getMessageKey(), context, of(json)).get());
-                    }
-                }
-            }
-
-            actionResult = new ActionResult(failure, validationMessages);
+            actionResult = new ActionResult(failure, fieldMessages(validation, context, messages, json));
         } else {
             User existingUser = userDao.getByUsername(user.getUsername());
 
@@ -81,7 +67,7 @@ public class UserApiController {
         ActionResult actionResult = null;
 
         if (fromDb == null) {
-            String message = messages.get(LOGIN_FAILURE, context,  of(json)).get();
+            String message = messages.get(LOGIN_FAILURE, context, of(json)).get();
             actionResult = new ActionResult(failure, message);
         } else {
             String message = messages.get(LOGIN_SUCCESS, context, of(json), user.getUsername()).get();

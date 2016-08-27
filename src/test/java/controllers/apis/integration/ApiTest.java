@@ -8,6 +8,7 @@ import views.ActionResult;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
@@ -43,5 +44,10 @@ public abstract class ApiTest extends NinjaTest {
     protected void assertFailure(ActionResult actionResult, String... messages) {
         assertThat(actionResult.getMessages(), containsInAnyOrder(messages));
         assertThat(actionResult.getStatus(), is(failure));
+    }
+
+    protected void assertFailure(ActionResult actionResult, Map<String, List<String>> fieldMessages) {
+        assertThat(actionResult.getStatus(), is(failure));
+        assertThat(actionResult.getFieldMessages(), is(fieldMessages));
     }
 }

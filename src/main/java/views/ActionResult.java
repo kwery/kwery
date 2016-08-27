@@ -3,10 +3,14 @@ package views;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.Map;
 
 public class ActionResult {
     private Status status;
+    //Generic messages go here
     private List<String> messages;
+    //Messages associated with a field go here
+    private Map<String, List<String>> fieldMessages;
 
     public ActionResult() {
     }
@@ -19,6 +23,11 @@ public class ActionResult {
     public ActionResult(Status status, List<String> messages) {
         this.status = status;
         this.messages = messages;
+    }
+
+    public ActionResult(Status status, Map<String, List<String>> fieldMessages) {
+        this.status = status;
+        this.fieldMessages = fieldMessages;
     }
 
     public List<String> getMessages() {
@@ -37,6 +46,13 @@ public class ActionResult {
         this.status = status;
     }
 
+    public Map<String, List<String>> getFieldMessages() {
+        return fieldMessages;
+    }
+
+    public void setFieldMessages(Map<String, List<String>> fieldMessages) {
+        this.fieldMessages = fieldMessages;
+    }
 
     public enum Status{
         success,
