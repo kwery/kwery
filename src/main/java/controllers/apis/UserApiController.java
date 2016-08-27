@@ -10,9 +10,12 @@ import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
+import ninja.validation.JSR303Validation;
+import ninja.validation.Validation;
 import views.ActionResult;
 
 import static com.google.common.base.Optional.of;
+import static controllers.ControllerUtil.fieldMessages;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static controllers.MessageKeys.LOGIN_FAILURE;
@@ -30,20 +33,28 @@ public class UserApiController {
     @Inject
     private Messages messages;
 
-    public Result addAdminUser(Context context, User user) {
-        User existingUser = userDao.getByUsername(user.getUsername());
+    public Result addAdminUser(
+            Context context,
+            @JSR303Validation User user,
+            Validation validation) {
 
         Result json = Results.json();
         ActionResult actionResult = null;
 
-        if (existingUser == null) {
-            userDao.save(user);
-
-            String message = messages.get(ADMIN_USER_ADDITION_SUCCESS, context, of(json), user.getUsername()).get();
-            actionResult = new ActionResult(success, message);
+        if (validation.hasViolations()) {
+            actionResult = new ActionResult(failure, fieldMessages(validation, context, messages, json));
         } else {
-            String message = messages.get(ADMIN_USER_ADDITION_FAILURE, context, of(json), user.getUsername()).get();
-            actionResult = new ActionResult(failure, message);
+            User existingUser = userDao.getByUsername(user.getUsername());
+
+            if (existingUser == null) {
+                userDao.save(user);
+
+                String message = messages.get(ADMIN_USER_ADDITION_SUCCESS, context, of(json), user.getUsername()).get();
+                actionResult = new ActionResult(success, message);
+            } else {
+                String message = messages.get(ADMIN_USER_ADDITION_FAILURE, context, of(json), user.getUsername()).get();
+                actionResult = new ActionResult(failure, message);
+            }
         }
 
         return json.render(actionResult);
@@ -56,7 +67,7 @@ public class UserApiController {
         ActionResult actionResult = null;
 
         if (fromDb == null) {
-            String message = messages.get(LOGIN_FAILURE, context,  of(json)).get();
+            String message = messages.get(LOGIN_FAILURE, context, of(json)).get();
             actionResult = new ActionResult(failure, message);
         } else {
             String message = messages.get(LOGIN_SUCCESS, context, of(json), user.getUsername()).get();

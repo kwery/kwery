@@ -7,7 +7,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
         self.label = ko.observable();
 
         self.status = ko.observable("");
-        self.message = ko.observable("");
+        self.messages = ko.observableArray([]);
 
         self.submit = function() {
             $.ajax("/api/datasource/add-datasource", {
@@ -20,11 +20,23 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
                 }),
                 type: "post", contentType: "application/json",
                 success: function(result) {
-                    //Clear previous set value
-                    self.status("");
-                    self.message("");
                     self.status(result.status);
-                    self.message(result.message);
+
+                    var messages = result.messages;
+                    var fieldMessages = result.fieldMessages;
+
+                    self.messages([]);
+                    if (messages != null) {
+                        ko.utils.arrayPushAll(self.messages, result.messages)
+                    }
+
+                    if (fieldMessages != null) {
+                        ko.utils.arrayForEach(["url", "username", "label"], function(elem){
+                            if (elem in fieldMessages) {
+                                ko.utils.arrayPushAll(self.messages, fieldMessages[elem])
+                            }
+                        });
+                    }
                 }
             });
         };
@@ -33,4 +45,3 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
     }
     return { viewModel: viewModel, template: template };
 });
-

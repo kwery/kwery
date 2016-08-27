@@ -25,4 +25,9 @@ public class Messages {
     public static final String LOGIN_SUCCESS_M = "{0} logged in successfully";
     public static final String LOGIN_FAILURE_M = "Please check your username and/or password";
     public static final String LOGIN_M = "Login";
+    public static final String USERNAME_VALIDATION_M = "Username should be at least of one character";
+    public static final String PASSWORD_VALIDATION_M = "Password should be at least of one character";
+    public static final String URL_VALIDATION_M = "url should be at least of one character";
+    public static final String LABEL_VALIDATION_M = "label should be at least of one character";
+
 }

@@ -5,7 +5,7 @@ define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login
         self.password = ko.observable();
 
         self.status = ko.observable("");
-        self.message = ko.observable("");
+        self.messages = ko.observable("");
 
         self.onSuccessShowDialog = ko.observable(true);
         self.nextAction = ko.observable("");
@@ -16,10 +16,6 @@ define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login
                 data: ko.toJSON({username: self.username, password: self.password}),
                 type: "post", contentType: "application/json",
                 success: function(result) {
-                    //Clear previous set value
-                    self.status("");
-                    self.message("");
-
                     if (result.status === "success") {
                         repoDash.user.setAuthenticated(true);
 
@@ -33,7 +29,7 @@ define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login
                     }
 
                     self.status(result.status);
-                    self.message(result.message);
+                    self.messages(result.messages);
                 }
             });
         };

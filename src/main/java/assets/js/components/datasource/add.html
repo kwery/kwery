@@ -1,5 +1,5 @@
 <div class="container">
-    <action-result params="status: status, message: message"></action-result>
+    <action-result params="status: status, messages: messages"></action-result>
     <form data-bind="submit: submit">
         <div class="row">
             <div class="twelve columns">
@@ -27,7 +27,7 @@
         </div>
         <div class="row">
             <div class="twelve columns">
-                <button data-bind="text: ko.i18n('create')" data-bind="click: save" class="button-primary" id="create"></button>
+                <button data-bind="text: ko.i18n('create')" class="button-primary" id="create"></button>
             </div>
         </div>
     </form>

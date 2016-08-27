@@ -4,9 +4,11 @@ import com.google.common.base.Optional;
 import ninja.Context;
 import ninja.Result;
 import ninja.i18n.Messages;
+import ninja.validation.Validation;
 import org.mockito.Mock;
 import views.ActionResult;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -20,6 +22,8 @@ public class ControllerMockTest {
     protected Messages messages;
     @Mock
     protected Context context;
+    @Mock
+    protected Validation validation;
 
     protected String dummyString = "foo";
 
@@ -40,12 +44,12 @@ public class ControllerMockTest {
     }
 
     protected void assertSuccess(ActionResult actionResult) {
-        assertThat(actionResult.getMessage(), is(dummyString));
+        assertThat(actionResult.getMessages(), containsInAnyOrder(dummyString));
         assertThat(actionResult.getStatus(), is(success));
     }
 
     protected void assertFailure(ActionResult actionResult) {
-        assertThat(actionResult.getMessage(), is(dummyString));
+        assertThat(actionResult.getMessages(), containsInAnyOrder(dummyString));
         assertThat(actionResult.getStatus(), is(failure));
     }
 }

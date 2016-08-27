@@ -2,7 +2,7 @@ define(["knockout", "jquery", "text!components/action-result.html", "knockout-jq
     function viewModel(params) {
         var self = this;
         self.status = params.status;
-        self.message = params.message;
+        self.messages = params.messages;
         self.nextAction = params.nextAction;
         self.nextActionName = params.nextActionName;
         self.onSuccessShowDialog = params.onSuccessShowDialog;

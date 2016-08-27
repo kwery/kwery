@@ -40,4 +40,19 @@ public class DatasourceDaoPersistTest extends BaseDatasourceDaoPersistTest {
             }
         }
     }
+
+    @Test(expected = javax.validation.ConstraintViolationException.class)
+    public void testNullValidation() {
+        Datasource d = new Datasource();
+        datasourceDao.save(d);
+    }
+
+    @Test(expected = javax.validation.ConstraintViolationException.class)
+    public void testMinimumLengthValidation() {
+        Datasource d = new Datasource();
+        d.setUrl("");
+        d.setLabel("");
+        d.setUsername("");
+        datasourceDao.save(d);
+    }
 }

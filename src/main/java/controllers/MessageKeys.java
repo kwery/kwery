@@ -24,4 +24,6 @@ public class MessageKeys {
     public static final String LOGIN_SUCCESS = "login.success";
     public static final String LOGIN_FAILURE = "login.failure";
     public static final String LOGIN = "login";
+    public static final String USERNAME_VALIDATION = "username.validation";
+    public static final String PASSWORD_VALIDATION = "password.validation";
 }
