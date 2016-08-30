@@ -4,13 +4,13 @@
         <div class="row">
             <div class="twelve columns">
                 <label data-bind="text: ko.i18n('url')" for="url"></label>
-                <input data-bind="value: url" class="u-full-width" type="text" id="url" name="url">
+                <input data-bind="value: url" minlength="1" required class="u-full-width" type="text" id="url" name="url">
             </div>
         </div>
         <div class="row">
             <div class="twelve columns">
                 <label data-bind="text: ko.i18n('user.name')" for="userName"></label>
-                <input data-bind="value: username" class="u-full-width" type="text" id="username" name="username">
+                <input data-bind="value: username" minlength="1" required class="u-full-width" type="text" id="username" name="username">
             </div>
         </div>
         <div class="row">
@@ -22,7 +22,7 @@
         <div class="row">
             <div class="twelve columns">
                 <label data-bind="text: ko.i18n('label')" for="label"></label>
-                <input data-bind="value: label" class="u-full-width" type="text" id="label" name="label">
+                <input data-bind="value: label" minlength="1" required class="u-full-width" type="text" id="label" name="label">
             </div>
         </div>
         <div class="row">

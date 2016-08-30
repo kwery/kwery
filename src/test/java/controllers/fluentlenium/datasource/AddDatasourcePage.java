@@ -23,6 +23,23 @@ public class AddDatasourcePage extends FluentPage {
         click("#create");
     }
 
+    public void submitForm() {
+        fill("input").with();
+        click("#create");
+    }
+
+    public String usernameValidationErrorMessage() {
+        return $("#username-error").getText();
+    }
+
+    public String urlValidationErrorMessage() {
+        return $("#url-error").getText();
+    }
+
+    public String labelValidationErrorMessage() {
+        return $("#label-error").getText();
+    }
+
     public boolean isRendered() {
         return form.isDisplayed();
     }
