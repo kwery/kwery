@@ -29,9 +29,9 @@ public class TestUtil {
 
     public static Datasource datasource() {
         Datasource datasource = new Datasource();
-        datasource.setUrl("url");
-        datasource.setUsername("username");
-        datasource.setPassword("password");
+        datasource.setUrl("localhost");
+        datasource.setUsername("root");
+        datasource.setPassword("root");
         datasource.setLabel("label");
         datasource.setType(MYSQL);
         return datasource;

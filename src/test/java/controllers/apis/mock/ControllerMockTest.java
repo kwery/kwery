@@ -39,6 +39,14 @@ public class ControllerMockTest {
         when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0), eq(str1))).thenReturn(Optional.of(dummyString));
     }
 
+    protected void mockMessagesWithReturn(String messageKey, String toReturn, String str0, String str1) {
+        when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0), eq(str1))).thenReturn(Optional.of(toReturn));
+    }
+
+    protected void mockMessagesWithReturn(String messageKey, String toReturn) {
+        when(messages.get(eq(messageKey), eq(context), any(Optional.class))).thenReturn(Optional.of(toReturn));
+    }
+
     protected ActionResult actionResult(Result result) {
         return (ActionResult) result.getRenderable();
     }
@@ -50,6 +58,11 @@ public class ControllerMockTest {
 
     protected void assertFailure(ActionResult actionResult) {
         assertThat(actionResult.getMessages(), containsInAnyOrder(dummyString));
+        assertThat(actionResult.getStatus(), is(failure));
+    }
+
+    protected void assertFailure(ActionResult actionResult, String... expectedMessages) {
+        assertThat(actionResult.getMessages(), containsInAnyOrder(expectedMessages));
         assertThat(actionResult.getStatus(), is(failure));
     }
 }

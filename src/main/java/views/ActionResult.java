@@ -30,6 +30,12 @@ public class ActionResult {
         this.fieldMessages = fieldMessages;
     }
 
+    public ActionResult(Status status, List<String> messages, Map<String, List<String>> fieldMessages) {
+        this.status = status;
+        this.messages = messages;
+        this.fieldMessages = fieldMessages;
+    }
+
     public List<String> getMessages() {
         return messages;
     }

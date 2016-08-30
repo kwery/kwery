@@ -16,6 +16,11 @@ import ninja.validation.Validation;
 import services.datasource.MysqlDatasourceService;
 import views.ActionResult;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import static com.google.common.base.Optional.of;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
@@ -44,18 +49,27 @@ public class DatasourceApiController {
         Result json = Results.json();
         ActionResult actionResult = null;
 
+        Map<String, List<String>> fieldMessages = new HashMap<>();
         if (validation.hasViolations()) {
-            actionResult = new ActionResult(failure, ControllerUtil.fieldMessages(validation, context, messages, json));
+            fieldMessages = ControllerUtil.fieldMessages(validation, context, messages, json);
+        }
+
+        List<String> errorMessages = new LinkedList<>();
+
+        if (datasourceDao.getByLabel(datasource.getLabel()) != null) {
+            errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+        }
+
+        if (!mysqlDatasourceService.testConnection(datasource)) {
+            errorMessages.add(messages.get(MYSQL_DATASOURCE_CONNECTION_FAILURE, context, of(json)).get());
+        }
+
+        if (fieldMessages.size() > 0 || errorMessages.size() > 0) {
+            actionResult = new ActionResult(failure, errorMessages, fieldMessages);
         } else {
-            Datasource existingDatasource = datasourceDao.getByLabel(datasource.getLabel());
-            if (existingDatasource == null) {
-                datasourceDao.save(datasource);
-                String msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
-                actionResult = new ActionResult(success, msg);
-            } else {
-                String msg = messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get();
-                actionResult = new ActionResult(failure, msg);
-            }
+            datasourceDao.save(datasource);
+            String msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+            actionResult = new ActionResult(success, msg);
         }
 
         return json.render(actionResult);

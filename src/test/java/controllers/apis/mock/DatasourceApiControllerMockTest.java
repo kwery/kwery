@@ -20,6 +20,7 @@ public class DatasourceApiControllerMockTest extends AbstractDatasourceApiContro
     public void testAddSuccess() {
         Datasource datasource = datasource();
         doNothing().when(datasourceDao).save(datasource);
+        when(mysqlDatasourceService.testConnection(datasource)).thenReturn(true);
         mockMessages(DATASOURCE_ADDITION_SUCCESS, MYSQL.name(), datasource.getLabel());
         assertSuccess(actionResult(datasourceApiController.addDatasource(datasource, context, validation)));
     }
@@ -27,9 +28,19 @@ public class DatasourceApiControllerMockTest extends AbstractDatasourceApiContro
     @Test
     public void testAddFailure() {
         Datasource datasource = datasource();
+
         when(datasourceDao.getByLabel(datasource.getLabel())).thenReturn(datasource);
-        mockMessages(DATASOURCE_ADDITION_FAILURE, MYSQL.name(), datasource.getLabel());
-        assertFailure(actionResult(datasourceApiController.addDatasource(datasource, context, validation)));
+        String alreadyExistsErrorMessage = "foo";
+        mockMessagesWithReturn(DATASOURCE_ADDITION_FAILURE, alreadyExistsErrorMessage, MYSQL.name(), datasource.getLabel());
+
+        when(mysqlDatasourceService.testConnection(datasource)).thenReturn(false);
+        String connectionFailedErrorMessage = "bar";
+        mockMessagesWithReturn(MYSQL_DATASOURCE_CONNECTION_FAILURE, connectionFailedErrorMessage);
+
+        assertFailure(
+                actionResult(datasourceApiController.addDatasource(datasource, context, validation)),
+                alreadyExistsErrorMessage, connectionFailedErrorMessage
+        );
     }
 
     @Test

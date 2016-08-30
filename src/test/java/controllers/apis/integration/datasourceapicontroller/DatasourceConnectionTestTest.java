@@ -1,5 +1,6 @@
 package controllers.apis.integration.datasourceapicontroller;
 
+import controllers.util.TestUtil;
 import models.Datasource;
 import org.junit.Test;
 import views.ActionResult;
@@ -22,6 +23,8 @@ public class DatasourceConnectionTestTest extends DatasoureApiControllerTest {
 
     @Test
     public void testFailure() throws IOException {
+        Datasource datasource = TestUtil.datasource();
+        datasource.setUrl("lskdjfkldsjf");
         ActionResult result = actionResult(ninjaTestBrowser.postJson(mysqlDatasourceConnectionTestApi, datasource));
         assertFailure(result, MYSQL_DATASOURCE_CONNECTION_FAILURE_M);
     }
