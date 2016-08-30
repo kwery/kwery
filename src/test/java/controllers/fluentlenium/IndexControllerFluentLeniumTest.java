@@ -11,7 +11,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
-public class IndexControllerFluentLeniumTest extends FluentLeniumTest {
+public class IndexControllerFluentLeniumTest extends RepoDashFluentLeniumTest {
     @Test
     public void index() {
         goTo(getServerAddress());
@@ -21,7 +21,7 @@ public class IndexControllerFluentLeniumTest extends FluentLeniumTest {
         assertEquals("Create admin user button present in index page", Messages.CREATE_ADMIN_USER_M.toUpperCase(), $(idSel(CREATE_ADMIN_USER_I)).getText());
         click($(idSel(CREATE_ADMIN_USER_I)));
         await().atMost(TIMEOUT_SECONDS, SECONDS);
-        assertEquals("URL changed to create admin user fragment", getServerAddress() + "#onboarding/add-admin-user", url());
+        assertEquals("URL changed to create admin user fragment", getServerAddress() + "/#onboarding/add-admin-user", url());
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(idSel(USERNAME_I)).isPresent();
     }
 }

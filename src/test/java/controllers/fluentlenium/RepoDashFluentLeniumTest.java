@@ -3,7 +3,11 @@ package controllers.fluentlenium;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import ninja.NinjaFluentLeniumTest;
+import com.google.inject.Injector;
+import ninja.utils.NinjaTestServer;
+import org.fluentlenium.adapter.FluentTest;
+import org.junit.After;
+import org.junit.Before;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -11,15 +15,34 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-public class FluentLeniumTest extends NinjaFluentLeniumTest {
-    static final int TIMEOUT_SECONDS = 5;
+//Contains code for NinjaFluentLeniumTest with HTMLUnitDriver taken out
+public class RepoDashFluentLeniumTest extends FluentTest {
+    public static final int TIMEOUT_SECONDS = 5;
+    public NinjaTestServer ninjaTestServer;
 
-    @Override
     public WebDriver getDefaultDriver() {
         System.setProperty("webdriver.chrome.driver", "/usr/lib/chromium-browser/chromedriver");
         ChromeDriver chromeDriver = new ChromeDriver();
         chromeDriver.manage().timeouts().implicitlyWait(1, TimeUnit.DAYS);
         return chromeDriver;
+    }
+
+    @Before
+    public void startupServer() {
+        ninjaTestServer = new NinjaTestServer();
+    }
+
+    public String getServerAddress() {
+        return ninjaTestServer.getServerUrl();
+    }
+
+    @After
+    public void shutdownServer() {
+        ninjaTestServer.shutdown();
+    }
+
+    public Injector getInjector() {
+        return ninjaTestServer.getInjector();
     }
 
     public String clsSel(String className, String... htmlTags) {
