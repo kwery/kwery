@@ -23,7 +23,6 @@ define(["knockout", "jquery", "text!components/user/admin/add.html"], function (
 
         self.submit = function(formElem) {
             if ($(formElem).valid()) {
-                console.log("Form submitted");
                 $.ajax("/api/user/add-admin-user", {
                     data: ko.toJSON({username: self.username, password: self.password}),
                     type: "post", contentType: "application/json",
