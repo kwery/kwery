@@ -30,6 +30,19 @@ public class AddAdminUserPage extends FluentPage {
         click("#createAdminUser");
     }
 
+    public void submitForm() {
+        fill("input").with();
+        click("#createAdminUser");
+    }
+
+    public String usernameValidationMessage() {
+        return $("#username-error").getText();
+    }
+
+    public String passwordValidationMessage() {
+        return $("#password-error").getText();
+    }
+
     public boolean isRendered() {
         return createAdminUserForm.isDisplayed();
     }

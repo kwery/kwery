@@ -5,15 +5,15 @@
                             nextAction: '#user/login',
                             nextActionName: ko.i18n('admin.user.addition.next.action')">
     </action-result>
-    <form data-bind="submit: submit">
+    <form data-bind="submit: submit" id="createAdminUserForm">
         <div class="row">
             <div class="six columns">
                 <label data-bind="text: ko.i18n('user.name')" for="username"></label>
-                <input data-bind="value: username" class="u-full-width" type="text" id="username" name="username">
+                <input data-bind="value: username" minlength="3" required class="u-full-width" type="text" id="username" name="username">
             </div>
             <div class="six columns">
                 <label data-bind="text: ko.i18n('password')" for="password"></label>
-                <input data-bind="value: password" class="u-full-width" type="password" id="password" name="password">
+                <input data-bind="value: password" minlength="3" required class="u-full-width" type="password" id="password" name="password">
             </div>
         </div>
         <div class="row">

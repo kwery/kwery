@@ -13,12 +13,16 @@ var require = {
         "knockout-jqueryui": "knockout-jqueryui",
         "repo-dash": "repo-dash",
         "router": "router",
-        "polyglot": "polyglot"
+        "polyglot": "polyglot",
+        "jquery-validate": "jquery.validate"
     },
     shim: {
         "jquery-migrate": {
             deps: ["jquery"],
             exports: "jquery"
+        },
+        "jquery-validate": {
+            deps: ["jquery"]
         }
     }
 };
