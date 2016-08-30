@@ -13,11 +13,14 @@ import ninja.Results;
 import ninja.i18n.Messages;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
+import services.datasource.MysqlDatasourceService;
 import views.ActionResult;
 
 import static com.google.common.base.Optional.of;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
+import static controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_FAILURE;
+import static controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_SUCCESS;
 import static models.Datasource.Type.MYSQL;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
@@ -29,6 +32,9 @@ public class DatasourceApiController {
 
     @Inject
     private Messages messages;
+
+    @Inject
+    private MysqlDatasourceService mysqlDatasourceService;
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result addDatasource(
@@ -55,11 +61,35 @@ public class DatasourceApiController {
         return json.render(actionResult);
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result testConnection(Datasource datasource, Context context) {
+        Result json = Results.json();
+        ActionResult result;
+
+        if (mysqlDatasourceService.testConnection(datasource)) {
+            result = new ActionResult(
+                    success,
+                    messages.get(MYSQL_DATASOURCE_CONNECTION_SUCCESS, context, of(json)).get()
+            );
+        } else {
+            result = new ActionResult(
+                    failure,
+                    messages.get(MYSQL_DATASOURCE_CONNECTION_FAILURE, context, of(json)).get()
+            );
+        }
+
+        return json.render(result);
+    }
+
     public void setMessages(Messages messages) {
         this.messages = messages;
     }
 
     public void setDatasourceDao(DatasourceDao datasourceDao) {
         this.datasourceDao = datasourceDao;
+    }
+
+    public void setMysqlDatasourceService(MysqlDatasourceService mysqlDatasourceService) {
+        this.mysqlDatasourceService = mysqlDatasourceService;
     }
 }

@@ -5,6 +5,7 @@ import dao.DatasourceDao;
 import ninja.validation.Validation;
 import org.junit.Before;
 import org.mockito.Mock;
+import services.datasource.MysqlDatasourceService;
 
 import static org.mockito.Mockito.when;
 
@@ -13,6 +14,8 @@ public abstract class AbstractDatasourceApiControllerMockTest extends Controller
     protected DatasourceDao datasourceDao;
     @Mock
     protected Validation validation;
+    @Mock
+    protected MysqlDatasourceService mysqlDatasourceService;
 
     protected DatasourceApiController datasourceApiController;
 
@@ -21,6 +24,7 @@ public abstract class AbstractDatasourceApiControllerMockTest extends Controller
         datasourceApiController = new DatasourceApiController();
         datasourceApiController.setMessages(messages);
         datasourceApiController.setDatasourceDao(datasourceDao);
+        datasourceApiController.setMysqlDatasourceService(mysqlDatasourceService);
         when(validation.hasViolations()).thenReturn(false);
     }
 }

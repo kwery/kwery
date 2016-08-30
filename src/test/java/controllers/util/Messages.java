@@ -1,7 +1,5 @@
 package controllers.util;
 
-import models.Datasource;
-
 /**
  * Holds messages present in messages.properties file, this is done to ease testing. All messages present here
  * should have an equivalent entry in messages.properties file.
@@ -29,5 +27,7 @@ public class Messages {
     public static final String PASSWORD_VALIDATION_M = "Password should be at least of one character";
     public static final String URL_VALIDATION_M = "url should be at least of one character";
     public static final String LABEL_VALIDATION_M = "label should be at least of one character";
+    public static final String MYSQL_DATASOURCE_CONNECTION_SUCCESS_M = "Successfully connected to MySQL datasource";
+    public static final String MYSQL_DATASOURCE_CONNECTION_FAILURE_M = "Failed to connect to MySQL datasource";
 
 }
