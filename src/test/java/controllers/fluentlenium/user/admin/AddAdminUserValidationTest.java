@@ -6,12 +6,12 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class AddAdminUserEmptySubmitValidationTest extends AddAdminUserTest {
+public class AddAdminUserValidationTest extends AddAdminUserTest {
     @Test
     public void test() {
         initPage();
         page.submitForm();
-        assertThat(page.usernameValidationMessage(), is(Messages.USERNAME_VALIDATION_M));
-        assertThat(page.passwordValidationMessage(), is(Messages.PASSWORD_VALIDATION_M));
+        assertThat(page.usernameValidationErrorMessage(), is(Messages.USERNAME_VALIDATION_M));
+        assertThat(page.passwordValidationErrorMessage(), is(Messages.PASSWORD_VALIDATION_M));
     }
 }

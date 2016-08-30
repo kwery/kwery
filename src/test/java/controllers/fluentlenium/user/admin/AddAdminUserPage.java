@@ -35,11 +35,11 @@ public class AddAdminUserPage extends FluentPage {
         click("#createAdminUser");
     }
 
-    public String usernameValidationMessage() {
+    public String usernameValidationErrorMessage() {
         return $("#username-error").getText();
     }
 
-    public String passwordValidationMessage() {
+    public String passwordValidationErrorMessage() {
         return $("#password-error").getText();
     }
 
