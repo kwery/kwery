@@ -6,6 +6,8 @@ import controllers.util.TestUtil;
 import dao.UserDao;
 import models.Datasource;
 import models.User;
+import org.junit.After;
+import org.junit.Before;
 
 import static org.junit.Assert.fail;
 
@@ -13,6 +15,12 @@ public class DatasourceTest extends RepoDashFluentLeniumTest {
     protected AddDatasourcePage page;
 
     protected Datasource datasource = TestUtil.datasource();
+
+    @Before
+    @Override
+    public void startServer() {
+        super.startServer();
+    }
 
     public void initPage() {
         User user = TestUtil.user();
@@ -33,5 +41,11 @@ public class DatasourceTest extends RepoDashFluentLeniumTest {
         if (!page.isRendered()) {
             fail("Add datasource page is not rendered");
         }
+    }
+
+    @Override
+    @After
+    public void shutdownServer() {
+        super.shutdownServer();
     }
 }

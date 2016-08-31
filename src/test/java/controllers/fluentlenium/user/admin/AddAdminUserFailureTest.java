@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class AddAdminUserFailureTest extends AddAdminUserTest {
     @Before
-    public void before() {
+    public void saveUser() {
         getInjector().getInstance(UserDao.class).save(user);
     }
 

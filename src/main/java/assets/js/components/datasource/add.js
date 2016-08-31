@@ -4,6 +4,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
         self.username = ko.observable();
         self.password = ko.observable();
         self.url = ko.observable();
+        self.port = ko.observable();
         self.label = ko.observable();
 
         self.status = ko.observable("");
@@ -15,6 +16,11 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
                 username: {
                     required: ko.i18n("username.validation"),
                     minlength: ko.i18n("username.validation")
+                },
+                port: {
+                    required: ko.i18n("port.validation"),
+                    minlength: ko.i18n("port.validation"),
+                    min: ko.i18n("port.validation")
                 },
                 url: {
                     required: ko.i18n("url.validation"),
@@ -32,6 +38,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
                 $.ajax("/api/datasource/add-datasource", {
                     data: ko.toJSON({
                         url: self.url,
+                        port: self.port,
                         username: self.username,
                         password: self.password,
                         label: self.label,

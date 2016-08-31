@@ -1,7 +1,6 @@
 package controllers.apis.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import controllers.util.Messages;
 import models.User;
 import ninja.NinjaTest;
 import views.ActionResult;

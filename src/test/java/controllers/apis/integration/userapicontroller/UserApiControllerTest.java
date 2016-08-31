@@ -20,7 +20,7 @@ public abstract class UserApiControllerTest extends ApiTest {
     protected User user;
 
     @Before
-    public void before() {
+    public void setupUserApiControllerTest() {
         this.userDao = getInjector().getInstance(UserDao.class);
         addAdminUserApi = getUrl(ADD_ADMIN_USER_API);
         loginApi = getUrl(LOGIN_API);

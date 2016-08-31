@@ -5,8 +5,7 @@ import org.junit.Before;
 
 public abstract class PostLoginApiTest extends UserApiControllerTest {
     @Before
-    public void before() {
-        super.before();
+    public void setupPostLoginApiTest() {
         userDao.save(user);
         ninjaTestBrowser.postJson(loginApi, TestUtil.user());
     }

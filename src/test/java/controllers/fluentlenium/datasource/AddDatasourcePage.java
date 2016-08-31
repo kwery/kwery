@@ -5,6 +5,9 @@ import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.support.FindBy;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static controllers.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
 import static controllers.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static controllers.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
@@ -40,6 +43,10 @@ public class AddDatasourcePage extends FluentPage {
         return $("#label-error").getText();
     }
 
+    public String portValidationErrorMessage() {
+        return $("#port-error").getText();
+    }
+
     public boolean isRendered() {
         return form.isDisplayed();
     }
@@ -50,6 +57,18 @@ public class AddDatasourcePage extends FluentPage {
 
     public void waitForFailureMessage(String label) {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_error p").hasText(format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, label));
+    }
+
+    public void waitForFailureMessage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_error").isDisplayed();
+    }
+
+    public List<String> errorMessages() {
+        List<String> messages = new LinkedList<>();
+        for (FluentWebElement e : $(".isa_error p")) {
+            messages.add(e.getText());
+        }
+        return messages;
     }
 
     @Override

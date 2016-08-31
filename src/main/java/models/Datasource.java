@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -19,6 +20,10 @@ public class Datasource {
     @Size(min = 1, message = "url.validation")
     @NotNull(message = "url.validation")
     private String url;
+
+    @Min(value = 1, message = "port.validation")
+    @NotNull(message = "port.validation")
+    private Integer port;
 
     @Size(min = 1, message = "username.validation")
     @NotNull(message = "username.validation")
@@ -47,6 +52,14 @@ public class Datasource {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public String getUsername() {

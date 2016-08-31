@@ -13,8 +13,7 @@ import static org.junit.Assert.assertThat;
 
 public class AddAdminUserExistsFailureTest extends UserApiControllerTest {
     @Before
-    public void before() {
-        super.before();
+    public void addAdminUserExistsFailureTestSetup() {
         userDao.save(TestUtil.user());
     }
 

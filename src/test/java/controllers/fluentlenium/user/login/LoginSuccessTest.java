@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class LoginSuccessTest extends LoginTest {
     @Before
-    public void before() {
+    public void saveUser() {
         getInjector().getInstance(UserDao.class).save(user);
     }
 
