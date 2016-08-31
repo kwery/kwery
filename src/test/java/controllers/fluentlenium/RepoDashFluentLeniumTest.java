@@ -28,7 +28,7 @@ public class RepoDashFluentLeniumTest extends FluentTest {
     }
 
     @Before
-    public void startupServer() {
+    public void startServer() {
         ninjaTestServer = new NinjaTestServer();
     }
 

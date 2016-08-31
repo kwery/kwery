@@ -43,6 +43,10 @@ public class AddDatasourcePage extends FluentPage {
         return $("#label-error").getText();
     }
 
+    public String portValidationErrorMessage() {
+        return $("#port-error").getText();
+    }
+
     public boolean isRendered() {
         return form.isDisplayed();
     }

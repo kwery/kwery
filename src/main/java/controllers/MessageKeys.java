@@ -28,4 +28,6 @@ public class MessageKeys {
     public static final String PASSWORD_VALIDATION = "password.validation";
     public static final String MYSQL_DATASOURCE_CONNECTION_SUCCESS = "mysql.datasource.connection.success";
     public static final String MYSQL_DATASOURCE_CONNECTION_FAILURE = "mysql.datasource.connection.failure";
+    public static final String PORT_VALIDATION = "port.validation";
+    public static final String PORT = "Port";
 }

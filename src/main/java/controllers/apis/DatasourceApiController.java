@@ -52,24 +52,25 @@ public class DatasourceApiController {
         Map<String, List<String>> fieldMessages = new HashMap<>();
         if (validation.hasViolations()) {
             fieldMessages = ControllerUtil.fieldMessages(validation, context, messages, json);
-        }
-
-        List<String> errorMessages = new LinkedList<>();
-
-        if (datasourceDao.getByLabel(datasource.getLabel()) != null) {
-            errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
-        }
-
-        if (!mysqlDatasourceService.testConnection(datasource)) {
-            errorMessages.add(messages.get(MYSQL_DATASOURCE_CONNECTION_FAILURE, context, of(json)).get());
-        }
-
-        if (fieldMessages.size() > 0 || errorMessages.size() > 0) {
-            actionResult = new ActionResult(failure, errorMessages, fieldMessages);
+            actionResult = new ActionResult(failure, fieldMessages);
         } else {
-            datasourceDao.save(datasource);
-            String msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
-            actionResult = new ActionResult(success, msg);
+            List<String> errorMessages = new LinkedList<>();
+
+            if (datasourceDao.getByLabel(datasource.getLabel()) != null) {
+                errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+            }
+
+            if (!mysqlDatasourceService.testConnection(datasource)) {
+                errorMessages.add(messages.get(MYSQL_DATASOURCE_CONNECTION_FAILURE, context, of(json)).get());
+            }
+
+            if (errorMessages.size() > 0) {
+                actionResult = new ActionResult(failure, errorMessages);
+            } else {
+                datasourceDao.save(datasource);
+                String msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+                actionResult = new ActionResult(success, msg);
+            }
         }
 
         return json.render(actionResult);

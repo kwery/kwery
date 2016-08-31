@@ -16,8 +16,7 @@ public abstract class DatasoureApiControllerTest extends PostLoginApiTest {
     protected Datasource datasource;
 
     @Before
-    public void before() {
-        super.before();
+    public void setupDatasourceApiControllerTest() {
         datasourceDao = getInjector().getInstance(DatasourceDao.class);
         addDatasourceApi = getUrl(ADD_DATASOURCE_API);
         mysqlDatasourceConnectionTestApi = getUrl(MYSQL_DATASOURCE_CONNECTION_TEST_API);

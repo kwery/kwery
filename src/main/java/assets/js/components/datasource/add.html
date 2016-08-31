@@ -9,6 +9,12 @@
         </div>
         <div class="row">
             <div class="twelve columns">
+                <label data-bind="text: ko.i18n('port')" for="port"></label>
+                <input data-bind="value: port" minlength="1" min="1" required class="u-full-width" type="text" id="port" name="port">
+            </div>
+        </div>
+        <div class="row">
+            <div class="twelve columns">
                 <label data-bind="text: ko.i18n('user.name')" for="userName"></label>
                 <input data-bind="value: username" minlength="1" required class="u-full-width" type="text" id="username" name="username">
             </div>

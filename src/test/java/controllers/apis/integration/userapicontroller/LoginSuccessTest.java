@@ -10,8 +10,7 @@ import static java.text.MessageFormat.format;
 
 public class LoginSuccessTest extends UserApiControllerTest {
     @Before
-    public void before() {
-        super.before();
+    public void loginSuccessTestSetup() {
         userDao.save(user);
     }
 

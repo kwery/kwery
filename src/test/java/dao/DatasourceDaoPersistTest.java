@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import javax.persistence.PersistenceException;
 
+import static controllers.util.TestUtil.datasource;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 

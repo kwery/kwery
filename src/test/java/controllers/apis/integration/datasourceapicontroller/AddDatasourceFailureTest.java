@@ -15,8 +15,7 @@ import static models.Datasource.Type.MYSQL;
 
 public class AddDatasourceFailureTest extends DatasoureApiControllerTest {
     @Before
-    public void before() {
-        super.before();
+    public void addDatasourceFailureTestSetup() {
         datasourceDao.save(datasource);
     }
 

@@ -29,5 +29,6 @@ public class Messages {
     public static final String LABEL_VALIDATION_M = "label should be at least of one character";
     public static final String MYSQL_DATASOURCE_CONNECTION_SUCCESS_M = "Successfully connected to MySQL datasource";
     public static final String MYSQL_DATASOURCE_CONNECTION_FAILURE_M = "Failed to connect to MySQL datasource";
-
+    public static final String PORT_VALIDATION_M = "Port should be greater than 0";
+    public static final String PORT_M = "Port";
 }

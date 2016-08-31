@@ -12,15 +12,17 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public class AddDatasourceFailureTest extends DatasourceTest {
+    @Override
     @Before
-    public void before() {
+    public void startServer() {
+        super.startServer();
         getInjector().getInstance(DatasourceDao.class).save(datasource);
     }
 
     @Test
     public void test() {
         initPage();
-        page.submitForm(datasource.getUrl() + "sjdfldsjf", datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
+        page.submitForm(datasource.getUrl() + "sjdfldsjf", String.valueOf(datasource.getPort()), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
         page.waitForFailureMessage();
         assertThat(
                 page.errorMessages(),
