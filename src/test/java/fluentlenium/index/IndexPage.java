@@ -9,8 +9,6 @@ import util.Messages;
 import static util.Messages.INSTALLATION_WELCOME_M;
 
 public class IndexPage extends FluentPage {
-    protected String baseUrl;
-
     @AjaxElement
     @FindBy(id = "heroText")
     protected FluentWebElement heroText;
@@ -21,16 +19,7 @@ public class IndexPage extends FluentPage {
 
     @Override
     public String getUrl() {
-        return baseUrl;
-    }
-
-    @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+        return "/";
     }
 
     public boolean isRendered() {

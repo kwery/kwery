@@ -12,7 +12,6 @@ public class AddAdminUserFailureTest extends AddAdminUserTest {
 
     @Test
     public void test() {
-        initPage();
         page.submitForm(user.getUsername(), user.getPassword());
         page.waitForFailureMessage(user);
     }

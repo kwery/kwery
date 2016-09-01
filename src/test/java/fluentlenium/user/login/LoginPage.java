@@ -17,11 +17,9 @@ public class LoginPage extends FluentPage {
     @FindBy(id = "loginForm")
     protected FluentWebElement loginForm;
 
-    private String baseUrl;
-
     @Override
     public String getUrl() {
-        return baseUrl + "/#user/login";
+        return "/#user/login";
     }
 
     public void submitForm(String... inputs) {
@@ -39,14 +37,5 @@ public class LoginPage extends FluentPage {
 
     public void waitForFailureMessage() {
         await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_error").hasText(LOGIN_FAILURE_M);
-    }
-
-    @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
     }
 }

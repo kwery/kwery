@@ -2,16 +2,19 @@ package fluentlenium.user.admin;
 
 import fluentlenium.RepoDashFluentLeniumTest;
 import models.User;
+import org.junit.Before;
 import util.TestUtil;
 
 public abstract class AddAdminUserTest extends RepoDashFluentLeniumTest {
     protected AddAdminUserPage page;
-    protected User user = TestUtil.user();
+    protected User user;
 
-    protected void initPage() {
+    @Before
+    public void setUpAddAdminUserTest() {
         page = createPage(AddAdminUserPage.class);
-        page.setBaseUrl(getServerAddress());
+        page.withDefaultUrl(getServerAddress());
         goTo(page);
         page.isRendered();
+        user = TestUtil.user();
     }
 }

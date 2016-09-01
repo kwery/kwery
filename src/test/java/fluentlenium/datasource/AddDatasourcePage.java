@@ -19,7 +19,6 @@ public class AddDatasourcePage extends FluentPage {
     @AjaxElement
     @FindBy(id = "addDatasourceForm")
     protected FluentWebElement form;
-    protected String baseUrl;
 
     public void submitForm(String... params) {
         fill("input").with(params);
@@ -73,15 +72,6 @@ public class AddDatasourcePage extends FluentPage {
 
     @Override
     public String getUrl() {
-        return baseUrl + "/#onboarding/add-datasource";
-    }
-
-    @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+        return "/#onboarding/add-datasource";
     }
 }

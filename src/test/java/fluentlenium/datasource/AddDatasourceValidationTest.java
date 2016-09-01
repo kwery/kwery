@@ -12,7 +12,6 @@ import static util.Messages.USERNAME_VALIDATION_M;
 public class AddDatasourceValidationTest extends DatasourceTest {
     @Test
     public void testEmptyValues() {
-        initPage();
         page.submitForm("", "", "", "", "");
         assertThat(page.usernameValidationErrorMessage(), is(USERNAME_VALIDATION_M));
         assertThat(page.urlValidationErrorMessage(), is(URL_VALIDATION_M));
@@ -22,7 +21,6 @@ public class AddDatasourceValidationTest extends DatasourceTest {
 
     @Test
     public void testPortMinimumValue() {
-        initPage();
         page.submitForm(datasource.getUrl(), String.valueOf(0), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
         assertThat(page.portValidationErrorMessage(), is(PORT_VALIDATION_M));
     }

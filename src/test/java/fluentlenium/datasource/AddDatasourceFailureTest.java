@@ -12,16 +12,13 @@ import static util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static util.Messages.MYSQL_DATASOURCE_CONNECTION_FAILURE_M;
 
 public class AddDatasourceFailureTest extends DatasourceTest {
-    @Override
     @Before
-    public void startServer() {
-        super.startServer();
+    public void setUpAddDatasourceFailureTest() {
         getInjector().getInstance(DatasourceDao.class).save(datasource);
     }
 
     @Test
     public void test() {
-        initPage();
         page.submitForm(datasource.getUrl() + "sjdfldsjf", String.valueOf(datasource.getPort()), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
         page.waitForFailureMessage();
         assertThat(

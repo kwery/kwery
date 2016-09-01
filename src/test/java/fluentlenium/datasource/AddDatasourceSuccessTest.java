@@ -12,10 +12,8 @@ import static org.junit.Assert.fail;
 public class AddDatasourceSuccessTest extends DatasourceTest {
     protected CloudHost cloudHost;
 
-    @Override
     @Before
-    public void startServer() {
-        super.startServer();
+    public void setUpAddDatasourceSuccessTest() {
         cloudHost = CloudHostFactory.getCloudHost("mysql");
         cloudHost.setup();
 
@@ -32,14 +30,12 @@ public class AddDatasourceSuccessTest extends DatasourceTest {
 
     @Test
     public void test() {
-        initPage();
         page.submitForm(datasource.getUrl(), String.valueOf(datasource.getPort()), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
         page.waitForSuccessMessage(datasource.getLabel());
     }
 
     @After
-    public void shutdownServer() {
-        super.shutdownServer();
+    public void tearDownAddDatasourceSuccessTest() {
         cloudHost.teardown();
     }
 }

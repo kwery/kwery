@@ -18,11 +18,9 @@ public class AddAdminUserPage extends FluentPage {
     @FindBy(id = "createAdminUserForm")
     protected FluentWebElement createAdminUserForm;
 
-    private String baseUrl;
-
     @Override
     public String getUrl() {
-        return baseUrl + "/#onboarding/add-admin-user";
+        return "/#onboarding/add-admin-user";
     }
 
     public void submitForm(String... inputs) {
@@ -45,15 +43,6 @@ public class AddAdminUserPage extends FluentPage {
 
     public boolean isRendered() {
         return createAdminUserForm.isDisplayed();
-    }
-
-    @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
     }
 
     public void waitForSuccessMessage(User user) {
@@ -79,7 +68,7 @@ public class AddAdminUserPage extends FluentPage {
     }
 
     public String expectedNextActionUrl() {
-        return baseUrl + "/#user/login";
+        return getBaseUrl() + "/#user/login";
     }
 
     public void waitForNextPage() {

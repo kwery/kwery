@@ -12,7 +12,6 @@ public class LoginSuccessTest extends LoginTest {
 
     @Test
     public void test() {
-        initPage();
         page.submitForm(user.getUsername(), user.getPassword());
         page.waitForSuccessMessage(user);
     }
