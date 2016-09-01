@@ -1,6 +1,7 @@
 package fluentlenium.datasource;
 
 import fluentlenium.RepoDashFluentLeniumTest;
+import fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
@@ -15,7 +16,7 @@ import static models.Datasource.Type.MYSQL;
 import static util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 
-public class AddDatasourcePage extends FluentPage {
+public class AddDatasourcePage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "addDatasourceForm")
     protected FluentWebElement form;
@@ -46,6 +47,7 @@ public class AddDatasourcePage extends FluentPage {
         return $("#port-error").getText();
     }
 
+    @Override
     public boolean isRendered() {
         return form.isDisplayed();
     }

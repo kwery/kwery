@@ -1,6 +1,7 @@
 package fluentlenium.user.admin;
 
 import fluentlenium.RepoDashFluentLeniumTest;
+import fluentlenium.RepoDashPage;
 import models.User;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
@@ -13,7 +14,7 @@ import static util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
 import static util.Messages.ADMIN_USER_ADDITION_NEXT_STEP_M;
 import static util.Messages.ADMIN_USER_ADDITION_SUCCESS_M;
 
-public class AddAdminUserPage extends FluentPage {
+public class AddAdminUserPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "createAdminUserForm")
     protected FluentWebElement createAdminUserForm;
@@ -41,6 +42,7 @@ public class AddAdminUserPage extends FluentPage {
         return $("#password-error").getText();
     }
 
+    @Override
     public boolean isRendered() {
         return createAdminUserForm.isDisplayed();
     }

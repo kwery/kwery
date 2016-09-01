@@ -1,5 +1,6 @@
 package fluentlenium.index;
 
+import fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
@@ -8,7 +9,7 @@ import util.Messages;
 
 import static util.Messages.INSTALLATION_WELCOME_M;
 
-public class IndexPage extends FluentPage {
+public class IndexPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "heroText")
     protected FluentWebElement heroText;
@@ -22,6 +23,7 @@ public class IndexPage extends FluentPage {
         return "/";
     }
 
+    @Override
     public boolean isRendered() {
         return heroText.isDisplayed();
     }
