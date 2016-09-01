@@ -1,6 +1,7 @@
 package fluentlenium.user.login;
 
 import fluentlenium.RepoDashFluentLeniumTest;
+import fluentlenium.RepoDashPage;
 import models.User;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
@@ -12,16 +13,14 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static util.Messages.LOGIN_FAILURE_M;
 import static util.Messages.LOGIN_SUCCESS_M;
 
-public class LoginPage extends FluentPage {
+public class LoginPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "loginForm")
     protected FluentWebElement loginForm;
 
-    private String baseUrl;
-
     @Override
     public String getUrl() {
-        return baseUrl + "/#user/login";
+        return "/#user/login";
     }
 
     public void submitForm(String... inputs) {
@@ -29,6 +28,7 @@ public class LoginPage extends FluentPage {
         click("#login");
     }
 
+    @Override
     public boolean isRendered() {
         return loginForm.isDisplayed();
     }
@@ -39,14 +39,5 @@ public class LoginPage extends FluentPage {
 
     public void waitForFailureMessage() {
         await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_error").hasText(LOGIN_FAILURE_M);
-    }
-
-    @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
     }
 }

@@ -1,5 +1,6 @@
 package fluentlenium.index;
 
+import fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
@@ -8,9 +9,7 @@ import util.Messages;
 
 import static util.Messages.INSTALLATION_WELCOME_M;
 
-public class IndexPage extends FluentPage {
-    protected String baseUrl;
-
+public class IndexPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "heroText")
     protected FluentWebElement heroText;
@@ -21,18 +20,10 @@ public class IndexPage extends FluentPage {
 
     @Override
     public String getUrl() {
-        return baseUrl;
+        return "/";
     }
 
     @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
     public boolean isRendered() {
         return heroText.isDisplayed();
     }

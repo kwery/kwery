@@ -5,21 +5,24 @@ import fluentlenium.RepoDashFluentLeniumTest;
 import fluentlenium.user.login.LoginPage;
 import models.Datasource;
 import models.User;
+import org.junit.Before;
 import util.TestUtil;
 
 import static org.junit.Assert.fail;
 
 public class DatasourceTest extends RepoDashFluentLeniumTest {
     protected AddDatasourcePage page;
+    protected Datasource datasource;
 
-    protected Datasource datasource = TestUtil.datasource();
+    @Before
+    public void setUpDatasourceTest() {
+        datasource = TestUtil.datasource();
 
-    public void initPage() {
         User user = TestUtil.user();
         getInjector().getInstance(UserDao.class).save(user);
 
         LoginPage loginPage = createPage(LoginPage.class);
-        loginPage.setBaseUrl(getServerAddress());
+        loginPage.withDefaultUrl(getServerAddress());
         goTo(loginPage);
         if (!loginPage.isRendered()) {
             fail("Login page is not rendered");
@@ -28,7 +31,7 @@ public class DatasourceTest extends RepoDashFluentLeniumTest {
         loginPage.waitForSuccessMessage(user);
 
         page = createPage(AddDatasourcePage.class);
-        page.setBaseUrl(getServerAddress());
+        page.withDefaultUrl(getServerAddress());
         goTo(page);
         if (!page.isRendered()) {
             fail("Add datasource page is not rendered");

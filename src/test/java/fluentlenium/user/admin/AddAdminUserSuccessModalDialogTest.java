@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 public class AddAdminUserSuccessModalDialogTest extends AddAdminUserTest {
     @Test
     public void test() {
-        initPage();
         page.submitForm(user.getUsername(), user.getPassword());
         page.waitForSuccessMessage(user);
         try {

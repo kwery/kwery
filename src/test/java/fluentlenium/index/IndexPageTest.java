@@ -1,15 +1,17 @@
 package fluentlenium.index;
 
 import fluentlenium.RepoDashFluentLeniumTest;
+import org.junit.Before;
 
 import static org.junit.Assert.fail;
 
 public abstract class IndexPageTest extends RepoDashFluentLeniumTest {
     protected IndexPage page;
 
-    public void initPage() {
+    @Before
+    public void setUpIndexPageTest() {
         page = createPage(IndexPage.class);
-        page.setBaseUrl(getServerAddress());
+        page.withDefaultUrl(getServerAddress());
         goTo(page);
         if (!page.isRendered()) {
             fail("Index page is not yet rendered");

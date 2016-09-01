@@ -2,16 +2,20 @@ package fluentlenium.user.login;
 
 import fluentlenium.RepoDashFluentLeniumTest;
 import models.User;
-import util.TestUtil;
+import org.junit.Before;
+
+import static util.TestUtil.user;
 
 public abstract class LoginTest extends RepoDashFluentLeniumTest {
     protected LoginPage page;
-    protected User user = TestUtil.user();
+    protected User user;
 
-    protected void initPage() {
+    @Before
+    public void setUpLoginTest() {
         page = createPage(LoginPage.class);
-        page.setBaseUrl(getServerAddress());
+        page.withDefaultUrl(getServerAddress());
         goTo(page);
         page.isRendered();
+        user = user();
     }
 }

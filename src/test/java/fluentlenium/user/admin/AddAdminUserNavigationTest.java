@@ -8,7 +8,6 @@ import static org.junit.Assert.assertThat;
 public class AddAdminUserNavigationTest extends AddAdminUserTest {
     @Test
     public void test() {
-        initPage();
         page.submitForm(user.getUsername(), user.getPassword());
         page.waitForSuccessMessage(user);
         assertThat($("#nextAction").getText(), is(page.expectedNextActionName()));
