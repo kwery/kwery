@@ -1,6 +1,5 @@
 package controllers.apis.mock;
 
-import controllers.util.TestSession;
 import models.User;
 import ninja.Result;
 import ninja.session.Session;
@@ -8,13 +7,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import util.TestSession;
+import util.TestUtil;
 
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_NEXT_ACTION;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static controllers.MessageKeys.LOGIN_SUCCESS;
 import static controllers.apis.UserApiController.SESSION_USERNAME_KEY;
-import static controllers.util.TestUtil.user;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -28,7 +28,7 @@ public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest
 
     @Test
     public void testAddUserSuccess() {
-        User user = user();
+        User user = TestUtil.user();
         when(userDao.getByUsername(user.getUsername())).thenReturn(null);
         doNothing().when(userDao).save(user);
 
@@ -43,7 +43,7 @@ public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest
 
     @Test
     public void testAddUserFailure() {
-        User user = user();
+        User user = TestUtil.user();
         when(userDao.getByUsername(user.getUsername())).thenReturn(user);
         mockMessages(ADMIN_USER_ADDITION_FAILURE, user.getUsername());
         assertFailure(actionResult(userApiController.addAdminUser(context, user, validation)));
@@ -51,7 +51,7 @@ public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest
 
     @Test
     public void testLoginSuccess() {
-        User user = user();
+        User user = TestUtil.user();
         when(userDao.getUser(user.getUsername(), user.getPassword())).thenReturn(user);
 
         session = new TestSession();
@@ -66,7 +66,7 @@ public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest
 
     @Test
     public void testUser() {
-        User user = user();
+        User user = TestUtil.user();
         user.setId(1);
 
         when(userDao.getByUsername(user.getUsername())).thenReturn(user);

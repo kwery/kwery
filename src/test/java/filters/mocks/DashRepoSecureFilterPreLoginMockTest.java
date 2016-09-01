@@ -1,7 +1,6 @@
 package filters.mocks;
 
 import com.google.common.base.Optional;
-import controllers.util.TestSession;
 import filters.DashRepoSecureFilter;
 import ninja.Context;
 import ninja.FilterChain;
@@ -13,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import util.TestSession;
 import views.ActionResult;
 
 import static controllers.MessageKeys.USER_NOT_LOGGED_IN;
