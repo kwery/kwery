@@ -42,4 +42,20 @@ public class DatasourceDao {
             return datasources.get(0);
         }
     }
+
+    @UnitOfWork
+    public Datasource getById(Integer id) {
+        EntityManager m = entityManagerProvider.get();
+        CriteriaBuilder cb = m.getCriteriaBuilder();
+        CriteriaQuery<Datasource> cq = cb.createQuery(Datasource.class);
+        Root<Datasource> root = cq.from(Datasource.class);
+        cq.where(cb.equal(root.get("id"), id));
+        TypedQuery<Datasource> tq = m.createQuery(cq);
+        List<Datasource> datasources = tq.getResultList();
+        if (datasources.isEmpty()) {
+            return null;
+        } else {
+            return datasources.get(0);
+        }
+    }
 }

@@ -13,16 +13,23 @@ import static util.TestUtil.datasource;
 
 public class DatasourceDaoQueryTest extends NinjaDaoTestBase {
     protected DatasourceDao datasourceDao;
+    protected Datasource datasource;
 
     @Before
     public void datasourceDaoQueryTestSetup() {
         datasourceDao = getInstance(DatasourceDao.class);
-        datasourceDao.save(datasource());
+        datasource = datasource();
+        datasourceDao.save(datasource);
     }
 
     @Test
     public void testQueryByLabel() {
         assertThat(datasourceDao.getByLabel(datasource().getLabel()), notNullValue(Datasource.class));
         assertThat(datasourceDao.getByLabel(datasource().getLabel() + "foo"), nullValue(Datasource.class));
+    }
+
+    @Test
+    public void testQueryById() {
+        assertThat(datasourceDao.getById(datasource.getId()), notNullValue());
     }
 }
