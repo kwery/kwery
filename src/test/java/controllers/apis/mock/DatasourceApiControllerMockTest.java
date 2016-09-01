@@ -9,10 +9,10 @@ import static controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
 import static controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_FAILURE;
 import static controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_SUCCESS;
-import static controllers.util.TestUtil.datasource;
 import static models.Datasource.Type.MYSQL;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static util.TestUtil.datasource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DatasourceApiControllerMockTest extends AbstractDatasourceApiControllerMockTest {

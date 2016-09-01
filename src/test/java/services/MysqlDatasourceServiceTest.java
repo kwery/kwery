@@ -2,19 +2,19 @@ package services;
 
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
-import controllers.util.TestUtil;
 import models.Datasource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import services.datasource.MysqlDatasourceService;
+import util.TestUtil;
 
 import java.io.IOException;
 
-import static controllers.util.TestUtil.datasource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static util.TestUtil.datasource;
 
 public class MysqlDatasourceServiceTest {
     protected CloudHost cloudHost;

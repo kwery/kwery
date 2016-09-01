@@ -1,6 +1,5 @@
 package filters.mocks;
 
-import controllers.util.TestSession;
 import filters.DashRepoSecureFilter;
 import ninja.Context;
 import ninja.FilterChain;
@@ -13,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import util.TestSession;
 
 import static controllers.apis.UserApiController.SESSION_USERNAME_KEY;
 import static org.hamcrest.core.Is.is;
