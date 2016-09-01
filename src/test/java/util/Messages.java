@@ -31,4 +31,6 @@ public class Messages {
     public static final String MYSQL_DATASOURCE_CONNECTION_FAILURE_M = "Failed to connect to MySQL datasource";
     public static final String PORT_VALIDATION_M = "Port should be greater than 0";
     public static final String PORT_M = "Port";
+    public static final String QUERY_VALIDATION_M = "Query cannot be empty";
+    public static final String CRON_EXPRESSION_VALIDATION_M = "Cron expression cannot be empty";
 }

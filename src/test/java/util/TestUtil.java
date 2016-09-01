@@ -2,6 +2,7 @@ package util;
 
 import com.google.common.collect.ImmutableMap;
 import models.Datasource;
+import models.QueryRun;
 import models.User;
 import org.openqa.selenium.Cookie;
 import org.slf4j.Logger;
@@ -44,6 +45,14 @@ public class TestUtil {
         datasource.setLabel("label");
         datasource.setType(MYSQL);
         return datasource;
+    }
+
+    public static QueryRun queryRun() {
+        QueryRun q = new QueryRun();
+        q.setQuery("select * from foo");
+        q.setLabel("test query run");
+        q.setCronExpression("* *");
+        return q;
     }
 
     public static Cookie sessionCookie(String value) {

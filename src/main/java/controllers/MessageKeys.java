@@ -30,4 +30,6 @@ public class MessageKeys {
     public static final String MYSQL_DATASOURCE_CONNECTION_FAILURE = "mysql.datasource.connection.failure";
     public static final String PORT_VALIDATION = "port.validation";
     public static final String PORT = "Port";
+    public static final String QUERY_VALIDATION = "query.validation";
+    public static final String CRON_EXPRESSION_VALIDATION = "cron.expression.validation";
 }

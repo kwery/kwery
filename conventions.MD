@@ -13,3 +13,4 @@ corresponding controller method as addUser, http path as add-user etc.
 11. Package names should be plural.
 12. DAO method names are prefixed with get and not find for example getUser not findUser.
 13. JavaScript module and file names in hyphen case.
+14. Database foreign keys should be suffixed with _fk.
