@@ -12,4 +12,5 @@ dependency-reduced-pom.xml
 #TODO - Fix this
 derby.log
 myEmbeddedDB
+repodashDb
 
