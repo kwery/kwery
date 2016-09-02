@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import models.QueryRun;
+import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -23,6 +24,7 @@ public class QueryRunDao {
         m.flush();
     }
 
+    @UnitOfWork
     public QueryRun getByLabel(String label) {
         EntityManager m = entityManagerProvider.get();
 

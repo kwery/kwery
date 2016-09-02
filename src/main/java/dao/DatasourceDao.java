@@ -58,4 +58,11 @@ public class DatasourceDao {
             return datasources.get(0);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    @UnitOfWork
+    public List<Datasource> getAll() {
+        EntityManager m = entityManagerProvider.get();
+        return m.createQuery("SELECT d FROM Datasource d").getResultList();
+    }
 }

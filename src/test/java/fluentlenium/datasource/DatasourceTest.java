@@ -6,9 +6,10 @@ import fluentlenium.user.login.LoginPage;
 import models.Datasource;
 import models.User;
 import org.junit.Before;
-import util.TestUtil;
 
 import static org.junit.Assert.fail;
+import static util.TestUtil.datasource;
+import static util.TestUtil.user;
 
 public class DatasourceTest extends RepoDashFluentLeniumTest {
     protected AddDatasourcePage page;
@@ -16,9 +17,9 @@ public class DatasourceTest extends RepoDashFluentLeniumTest {
 
     @Before
     public void setUpDatasourceTest() {
-        datasource = TestUtil.datasource();
+        datasource = datasource();
 
-        User user = TestUtil.user();
+        User user = user();
         getInjector().getInstance(UserDao.class).save(user);
 
         LoginPage loginPage = createPage(LoginPage.class);

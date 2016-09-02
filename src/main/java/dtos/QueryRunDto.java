@@ -10,14 +10,15 @@ public class QueryRunDto {
     private String query;
 
     @NotNull(message = "label.validation")
+    @Size(min = 1, message = "label.validation")
     private String label;
 
     @Size(min = 1, message = "cron.expression.validation")
     @NotNull(message = "cron.expression.validation")
     private String cronExpression;
 
-    @Min(value = 1, message= "cron.expression.datasource.validation")
-    @NotNull(message = "cron.expression.validation")
+    @Min(value = 1, message= "datasource.validation")
+    @NotNull(message = "datasource.validation")
     private Integer datasourceId;
 
     public String getQuery() {

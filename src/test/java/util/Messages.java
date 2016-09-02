@@ -33,4 +33,8 @@ public class Messages {
     public static final String PORT_M = "Port";
     public static final String QUERY_VALIDATION_M = "Query cannot be empty";
     public static final String CRON_EXPRESSION_VALIDATION_M = "Cron expression cannot be empty";
+    public static final String DATASOURCE_VALIDATION_M = "Datasource cannot be empty";
+    public static final String QUERY_RUN_ADDITION_SUCCESS_M = "Query has been successfully scheduled to run";
+    public static final String QUERY_RUN_ADDITION_FAILURE_M = "There is already a schedule with label {0}, please choose a different label";
+
 }

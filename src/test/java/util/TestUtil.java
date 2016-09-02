@@ -1,6 +1,7 @@
 package util;
 
 import com.google.common.collect.ImmutableMap;
+import dtos.QueryRunDto;
 import models.Datasource;
 import models.QueryRun;
 import models.User;
@@ -53,6 +54,14 @@ public class TestUtil {
         q.setLabel("test query run");
         q.setCronExpression("* *");
         return q;
+    }
+
+    public static QueryRunDto queryRunDto() {
+        QueryRunDto dto = new QueryRunDto();
+        dto.setQuery("select * from foo");
+        dto.setLabel("test");
+        dto.setCronExpression("*");
+        return dto;
     }
 
     public static Cookie sessionCookie(String value) {

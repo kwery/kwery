@@ -4,6 +4,7 @@ import fluentlenium.RepoDashFluentLeniumTest;
 import fluentlenium.RepoDashPage;
 import fluentlenium.datasource.AddDatasourcePage;
 import fluentlenium.index.IndexPage;
+import fluentlenium.queryrun.AddQueryRunPage;
 import fluentlenium.user.admin.AddAdminUserPage;
 import fluentlenium.user.login.LoginPage;
 import org.fluentlenium.core.FluentPage;
@@ -27,6 +28,7 @@ public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTe
         pageClasses.put(AddAdminUserPage.class, false);
         pageClasses.put(IndexPage.class, false);
         pageClasses.put(AddDatasourcePage.class, true);
+        pageClasses.put(AddQueryRunPage.class, true);
     }
 
     @Test
