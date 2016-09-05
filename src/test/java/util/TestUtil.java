@@ -52,7 +52,7 @@ public class TestUtil {
         QueryRun q = new QueryRun();
         q.setQuery("select * from foo");
         q.setLabel("test query run");
-        q.setCronExpression("* *");
+        q.setCronExpression("* * * * *");
         return q;
     }
 
@@ -60,7 +60,7 @@ public class TestUtil {
         QueryRunDto dto = new QueryRunDto();
         dto.setQuery("select * from foo");
         dto.setLabel("test");
-        dto.setCronExpression("*");
+        dto.setCronExpression("* * * * *");
         return dto;
     }
 

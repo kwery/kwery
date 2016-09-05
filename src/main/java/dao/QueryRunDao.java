@@ -47,4 +47,11 @@ public class QueryRunDao {
             return runs.get(0);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    @UnitOfWork
+    public List<QueryRun> getAll() {
+        EntityManager m = entityManagerProvider.get();
+        return m.createQuery("SELECT q FROM QueryRun q").getResultList();
+    }
 }

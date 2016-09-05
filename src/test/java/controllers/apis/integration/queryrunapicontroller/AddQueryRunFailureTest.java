@@ -1,7 +1,6 @@
 package controllers.apis.integration.queryrunapicontroller;
 
 import conf.Routes;
-import controllers.apis.QueryRunApiController;
 import controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import dao.DatasourceDao;
 import dao.QueryRunDao;
@@ -9,6 +8,7 @@ import dtos.QueryRunDto;
 import models.Datasource;
 import org.junit.Before;
 import org.junit.Test;
+import services.scheduler.SchedulerService;
 import util.Messages;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class AddQueryRunFailureTest extends AbstractPostLoginApiTest {
         dto = queryRunDto();
         dto.setDatasourceId(addedDatasource.getId());
 
-        getInjector().getInstance(QueryRunDao.class).save(new QueryRunApiController().toModel(dto, addedDatasource));
+        getInjector().getInstance(QueryRunDao.class).save(new SchedulerService().toModel(dto, addedDatasource));
     }
 
     @Test

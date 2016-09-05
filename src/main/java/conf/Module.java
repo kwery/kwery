@@ -17,12 +17,36 @@
 package conf;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import custom.TemplateEngineJsFreemarker;
+import it.sauronsoftware.cron4j.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import services.scheduler.ApplicationStartupScheduler;
+import services.scheduler.MysqlQueryRunner;
+import services.scheduler.QueryRunner;
+import services.scheduler.QueryTaskFactory;
 
 @Singleton
 public class Module extends AbstractModule {
+    private static Logger logger = LoggerFactory.getLogger(Module.class);
+
     protected void configure() {
         bind(TemplateEngineJsFreemarker.class);
+        bind(Scheduler.class).toProvider(SchedulerProvider.class).asEagerSingleton();
+        bind(QueryRunner.class).to(MysqlQueryRunner.class);
+        bind(ApplicationStartupScheduler.class);
+        install(new FactoryModuleBuilder().build(QueryTaskFactory.class));
+    }
+
+    public static class SchedulerProvider implements Provider<Scheduler> {
+        private Scheduler scheduler = new Scheduler();
+
+        @Override
+        public Scheduler get() {
+            return scheduler;
+        }
     }
 }

@@ -8,7 +8,6 @@ import dao.QueryRunDao;
 import dtos.QueryRunDto;
 import filters.DashRepoSecureFilter;
 import models.Datasource;
-import models.QueryRun;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -16,6 +15,7 @@ import ninja.Results;
 import ninja.i18n.Messages;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
+import services.scheduler.SchedulerService;
 import views.ActionResult;
 
 import java.util.LinkedList;
@@ -36,6 +36,9 @@ public class QueryRunApiController {
 
     @Inject
     private Messages messages;
+
+    @Inject
+    private SchedulerService schedulerService;
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result addQueryRun(@JSR303Validation QueryRunDto queryRunDto, Context context, Validation validation) {
@@ -59,8 +62,7 @@ public class QueryRunApiController {
             if (errorMessages.size() > 0) {
                 actionResult = new ActionResult(failure, errorMessages);
             } else {
-                QueryRun queryRun = toModel(queryRunDto, datasource);
-                queryRunDao.save(queryRun);
+                schedulerService.schedule(queryRunDto);
                 actionResult = new ActionResult(
                         success,
                         messages.get(MessageKeys.QUERY_RUN_ADDITION_SUCCESS, context, Optional.of(json)).get()
@@ -69,14 +71,5 @@ public class QueryRunApiController {
         }
 
         return json.render(actionResult);
-    }
-
-    public QueryRun toModel(QueryRunDto dto, Datasource datasource) {
-        QueryRun q = new QueryRun();
-        q.setQuery(dto.getQuery());
-        q.setCronExpression(dto.getCronExpression());
-        q.setLabel(dto.getLabel());
-        q.setDatasource(datasource);
-        return q;
     }
 }

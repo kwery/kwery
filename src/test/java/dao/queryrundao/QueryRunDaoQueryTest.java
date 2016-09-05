@@ -8,29 +8,47 @@ import ninja.NinjaDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static util.TestUtil.datasource;
 import static util.TestUtil.queryRun;
 
 public class QueryRunDaoQueryTest extends NinjaDaoTestBase {
     protected QueryRunDao dao;
-    protected QueryRun queryRun;
-    protected Datasource datasource;
+
+    protected QueryRun queryRun0;
 
     @Before
     public void setUpQueryRunDaoQueryTest() {
         dao = getInstance(QueryRunDao.class);
         Datasource datasource = datasource();
         getInstance(DatasourceDao.class).save(datasource);
-        queryRun = queryRun();
-        queryRun.setDatasource(datasource);
-        dao.save(queryRun);
+
+        queryRun0 = queryRun();
+        queryRun0.setDatasource(datasource);
+        dao.save(queryRun0);
+
+        QueryRun queryRun1 = queryRun();
+        queryRun1.setDatasource(datasource);
+        queryRun1.setLabel("unique test label");
+        dao.save(queryRun1);
     }
 
     @Test
-    public void test() {
-        QueryRun fromDb = dao.getByLabel(queryRun.getLabel());
+    public void testGetByLabel() {
+        QueryRun fromDb = dao.getByLabel(queryRun0.getLabel());
         assertThat(fromDb, notNullValue());
+    }
+
+    @Test
+    public void testGetAll() {
+        List<QueryRun> queryRuns = dao.getAll();
+        assertThat(queryRuns, hasSize(2));
+        assertThat(queryRuns, hasItems(instanceOf(QueryRun.class)));
     }
 }
