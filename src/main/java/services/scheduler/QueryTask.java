@@ -34,7 +34,6 @@ public class QueryTask extends Task {
         this(datasource, queryRun, TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES));
     }
 
-    @Inject
     public QueryTask(@Assisted Datasource datasource, @Assisted QueryRun queryRun, @Assisted long cancelCheckFrequency) {
         this.datasource = datasource;
         this.queryRun = queryRun;
