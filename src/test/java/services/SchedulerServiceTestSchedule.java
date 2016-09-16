@@ -65,7 +65,7 @@ public class SchedulerServiceTestSchedule extends NinjaDaoTestBase {
 
     protected class TestQueryTaskFactory implements QueryTaskFactory {
         @Override
-        public QueryTask create(QueryRun q, Datasource d) {
+        public QueryTask create(QueryRun q, Datasource d, long cancelCheckFrequency) {
             return queryTask;
         }
     }

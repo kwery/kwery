@@ -27,7 +27,7 @@ public class SchedulerServiceTestCancel extends NinjaDaoTestBase {
     protected CloudHost cloudHost;
     protected Datasource datasource;
     protected Scheduler scheduler;
-    protected String taskId;
+    protected String scheduleId;
     protected SchedulerService schedulerService;
 
     @Before
@@ -55,24 +55,35 @@ public class SchedulerServiceTestCancel extends NinjaDaoTestBase {
 
         QueryRun queryRun = TestUtil.queryRun();
         queryRun.setQuery("select sleep(86400)");
-        queryRun.setCronExpression("*/5 * * * *");
+        queryRun.setCronExpression("*/2 * * * *");
         queryRun.setDatasource(datasource);
 
-        taskId = scheduler.schedule(queryRun.getCronExpression(), new QueryTaskFactory() {
+        scheduleId = scheduler.schedule(queryRun.getCronExpression(), new QueryTaskFactory() {
             @Override
-            public QueryTask create(QueryRun q, Datasource d) {
-                return new QueryTask(datasource, q);
+            public QueryTask create(QueryRun q, Datasource d, long cancelCheckFrequency) {
+                return new QueryTask(datasource, q, cancelCheckFrequency);
             }
-        }.create(queryRun, datasource));
+        }.create(queryRun, datasource, TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS)));
     }
 
     @Test
     public void test() throws InterruptedException {
-        TimeUnit.SECONDS.sleep(90);
-        assertThat(scheduler.getExecutingTasks().length, is(1));
-        schedulerService.cancel(taskId);
-        TimeUnit.SECONDS.sleep(90);
-        assertThat(scheduler.getExecutingTasks().length, is(0));
+        while (true) {
+            long start = System.currentTimeMillis();
+
+            if (scheduler.getExecutingTasks().length > 0) {
+                schedulerService.cancel(scheduleId);
+                TimeUnit.SECONDS.sleep(10);
+                assertThat(scheduler.getExecutingTasks().length, is(0));
+                break;
+            }
+
+            if (TimeUnit.MINUTES.convert(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS) > 2) {
+                break;
+            }
+
+            TimeUnit.MILLISECONDS.sleep(1);
+        }
     }
 
     @After

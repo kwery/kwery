@@ -25,13 +25,20 @@ public class QueryTask extends Task {
 
     private Datasource datasource;
     private QueryRun queryRun;
+    private long cancelCheckFrequency;
 
     private String id = UUID.randomUUID().toString();
 
     @Inject
     public QueryTask(@Assisted Datasource datasource, @Assisted QueryRun queryRun) {
+        this(datasource, queryRun, TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES));
+    }
+
+    @Inject
+    public QueryTask(@Assisted Datasource datasource, @Assisted QueryRun queryRun, @Assisted long cancelCheckFrequency) {
         this.datasource = datasource;
         this.queryRun = queryRun;
+        this.cancelCheckFrequency = cancelCheckFrequency;
     }
 
     @Override
@@ -42,7 +49,6 @@ public class QueryTask extends Task {
                 String.format("jdbc:mysql://%s:%d", datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword())) {
             PreparedStatement p = connection.prepareStatement(queryRun.getQuery());
 
-            long delay = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -60,7 +66,7 @@ public class QueryTask extends Task {
                         }
                     }
                 }
-            }, delay, delay);
+            }, cancelCheckFrequency, cancelCheckFrequency);
             p.executeQuery();
             p.close();
             timer.cancel();
