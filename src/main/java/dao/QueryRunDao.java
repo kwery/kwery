@@ -54,4 +54,15 @@ public class QueryRunDao {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT q FROM QueryRun q").getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    @UnitOfWork
+    public QueryRun getById(Integer id) {
+        EntityManager e = entityManagerProvider.get();
+        List<QueryRun> m = e.createQuery("SELECT q FROM QueryRun q where q.id = :id").setParameter("id", id).getResultList();
+        if (m.size() == 0) {
+            return null;
+        }
+        return m.get(0);
+    }
 }
