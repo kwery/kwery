@@ -22,6 +22,7 @@ import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import custom.TemplateEngineJsFreemarker;
 import it.sauronsoftware.cron4j.Scheduler;
+import models.QueryRun;
 import models.QueryRunExecution;
 import services.scheduler.ApplicationStartupScheduler;
 import services.scheduler.MysqlQueryRunner;
@@ -51,5 +52,10 @@ public class Module extends AbstractModule {
     @Provides
     protected QueryRunExecution provideQueryRunExecution() {
         return new QueryRunExecution();
+    }
+
+    @Provides
+    protected QueryRun provideQueryRun() {
+        return new QueryRun();
     }
 }

@@ -1,17 +1,40 @@
 package dao.queryrunexecutiondao;
 
+import dao.DatasourceDao;
+import dao.QueryRunDao;
+import dao.QueryRunExecutionDao;
+import models.Datasource;
+import models.QueryRun;
 import models.QueryRunExecution;
+import ninja.NinjaDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
+import util.TestUtil;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class QueryRunExecutionDaoQueryTest extends QueryRunExecutionDaoPersistTest {
+public class QueryRunExecutionDaoQueryTest extends NinjaDaoTestBase {
+    protected QueryRunExecutionDao queryRunExecutionDao;
+    protected QueryRun queryRun;
+    protected QueryRunExecution queryRunExecution;
+
     @Before
     public void setUpQueryRunExecutionDaoQueryTest() {
+        Datasource datasource = TestUtil.datasource();
+        getInstance(DatasourceDao.class).save(datasource);
+
+        queryRun = TestUtil.queryRun();
+        queryRun.setDatasource(datasource);
+        getInstance(QueryRunDao.class).save(queryRun);
+
+        queryRunExecutionDao = getInstance(QueryRunExecutionDao.class);
+
+        queryRunExecution = TestUtil.queryRunExecution();
+        queryRunExecution.setQueryRun(queryRun);
+
         queryRunExecutionDao.save(queryRunExecution);
     }
 

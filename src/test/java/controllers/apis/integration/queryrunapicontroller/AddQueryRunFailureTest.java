@@ -6,9 +6,9 @@ import dao.DatasourceDao;
 import dao.QueryRunDao;
 import dtos.QueryRunDto;
 import models.Datasource;
+import models.QueryRun;
 import org.junit.Before;
 import org.junit.Test;
-import services.scheduler.SchedulerService;
 import util.Messages;
 
 import java.io.IOException;
@@ -31,7 +31,13 @@ public class AddQueryRunFailureTest extends AbstractPostLoginApiTest {
         dto = queryRunDto();
         dto.setDatasourceId(addedDatasource.getId());
 
-        getInjector().getInstance(QueryRunDao.class).save(new SchedulerService().toModel(dto, addedDatasource));
+        QueryRun queryRun = new QueryRun();
+        queryRun.setCronExpression(dto.getCronExpression());
+        queryRun.setQuery(dto.getQuery());
+        queryRun.setLabel(dto.getLabel());
+        queryRun.setDatasource(addedDatasource);
+
+        getInjector().getInstance(QueryRunDao.class).save(queryRun);
     }
 
     @Test
