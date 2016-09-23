@@ -25,6 +25,9 @@ public class ApplicationStartupScheduler {
     @Inject
     protected QueryRunDao queryRunDao;
 
+    @Inject
+    protected QueryTaskFactory queryTaskFactory;
+
     @Start
     public void schedule() {
         logger.info("Starting schduler");
@@ -32,7 +35,7 @@ public class ApplicationStartupScheduler {
         logger.info("Scheduling queries on startup");
         for (QueryRun queryRun : queryRunDao.getAll()) {
             Datasource datasource = datasourceDao.getById(queryRun.getDatasource().getId());
-            scheduler.schedule(queryRun.getCronExpression(), new QueryTask(datasource, queryRun));
+            scheduler.schedule(queryRun.getCronExpression(), queryTaskFactory.create(queryRun));
             logger.info("Scheduled query {} connection to datasource {} with cron expression {}", queryRun.getQuery(), datasource.getLabel(), queryRun.getCronExpression());
         }
     }

@@ -1,16 +1,22 @@
 package services.scheduler;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import dao.DatasourceDao;
 import dao.QueryRunDao;
 import dtos.QueryRunDto;
-import it.sauronsoftware.cron4j.Scheduler;
-import it.sauronsoftware.cron4j.TaskExecutor;
 import models.Datasource;
 import models.QueryRun;
+import ninja.lifecycle.Dispose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class SchedulerService {
@@ -23,40 +29,54 @@ public class SchedulerService {
     private DatasourceDao datasourceDao;
 
     @Inject
-    protected Scheduler scheduler;
+    protected QueryTaskSchedulerFactory queryTaskSchedulerFactory;
 
     @Inject
-    protected QueryTaskFactory factory;
+    protected Provider<QueryRun> queryRunProvider;
 
-    public String schedule(QueryRunDto dto) {
+    protected Map<Integer, QueryTaskScheduler> queryRunSchedulerMap = new HashMap<>();
+
+    //TODO Rollback on error
+    public void schedule(QueryRunDto dto) {
         Datasource datasource = datasourceDao.getById(dto.getDatasourceId());
         QueryRun model = toModel(dto, datasource);
         queryRunDao.save(model);
-        String id = scheduler.schedule(model.getCronExpression(), factory.create(model, datasource));
-        logger.info("Scheduled query {} with cron expression {} on datasource {}, schedule id is {}", model.getQuery(), model.getCronExpression(), datasource.getLabel(), id);
-        return id;
+        schedule(model);
     }
 
-    public boolean cancel(String scheduleId) {
-        for (TaskExecutor executor : scheduler.getExecutingTasks()) {
-            if (((QueryTask)executor.getTask()).id().equals(((QueryTask)scheduler.getTask(scheduleId)).id())) {
-                executor.stop();
-                logger.info("Cancelling task with schedule id {}", scheduleId);
-                return true;
-            }
-        }
+    public void schedule(QueryRun queryRun) {
+        QueryTaskScheduler queryTaskScheduler = queryTaskSchedulerFactory.create(new LinkedList<>(), queryRun);
+        queryRunSchedulerMap.put(queryRun.getId(), queryTaskScheduler);
+    }
 
-        logger.info("Could not cancel task with schedule id {} as it is not found", scheduleId);
-        return false;
+    public List<OngoingQueryTask> ongoingQueryTasks(Integer queryRunId) {
+        return queryRunSchedulerMap.get(queryRunId).ongoingQueryTasks();
+    }
+
+    public void stopExecution(int queryRunId, String taskExecutionId) {
+        queryRunSchedulerMap.get(queryRunId).stopExecution(taskExecutionId);
     }
 
     public QueryRun toModel(QueryRunDto dto, Datasource datasource) {
-        QueryRun q = new QueryRun();
+        QueryRun q = queryRunProvider.get();
         q.setQuery(dto.getQuery());
         q.setCronExpression(dto.getCronExpression());
         q.setLabel(dto.getLabel());
         q.setDatasource(datasource);
         return q;
+    }
+
+    @VisibleForTesting
+    public Map<Integer, QueryTaskScheduler> getQueryRunSchedulerMap() {
+        return queryRunSchedulerMap;
+    }
+
+    @Dispose
+    public void shutdownSchedulers() {
+        logger.info("Stopping all schedulers on shutdown");
+        for (QueryTaskScheduler queryTaskScheduler : queryRunSchedulerMap.values()) {
+            queryTaskScheduler.stopScheduler();
+        }
     }
 
     public void setQueryRunDao(QueryRunDao queryRunDao) {
@@ -67,11 +87,7 @@ public class SchedulerService {
         this.datasourceDao = datasourceDao;
     }
 
-    public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;
-    }
-
-    public void setFactory(QueryTaskFactory factory) {
-        this.factory = factory;
+    public void setQueryRunProvider(Provider<QueryRun> queryRunProvider) {
+        this.queryRunProvider = queryRunProvider;
     }
 }

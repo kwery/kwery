@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import dtos.QueryRunDto;
 import models.Datasource;
 import models.QueryRun;
+import models.QueryRunExecution;
 import models.User;
 import org.openqa.selenium.Cookie;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static models.Datasource.Type.MYSQL;
+import static models.QueryRunExecution.Status.SUCCESS;
 
 public class TestUtil {
     protected static Logger logger = LoggerFactory.getLogger(TestUtil.class);
@@ -62,6 +64,16 @@ public class TestUtil {
         dto.setLabel("test");
         dto.setCronExpression("* * * * *");
         return dto;
+    }
+
+    public static QueryRunExecution queryRunExecution() {
+        QueryRunExecution e = new QueryRunExecution();
+        e.setExecutionStart(1l);
+        e.setExecutionEnd(2l);
+        e.setResult("result");
+        e.setStatus(SUCCESS);
+        e.setExecutionId("ksjdfjld");
+        return e;
     }
 
     public static Cookie sessionCookie(String value) {

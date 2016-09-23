@@ -17,36 +17,39 @@
 package conf;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provider;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import custom.TemplateEngineJsFreemarker;
 import it.sauronsoftware.cron4j.Scheduler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import models.QueryRunExecution;
 import services.scheduler.ApplicationStartupScheduler;
 import services.scheduler.MysqlQueryRunner;
+import services.scheduler.PreparedStatementExecutorFactory;
 import services.scheduler.QueryRunner;
 import services.scheduler.QueryTaskFactory;
+import services.scheduler.QueryTaskSchedulerFactory;
+import services.scheduler.ResultSetProcessorFactory;
 
 @Singleton
 public class Module extends AbstractModule {
-    private static Logger logger = LoggerFactory.getLogger(Module.class);
-
     protected void configure() {
         bind(TemplateEngineJsFreemarker.class);
-        bind(Scheduler.class).toProvider(SchedulerProvider.class).asEagerSingleton();
         bind(QueryRunner.class).to(MysqlQueryRunner.class);
         bind(ApplicationStartupScheduler.class);
         install(new FactoryModuleBuilder().build(QueryTaskFactory.class));
+        install(new FactoryModuleBuilder().build(QueryTaskSchedulerFactory.class));
+        install(new FactoryModuleBuilder().build(ResultSetProcessorFactory.class));
+        install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
     }
 
-    public static class SchedulerProvider implements Provider<Scheduler> {
-        private Scheduler scheduler = new Scheduler();
+    @Provides
+    protected Scheduler provideScheduler() {
+        return new Scheduler();
+    }
 
-        @Override
-        public Scheduler get() {
-            return scheduler;
-        }
+    @Provides
+    protected QueryRunExecution provideQueryRunExecution() {
+        return new QueryRunExecution();
     }
 }
