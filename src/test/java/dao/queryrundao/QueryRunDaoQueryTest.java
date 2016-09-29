@@ -4,9 +4,9 @@ import dao.DatasourceDao;
 import dao.QueryRunDao;
 import models.Datasource;
 import models.QueryRun;
-import ninja.NinjaDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
+import util.RepoDashDaoTestBase;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 import static util.TestUtil.datasource;
 import static util.TestUtil.queryRun;
 
-public class QueryRunDaoQueryTest extends NinjaDaoTestBase {
+public class QueryRunDaoQueryTest extends RepoDashDaoTestBase {
     protected QueryRunDao dao;
     protected QueryRun queryRun0;
     protected Integer queryRunId;

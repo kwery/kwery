@@ -2,10 +2,10 @@ package dao.datasourcedao;
 
 import dao.DatasourceDao;
 import models.Datasource;
-import ninja.NinjaDaoTestBase;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
+import util.RepoDashDaoTestBase;
 
 import javax.persistence.PersistenceException;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static util.TestUtil.datasource;
 
-public class DatasourceDaoPersistTest extends NinjaDaoTestBase {
+public class DatasourceDaoPersistTest extends RepoDashDaoTestBase {
     private DatasourceDao datasourceDao;
 
     @Before

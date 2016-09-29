@@ -2,9 +2,9 @@ package dao.datasourcedao;
 
 import dao.DatasourceDao;
 import models.Datasource;
-import ninja.NinjaDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
+import util.RepoDashDaoTestBase;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static util.TestUtil.datasource;
 
-public class DatasourceDaoQueryTest extends NinjaDaoTestBase {
+public class DatasourceDaoQueryTest extends RepoDashDaoTestBase {
     protected DatasourceDao datasourceDao;
 
     protected Datasource savedDatasource0;

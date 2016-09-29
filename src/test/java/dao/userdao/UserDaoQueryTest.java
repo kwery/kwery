@@ -2,15 +2,15 @@ package dao.userdao;
 
 import dao.UserDao;
 import models.User;
-import ninja.NinjaDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
+import util.RepoDashDaoTestBase;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class UserDaoQueryTest extends NinjaDaoTestBase {
+public class UserDaoQueryTest extends RepoDashDaoTestBase {
     private UserDao userDao;
 
     private String savedUsername = "purvi";

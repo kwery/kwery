@@ -4,10 +4,10 @@ import dao.DatasourceDao;
 import dao.QueryRunDao;
 import models.Datasource;
 import models.QueryRun;
-import ninja.NinjaDaoTestBase;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
+import util.RepoDashDaoTestBase;
 import util.TestUtil;
 
 import javax.persistence.PersistenceException;
@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
 import static util.TestUtil.datasource;
 import static util.TestUtil.queryRun;
 
-public class QueryRunDaoUniqueLabelTest extends NinjaDaoTestBase {
+public class QueryRunDaoUniqueLabelTest extends RepoDashDaoTestBase {
     protected QueryRunDao dao;
     protected QueryRun persistedModel;
     protected Datasource datasource;

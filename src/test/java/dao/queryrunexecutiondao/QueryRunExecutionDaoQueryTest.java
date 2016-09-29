@@ -6,9 +6,9 @@ import dao.QueryRunExecutionDao;
 import models.Datasource;
 import models.QueryRun;
 import models.QueryRunExecution;
-import ninja.NinjaDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
+import util.RepoDashDaoTestBase;
 import util.TestUtil;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class QueryRunExecutionDaoQueryTest extends NinjaDaoTestBase {
+public class QueryRunExecutionDaoQueryTest extends RepoDashDaoTestBase {
     protected QueryRunExecutionDao queryRunExecutionDao;
     protected QueryRun queryRun;
     protected QueryRunExecution queryRunExecution;
