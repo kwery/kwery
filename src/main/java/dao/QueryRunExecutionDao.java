@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import models.QueryRunExecution;
+import models.QueryRunExecution.Status;
 import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
@@ -51,5 +52,12 @@ public class QueryRunExecutionDao {
     public List<QueryRunExecution> getByQueryRunId(Integer queryRunId) {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT e FROM QueryRunExecution e WHERE e.queryRun.id = :queryRunId").setParameter("queryRunId", queryRunId).getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @UnitOfWork
+    public List<QueryRunExecution> getByStatus(Status status) {
+        EntityManager m = entityManagerProvider.get();
+        return m.createQuery("SELECT e FROM QueryRunExecution e WHERE e.status = :status").setParameter("status", status).getResultList();
     }
 }

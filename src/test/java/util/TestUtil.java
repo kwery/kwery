@@ -5,6 +5,7 @@ import dtos.QueryRunDto;
 import models.Datasource;
 import models.QueryRun;
 import models.QueryRunExecution;
+import models.QueryRunExecution.Status;
 import models.User;
 import org.openqa.selenium.Cookie;
 import org.slf4j.Logger;
@@ -67,11 +68,15 @@ public class TestUtil {
     }
 
     public static QueryRunExecution queryRunExecution() {
+        return queryRunExecution(SUCCESS);
+    }
+
+    public static QueryRunExecution queryRunExecution(Status status) {
         QueryRunExecution e = new QueryRunExecution();
         e.setExecutionStart(1l);
         e.setExecutionEnd(2l);
         e.setResult("result");
-        e.setStatus(SUCCESS);
+        e.setStatus(status);
         e.setExecutionId("ksjdfjld");
         return e;
     }
