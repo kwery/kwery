@@ -10,13 +10,14 @@ import dtos.QueryRunDto;
 import models.Datasource;
 import models.QueryRun;
 import ninja.lifecycle.Dispose;
+import ninja.lifecycle.Start;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Singleton
 public class SchedulerService {
@@ -45,7 +46,7 @@ public class SchedulerService {
     }
 
     public void schedule(QueryRun queryRun) {
-        QueryTaskScheduler queryTaskScheduler = queryTaskSchedulerFactory.create(new LinkedList<>(), queryRun);
+        QueryTaskScheduler queryTaskScheduler = queryTaskSchedulerFactory.create(new CopyOnWriteArrayList<>(), queryRun);
         queryRunSchedulerMap.put(queryRun.getId(), queryTaskScheduler);
     }
 
@@ -66,17 +67,23 @@ public class SchedulerService {
         return q;
     }
 
-    @VisibleForTesting
-    public Map<Integer, QueryTaskScheduler> getQueryRunSchedulerMap() {
-        return queryRunSchedulerMap;
+    @Start
+    public void scheduleAllQueries() {
+        logger.info("Scheduling all queries");
+        queryRunDao.getAll().forEach(this::schedule);
     }
 
     @Dispose
     public void shutdownSchedulers() {
-        logger.info("Stopping all schedulers on shutdown");
+        logger.info("Stopping all schedulers");
         for (QueryTaskScheduler queryTaskScheduler : queryRunSchedulerMap.values()) {
             queryTaskScheduler.stopScheduler();
         }
+    }
+
+    @VisibleForTesting
+    public Map<Integer, QueryTaskScheduler> getQueryRunSchedulerMap() {
+        return queryRunSchedulerMap;
     }
 
     public void setQueryRunDao(QueryRunDao queryRunDao) {

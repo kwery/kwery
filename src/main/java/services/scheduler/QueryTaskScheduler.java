@@ -57,29 +57,22 @@ public class QueryTaskScheduler implements SchedulerListener {
 
         executor.addTaskExecutorListener(queryTaskExecutorListener);
 
-        synchronized (ongoingExecutions) {
-            ongoingExecutions.add(executor);
-        }
+        ongoingExecutions.add(executor);
     }
 
     @Override
     public void taskSucceeded(TaskExecutor executor) {
-        synchronized (ongoingExecutions) {
-            ongoingExecutions.remove(executor);
-        }
+        ongoingExecutions.remove(executor);
     }
 
     @Override
     public void taskFailed(TaskExecutor executor, Throwable exception) {
         QueryRun queryRun = ((QueryTask) executor.getTask()).getQueryRun();
         logger.info("Query {} with label {} running on datasource {} failed due to", queryRun.getQuery(), queryRun.getLabel(), queryRun.getDatasource().getLabel(), exception);
-        synchronized (ongoingExecutions) {
-            ongoingExecutions.remove(executor);
-        }
+        ongoingExecutions.remove(executor);
     }
 
     public List<OngoingQueryTask> ongoingQueryTasks() {
-        synchronized (ongoingExecutions) {
             List<OngoingQueryTask> l = new ArrayList<>(ongoingExecutions.size());
 
             for (TaskExecutor ongoingExecution : ongoingExecutions) {
@@ -91,19 +84,16 @@ public class QueryTaskScheduler implements SchedulerListener {
             }
 
             return l;
-        }
     }
 
     public void stopExecution(String executionId) {
-        synchronized (ongoingExecutions) {
-            for (TaskExecutor ongoingExecution : ongoingExecutions) {
-                if (executionId.equals(ongoingExecution.getGuid())) {
-                    QueryTask q = (QueryTask)ongoingExecution.getTask();
-                    logger.info("Stopping query execution {} running on datasource {} with execution id {}", q.getQueryRun().getQuery(),
-                            q.getQueryRun().getDatasource().getLabel(), executionId);
-                    ongoingExecution.stop();
-                    break;
-                }
+        for (TaskExecutor ongoingExecution : ongoingExecutions) {
+            if (executionId.equals(ongoingExecution.getGuid())) {
+                QueryTask q = (QueryTask)ongoingExecution.getTask();
+                logger.info("Stopping query execution {} running on datasource {} with execution id {}", q.getQueryRun().getQuery(),
+                        q.getQueryRun().getDatasource().getLabel(), executionId);
+                ongoingExecution.stop();
+                break;
             }
         }
     }
