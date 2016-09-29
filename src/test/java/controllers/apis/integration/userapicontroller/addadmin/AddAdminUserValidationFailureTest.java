@@ -54,7 +54,5 @@ public class AddAdminUserValidationFailureTest extends AbstractApiTest {
         assertFailure(actionResult, EXPECTED_MESSAGE_MAP);
 
         assertThat(userDao.getByUsername(invalidUser.getUsername()), nullValue());
-
-        assertThat(userDao.getByUsername(invalidUser.getUsername()), nullValue());
     }
 }

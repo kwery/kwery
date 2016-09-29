@@ -2,16 +2,16 @@ package dao.userdao;
 
 import dao.UserDao;
 import models.User;
-import ninja.NinjaDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
+import util.RepoDashDaoTestBase;
 
 import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolationException;
 
 import static org.junit.Assert.assertTrue;
 
-public class UserDaoPersistTest extends NinjaDaoTestBase {
+public class UserDaoPersistTest extends RepoDashDaoTestBase {
     private UserDao userDao;
 
     @Before

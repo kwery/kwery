@@ -17,12 +17,45 @@
 package conf;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import custom.TemplateEngineJsFreemarker;
+import it.sauronsoftware.cron4j.Scheduler;
+import models.QueryRun;
+import models.QueryRunExecution;
+import services.scheduler.MysqlQueryRunner;
+import services.scheduler.PreparedStatementExecutorFactory;
+import services.scheduler.QueryRunner;
+import services.scheduler.QueryTaskFactory;
+import services.scheduler.QueryTaskSchedulerFactory;
+import services.scheduler.ResultSetProcessorFactory;
+import services.scheduler.SchedulerService;
 
 @Singleton
 public class Module extends AbstractModule {
     protected void configure() {
         bind(TemplateEngineJsFreemarker.class);
+        bind(QueryRunner.class).to(MysqlQueryRunner.class);
+        install(new FactoryModuleBuilder().build(QueryTaskFactory.class));
+        install(new FactoryModuleBuilder().build(QueryTaskSchedulerFactory.class));
+        install(new FactoryModuleBuilder().build(ResultSetProcessorFactory.class));
+        install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
+        bind(SchedulerService.class);
+    }
+
+    @Provides
+    protected Scheduler provideScheduler() {
+        return new Scheduler();
+    }
+
+    @Provides
+    protected QueryRunExecution provideQueryRunExecution() {
+        return new QueryRunExecution();
+    }
+
+    @Provides
+    protected QueryRun provideQueryRun() {
+        return new QueryRun();
     }
 }

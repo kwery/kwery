@@ -16,6 +16,8 @@ import java.util.List;
 
 import static conf.Routes.ADD_ADMIN_USER_API;
 import static conf.Routes.ADD_DATASOURCE_API;
+import static conf.Routes.ADD_QUERY_RUN_API;
+import static conf.Routes.ALL_DATASOURCES_API;
 import static conf.Routes.INDEX;
 import static conf.Routes.LOGIN_API;
 import static conf.Routes.MYSQL_DATASOURCE_CONNECTION_TEST_API;
@@ -28,6 +30,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasSize;
 import static util.Messages.USER_NOT_LOGGED_IN_M;
 import static util.TestUtil.datasource;
+import static util.TestUtil.queryRunDto;
 import static util.TestUtil.user;
 import static views.ActionResult.Status.failure;
 
@@ -45,7 +48,9 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
                 new ApiSecurityTestVo(USER, true, GET, user()),
                 new ApiSecurityTestVo(INDEX, false, GET),
                 new ApiSecurityTestVo(ADD_ADMIN_USER_API, false, POST, user()),
-                new ApiSecurityTestVo(LOGIN_API, false, POST, user())
+                new ApiSecurityTestVo(LOGIN_API, false, POST, user()),
+                new ApiSecurityTestVo(ADD_QUERY_RUN_API, true, POST, queryRunDto()),
+                new ApiSecurityTestVo(ALL_DATASOURCES_API, true, GET)
         );
     }
 

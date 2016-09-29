@@ -2,9 +2,9 @@ package controllers.apis;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import controllers.ControllerUtil;
 import dao.DatasourceDao;
 import filters.DashRepoSecureFilter;
+import it.sauronsoftware.cron4j.Scheduler;
 import models.Datasource;
 import ninja.Context;
 import ninja.FilterWith;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Optional.of;
+import static controllers.ControllerUtil.fieldMessages;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
 import static controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_FAILURE;
@@ -41,6 +42,9 @@ public class DatasourceApiController {
     @Inject
     private MysqlDatasourceService mysqlDatasourceService;
 
+    @Inject
+    private Scheduler scheduler;
+
     @FilterWith(DashRepoSecureFilter.class)
     public Result addDatasource(
             @JSR303Validation Datasource datasource,
@@ -51,7 +55,7 @@ public class DatasourceApiController {
 
         Map<String, List<String>> fieldMessages = new HashMap<>();
         if (validation.hasViolations()) {
-            fieldMessages = ControllerUtil.fieldMessages(validation, context, messages, json);
+            fieldMessages = fieldMessages(validation, context, messages, json);
             actionResult = new ActionResult(failure, fieldMessages);
         } else {
             List<String> errorMessages = new LinkedList<>();
@@ -94,6 +98,12 @@ public class DatasourceApiController {
         }
 
         return json.render(result);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result allDatasources() {
+        Result json = Results.json();
+        return json.render(datasourceDao.getAll());
     }
 
     public void setMessages(Messages messages) {
