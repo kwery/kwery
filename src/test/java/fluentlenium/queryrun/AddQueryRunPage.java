@@ -1,7 +1,7 @@
 package fluentlenium.queryrun;
 
 import com.google.common.collect.ImmutableList;
-import dtos.QueryRunDto;
+import dtos.SqlQueryDto;
 import fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
@@ -21,7 +21,7 @@ public class AddQueryRunPage extends FluentPage implements RepoDashPage {
     @FindBy(id = "queryRunForm")
     protected FluentWebElement form;
 
-    public void submitForm(QueryRunDto dto) {
+    public void submitForm(SqlQueryDto dto) {
         fill("input").with(dto.getQuery(), dto.getCronExpression(), dto.getLabel());
         fillSelect("#datasourceId").withIndex(0);
         click("#create");
@@ -54,6 +54,6 @@ public class AddQueryRunPage extends FluentPage implements RepoDashPage {
 
     @Override
     public String getUrl() {
-        return "/#query-run/add";
+        return "/#sql-query/add";
     }
 }

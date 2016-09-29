@@ -1,11 +1,11 @@
 package util;
 
 import com.google.common.collect.ImmutableMap;
-import dtos.QueryRunDto;
+import dtos.SqlQueryDto;
 import models.Datasource;
-import models.QueryRun;
-import models.QueryRunExecution;
-import models.QueryRunExecution.Status;
+import models.SqlQuery;
+import models.SqlQueryExecution;
+import models.SqlQueryExecution.Status;
 import models.User;
 import org.openqa.selenium.Cookie;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static models.Datasource.Type.MYSQL;
-import static models.QueryRunExecution.Status.SUCCESS;
+import static models.SqlQueryExecution.Status.SUCCESS;
 
 public class TestUtil {
     protected static Logger logger = LoggerFactory.getLogger(TestUtil.class);
@@ -51,28 +51,28 @@ public class TestUtil {
         return datasource;
     }
 
-    public static QueryRun queryRun() {
-        QueryRun q = new QueryRun();
+    public static SqlQuery queryRun() {
+        SqlQuery q = new SqlQuery();
         q.setQuery("select * from foo");
         q.setLabel("test query run");
         q.setCronExpression("* * * * *");
         return q;
     }
 
-    public static QueryRunDto queryRunDto() {
-        QueryRunDto dto = new QueryRunDto();
+    public static SqlQueryDto queryRunDto() {
+        SqlQueryDto dto = new SqlQueryDto();
         dto.setQuery("select * from foo");
         dto.setLabel("test");
         dto.setCronExpression("* * * * *");
         return dto;
     }
 
-    public static QueryRunExecution queryRunExecution() {
+    public static SqlQueryExecution queryRunExecution() {
         return queryRunExecution(SUCCESS);
     }
 
-    public static QueryRunExecution queryRunExecution(Status status) {
-        QueryRunExecution e = new QueryRunExecution();
+    public static SqlQueryExecution queryRunExecution(Status status) {
+        SqlQueryExecution e = new SqlQueryExecution();
         e.setExecutionStart(1l);
         e.setExecutionEnd(2l);
         e.setResult("result");

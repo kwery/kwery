@@ -16,9 +16,9 @@ import java.util.List;
 
 import static conf.Routes.ADD_ADMIN_USER_API;
 import static conf.Routes.ADD_DATASOURCE_API;
-import static conf.Routes.ADD_QUERY_RUN_API;
+import static conf.Routes.ADD_SQL_QUERY_API;
 import static conf.Routes.ALL_DATASOURCES_API;
-import static conf.Routes.CURRENTLY_EXECUTING_QUERY_RUN_API;
+import static conf.Routes.CURRENTLY_EXECUTING_SQL_QUERY_API;
 import static conf.Routes.INDEX;
 import static conf.Routes.LOGIN_API;
 import static conf.Routes.MYSQL_DATASOURCE_CONNECTION_TEST_API;
@@ -50,9 +50,9 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
                 new ApiSecurityTestVo(INDEX, false, GET),
                 new ApiSecurityTestVo(ADD_ADMIN_USER_API, false, POST, user()),
                 new ApiSecurityTestVo(LOGIN_API, false, POST, user()),
-                new ApiSecurityTestVo(ADD_QUERY_RUN_API, true, POST, queryRunDto()),
+                new ApiSecurityTestVo(ADD_SQL_QUERY_API, true, POST, queryRunDto()),
                 new ApiSecurityTestVo(ALL_DATASOURCES_API, true, GET),
-                new ApiSecurityTestVo(CURRENTLY_EXECUTING_QUERY_RUN_API, true, GET)
+                new ApiSecurityTestVo(CURRENTLY_EXECUTING_SQL_QUERY_API, true, GET)
         );
     }
 

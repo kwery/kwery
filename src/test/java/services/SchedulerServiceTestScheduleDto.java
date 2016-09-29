@@ -4,9 +4,9 @@ import com.google.inject.Provider;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import dao.DatasourceDao;
-import dtos.QueryRunDto;
+import dtos.SqlQueryDto;
 import models.Datasource;
-import models.QueryRun;
+import models.SqlQuery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.spy;
 public class SchedulerServiceTestScheduleDto extends RepoDashTestBase {
     protected CloudHost cloudHost;
     protected Datasource datasource;
-    protected QueryRun queryRun = new QueryRun();
+    protected SqlQuery sqlQuery = new SqlQuery();
     protected SchedulerService schedulerService;
     protected SchedulerService schedulerServiceSpy;
 
@@ -49,30 +49,30 @@ public class SchedulerServiceTestScheduleDto extends RepoDashTestBase {
 
         schedulerService = getInstance(SchedulerService.class);
         schedulerServiceSpy = spy(schedulerService);
-        schedulerServiceSpy.setQueryRunProvider(new Provider<QueryRun>() {
+        schedulerServiceSpy.setQueryRunProvider(new Provider<SqlQuery>() {
             @Override
-            public QueryRun get() {
-                return queryRun;
+            public SqlQuery get() {
+                return sqlQuery;
             }
         });
     }
 
     @Test
     public void test() {
-        QueryRunDto dto = new QueryRunDto();
+        SqlQueryDto dto = new SqlQueryDto();
         dto.setDatasourceId(datasource.getId());
         dto.setQuery("test query");
         dto.setLabel("test label");
         dto.setCronExpression("test cron expression");
 
-        doNothing().when(schedulerServiceSpy).schedule(queryRun);
+        doNothing().when(schedulerServiceSpy).schedule(sqlQuery);
 
         schedulerServiceSpy.schedule(dto);
 
-        assertThat(queryRun.getQuery(), is(dto.getQuery()));
-        assertThat(queryRun.getLabel(), is(dto.getLabel()));
-        assertThat(queryRun.getCronExpression(), is(dto.getCronExpression()));
-        assertThat(queryRun.getDatasource().getId(), is(datasource.getId()));
+        assertThat(sqlQuery.getQuery(), is(dto.getQuery()));
+        assertThat(sqlQuery.getLabel(), is(dto.getLabel()));
+        assertThat(sqlQuery.getCronExpression(), is(dto.getCronExpression()));
+        assertThat(sqlQuery.getDatasource().getId(), is(datasource.getId()));
     }
 
 
