@@ -21,7 +21,7 @@
                 {url: "onboarding/add-admin-user", auth: false, component: "onboarding-add-admin-user"},
                 {url: "onboarding/add-datasource", auth: true, component: "onboarding-add-datasource"},
                 {url: "user/login{?query}", auth: false, component: "user-login"},
-                {url: "query-run/add", auth: true, component: "query-run-add"},
+                {url: "sql-query/add", auth: true, component: "sql-query-add"},
             ];
 
             var componentMapping = {
