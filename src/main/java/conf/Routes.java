@@ -18,6 +18,7 @@ public class Routes implements ApplicationRoutes {
     public static final String USER = "/api/user";
     public static final String ADD_QUERY_RUN_API = "/api/query-run/add";
     public static final String ALL_DATASOURCES_API = "/api/datasource/all";
+    public static final String CURRENTLY_EXECUTING_QUERY_RUN_API = "/api/query-run/currently-executing";
 
     @Override
     public void init(Router router) {  
@@ -31,6 +32,7 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(USER).with(UserApiController.class, "user");
         router.POST().route(ADD_QUERY_RUN_API).with(QueryRunApiController.class, "addQueryRun");
         router.GET().route(ALL_DATASOURCES_API).with(DatasourceApiController.class, "allDatasources");
+        router.GET().route(CURRENTLY_EXECUTING_QUERY_RUN_API).with(QueryRunApiController.class, "currentlyExecutingQueries");
         //Api - End
 
         //Static asset

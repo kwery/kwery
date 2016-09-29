@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import controllers.MessageKeys;
 import dao.DatasourceDao;
 import dao.QueryRunDao;
+import dao.QueryRunExecutionDao;
 import dtos.QueryRunDto;
 import filters.DashRepoSecureFilter;
 import models.Datasource;
@@ -24,6 +25,7 @@ import java.util.List;
 import static controllers.ControllerUtil.fieldMessages;
 import static controllers.MessageKeys.DATASOURCE_VALIDATION;
 import static controllers.MessageKeys.QUERY_RUN_ADDITION_FAILURE;
+import static models.QueryRunExecution.Status.ONGOING;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
 
@@ -39,6 +41,9 @@ public class QueryRunApiController {
 
     @Inject
     private SchedulerService schedulerService;
+
+    @Inject
+    private QueryRunExecutionDao queryRunExecutionDao;
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result addQueryRun(@JSR303Validation QueryRunDto queryRunDto, Context context, Validation validation) {
@@ -71,5 +76,10 @@ public class QueryRunApiController {
         }
 
         return json.render(actionResult);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result currentlyExecutingQueries() {
+        return Results.json().render(queryRunExecutionDao.getByStatus(ONGOING));
     }
 }
