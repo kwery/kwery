@@ -7,6 +7,7 @@ import dao.DatasourceDao;
 import dao.SqlQueryDao;
 import dao.SqlQueryExecutionDao;
 import dtos.SqlQueryDto;
+import dtos.SqlQueryExecutionDto;
 import filters.DashRepoSecureFilter;
 import models.Datasource;
 import models.SqlQueryExecution;
@@ -20,6 +21,8 @@ import ninja.validation.Validation;
 import services.scheduler.SchedulerService;
 import views.ActionResult;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,8 +85,23 @@ public class SqlQueryApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result currentlyExecutingSqlQueries() {
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.getByStatus(ONGOING);
-        Collections.sort(executions, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
-        return Results.json().render(executions);
+        List<SqlQueryExecution> models = sqlQueryExecutionDao.getByStatus(ONGOING);
+        Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
+
+        List<SqlQueryExecutionDto> dtos = new ArrayList<>(models.size());
+
+        for (SqlQueryExecution model : models) {
+            dtos.add(from(model));
+        }
+
+        return Results.json().render(dtos);
+    }
+
+    public SqlQueryExecutionDto from(SqlQueryExecution model) {
+        SqlQueryExecutionDto dto = new SqlQueryExecutionDto();
+        dto.setSqlQueryLabel(model.getSqlQuery().getLabel());
+        dto.setDatasourceLabel(model.getSqlQuery().getDatasource().getLabel());
+        dto.setSqlQueryExecutionStartTime(new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(model.getExecutionStart()));
+        return dto;
     }
 }
