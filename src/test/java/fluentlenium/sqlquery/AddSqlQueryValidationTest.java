@@ -1,4 +1,4 @@
-package fluentlenium.queryrun;
+package fluentlenium.sqlquery;
 
 import org.junit.Test;
 import util.Messages;
@@ -6,7 +6,7 @@ import util.Messages;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
-public class AddSqlQueryValidationTest extends QueryRunTest {
+public class AddSqlQueryValidationTest extends SqlQueryTest {
     @Test
     public void test() {
         page.submitForm();

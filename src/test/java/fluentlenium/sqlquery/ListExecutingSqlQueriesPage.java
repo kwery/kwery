@@ -1,4 +1,4 @@
-package fluentlenium.queryrun;
+package fluentlenium.sqlquery;
 
 import fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;

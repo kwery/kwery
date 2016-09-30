@@ -1,4 +1,4 @@
-package fluentlenium.queryrun;
+package fluentlenium.sqlquery;
 
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
@@ -16,8 +16,8 @@ import static org.junit.Assert.fail;
 import static util.TestUtil.datasource;
 import static util.TestUtil.user;
 
-public class QueryRunTest extends RepoDashFluentLeniumTest {
-    protected AddQueryRunPage page;
+public class SqlQueryTest extends RepoDashFluentLeniumTest {
+    protected AddSqlQueryPage page;
     protected CloudHost cloudHost;
     protected Datasource datasource;
 
@@ -51,7 +51,7 @@ public class QueryRunTest extends RepoDashFluentLeniumTest {
 
         getInjector().getInstance(DatasourceDao.class).save(datasource());
 
-        page = createPage(AddQueryRunPage.class);
+        page = createPage(AddSqlQueryPage.class);
         page.withDefaultUrl(getServerAddress()).goTo(page);
         if (!page.isRendered()) {
             fail("Add query run page is not rendered");

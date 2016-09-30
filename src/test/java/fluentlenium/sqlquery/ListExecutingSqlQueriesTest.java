@@ -1,4 +1,4 @@
-package fluentlenium.queryrun;
+package fluentlenium.sqlquery;
 
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
