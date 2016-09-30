@@ -1,6 +1,7 @@
 package controllers.apis.integration.queryrunapicontroller;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import conf.Routes;
@@ -19,6 +20,7 @@ import services.scheduler.SchedulerService;
 import util.TestUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +31,7 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
+import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiTest {
@@ -80,9 +83,14 @@ public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiT
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
         assertThat(json, isJson());
 
+        List<Long> startTimes = new ArrayList<>(sqlQueryExecutions.size());
+
         for (int i = 0; i < sqlQueryExecutions.size(); ++i) {
             assertThat(json, hasJsonPath(format("$[%d].id", i), greaterThan(0)));
             assertThat(json, hasJsonPath(format("$[%d].executionStart", i), greaterThan(start)));
+
+            startTimes.add(JsonPath.read(json, format("$[%d].executionStart", i)));
+
             assertThat(json, hasJsonPath(format("$[%d].executionEnd", i), nullValue()));
             assertThat(json, hasJsonPath(format("$[%d].status", i), is(SqlQueryExecution.Status.ONGOING.name())));
             assertThat(json, hasJsonPath(format("$[%d].result", i), nullValue()));
@@ -91,6 +99,10 @@ public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiT
             assertThat(json, hasJsonPath(format("$[%d].sqlQuery.label", i), is(sqlQuery.getLabel())));
             assertThat(json, hasJsonPath(format("$[%d].sqlQuery.cronExpression", i), is(sqlQuery.getCronExpression())));
             assertThat(json, hasJsonPath(format("$[%d].sqlQuery.datasource.label", i), is(datasource.getLabel())));
+        }
+
+        for (int i = 0; i < startTimes.size() - 1; ++i) {
+            assertThat(startTimes.get(i), lessThan(startTimes.get(i + 1)));
         }
     }
 

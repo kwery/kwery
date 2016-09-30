@@ -9,6 +9,7 @@ import dao.SqlQueryExecutionDao;
 import dtos.SqlQueryDto;
 import filters.DashRepoSecureFilter;
 import models.Datasource;
+import models.SqlQueryExecution;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -19,6 +20,7 @@ import ninja.validation.Validation;
 import services.scheduler.SchedulerService;
 import views.ActionResult;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,6 +82,8 @@ public class SqlQueryApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result currentlyExecutingSqlQueries() {
-        return Results.json().render(sqlQueryExecutionDao.getByStatus(ONGOING));
+        List<SqlQueryExecution> executions = sqlQueryExecutionDao.getByStatus(ONGOING);
+        Collections.sort(executions, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
+        return Results.json().render(executions);
     }
 }
