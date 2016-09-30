@@ -18,7 +18,7 @@ public class Routes implements ApplicationRoutes {
     public static final String USER = "/api/user";
     public static final String ADD_SQL_QUERY_API = "/api/sql-query/add";
     public static final String ALL_DATASOURCES_API = "/api/datasource/all";
-    public static final String CURRENTLY_EXECUTING_SQL_QUERY_API = "/api/sql-query/currently-executing";
+    public static final String ONGOING_SQL_QUERY_API = "/api/sql-query/onging";
 
     @Override
     public void init(Router router) {  
@@ -32,7 +32,7 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(USER).with(UserApiController.class, "user");
         router.POST().route(ADD_SQL_QUERY_API).with(SqlQueryApiController.class, "addSqlQuery");
         router.GET().route(ALL_DATASOURCES_API).with(DatasourceApiController.class, "allDatasources");
-        router.GET().route(CURRENTLY_EXECUTING_SQL_QUERY_API).with(SqlQueryApiController.class, "currentlyExecutingSqlQueries");
+        router.GET().route(ONGOING_SQL_QUERY_API).with(SqlQueryApiController.class, "ongingSqlQueries");
         //Api - End
 
         //Static asset

@@ -67,7 +67,7 @@ public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiT
 
     @Test
     public void test() throws InterruptedException, IOException {
-        String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(Routes.CURRENTLY_EXECUTING_SQL_QUERY_API));
+        String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(Routes.ONGOING_SQL_QUERY_API));
 
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
         assertThat(json, isJson());

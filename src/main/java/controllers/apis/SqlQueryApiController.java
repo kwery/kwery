@@ -84,7 +84,7 @@ public class SqlQueryApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result currentlyExecutingSqlQueries() {
+    public Result ongingSqlQueries() {
         List<SqlQueryExecution> models = sqlQueryExecutionDao.getByStatus(ONGOING);
         Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
 
