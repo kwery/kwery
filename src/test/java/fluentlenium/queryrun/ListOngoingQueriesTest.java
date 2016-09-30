@@ -1,24 +1,24 @@
-package controllers.apis.integration.queryrunapicontroller;
+package fluentlenium.queryrun;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
 import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import conf.Routes;
-import controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
+import fluentlenium.RepoDashFluentLeniumTest;
+import fluentlenium.user.login.LoginPage;
 import fluentlenium.utils.DbUtil;
+import fluentlenium.utils.UserTableUtil;
 import models.Datasource;
 import models.SqlQuery;
 import models.SqlQueryExecution;
+import org.fluentlenium.core.domain.FluentWebElement;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
+import javax.sql.DataSource;
+import java.util.List;
 
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
+import static junit.framework.TestCase.fail;
 import static models.Datasource.COLUMN_ID;
 import static models.Datasource.COLUMN_LABEL;
 import static models.Datasource.COLUMN_PASSWORD;
@@ -38,17 +38,21 @@ import static models.SqlQueryExecution.COLUMN_RESULT;
 import static models.SqlQueryExecution.COLUMN_STATUS;
 import static models.SqlQueryExecution.Status.ONGOING;
 import static models.SqlQueryExecution.Status.SUCCESS;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiTest {
-    protected Datasource datasource;
-    protected SqlQuery sqlQuery;
+public class ListOngoingQueriesTest extends RepoDashFluentLeniumTest {
+    protected ListOngoingSqlQueriesPage page;
 
     @Before
-    public void setUpQueryRunCurrentlyExecutingQueriesTest() {
-        DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
-                sequenceOf(
+    public void setUpListOngoingQueriesTest() {
+        UserTableUtil userTableUtil = new UserTableUtil();
+        DataSource datasource = DbUtil.getDatasource();
+
+        DbSetup dbSetup = new DbSetup(new DataSourceDestination(datasource),
+                Operations.sequenceOf(
+                        userTableUtil.insertOperation(),
                         insertInto(Datasource.TABLE)
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
@@ -62,24 +66,44 @@ public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiT
                                 .values(3, null, "sdjfklj", 1475215333445l, null, ONGOING, 1).build()
                 )
         );
+
         dbSetup.launch();
+
+        LoginPage loginPage = createPage(LoginPage.class);
+        loginPage.withDefaultUrl(getServerAddress());
+        goTo(loginPage);
+        if (!loginPage.isRendered()) {
+            fail("Could not render login page");
+        }
+        loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
+        loginPage.waitForSuccessMessage(userTableUtil.firstRow());
+
+        page = createPage(ListOngoingSqlQueriesPage.class);
+        page.withDefaultUrl(getServerAddress());
+        goTo(page);
+        if (!page.isRendered()) {
+            fail("Could not render list onging SQL queries page");
+        }
     }
 
     @Test
-    public void test() throws InterruptedException, IOException {
-        String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(Routes.CURRENTLY_EXECUTING_SQL_QUERY_API));
+    public void test() {
+        List<FluentWebElement> headerColumns = $("#ongoingQueriesTable thead th");
+        assertThat(headerColumns, hasSize(3));
 
-        Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
-        assertThat(json, isJson());
-        assertThat(JsonPath.read(json, "$.length()"), is(2));
+        assertThat(headerColumns.get(0).getText(), is("Label"));
+        assertThat(headerColumns.get(1).getText(), is("Start Time"));
+        assertThat(headerColumns.get(2).getText(), is("Datasource"));
 
-        assertThat(json, hasJsonPath("$[0].sqlQueryLabel", is("testQuery")));
-        assertThat(json, hasJsonPath("$[1].sqlQueryLabel", is("testQuery")));
+        List<FluentWebElement> columns = $("#ongoingQueriesTable tr td");
+        assertThat(columns, hasSize(6));
 
-        assertThat(json, hasJsonPath("$[0].sqlQueryExecutionStartTime", is("Fri Sep 30 2016 11:32")));
-        assertThat(json, hasJsonPath("$[1].sqlQueryExecutionStartTime", is("Fri Sep 30 2016 11:34")));
+        assertThat(columns.get(0).getText(), is("testQuery"));
+        assertThat(columns.get(1).getText(), is("Fri Sep 30 2016 11:32"));
+        assertThat(columns.get(2).getText(), is("testDatasource"));
 
-        assertThat(json, hasJsonPath("$[0].datasourceLabel", is("testDatasource")));
-        assertThat(json, hasJsonPath("$[1].datasourceLabel", is("testDatasource")));
+        assertThat(columns.get(3).getText(), is("testQuery"));
+        assertThat(columns.get(4).getText(), is("Fri Sep 30 2016 11:34"));
+        assertThat(columns.get(5).getText(), is("testDatasource"));
     }
 }
