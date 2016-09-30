@@ -42,8 +42,8 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ListOngoingQueriesTest extends RepoDashFluentLeniumTest {
-    protected ListOngoingSqlQueriesPage page;
+public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
+    protected ListExecutingSqlQueriesPage page;
 
     @Before
     public void setUpListOngoingQueriesTest() {
@@ -78,7 +78,7 @@ public class ListOngoingQueriesTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
         loginPage.waitForSuccessMessage(userTableUtil.firstRow());
 
-        page = createPage(ListOngoingSqlQueriesPage.class);
+        page = createPage(ListExecutingSqlQueriesPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
         if (!page.isRendered()) {
@@ -88,14 +88,14 @@ public class ListOngoingQueriesTest extends RepoDashFluentLeniumTest {
 
     @Test
     public void test() {
-        List<FluentWebElement> headerColumns = $("#ongoingQueriesTable thead th");
+        List<FluentWebElement> headerColumns = $("#executingSqlQueriesTable thead th");
         assertThat(headerColumns, hasSize(3));
 
         assertThat(headerColumns.get(0).getText(), is("Label"));
         assertThat(headerColumns.get(1).getText(), is("Start Time"));
         assertThat(headerColumns.get(2).getText(), is("Datasource"));
 
-        List<FluentWebElement> columns = $("#ongoingQueriesTable tr td");
+        List<FluentWebElement> columns = $("#executingSqlQueriesTable tr td");
         assertThat(columns, hasSize(6));
 
         assertThat(columns.get(0).getText(), is("testQuery"));

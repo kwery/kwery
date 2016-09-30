@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/sql-query/currently-executing.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/sql-query/executing.html"], function (ko, $, template) {
     function viewModel(params) {
         var self = this;
 

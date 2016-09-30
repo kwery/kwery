@@ -22,7 +22,7 @@
                 {url: "onboarding/add-datasource", auth: true, component: "onboarding-add-datasource"},
                 {url: "user/login{?query}", auth: false, component: "user-login"},
                 {url: "sql-query/add", auth: true, component: "sql-query-add"},
-                {url: "sql-query/currently-executing", auth: true, component: "sql-query-currently-executing"},
+                {url: "sql-query/executing", auth: true, component: "sql-query-executing"},
             ];
 
             var componentMapping = {
