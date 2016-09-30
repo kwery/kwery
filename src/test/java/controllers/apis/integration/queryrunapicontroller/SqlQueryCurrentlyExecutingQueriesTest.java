@@ -2,112 +2,83 @@ package controllers.apis.integration.queryrunapicontroller;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
-import com.xebialabs.overcast.host.CloudHost;
-import com.xebialabs.overcast.host.CloudHostFactory;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import conf.Routes;
 import controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import dao.DatasourceDao;
-import dao.SqlQueryDao;
 import models.Datasource;
 import models.SqlQuery;
 import models.SqlQueryExecution;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.CollectionType;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import services.scheduler.SchedulerService;
-import util.TestUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static java.lang.String.format;
-import static junit.framework.TestCase.fail;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.Operations.sequenceOf;
+import static models.Datasource.COLUMN_ID;
+import static models.Datasource.COLUMN_LABEL;
+import static models.Datasource.COLUMN_PASSWORD;
+import static models.Datasource.COLUMN_PORT;
+import static models.Datasource.COLUMN_TYPE;
+import static models.Datasource.COLUMN_URL;
+import static models.Datasource.COLUMN_USERNAME;
+import static models.Datasource.Type.MYSQL;
+import static models.SqlQuery.COLUMN_CRON_EXPRESSION;
+import static models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
+import static models.SqlQuery.COLUMN_QUERY;
+import static models.SqlQueryExecution.COLUMN_EXECUTION_END;
+import static models.SqlQueryExecution.COLUMN_EXECUTION_ID;
+import static models.SqlQueryExecution.COLUMN_EXECUTION_START;
+import static models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
+import static models.SqlQueryExecution.COLUMN_RESULT;
+import static models.SqlQueryExecution.COLUMN_STATUS;
+import static models.SqlQueryExecution.Status.ONGOING;
+import static models.SqlQueryExecution.Status.SUCCESS;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiTest {
-    protected long start = System.currentTimeMillis();
-
-    protected CloudHost cloudHost;
     protected Datasource datasource;
     protected SqlQuery sqlQuery;
 
     @Before
     public void setUpQueryRunCurrentlyExecutingQueriesTest() {
-        cloudHost = CloudHostFactory.getCloudHost("mysql");
-        cloudHost.setup();
-        String mysqlHost = cloudHost.getHostName();
-        int port = cloudHost.getPort(3306);
-
-        if (!TestUtil.waitForMysql(mysqlHost, port)) {
-            fail("MySQL docker service is not up");
-        }
-
-        datasource = new Datasource();
-        datasource.setUrl(mysqlHost);
-        datasource.setPort(port);
-        datasource.setLabel("test");
-        datasource.setUsername("root");
-        datasource.setPassword("root");
-
-        getInjector().getInstance(DatasourceDao.class).save(datasource);
-
-        sqlQuery = new SqlQuery();
-        sqlQuery.setDatasource(datasource);
-        sqlQuery.setCronExpression("* * * * *");
-        sqlQuery.setLabel("test");
-        sqlQuery.setQuery("select sleep(86440)");
-
-        getInjector().getInstance(SqlQueryDao.class).save(sqlQuery);
-
-        getInjector().getInstance(SchedulerService.class).schedule(sqlQuery);
+        DbSetup dbSetup = new DbSetup(new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(Datasource.TABLE)
+                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
+                                .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
+                        insertInto(SqlQuery.TABLE)
+                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
+                                .values(1, "* * * * *", "testQuery", "select * from foo", 1).build(),
+                        insertInto(SqlQueryExecution.TABLE)
+                                .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
+                                .values(1, null, "sjfljkl", 1475215495171l, "status", SUCCESS, 1)
+                                .values(2, null, "sjfljkl", 1475215495171l, null, ONGOING, 1)
+                                .values(3, null, "sdjfklj", 1475215333445l, null, ONGOING, 1).build()
+                )
+        );
+        dbSetup.launch();
     }
 
     @Test
     public void test() throws InterruptedException, IOException {
-        TimeUnit.SECONDS.sleep(70);
         String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(Routes.CURRENTLY_EXECUTING_SQL_QUERY_API));
-        ObjectMapper mapper = new ObjectMapper();
-        CollectionType type = mapper.getTypeFactory().constructCollectionType(List.class, SqlQueryExecution.class);
-        List<SqlQueryExecution> sqlQueryExecutions = mapper.readValue(jsonResponse, type);
 
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
         assertThat(json, isJson());
+        assertThat(JsonPath.read(json, "$.length()"), is(2));
 
-        List<Long> startTimes = new ArrayList<>(sqlQueryExecutions.size());
+        assertThat(json, hasJsonPath("$[0].sqlQueryLabel", is("testQuery")));
+        assertThat(json, hasJsonPath("$[1].sqlQueryLabel", is("testQuery")));
 
-        for (int i = 0; i < sqlQueryExecutions.size(); ++i) {
-            assertThat(json, hasJsonPath(format("$[%d].id", i), greaterThan(0)));
-            assertThat(json, hasJsonPath(format("$[%d].executionStart", i), greaterThan(start)));
+        assertThat(json, hasJsonPath("$[0].sqlQueryExecutionStartTime", is("Fri Sep 30 2016 11:32")));
+        assertThat(json, hasJsonPath("$[1].sqlQueryExecutionStartTime", is("Fri Sep 30 2016 11:34")));
 
-            startTimes.add(JsonPath.read(json, format("$[%d].executionStart", i)));
-
-            assertThat(json, hasJsonPath(format("$[%d].executionEnd", i), nullValue()));
-            assertThat(json, hasJsonPath(format("$[%d].status", i), is(SqlQueryExecution.Status.ONGOING.name())));
-            assertThat(json, hasJsonPath(format("$[%d].result", i), nullValue()));
-            assertThat(json, hasJsonPath(format("$[%d].sqlQuery.id", i), greaterThan(0)));
-            assertThat(json, hasJsonPath(format("$[%d].sqlQuery.query", i), is(sqlQuery.getQuery())));
-            assertThat(json, hasJsonPath(format("$[%d].sqlQuery.label", i), is(sqlQuery.getLabel())));
-            assertThat(json, hasJsonPath(format("$[%d].sqlQuery.cronExpression", i), is(sqlQuery.getCronExpression())));
-            assertThat(json, hasJsonPath(format("$[%d].sqlQuery.datasource.label", i), is(datasource.getLabel())));
-        }
-
-        for (int i = 0; i < startTimes.size() - 1; ++i) {
-            assertThat(startTimes.get(i), lessThan(startTimes.get(i + 1)));
-        }
-    }
-
-    @After
-    public void tearDownQueryRunCurrentlyExecutingQueriesTest() {
-        cloudHost.teardown();
+        assertThat(json, hasJsonPath("$[0].datasourceLabel", is("testDatasource")));
+        assertThat(json, hasJsonPath("$[1].datasourceLabel", is("testDatasource")));
     }
 }

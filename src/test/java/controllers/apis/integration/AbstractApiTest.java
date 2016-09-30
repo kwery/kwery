@@ -1,6 +1,7 @@
 package controllers.apis.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mchange.v2.c3p0.C3P0Registry;
 import models.User;
 import ninja.NinjaTest;
 import views.ActionResult;
@@ -8,6 +9,7 @@ import views.ActionResult;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
@@ -48,5 +50,10 @@ public abstract class AbstractApiTest extends NinjaTest {
     protected void assertFailure(ActionResult actionResult, Map<String, List<String>> fieldMessages) {
         assertThat(actionResult.getStatus(), is(failure));
         assertThat(actionResult.getFieldMessages(), is(fieldMessages));
+    }
+
+    protected javax.sql.DataSource getDatasource() {
+        Set set = C3P0Registry.getPooledDataSources();
+        return (javax.sql.DataSource) set.iterator().next();
     }
 }

@@ -12,27 +12,36 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "query_run")
+@Table(name = SqlQuery.TABLE)
 public class SqlQuery {
+    public static final String TABLE = "query_run";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_QUERY = "query";
+    public static final String COLUMN_LABEL = "label";
+    public static final String COLUMN_CRON_EXPRESSION = "cron_expression";
+    public static final String COLUMN_DATASOURCE_ID_FK = "datasource_id_fk";
+
+    @Column(name = COLUMN_ID)
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = COLUMN_QUERY)
     @Size(min = 1, message = "query.validation")
     @NotNull(message = "query.validation")
     private String query;
 
-    @Column(unique = true)
+    @Column(name = COLUMN_LABEL, unique = true)
     @NotNull(message = "label.validation")
     private String label;
 
-    @Column(name = "cron_expression")
+    @Column(name = COLUMN_CRON_EXPRESSION)
     @Size(min = 1, message = "cron.expression.validation")
     @NotNull(message = "cron.expression.validation")
     private String cronExpression;
 
+    @JoinColumn(name = COLUMN_DATASOURCE_ID_FK)
     @ManyToOne
-    @JoinColumn(name = "datasource_id_fk")
     @NotNull
     private Datasource datasource;
 
