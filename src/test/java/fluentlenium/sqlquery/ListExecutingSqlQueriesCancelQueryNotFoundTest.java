@@ -5,36 +5,41 @@ import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import dao.DatasourceDao;
 import dao.SqlQueryDao;
+import dao.SqlQueryExecutionDao;
 import fluentlenium.RepoDashFluentLeniumTest;
 import fluentlenium.user.login.LoginPage;
 import fluentlenium.utils.UserTableUtil;
 import models.Datasource;
 import models.SqlQuery;
+import models.SqlQueryExecution;
 import models.User;
 import org.fluentlenium.core.domain.FluentWebElement;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import services.scheduler.SchedulerService;
+import services.scheduler.SqlQueryExecutionNotFoundException;
+import util.Messages;
 import util.MySqlDocker;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static fluentlenium.utils.DbUtil.getDatasource;
-import static junit.framework.TestCase.fail;
+import static models.SqlQueryExecution.Status.ONGOING;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static util.Messages.KILLED_M;
-import static util.Messages.KILL_M;
+import static org.junit.Assert.fail;
 import static util.TestUtil.sleepSqlQuery;
 
-public class ListExecutingSqlQueriesCancelSuccessTest extends RepoDashFluentLeniumTest {
+public class ListExecutingSqlQueriesCancelQueryNotFoundTest extends RepoDashFluentLeniumTest {
     protected MySqlDocker mySqlDocker = new MySqlDocker();
     protected SchedulerService schedulerService;
     protected ListExecutingSqlQueriesPage page;
+    protected SqlQuery sqlQuery;
 
     @Before
-    public void setUpListExecutingSqlQueriesCancelSuccessTest () throws InterruptedException {
+    public void setUpListExecutingSqlQueriesCancelSuccessTest () throws InterruptedException, SqlQueryExecutionNotFoundException {
         mySqlDocker.start();
 
         UserTableUtil userTableUtil = new UserTableUtil();
@@ -48,7 +53,7 @@ public class ListExecutingSqlQueriesCancelSuccessTest extends RepoDashFluentLeni
         Datasource datasource = mySqlDocker.datasource();
         getInjector().getInstance(DatasourceDao.class).save(datasource);
 
-        SqlQuery sqlQuery = sleepSqlQuery(datasource);
+        this.sqlQuery = sleepSqlQuery(datasource);
         getInjector().getInstance(SqlQueryDao.class).save(sqlQuery);
 
         schedulerService = getInjector().getInstance(SchedulerService.class);
@@ -73,19 +78,19 @@ public class ListExecutingSqlQueriesCancelSuccessTest extends RepoDashFluentLeni
         if (!page.isRendered()) {
             fail("Could not render list ongoing SQL queries page");
         }
+
+        List<SqlQueryExecution> models = getInjector().getInstance(SqlQueryExecutionDao.class).getByStatus(ONGOING);
+        Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
+
+        schedulerService.stopExecution(sqlQuery.getId(), models.get(0).getExecutionId());
     }
 
     @Test
     public void test() throws InterruptedException {
         FluentWebElement killButton = $("#executingSqlQueriesTable tr td button", 0);
-        assertThat(killButton.getText(), is(KILL_M.toUpperCase()));
+        assertThat(killButton.getText(), is(Messages.KILL_M.toUpperCase()));
         killButton.click();
         TimeUnit.SECONDS.sleep(30);
-        assertThat($("#executingSqlQueriesTable tr td button", 0).getText(), is(KILLED_M.toUpperCase()));
-    }
-
-    @After
-    public void tearDownListExecutingSqlQueriesCancelSuccessTest() {
-        mySqlDocker.tearDown();
+        assertThat($("#executingSqlQueriesTable tr td p", 0).getText(), is(Messages.KILL_QUERY_NOT_FOUND_M));
     }
 }
