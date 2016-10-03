@@ -35,4 +35,9 @@ public class MessageKeys {
     public static final String DATASOURCE_VALIDATION = "datasource.validation";
     public static final String QUERY_RUN_ADDITION_SUCCESS = "query.run.addition.success";
     public static final String QUERY_RUN_ADDITION_FAILURE = "query.run.addition.failure";
+    public static final String KILL_QUERY = "kill.query";
+    public static final String KILL = "kill";
+    public static final String KILLING = "killing";
+    public static final String KILLED = "killed";
+    public static final String KILL_QUERY_NOT_FOUND = "kill.query.not.found";
 }

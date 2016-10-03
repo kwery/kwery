@@ -4,10 +4,10 @@
             <table class="u-full-width" id="executingSqlQueriesTable">
                 <thead>
                     <tr>
-                        <th>Label</th>
-                        <th>Start Time</th>
-                        <th>Datasource</th>
-                        <th>Kill Query</th>
+                        <th data-bind="text: ko.i18n('query')"></th>
+                        <th data-bind="text: ko.i18n('start')"></th>
+                        <th data-bind="text: ko.i18n('datasource')"></th>
+                        <th data-bind="text: ko.i18n('kill.query')"></th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: executions">

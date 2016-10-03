@@ -13,6 +13,7 @@ import models.SqlQueryExecution;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.junit.Before;
 import org.junit.Test;
+import util.Messages;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -41,6 +42,10 @@ import static models.SqlQueryExecution.Status.SUCCESS;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static util.Messages.DATASOURCE_M;
+import static util.Messages.KILL_QUERY_M;
+import static util.Messages.QUERY_M;
+import static util.Messages.START_M;
 
 public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
     protected ListExecutingSqlQueriesPage page;
@@ -91,10 +96,10 @@ public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
         List<FluentWebElement> headerColumns = $("#executingSqlQueriesTable thead th");
         assertThat(headerColumns, hasSize(4));
 
-        assertThat(headerColumns.get(0).getText(), is("Label"));
-        assertThat(headerColumns.get(1).getText(), is("Start Time"));
-        assertThat(headerColumns.get(2).getText(), is("Datasource"));
-        assertThat(headerColumns.get(3).getText(), is("Kill Query"));
+        assertThat(headerColumns.get(0).getText(), is(QUERY_M));
+        assertThat(headerColumns.get(1).getText(), is(START_M));
+        assertThat(headerColumns.get(2).getText(), is(DATASOURCE_M));
+        assertThat(headerColumns.get(3).getText(), is(KILL_QUERY_M));
 
         List<FluentWebElement> columns = $("#executingSqlQueriesTable tr td");
         assertThat(columns, hasSize(8));
@@ -102,11 +107,11 @@ public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
         assertThat(columns.get(0).getText(), is("testQuery"));
         assertThat(columns.get(1).getText(), is("Fri Sep 30 2016 11:32"));
         assertThat(columns.get(2).getText(), is("testDatasource"));
-        assertThat(columns.get(3).getText(), is("KILL"));
+        assertThat(columns.get(3).getText(), is(Messages.KILL_M.toUpperCase()));
 
         assertThat(columns.get(4).getText(), is("testQuery"));
         assertThat(columns.get(5).getText(), is("Fri Sep 30 2016 11:34"));
         assertThat(columns.get(6).getText(), is("testDatasource"));
-        assertThat(columns.get(7).getText(), is("KILL"));
+        assertThat(columns.get(7).getText(), is(Messages.KILL_M.toUpperCase()));
     }
 }
