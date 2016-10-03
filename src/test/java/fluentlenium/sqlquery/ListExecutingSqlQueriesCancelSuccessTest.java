@@ -75,8 +75,6 @@ public class ListExecutingSqlQueriesCancelSuccessTest extends RepoDashFluentLeni
 
     @Test
     public void test() throws InterruptedException {
-        System.out.println("foo");
-        System.out.println("bar");
         FluentWebElement killButton = $("#executingSqlQueriesTable tr td button", 0);
         assertThat(killButton.getText(), is("KILL"));
         killButton.click();
