@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import services.scheduler.OngoingSqlQueryTask;
 import services.scheduler.SchedulerService;
+import services.scheduler.SqlQueryExecutionNotFoundException;
 import util.RepoDashTestBase;
 import util.TestUtil;
 
@@ -73,7 +74,7 @@ public class SchedulerServiceTestOngoingAndCancel extends RepoDashTestBase {
     }
 
     @Test
-    public void test() throws InterruptedException, JsonProcessingException {
+    public void test() throws InterruptedException, JsonProcessingException, SqlQueryExecutionNotFoundException {
         long now = System.currentTimeMillis();
 
         schedulerService.schedule(sqlQuery);

@@ -16,9 +16,11 @@ import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
+import ninja.params.PathParam;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import services.scheduler.SchedulerService;
+import services.scheduler.SqlQueryExecutionNotFoundException;
 import views.ActionResult;
 
 import java.text.SimpleDateFormat;
@@ -84,7 +86,7 @@ public class SqlQueryApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result ongingSqlQueries() {
+    public Result executingSqlQueries() {
         List<SqlQueryExecution> models = sqlQueryExecutionDao.getByStatus(ONGOING);
         Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
 
@@ -97,11 +99,38 @@ public class SqlQueryApiController {
         return Results.json().render(dtos);
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result killSqlQuery(@PathParam("sqlQueryId") Integer sqlQueryId, SqlQueryExecutionIdContainer sqlQueryExecutionId) {
+        ActionResult actionResult = new ActionResult(success, new LinkedList<>());
+
+        try {
+            schedulerService.stopExecution(sqlQueryId, sqlQueryExecutionId.getSqlQueryExecutionId());
+        } catch (SqlQueryExecutionNotFoundException e) {
+            actionResult.setStatus(failure);
+        }
+
+        return Results.json().render(actionResult);
+    }
+
     public SqlQueryExecutionDto from(SqlQueryExecution model) {
         SqlQueryExecutionDto dto = new SqlQueryExecutionDto();
         dto.setSqlQueryLabel(model.getSqlQuery().getLabel());
         dto.setDatasourceLabel(model.getSqlQuery().getDatasource().getLabel());
         dto.setSqlQueryExecutionStartTime(new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(model.getExecutionStart()));
+        dto.setSqlQueryId(model.getSqlQuery().getId());
+        dto.setSqlQueryExecutionId(model.getExecutionId());
         return dto;
+    }
+
+    public static class SqlQueryExecutionIdContainer {
+        private String sqlQueryExecutionId;
+
+        public String getSqlQueryExecutionId() {
+            return sqlQueryExecutionId;
+        }
+
+        public void setSqlQueryExecutionId(String sqlQueryExecutionId) {
+            this.sqlQueryExecutionId = sqlQueryExecutionId;
+        }
     }
 }

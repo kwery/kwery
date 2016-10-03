@@ -5,7 +5,7 @@ define(["knockout", "jquery", "text!components/sql-query/executing.html"], funct
         self.executions = ko.observableArray([]);
 
         $.ajax({
-            url: "/api/sql-query/currently-executing",
+            url: "/api/sql-query/executing",
             type: "get",
             contentType: "application/json",
             success: function (executions) {

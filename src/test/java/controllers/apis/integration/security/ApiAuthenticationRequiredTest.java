@@ -18,10 +18,10 @@ import static conf.Routes.ADD_ADMIN_USER_API;
 import static conf.Routes.ADD_DATASOURCE_API;
 import static conf.Routes.ADD_SQL_QUERY_API;
 import static conf.Routes.ALL_DATASOURCES_API;
+import static conf.Routes.EXECUTING_SQL_QUERY_API;
 import static conf.Routes.INDEX;
 import static conf.Routes.LOGIN_API;
 import static conf.Routes.MYSQL_DATASOURCE_CONNECTION_TEST_API;
-import static conf.Routes.ONGOING_SQL_QUERY_API;
 import static conf.Routes.USER;
 import static controllers.apis.integration.security.ApiSecurityTestVo.HttpMethod.GET;
 import static controllers.apis.integration.security.ApiSecurityTestVo.HttpMethod.POST;
@@ -52,7 +52,7 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
                 new ApiSecurityTestVo(LOGIN_API, false, POST, user()),
                 new ApiSecurityTestVo(ADD_SQL_QUERY_API, true, POST, queryRunDto()),
                 new ApiSecurityTestVo(ALL_DATASOURCES_API, true, GET),
-                new ApiSecurityTestVo(ONGOING_SQL_QUERY_API, true, GET)
+                new ApiSecurityTestVo(EXECUTING_SQL_QUERY_API, true, GET)
         );
     }
 

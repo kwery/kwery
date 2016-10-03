@@ -7,6 +7,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("action-result", {
         require: "components/action-result"
     });
+    ko.components.register("kill-sql-query", {
+        require: "components/kill-sql-query"
+    });
     ko.components.register("onboarding-add-admin-user", {
         require: "components/user/admin/add"
     });

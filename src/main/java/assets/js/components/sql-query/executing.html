@@ -7,6 +7,7 @@
                         <th>Label</th>
                         <th>Start Time</th>
                         <th>Datasource</th>
+                        <th>Kill Query</th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: executions">
@@ -14,6 +15,10 @@
                         <td data-bind="text: sqlQueryLabel"></td>
                         <td data-bind="text: sqlQueryExecutionStartTime"></td>
                         <td data-bind="text: datasourceLabel"></td>
+                        <td>
+                            <kill-sql-query params="sqlQueryId: sqlQueryId, sqlQueryExecutionId: sqlQueryExecutionId">
+                            </kill-sql-query>
+                        </td>
                     </tr>
                 </tbody>
             </table>

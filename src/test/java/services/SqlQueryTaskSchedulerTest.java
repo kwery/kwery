@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import services.scheduler.OngoingSqlQueryTask;
+import services.scheduler.SqlQueryExecutionNotFoundException;
 import services.scheduler.SqlQueryTask;
 import services.scheduler.SqlQueryTaskExecutorListener;
 import services.scheduler.SqlQueryTaskFactory;
@@ -133,7 +134,7 @@ public class SqlQueryTaskSchedulerTest {
     }
 
     @Test
-    public void testStopExecution() {
+    public void testStopExecution() throws SqlQueryExecutionNotFoundException {
         TaskExecutor another = mock(TaskExecutor.class);
         when(another.getGuid()).thenReturn("");
 

@@ -82,28 +82,31 @@ public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
         page.withDefaultUrl(getServerAddress());
         goTo(page);
         if (!page.isRendered()) {
-            fail("Could not render list onging SQL queries page");
+            fail("Could not render list ongoing SQL queries page");
         }
     }
 
     @Test
     public void test() {
         List<FluentWebElement> headerColumns = $("#executingSqlQueriesTable thead th");
-        assertThat(headerColumns, hasSize(3));
+        assertThat(headerColumns, hasSize(4));
 
         assertThat(headerColumns.get(0).getText(), is("Label"));
         assertThat(headerColumns.get(1).getText(), is("Start Time"));
         assertThat(headerColumns.get(2).getText(), is("Datasource"));
+        assertThat(headerColumns.get(3).getText(), is("Kill Query"));
 
         List<FluentWebElement> columns = $("#executingSqlQueriesTable tr td");
-        assertThat(columns, hasSize(6));
+        assertThat(columns, hasSize(8));
 
         assertThat(columns.get(0).getText(), is("testQuery"));
         assertThat(columns.get(1).getText(), is("Fri Sep 30 2016 11:32"));
         assertThat(columns.get(2).getText(), is("testDatasource"));
+        assertThat(columns.get(3).getText(), is("KILL"));
 
-        assertThat(columns.get(3).getText(), is("testQuery"));
-        assertThat(columns.get(4).getText(), is("Fri Sep 30 2016 11:34"));
-        assertThat(columns.get(5).getText(), is("testDatasource"));
+        assertThat(columns.get(4).getText(), is("testQuery"));
+        assertThat(columns.get(5).getText(), is("Fri Sep 30 2016 11:34"));
+        assertThat(columns.get(6).getText(), is("testDatasource"));
+        assertThat(columns.get(7).getText(), is("KILL"));
     }
 }

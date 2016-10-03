@@ -41,7 +41,7 @@ import static models.SqlQueryExecution.Status.SUCCESS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiTest {
+public class SqlQueryExecutingQueriesTest extends AbstractPostLoginApiTest {
     protected Datasource datasource;
     protected SqlQuery sqlQuery;
 
@@ -58,8 +58,8 @@ public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiT
                         insertInto(SqlQueryExecution.TABLE)
                                 .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
                                 .values(1, null, "sjfljkl", 1475215495171l, "status", SUCCESS, 1)
-                                .values(2, null, "sjfljkl", 1475215495171l, null, ONGOING, 1)
-                                .values(3, null, "sdjfklj", 1475215333445l, null, ONGOING, 1).build()
+                                .values(2, null, "executionId1", 1475215495171l, null, ONGOING, 1)
+                                .values(3, null, "executionId0", 1475215333445l, null, ONGOING, 1).build()
                 )
         );
         dbSetup.launch();
@@ -67,7 +67,7 @@ public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiT
 
     @Test
     public void test() throws InterruptedException, IOException {
-        String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(Routes.ONGOING_SQL_QUERY_API));
+        String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(Routes.EXECUTING_SQL_QUERY_API));
 
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
         assertThat(json, isJson());
@@ -81,5 +81,11 @@ public class SqlQueryCurrentlyExecutingQueriesTest extends AbstractPostLoginApiT
 
         assertThat(json, hasJsonPath("$[0].datasourceLabel", is("testDatasource")));
         assertThat(json, hasJsonPath("$[1].datasourceLabel", is("testDatasource")));
+
+        assertThat(json, hasJsonPath("$[0].sqlQueryId", is(1)));
+        assertThat(json, hasJsonPath("$[1].sqlQueryId", is(1)));
+
+        assertThat(json, hasJsonPath("$[0].sqlQueryExecutionId", is("executionId0")));
+        assertThat(json, hasJsonPath("$[1].sqlQueryExecutionId", is("executionId1")));
     }
 }

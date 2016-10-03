@@ -86,15 +86,22 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
             return l;
     }
 
-    public void stopExecution(String executionId) {
+    public void stopExecution(String executionId) throws SqlQueryExecutionNotFoundException {
+        boolean found = false;
+
         for (TaskExecutor ongoingExecution : ongoingExecutions) {
             if (executionId.equals(ongoingExecution.getGuid())) {
                 SqlQueryTask q = (SqlQueryTask)ongoingExecution.getTask();
                 logger.info("Stopping query execution {} running on datasource {} with execution id {}", q.getSqlQuery().getQuery(),
                         q.getSqlQuery().getDatasource().getLabel(), executionId);
                 ongoingExecution.stop();
+                found = true;
                 break;
             }
+        }
+
+        if (!found) {
+            throw new SqlQueryExecutionNotFoundException();
         }
     }
 

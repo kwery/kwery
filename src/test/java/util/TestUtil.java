@@ -59,6 +59,15 @@ public class TestUtil {
         return q;
     }
 
+    public static SqlQuery sleepSqlQuery(Datasource datasource) {
+        SqlQuery sqlQuery = new SqlQuery();
+        sqlQuery.setDatasource(datasource);
+        sqlQuery.setCronExpression("* * * * *");
+        sqlQuery.setLabel("test");
+        sqlQuery.setQuery("select sleep(86440)");
+        return sqlQuery;
+    }
+
     public static SqlQueryDto queryRunDto() {
         SqlQueryDto dto = new SqlQueryDto();
         dto.setQuery("select * from foo");

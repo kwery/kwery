@@ -54,8 +54,12 @@ public class SchedulerService {
         return queryRunSchedulerMap.get(queryRunId).ongoingQueryTasks();
     }
 
-    public void stopExecution(int queryRunId, String taskExecutionId) {
-        queryRunSchedulerMap.get(queryRunId).stopExecution(taskExecutionId);
+    public void stopExecution(int sqlQueryId, String sqlQueryExecutionId) throws SqlQueryExecutionNotFoundException {
+        SqlQueryTaskScheduler sqlQueryTaskScheduler = queryRunSchedulerMap.get(sqlQueryId);
+        if (sqlQueryTaskScheduler == null) {
+            throw new SqlQueryExecutionNotFoundException();
+        }
+        sqlQueryTaskScheduler.stopExecution(sqlQueryExecutionId);
     }
 
     public SqlQuery toModel(SqlQueryDto dto, Datasource datasource) {
