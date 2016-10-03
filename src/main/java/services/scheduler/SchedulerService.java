@@ -50,8 +50,8 @@ public class SchedulerService {
         queryRunSchedulerMap.put(sqlQuery.getId(), sqlQueryTaskScheduler);
     }
 
-    public List<OngoingSqlQueryTask> ongoingQueryTasks(Integer queryRunId) {
-        return queryRunSchedulerMap.get(queryRunId).ongoingQueryTasks();
+    public List<OngoingSqlQueryTask> ongoingQueryTasks(Integer sqlQueryId) {
+        return queryRunSchedulerMap.get(sqlQueryId).ongoingQueryTasks();
     }
 
     public void stopExecution(int sqlQueryId, String sqlQueryExecutionId) throws SqlQueryExecutionNotFoundException {
