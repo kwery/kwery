@@ -10,17 +10,24 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "dash_repo_user")
+@Table(name = User.TABLE_DASH_REPO_USER)
 public class User {
+    public static final String TABLE_DASH_REPO_USER = "dash_repo_user";
+    public static final String COLUMN_USERNAME = "username";
+    public static final String COLUMN_PASSWORD = "password";
+    public static final String COLUMN_ID = "id";
+
+    @Column(name = COLUMN_ID)
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
-    @Column(unique = true)
+    @Column(name = COLUMN_USERNAME, unique = true)
     @Size(min = 1, message = "username.validation")
     @NotNull(message = "username.validation")
     private String username;
 
+    @Column(name = COLUMN_PASSWORD)
     @Size(min = 1, message = "password.validation")
     @NotNull(message = "password.validation")
     private String password;

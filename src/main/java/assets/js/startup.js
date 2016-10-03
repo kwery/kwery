@@ -7,6 +7,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("action-result", {
         require: "components/action-result"
     });
+    ko.components.register("kill-sql-query", {
+        require: "components/kill-sql-query"
+    });
     ko.components.register("onboarding-add-admin-user", {
         require: "components/user/admin/add"
     });
@@ -16,8 +19,11 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("user-login", {
         require: "components/user/login"
     });
-    ko.components.register("query-run-add", {
-        require: "components/query-run/add"
+    ko.components.register("sql-query-add", {
+        require: "components/sql-query/add"
+    });
+    ko.components.register("sql-query-executing", {
+        require: "components/sql-query/executing"
     });
 
     ko.applyBindings({ route: router.currentRoute });

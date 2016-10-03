@@ -6,11 +6,11 @@ import com.google.common.collect.ImmutableList;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import dao.DatasourceDao;
-import dao.QueryRunDao;
-import dao.QueryRunExecutionDao;
+import dao.SqlQueryDao;
+import dao.SqlQueryExecutionDao;
 import models.Datasource;
-import models.QueryRun;
-import models.QueryRunExecution;
+import models.SqlQuery;
+import models.SqlQueryExecution;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import util.TestUtil;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static models.QueryRunExecution.Status.SUCCESS;
+import static models.SqlQueryExecution.Status.SUCCESS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
@@ -31,9 +31,9 @@ import static org.junit.Assert.fail;
 public class SchedulerServiceTestScheduleDao extends RepoDashTestBase {
     protected CloudHost cloudHost;
     protected Datasource datasource;
-    protected QueryRun queryRun;
+    protected SqlQuery sqlQuery;
     protected SchedulerService schedulerService;
-    protected QueryRunExecutionDao queryRunExecutionDao;
+    protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
     @Before
     public void setUpSchedulerServiceTestScheduler() {
@@ -55,26 +55,26 @@ public class SchedulerServiceTestScheduleDao extends RepoDashTestBase {
 
         getInstance(DatasourceDao.class).save(datasource);
 
-        queryRun = new QueryRun();
-        queryRun.setDatasource(datasource);
-        queryRun.setCronExpression("* * * * *");
-        queryRun.setLabel("test");
-        queryRun.setQuery("select user from mysql.user where user in ('root')");
+        sqlQuery = new SqlQuery();
+        sqlQuery.setDatasource(datasource);
+        sqlQuery.setCronExpression("* * * * *");
+        sqlQuery.setLabel("test");
+        sqlQuery.setQuery("select user from mysql.user where user in ('root')");
 
-        getInstance(QueryRunDao.class).save(queryRun);
+        getInstance(SqlQueryDao.class).save(sqlQuery);
 
         schedulerService = getInstance(SchedulerService.class);
 
-        queryRunExecutionDao = getInstance(QueryRunExecutionDao.class);
+        sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
     }
 
     @Test
     public void test() throws InterruptedException, JsonProcessingException {
         long now = System.currentTimeMillis();
 
-        schedulerService.schedule(queryRun);
+        schedulerService.schedule(sqlQuery);
         TimeUnit.MINUTES.sleep(3);
-        List<QueryRunExecution> executions = queryRunExecutionDao.getByQueryRunId(queryRun.getId());
+        List<SqlQueryExecution> executions = sqlQueryExecutionDao.getBySqlQueryId(sqlQuery.getId());
         assertThat(executions.size(), greaterThanOrEqualTo(2));
 
         String expectedResult = new ObjectMapper().writeValueAsString(
@@ -84,9 +84,9 @@ public class SchedulerServiceTestScheduleDao extends RepoDashTestBase {
                 )
         );
 
-        for (QueryRunExecution execution : executions) {
+        for (SqlQueryExecution execution : executions) {
             assertThat(execution.getId(), greaterThan(0));
-            assertThat(execution.getQueryRun().getId(), is(queryRun.getId()));
+            assertThat(execution.getSqlQuery().getId(), is(sqlQuery.getId()));
             assertThat(execution.getStatus(), is(SUCCESS));
             assertThat(execution.getExecutionStart(), greaterThan(now));
             assertThat(execution.getExecutionEnd(), greaterThan(execution.getExecutionStart()));

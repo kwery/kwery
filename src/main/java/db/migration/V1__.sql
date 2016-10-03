@@ -10,7 +10,7 @@ create table datasource (
   label varchar(255) not null,
   password varchar(255),
   port integer not null check (port>=1),
-  type integer,
+  type varchar(255),
   url varchar(255) not null,
   username varchar(255) not null,
   primary key (id)
@@ -31,7 +31,7 @@ create table query_run_execution (
   executionId varchar(255),
   executionStart bigint,
   result varchar(255),
-  status integer,
+  status varchar(255),
   query_run_id_fk integer,
   primary key (id)
 );

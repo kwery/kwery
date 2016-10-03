@@ -5,10 +5,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import dao.DatasourceDao;
-import dao.QueryRunDao;
-import dtos.QueryRunDto;
+import dao.SqlQueryDao;
+import dtos.SqlQueryDto;
 import models.Datasource;
-import models.QueryRun;
+import models.SqlQuery;
 import ninja.lifecycle.Dispose;
 import ninja.lifecycle.Start;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class SchedulerService {
     private static Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     @Inject
-    protected QueryRunDao queryRunDao;
+    protected SqlQueryDao sqlQueryDao;
 
     @Inject
     private DatasourceDao datasourceDao;
@@ -33,33 +33,37 @@ public class SchedulerService {
     protected QueryTaskSchedulerFactory queryTaskSchedulerFactory;
 
     @Inject
-    protected Provider<QueryRun> queryRunProvider;
+    protected Provider<SqlQuery> queryRunProvider;
 
-    protected Map<Integer, QueryTaskScheduler> queryRunSchedulerMap = new HashMap<>();
+    protected Map<Integer, SqlQueryTaskScheduler> queryRunSchedulerMap = new HashMap<>();
 
     //TODO Rollback on error
-    public void schedule(QueryRunDto dto) {
+    public void schedule(SqlQueryDto dto) {
         Datasource datasource = datasourceDao.getById(dto.getDatasourceId());
-        QueryRun model = toModel(dto, datasource);
-        queryRunDao.save(model);
+        SqlQuery model = toModel(dto, datasource);
+        sqlQueryDao.save(model);
         schedule(model);
     }
 
-    public void schedule(QueryRun queryRun) {
-        QueryTaskScheduler queryTaskScheduler = queryTaskSchedulerFactory.create(new CopyOnWriteArrayList<>(), queryRun);
-        queryRunSchedulerMap.put(queryRun.getId(), queryTaskScheduler);
+    public void schedule(SqlQuery sqlQuery) {
+        SqlQueryTaskScheduler sqlQueryTaskScheduler = queryTaskSchedulerFactory.create(new CopyOnWriteArrayList<>(), sqlQuery);
+        queryRunSchedulerMap.put(sqlQuery.getId(), sqlQueryTaskScheduler);
     }
 
-    public List<OngoingQueryTask> ongoingQueryTasks(Integer queryRunId) {
-        return queryRunSchedulerMap.get(queryRunId).ongoingQueryTasks();
+    public List<OngoingSqlQueryTask> ongoingQueryTasks(Integer sqlQueryId) {
+        return queryRunSchedulerMap.get(sqlQueryId).ongoingQueryTasks();
     }
 
-    public void stopExecution(int queryRunId, String taskExecutionId) {
-        queryRunSchedulerMap.get(queryRunId).stopExecution(taskExecutionId);
+    public void stopExecution(int sqlQueryId, String sqlQueryExecutionId) throws SqlQueryExecutionNotFoundException {
+        SqlQueryTaskScheduler sqlQueryTaskScheduler = queryRunSchedulerMap.get(sqlQueryId);
+        if (sqlQueryTaskScheduler == null) {
+            throw new SqlQueryExecutionNotFoundException();
+        }
+        sqlQueryTaskScheduler.stopExecution(sqlQueryExecutionId);
     }
 
-    public QueryRun toModel(QueryRunDto dto, Datasource datasource) {
-        QueryRun q = queryRunProvider.get();
+    public SqlQuery toModel(SqlQueryDto dto, Datasource datasource) {
+        SqlQuery q = queryRunProvider.get();
         q.setQuery(dto.getQuery());
         q.setCronExpression(dto.getCronExpression());
         q.setLabel(dto.getLabel());
@@ -70,31 +74,31 @@ public class SchedulerService {
     @Start
     public void scheduleAllQueries() {
         logger.info("Scheduling all queries");
-        queryRunDao.getAll().forEach(this::schedule);
+        sqlQueryDao.getAll().forEach(this::schedule);
     }
 
     @Dispose
     public void shutdownSchedulers() {
         logger.info("Stopping all schedulers");
-        for (QueryTaskScheduler queryTaskScheduler : queryRunSchedulerMap.values()) {
-            queryTaskScheduler.stopScheduler();
+        for (SqlQueryTaskScheduler sqlQueryTaskScheduler : queryRunSchedulerMap.values()) {
+            sqlQueryTaskScheduler.stopScheduler();
         }
     }
 
     @VisibleForTesting
-    public Map<Integer, QueryTaskScheduler> getQueryRunSchedulerMap() {
+    public Map<Integer, SqlQueryTaskScheduler> getQueryRunSchedulerMap() {
         return queryRunSchedulerMap;
     }
 
-    public void setQueryRunDao(QueryRunDao queryRunDao) {
-        this.queryRunDao = queryRunDao;
+    public void setSqlQueryDao(SqlQueryDao sqlQueryDao) {
+        this.sqlQueryDao = sqlQueryDao;
     }
 
     public void setDatasourceDao(DatasourceDao datasourceDao) {
         this.datasourceDao = datasourceDao;
     }
 
-    public void setQueryRunProvider(Provider<QueryRun> queryRunProvider) {
+    public void setQueryRunProvider(Provider<SqlQuery> queryRunProvider) {
         this.queryRunProvider = queryRunProvider;
     }
 }

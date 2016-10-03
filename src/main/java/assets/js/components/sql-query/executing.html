@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="twelve columns">
+            <table class="u-full-width" id="executingSqlQueriesTable">
+                <thead>
+                    <tr>
+                        <th data-bind="text: ko.i18n('query')"></th>
+                        <th data-bind="text: ko.i18n('start')"></th>
+                        <th data-bind="text: ko.i18n('datasource')"></th>
+                        <th data-bind="text: ko.i18n('kill.query')"></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: executions">
+                    <tr>
+                        <td data-bind="text: sqlQueryLabel"></td>
+                        <td data-bind="text: sqlQueryExecutionStartTime"></td>
+                        <td data-bind="text: datasourceLabel"></td>
+                        <td>
+                            <kill-sql-query params="sqlQueryId: sqlQueryId, sqlQueryExecutionId: sqlQueryExecutionId">
+                            </kill-sql-query>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
