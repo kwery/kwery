@@ -23,7 +23,7 @@
                 {url: "user/login{?query}", auth: false, component: "user-login"},
                 {url: "sql-query/add", auth: true, component: "sql-query-add"},
                 {url: "sql-query/executing", auth: true, component: "sql-query-executing"},
-                {url: "sql-query/execution-list", auth: true, component: "sql-query-execution-list"},
+                {url: "sql-query/{sqlQueryId}/execution-list", auth: true, component: "sql-query-execution-list"},
             ];
 
             var componentMapping = {

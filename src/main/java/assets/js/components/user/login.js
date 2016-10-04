@@ -20,11 +20,9 @@ define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login
                         repoDash.user.setAuthenticated(true);
 
                         //Intended action was not login, but the user was not authenticated, hence login page was
-                        //shown. Now, post login success, route to the intended page.
+                        //shown. Now, post login success, refresh the page
                         if (window.location.hash !== "#user/login") {
-                            var comp = repoDash.componentMapping.component(params[0].previous);
-                            router.currentRoute({page: comp});
-                            //router.currentRoute({page: 'onboarding-add-datasource'});
+                            window.location.reload();
                         }
                     }
 

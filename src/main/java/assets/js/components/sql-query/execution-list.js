@@ -6,7 +6,7 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
         self.sqlQuery = ko.observable("");
 
         $.ajax({
-            url: "/api/sql-query/1/execution/0/100",
+            url: "/api/sql-query/" + params.sqlQueryId + "/execution/0/100",
             type: "get",
             contentType: "application/json",
             success: function (executionListDto) {
