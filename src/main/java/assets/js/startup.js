@@ -25,6 +25,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("sql-query-executing", {
         require: "components/sql-query/executing"
     });
+    ko.components.register("sql-query-execution-list", {
+        require: "components/sql-query/execution-list"
+    });
 
     ko.applyBindings({ route: router.currentRoute });
 

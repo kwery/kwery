@@ -1,0 +1,29 @@
+<div class="container">
+    <div class="row">
+        <div class="twelve columns">
+            <p data-bind="text:sqlQuery"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="twelve columns">
+            <table class="u-full-width" id="executionListTable">
+                <thead>
+                    <tr>
+                        <th data-bind="text: ko.i18n('start')"></th>
+                        <th data-bind="text: ko.i18n('end')"></th>
+                        <th data-bind="text: ko.i18n('status')"></th>
+                        <th data-bind="text: ko.i18n('result')"></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: executions">
+                    <tr>
+                        <td data-bind="text: sqlQueryExecutionStartTime"></td>
+                        <td data-bind="text: sqlQueryExecutionEndTime"></td>
+                        <td data-bind="text: status"></td>
+                        <td data-bind="text: result"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
