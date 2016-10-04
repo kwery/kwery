@@ -5,7 +5,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import models.SqlQueryExecution;
-import models.SqlQueryExecution.Status;
 import ninja.jpa.UnitOfWork;
 import services.scheduler.SqlQueryExecutionSearchFilter;
 
@@ -44,29 +43,15 @@ public class SqlQueryExecutionDao {
     @SuppressWarnings("unchecked")
     @UnitOfWork
     public SqlQueryExecution getByExecutionId(String executionId) {
-        EntityManager m = entityManagerProvider.get();
-        List<SqlQueryExecution> l = m.createQuery("SELECT e FROM SqlQueryExecution e WHERE e.executionId = :executionId")
-                .setParameter("executionId", executionId).getResultList();
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setExecutionId(executionId);
+        List<SqlQueryExecution> executions = filter(filter);
 
-        if (l.size() == 0) {
+        if (executions.size() == 0) {
             return null;
         }
 
-        return l.get(0);
-    }
-
-    @SuppressWarnings("unchecked")
-    @UnitOfWork
-    public List<SqlQueryExecution> getBySqlQueryId(Integer id) {
-        EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT e FROM SqlQueryExecution e WHERE e.sqlQuery.id = :sqlQueryId").setParameter("sqlQueryId", id).getResultList();
-    }
-
-    @SuppressWarnings("unchecked")
-    @UnitOfWork
-    public List<SqlQueryExecution> getByStatus(Status status) {
-        EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT e FROM SqlQueryExecution e WHERE e.status = :status").setParameter("status", status).getResultList();
+        return executions.get(0);
     }
 
     @UnitOfWork

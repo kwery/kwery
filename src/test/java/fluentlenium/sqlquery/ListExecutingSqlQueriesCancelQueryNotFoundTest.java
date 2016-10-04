@@ -1,5 +1,6 @@
 package fluentlenium.sqlquery;
 
+import com.google.common.collect.ImmutableList;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
@@ -18,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import services.scheduler.SchedulerService;
 import services.scheduler.SqlQueryExecutionNotFoundException;
+import services.scheduler.SqlQueryExecutionSearchFilter;
 import util.Messages;
 import util.MySqlDocker;
 
@@ -79,7 +81,9 @@ public class ListExecutingSqlQueriesCancelQueryNotFoundTest extends RepoDashFlue
             fail("Could not render list ongoing SQL queries page");
         }
 
-        List<SqlQueryExecution> models = getInjector().getInstance(SqlQueryExecutionDao.class).getByStatus(ONGOING);
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setStatuses(ImmutableList.of(ONGOING));
+        List<SqlQueryExecution> models = getInjector().getInstance(SqlQueryExecutionDao.class).filter(filter);
         Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
 
         schedulerService.stopExecution(sqlQuery.getId(), models.get(0).getExecutionId());
