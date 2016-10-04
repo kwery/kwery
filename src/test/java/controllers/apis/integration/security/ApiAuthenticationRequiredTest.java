@@ -51,7 +51,19 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
         String killSqlQueryUrl = router.getReverseRoute(
                 SqlQueryApiController.class,
                 "killSqlQuery",
-                ImmutableMap.of("sqlQueryId", 1)
+                ImmutableMap.of(
+                        "sqlQueryId", 1
+                )
+        );
+
+        String listSqlQueryExecutionUrl = router.getReverseRoute(
+            SqlQueryApiController.class,
+            "listSqlQueryExecution",
+            ImmutableMap.of(
+                    "sqlQueryId", 1,
+                    "pageNo", 0,
+                    "resultCount", 2
+            )
         );
 
         vos = ImmutableList.of(
@@ -64,7 +76,8 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
                 new ApiSecurityTestVo(ADD_SQL_QUERY_API, true, POST, queryRunDto()),
                 new ApiSecurityTestVo(ALL_DATASOURCES_API, true, GET),
                 new ApiSecurityTestVo(EXECUTING_SQL_QUERY_API, true, GET),
-                new ApiSecurityTestVo(killSqlQueryUrl, true, POST, new SqlQueryApiController.SqlQueryExecutionIdContainer())
+                new ApiSecurityTestVo(killSqlQueryUrl, true, POST, new SqlQueryApiController.SqlQueryExecutionIdContainer()),
+                new ApiSecurityTestVo(listSqlQueryExecutionUrl, true, GET)
         );
     }
 
