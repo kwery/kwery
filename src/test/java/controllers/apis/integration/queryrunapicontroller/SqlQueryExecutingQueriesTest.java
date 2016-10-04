@@ -42,9 +42,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryExecutingQueriesTest extends AbstractPostLoginApiTest {
-    protected Datasource datasource;
-    protected SqlQuery sqlQuery;
-
     @Before
     public void setUpQueryRunCurrentlyExecutingQueriesTest() {
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),

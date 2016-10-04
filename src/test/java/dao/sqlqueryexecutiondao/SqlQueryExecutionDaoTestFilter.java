@@ -51,7 +51,6 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
 
     @Before
     public void setUpSqlQueryExecutionDaoTestFilter() {
-
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 sequenceOf(
                         insertInto(Datasource.TABLE)
@@ -75,7 +74,6 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
                                 .values(7, null, UUID.randomUUID().toString(), 1475158740747l, null, ONGOING, 1)
                                 .values(8, null, UUID.randomUUID().toString(), 1475158740747l, null, ONGOING, 2)
 
-
                                 .values(9, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, "result", SUCCESS, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
                                 .values(10, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, "result", SUCCESS, 2) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
                                 .values(11, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
@@ -85,14 +83,14 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
                                 .values(15, null, UUID.randomUUID().toString(), 1475245307680l, null, ONGOING, 1) //Fri Sep 30 19:51:47 IST 2016
                                 .values(16, null, UUID.randomUUID().toString(), 1475245307680l, null, ONGOING, 2) //Fri Sep 30 19:51:47 IST 2016
 
-                                .values(17, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, "result", SUCCESS, 1) //Sat Oct 01 19:54:04 IST 2016 - Sat Oct 01 20:14:04 IST 2016
-                                .values(18, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, "result", SUCCESS, 2) //Sat Oct 01 19:54:04 IST 2016 - Sat Oct 01 20:14:04 IST 2016
-                                .values(19, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Sat Oct 01 19:54:04 IST 2016 - Sat Oct 01 20:14:04 IST 2016
-                                .values(20, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 2) //Sat Oct 01 19:54:04 IST 2016 - Sat Oct 01 20:14:04 IST 2016
-                                .values(21, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, KILLED, 1) //Sat Oct 01 19:54:04 IST 2016 - Sat Oct 01 20:14:04 IST 2016
-                                .values(22, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, KILLED, 2) //Sat Oct 01 19:54:04 IST 2016 - Sat Oct 01 20:14:04 IST 2016
-                                .values(23, null, UUID.randomUUID().toString(), 1475245307680l, null, ONGOING, 1) //Fri Sep 30 19:51:47 IST 2016
-                                .values(24, null, UUID.randomUUID().toString(), 1475245307680l, null, ONGOING, 2) //Fri Sep 30 19:51:47 IST 2016
+                                .values(17, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, "result", SUCCESS, 1) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(18, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, "result", SUCCESS, 2) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(19, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, FAILURE, 1) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(20, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, FAILURE, 2) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(21, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, KILLED, 1) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(22, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, KILLED, 2) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(23, null, UUID.randomUUID().toString(), 1475331707680l, null, ONGOING, 1) //Sat Oct 01 19:51:47 IST 2016
+                                .values(24, null, UUID.randomUUID().toString(), 1475331707680l, null, ONGOING, 2) //Sat Oct 01 19:51:47 IST 2016
 
                                 .values(25, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, "result", SUCCESS, 1) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
                                 .values(26, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, "result", SUCCESS, 2) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016

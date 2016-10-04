@@ -9,8 +9,10 @@ import dao.SqlQueryDao;
 import dao.SqlQueryExecutionDao;
 import dtos.SqlQueryDto;
 import dtos.SqlQueryExecutionDto;
+import dtos.SqlQueryExecutionListDto;
 import filters.DashRepoSecureFilter;
 import models.Datasource;
+import models.SqlQuery;
 import models.SqlQueryExecution;
 import ninja.Context;
 import ninja.FilterWith;
@@ -39,6 +41,8 @@ import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
 
 public class SqlQueryApiController {
+    public static final String DISPLAY_DATE_FORMAT = "EEE MMM dd yyyy HH:mm";
+
     @Inject
     private SqlQueryDao sqlQueryDao;
 
@@ -116,13 +120,46 @@ public class SqlQueryApiController {
         return Results.json().render(actionResult);
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result listSqlQueryExecution(@PathParam("sqlQueryId") Integer sqlQueryId, @PathParam("pageNo") Integer pageNo, @PathParam("resultCount") Integer resultCount) {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(sqlQueryId);
+        filter.setPageNumber(pageNo);
+        filter.setResultCount(resultCount);
+        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+
+        Collections.sort(sqlQueryExecutions, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
+
+        List<SqlQueryExecutionDto> sqlQueryExecutionDtos = new ArrayList<>(sqlQueryExecutions.size());
+
+        for (SqlQueryExecution sqlQueryExecution : sqlQueryExecutions) {
+            sqlQueryExecutionDtos.add(from(sqlQueryExecution));
+        }
+
+        SqlQuery sqlQuery = sqlQueryDao.getById(sqlQueryId);
+
+        SqlQueryExecutionListDto sqlQueryExecutionListDto = new SqlQueryExecutionListDto();
+        sqlQueryExecutionListDto.setSqlQuery(sqlQuery.getQuery());
+        sqlQueryExecutionListDto.setSqlQueryExecutionDtos(sqlQueryExecutionDtos);
+
+        return Results.json().render(sqlQueryExecutionListDto);
+    }
+
     public SqlQueryExecutionDto from(SqlQueryExecution model) {
         SqlQueryExecutionDto dto = new SqlQueryExecutionDto();
         dto.setSqlQueryLabel(model.getSqlQuery().getLabel());
         dto.setDatasourceLabel(model.getSqlQuery().getDatasource().getLabel());
-        dto.setSqlQueryExecutionStartTime(new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(model.getExecutionStart()));
+        dto.setSqlQueryExecutionStartTime(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(model.getExecutionStart()));
+
+        Long executionEnd = model.getExecutionEnd();
+        if (executionEnd != null) {
+            dto.setSqlQueryExecutionEndTime(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(executionEnd));
+        }
+
         dto.setSqlQueryId(model.getSqlQuery().getId());
         dto.setSqlQueryExecutionId(model.getExecutionId());
+        dto.setStatus(model.getStatus().name());
+        dto.setResult(model.getResult());
         return dto;
     }
 
