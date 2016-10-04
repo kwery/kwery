@@ -1,6 +1,7 @@
 package controllers.apis;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import controllers.MessageKeys;
 import dao.DatasourceDao;
@@ -21,6 +22,7 @@ import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import services.scheduler.SchedulerService;
 import services.scheduler.SqlQueryExecutionNotFoundException;
+import services.scheduler.SqlQueryExecutionSearchFilter;
 import views.ActionResult;
 
 import java.text.SimpleDateFormat;
@@ -87,7 +89,9 @@ public class SqlQueryApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result executingSqlQueries() {
-        List<SqlQueryExecution> models = sqlQueryExecutionDao.getByStatus(ONGOING);
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setStatuses(ImmutableList.of(ONGOING));
+        List<SqlQueryExecution> models = sqlQueryExecutionDao.filter(filter);
         Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
 
         List<SqlQueryExecutionDto> dtos = new ArrayList<>(models.size());

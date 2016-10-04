@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import services.scheduler.SchedulerService;
+import services.scheduler.SqlQueryExecutionSearchFilter;
 import util.RepoDashTestBase;
 import util.TestUtil;
 
@@ -74,7 +75,11 @@ public class SchedulerServiceTestScheduleDao extends RepoDashTestBase {
 
         schedulerService.schedule(sqlQuery);
         TimeUnit.MINUTES.sleep(3);
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.getBySqlQueryId(sqlQuery.getId());
+
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(sqlQuery.getId());
+
+        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
         assertThat(executions.size(), greaterThanOrEqualTo(2));
 
         String expectedResult = new ObjectMapper().writeValueAsString(
