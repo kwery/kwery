@@ -2,7 +2,10 @@ package controllers.apis.integration.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import controllers.apis.SqlQueryApiController;
 import ninja.NinjaDocTester;
+import ninja.Router;
 import org.doctester.testbrowser.Request;
 import org.doctester.testbrowser.Response;
 import org.junit.Before;
@@ -43,6 +46,14 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
 
     @Before
     public void setUpApiAuthenticationRequiredTest() {
+        Router router = getInjector().getInstance(Router.class);
+
+        String killSqlQueryUrl = router.getReverseRoute(
+                SqlQueryApiController.class,
+                "killSqlQuery",
+                ImmutableMap.of("sqlQueryId", 1)
+        );
+
         vos = ImmutableList.of(
                 new ApiSecurityTestVo(ADD_DATASOURCE_API, true, POST, datasource()),
                 new ApiSecurityTestVo(MYSQL_DATASOURCE_CONNECTION_TEST_API, true, POST, datasource()),
@@ -52,7 +63,8 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
                 new ApiSecurityTestVo(LOGIN_API, false, POST, user()),
                 new ApiSecurityTestVo(ADD_SQL_QUERY_API, true, POST, queryRunDto()),
                 new ApiSecurityTestVo(ALL_DATASOURCES_API, true, GET),
-                new ApiSecurityTestVo(EXECUTING_SQL_QUERY_API, true, GET)
+                new ApiSecurityTestVo(EXECUTING_SQL_QUERY_API, true, GET),
+                new ApiSecurityTestVo(killSqlQueryUrl, true, POST, new SqlQueryApiController.SqlQueryExecutionIdContainer())
         );
     }
 
