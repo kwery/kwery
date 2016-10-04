@@ -1,4 +1,4 @@
-package controllers.apis.integration.queryrunapicontroller;
+package controllers.apis.integration.sqlqueryapicontroller;
 
 import controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import dao.DatasourceDao;

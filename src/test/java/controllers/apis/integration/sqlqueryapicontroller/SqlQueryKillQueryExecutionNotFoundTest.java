@@ -1,4 +1,4 @@
-package controllers.apis.integration.queryrunapicontroller;
+package controllers.apis.integration.sqlqueryapicontroller;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.Configuration;
