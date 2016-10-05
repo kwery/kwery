@@ -1,5 +1,6 @@
 package controllers.apis.integration.sqlqueryapicontroller;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -7,6 +8,7 @@ import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import controllers.apis.SqlQueryApiController;
 import controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
+import dtos.SqlQueryExecutionListFilterDto;
 import fluentlenium.utils.DbUtil;
 import models.Datasource;
 import models.SqlQuery;
@@ -15,6 +17,7 @@ import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.LinkedList;
 import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -105,18 +108,114 @@ public class ListSqlQueryExecutionTest extends AbstractPostLoginApiTest {
     }
 
     @Test
-    public void test() {
+    public void testExecutionEndDateFilter() {
         String url = getInjector().getInstance(Router.class).getReverseRoute(
                 SqlQueryApiController.class,
                 "listSqlQueryExecution",
                 ImmutableMap.of(
-                        "sqlQueryId", 1,
-                        "pageNo", 0,
-                        "resultCount", 2
+                        "sqlQueryId", 1
                 )
         );
 
-        String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(url));
+        SqlQueryExecutionListFilterDto filter = new SqlQueryExecutionListFilterDto();
+        filter.setPageNumber(0);
+        filter.setResultCount(2);
+        //Sat Oct 01 20:21:47
+        filter.setExecutionEndStart("01/10/2016 20:20");
+        filter.setExecutionEndEnd("01/10/2016 20:22");
+
+        String jsonResponse = ninjaTestBrowser.postJson(getUrl(url), filter);
+        Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
+
+        assertThat(json, isJson());
+        assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
+        assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(1));
+
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionStartTime", is("Sat Oct 01 2016 19:51")));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionEndTime", is("Sat Oct 01 2016 20:21")));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].status", is(KILLED.name())));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].result", nullValue()));
+    }
+
+    @Test
+    public void testExecutionStartDateFilter() {
+        String url = getInjector().getInstance(Router.class).getReverseRoute(
+                SqlQueryApiController.class,
+                "listSqlQueryExecution",
+                ImmutableMap.of(
+                        "sqlQueryId", 1
+                )
+        );
+
+        SqlQueryExecutionListFilterDto filter = new SqlQueryExecutionListFilterDto();
+        filter.setPageNumber(0);
+        filter.setResultCount(2);
+        filter.setExecutionStartStart("29/09/2016 19:48");
+        filter.setExecutionStartEnd("29/09/2016 19:50");
+
+        String jsonResponse = ninjaTestBrowser.postJson(getUrl(url), filter);
+        Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
+
+        assertThat(json, isJson());
+        assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
+        assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(1));
+
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionStartTime", is("Thu Sep 29 2016 19:49")));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionEndTime", is("Thu Sep 29 2016 20:09")));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].status", is(SUCCESS.name())));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].result", is("result")));
+    }
+
+    @Test
+    public void testStatusFilter() {
+        String url = getInjector().getInstance(Router.class).getReverseRoute(
+                SqlQueryApiController.class,
+                "listSqlQueryExecution",
+                ImmutableMap.of(
+                        "sqlQueryId", 1
+                )
+        );
+
+        SqlQueryExecutionListFilterDto filter = new SqlQueryExecutionListFilterDto();
+        filter.setPageNumber(0);
+        filter.setResultCount(2);
+        filter.setStatuses(ImmutableList.of(SUCCESS.name(), FAILURE.name()));
+
+        String jsonResponse = ninjaTestBrowser.postJson(getUrl(url), filter);
+        Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
+
+        assertThat(json, isJson());
+        assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
+        assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(2));
+
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionStartTime", is("Thu Sep 29 2016 19:49")));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[1].sqlQueryExecutionStartTime", is("Fri Sep 30 2016 19:51")));
+
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionEndTime", is("Thu Sep 29 2016 20:09")));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[1].sqlQueryExecutionEndTime", is("Fri Sep 30 2016 20:11")));
+
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].status", is(SUCCESS.name())));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[1].status", is(FAILURE.name())));
+
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].result", is("result")));
+        assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[1].result", nullValue()));
+    }
+
+    @Test
+    public void testPaginationAndNonDefaultValues() {
+        String url = getInjector().getInstance(Router.class).getReverseRoute(
+                SqlQueryApiController.class,
+                "listSqlQueryExecution",
+                ImmutableMap.of(
+                        "sqlQueryId", 1
+                )
+        );
+
+        SqlQueryExecutionListFilterDto filter = new SqlQueryExecutionListFilterDto();
+        filter.setPageNumber(0);
+        filter.setResultCount(2);
+
+        String jsonResponse = ninjaTestBrowser.postJson(getUrl(url), filter);
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
 
         assertThat(json, isJson());
@@ -136,17 +235,15 @@ public class ListSqlQueryExecutionTest extends AbstractPostLoginApiTest {
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[1].result", nullValue()));
 
         //Paginate
-        url = getInjector().getInstance(Router.class).getReverseRoute(
-                SqlQueryApiController.class,
-                "listSqlQueryExecution",
-                ImmutableMap.of(
-                        "sqlQueryId", 1,
-                        "pageNo", 1,
-                        "resultCount", 2
-                )
-        );
+        filter.setPageNumber(1);
+        //Set non null values
+        filter.setExecutionStartStart("");
+        filter.setExecutionStartEnd("");
+        filter.setExecutionEndStart("");
+        filter.setExecutionEndEnd("");
+        filter.setStatuses(new LinkedList<>());
 
-        jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(url));
+        jsonResponse = ninjaTestBrowser.postJson(getUrl(url), filter);
         json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
 
         assertThat(json, isJson());

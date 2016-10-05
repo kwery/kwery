@@ -4,6 +4,67 @@
             <p data-bind="text:sqlQuery"></p>
         </div>
     </div>
+    <form data-bind="submit: submit" id="filterExecutionListForm">
+        <div class="row">
+            <div class="six columns">
+                <div class="row">
+                    <div class="twelve columns">
+                        <label data-bind="text: ko.i18n('execution.start.start')" for="executionStartStart"></label>
+                        <input data-bind="value: executionStartStart" class="u-full-width" type="text" id="executionStartStart" name="executionStartStart">
+                    </div>
+                </div>
+            </div>
+            <div class="six columns">
+                <div class="twelve columns">
+                    <label data-bind="text: ko.i18n('execution.start.end')" for="executionStartEnd"></label>
+                    <input data-bind="value: executionStartEnd" type="text" id="executionStartEnd" name="executionStartEnd">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="six columns">
+                <div class="row">
+                    <div class="twelve columns">
+                        <label data-bind="text: ko.i18n('execution.end.start')" for="executionEndStart"></label>
+                        <input data-bind="value: executionEndStart" class="u-full-width" type="text" id="executionEndStart" name="executionEndStart">
+                    </div>
+                </div>
+            </div>
+            <div class="six columns">
+                <div class="twelve columns">
+                    <label data-bind="text: ko.i18n('execution.end.end')" for="executionEndEnd"></label>
+                    <input data-bind="value: executionEndEnd" class="u-full-width" type="text" id="executionEndEnd" name="executionEndEnd">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="twelve columns">
+                <label data-bind="text: ko.i18n('status')"></label>
+                <!-- TODO Status should be picked from back end -->
+                <label class="example-send-yourself-copy">
+                    <input data-bind="checked: statuses" type="checkbox" value="ONGOING">
+                    <span class="label-body">ONGOING</span>
+                </label>
+                <label class="example-send-yourself-copy">
+                    <input data-bind="checked: statuses" type="checkbox" value="SUCCESS">
+                    <span class="label-body">SUCCESS</span>
+                </label>
+                <label class="example-send-yourself-copy">
+                    <input data-bind="checked: statuses" type="checkbox" value="FAILURE">
+                    <span class="label-body">FAILURE</span>
+                </label>
+                <label class="example-send-yourself-copy">
+                    <input data-bind="checked: statuses" type="checkbox" value="KILLED">
+                    <span class="label-body">KILLED</span>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="twelve columns">
+                <button data-bind="text: ko.i18n('filter')" class="button-primary" id="filter"></button>
+            </div>
+        </div>
+    </form>
     <div class="row">
         <div class="twelve columns">
             <table class="u-full-width" id="executionListTable">

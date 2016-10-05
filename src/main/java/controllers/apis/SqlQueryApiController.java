@@ -1,6 +1,7 @@
 package controllers.apis;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import controllers.MessageKeys;
@@ -10,6 +11,7 @@ import dao.SqlQueryExecutionDao;
 import dtos.SqlQueryDto;
 import dtos.SqlQueryExecutionDto;
 import dtos.SqlQueryExecutionListDto;
+import dtos.SqlQueryExecutionListFilterDto;
 import filters.DashRepoSecureFilter;
 import models.Datasource;
 import models.SqlQuery;
@@ -27,6 +29,7 @@ import services.scheduler.SqlQueryExecutionNotFoundException;
 import services.scheduler.SqlQueryExecutionSearchFilter;
 import views.ActionResult;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +45,7 @@ import static views.ActionResult.Status.success;
 
 public class SqlQueryApiController {
     public static final String DISPLAY_DATE_FORMAT = "EEE MMM dd yyyy HH:mm";
+    public static final String FILTER_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     @Inject
     private SqlQueryDao sqlQueryDao;
@@ -121,12 +125,39 @@ public class SqlQueryApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result listSqlQueryExecution(@PathParam("sqlQueryId") Integer sqlQueryId, @PathParam("pageNo") Integer pageNo, @PathParam("resultCount") Integer resultCount) {
-        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
-        filter.setSqlQueryId(sqlQueryId);
-        filter.setPageNumber(pageNo);
-        filter.setResultCount(resultCount);
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+    public Result listSqlQueryExecution(@PathParam("sqlQueryId") Integer sqlQueryId, SqlQueryExecutionListFilterDto filterDto) throws ParseException {
+        SqlQueryExecutionSearchFilter dbFilter = new SqlQueryExecutionSearchFilter();
+        dbFilter.setSqlQueryId(sqlQueryId);
+
+        dbFilter.setPageNumber(filterDto.getPageNumber());
+        dbFilter.setResultCount(filterDto.getResultCount());
+
+        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionStartStart()))) {
+            dbFilter.setExecutionStartStart(getTime(filterDto.getExecutionStartStart()));
+        }
+
+        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionStartEnd()))) {
+            dbFilter.setExecutionStartEnd(getTime(filterDto.getExecutionStartEnd()));
+        }
+
+        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionEndStart()))) {
+            dbFilter.setExecutionEndStart(getTime(filterDto.getExecutionEndStart()));
+        }
+
+        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionEndEnd()))) {
+            dbFilter.setExecutionEndEnd(getTime(filterDto.getExecutionEndEnd()));
+        }
+
+        if (filterDto.getStatuses() != null && filterDto.getStatuses().size() > 0) {
+            List<SqlQueryExecution.Status> fromRequest = new ArrayList<>(filterDto.getStatuses().size());
+            for (String status : filterDto.getStatuses()) {
+                fromRequest.add(SqlQueryExecution.Status.valueOf(status));
+            }
+
+            dbFilter.setStatuses(fromRequest);
+        }
+
+        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(dbFilter);
 
         Collections.sort(sqlQueryExecutions, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
 
@@ -143,6 +174,10 @@ public class SqlQueryApiController {
         sqlQueryExecutionListDto.setSqlQueryExecutionDtos(sqlQueryExecutionDtos);
 
         return Results.json().render(sqlQueryExecutionListDto);
+    }
+
+    private long getTime(String date) throws ParseException {
+        return new SimpleDateFormat(FILTER_DATE_FORMAT).parse(date).getTime();
     }
 
     public SqlQueryExecutionDto from(SqlQueryExecution model) {
