@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="twelve columns">
-            <p data-bind="text:sqlQuery"></p>
+            <p data-bind="text:sqlQuery" id="sqlQuery"></p>
         </div>
     </div>
     <form data-bind="submit: submit" id="filterExecutionListForm">
@@ -43,25 +43,25 @@
                 <!-- TODO Status should be picked from back end -->
                 <label class="example-send-yourself-copy">
                     <input data-bind="checked: statuses" type="checkbox" value="ONGOING">
-                    <span class="label-body">ONGOING</span>
+                    <span class="label-body" id="ongoingCheckBox">ONGOING</span>
                 </label>
                 <label class="example-send-yourself-copy">
                     <input data-bind="checked: statuses" type="checkbox" value="SUCCESS">
-                    <span class="label-body">SUCCESS</span>
+                    <span class="label-body" id="successCheckBox">SUCCESS</span>
                 </label>
                 <label class="example-send-yourself-copy">
                     <input data-bind="checked: statuses" type="checkbox" value="FAILURE">
-                    <span class="label-body">FAILURE</span>
+                    <span class="label-body" id="failureCheckBox">FAILURE</span>
                 </label>
                 <label class="example-send-yourself-copy">
                     <input data-bind="checked: statuses" type="checkbox" value="KILLED">
-                    <span class="label-body">KILLED</span>
+                    <span class="label-body" id="killedCheckBox">KILLED</span>
                 </label>
             </div>
         </div>
         <div class="row">
             <div class="twelve columns">
-                <button data-bind="text: ko.i18n('filter')" class="button-primary" id="filter"></button>
+                <button data-bind="text: ko.i18n('filter')" class="button-primary" id="filterButton"></button>
             </div>
         </div>
     </form>
@@ -76,7 +76,7 @@
                         <th data-bind="text: ko.i18n('result')"></th>
                     </tr>
                 </thead>
-                <tbody data-bind="foreach: executions">
+                <tbody data-bind="foreach: executions" id="executionListTableBody">
                     <tr>
                         <td data-bind="text: sqlQueryExecutionStartTime"></td>
                         <td data-bind="text: sqlQueryExecutionEndTime"></td>
