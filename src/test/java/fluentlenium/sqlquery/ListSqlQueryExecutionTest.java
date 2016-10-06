@@ -81,6 +81,7 @@ public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
         );
         dbSetup.launch();
 
+
         LoginPage loginPage = createPage(LoginPage.class);
         loginPage.withDefaultUrl(getServerAddress());
         goTo(loginPage);
@@ -135,26 +136,48 @@ public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
         pageInvariant();
 
         page.fillStatus(SUCCESS, FAILURE);
+        page.fillResultCount(1);
+
         page.filter();
 
-        page.waitForFilterResult(2);
+        page.waitForFilterResult(1);
 
         List<List<String>> executionList = page.getExecutionList();
 
-        assertThat(executionList, hasSize(2));
+        assertThat(executionList, hasSize(1));
 
-        List<String> firstRow = executionList.get(0);
+        List<String> row = executionList.get(0);
 
-        assertThat(firstRow.get(0), is("Thu Sep 29 2016 19:49"));
-        assertThat(firstRow.get(1), is("Thu Sep 29 2016 20:09"));
-        assertThat(firstRow.get(2), is(SUCCESS.name()));
-        assertThat(firstRow.get(3), is("result"));
+        assertThat(row.get(0), is("Thu Sep 29 2016 19:49"));
+        assertThat(row.get(1), is("Thu Sep 29 2016 20:09"));
+        assertThat(row.get(2), is(SUCCESS.name()));
+        assertThat(row.get(3), is("result"));
 
-        List<String> secondRow = executionList.get(1);
-        assertThat(secondRow.get(0), is("Fri Sep 30 2016 19:51"));
-        assertThat(secondRow.get(1), is("Fri Sep 30 2016 20:11"));
-        assertThat(secondRow.get(2), is(FAILURE.name()));
-        assertThat(secondRow.get(3), is(""));
+        page.clickNext();
+        page.waitForStatus(FAILURE);
+
+        pageInvariant();
+
+        executionList = page.getExecutionList();
+        row = executionList.get(0);
+
+        assertThat(row.get(0), is("Fri Sep 30 2016 19:51"));
+        assertThat(row.get(1), is("Fri Sep 30 2016 20:11"));
+        assertThat(row.get(2), is(FAILURE.name()));
+        assertThat(row.get(3), is(""));
+
+        page.clickPrevious();
+        page.waitForStatus(SUCCESS);
+
+        pageInvariant();
+
+        executionList = page.getExecutionList();
+        row = executionList.get(0);
+
+        assertThat(row.get(0), is("Thu Sep 29 2016 19:49"));
+        assertThat(row.get(1), is("Thu Sep 29 2016 20:09"));
+        assertThat(row.get(2), is(SUCCESS.name()));
+        assertThat(row.get(3), is("result"));
     }
 
     @Test
@@ -162,39 +185,95 @@ public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
         pageInvariant();
 
         page.fillExecutionStartStart("29/09/2016 19:48");
-        page.fillExecutionStartEnd("29/09/2016 19:50");
+        page.fillExecutionStartEnd("30/09/2016 19:52");
+        page.fillResultCount(1);
+
+        //Fri Sep 30 19:51:47 IST 2016
         page.filter();
         page.waitForFilterResult(1);
 
         List<List<String>> executionList = page.getExecutionList();
         assertThat(executionList, hasSize(1));
 
-        List<String> firstRow = executionList.get(0);
+        List<String> row = executionList.get(0);
 
-        assertThat(firstRow.get(0), is("Thu Sep 29 2016 19:49"));
-        assertThat(firstRow.get(1), is("Thu Sep 29 2016 20:09"));
-        assertThat(firstRow.get(2), is(SUCCESS.name()));
-        assertThat(firstRow.get(3), is("result"));
+        assertThat(row.get(0), is("Thu Sep 29 2016 19:49"));
+        assertThat(row.get(1), is("Thu Sep 29 2016 20:09"));
+        assertThat(row.get(2), is(SUCCESS.name()));
+        assertThat(row.get(3), is("result"));
+
+        page.clickNext();
+        page.waitForStatus(FAILURE);
+        pageInvariant();
+
+        executionList = page.getExecutionList();
+        row = executionList.get(0);
+
+        assertThat(row.get(0), is("Fri Sep 30 2016 19:51"));
+        assertThat(row.get(1), is("Fri Sep 30 2016 20:11"));
+        assertThat(row.get(2), is(FAILURE.name()));
+        assertThat(row.get(3), is(""));
+
+        page.clickPrevious();
+        page.waitForStatus(SUCCESS);
+
+        pageInvariant();
+
+        executionList = page.getExecutionList();
+        row = executionList.get(0);
+
+        assertThat(row.get(0), is("Thu Sep 29 2016 19:49"));
+        assertThat(row.get(1), is("Thu Sep 29 2016 20:09"));
+        assertThat(row.get(2), is(SUCCESS.name()));
+        assertThat(row.get(3), is("result"));
     }
 
     @Test
     public void testFilterExecutionEndStartAndEnd() {
         pageInvariant();
-
-        page.fillExecutionEndStart("01/10/2016 20:20");
+        //Fri Sep 30 20:11:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+        page.fillExecutionEndStart("30/09/2016 20:10");
         page.fillExecutionEndEnd("01/10/2016 20:22");
+        page.fillResultCount(1);
+
         page.filter();
+
         page.waitForFilterResult(1);
 
         List<List<String>> executionList = page.getExecutionList();
         assertThat(executionList, hasSize(1));
 
-        List<String> firstRow = executionList.get(0);
+        List<String> row = executionList.get(0);
 
-        assertThat(firstRow.get(0), is("Sat Oct 01 2016 19:51"));
-        assertThat(firstRow.get(1), is("Sat Oct 01 2016 20:21"));
-        assertThat(firstRow.get(2), is(KILLED.name()));
-        assertThat(firstRow.get(3), is(""));
+        assertThat(row.get(0), is("Fri Sep 30 2016 19:51"));
+        assertThat(row.get(1), is("Fri Sep 30 2016 20:11"));
+        assertThat(row.get(2), is(FAILURE.name()));
+        assertThat(row.get(3), is(""));
+
+        page.clickNext();
+        page.waitForStatus(KILLED);
+        pageInvariant();
+
+        executionList = page.getExecutionList();
+        row = executionList.get(0);
+
+        //Sat Oct 01 19:51:47 IST 2016
+        assertThat(row.get(0), is("Sat Oct 01 2016 19:51"));
+        assertThat(row.get(1), is("Sat Oct 01 2016 20:21"));
+        assertThat(row.get(2), is(KILLED.name()));
+        assertThat(row.get(3), is(""));
+
+        page.clickPrevious();
+
+        page.waitForStatus(FAILURE);
+        pageInvariant();
+        executionList = page.getExecutionList();
+        row = executionList.get(0);
+
+        assertThat(row.get(0), is("Fri Sep 30 2016 19:51"));
+        assertThat(row.get(1), is("Fri Sep 30 2016 20:11"));
+        assertThat(row.get(2), is(FAILURE.name()));
+        assertThat(row.get(3), is(""));
     }
 
     private void pageInvariant() {
@@ -208,5 +287,4 @@ public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
 
         assertThat(page.sqlQuery(), is("select * from foo"));
     }
-
 }

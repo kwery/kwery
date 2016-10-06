@@ -3,6 +3,7 @@ package fluentlenium.sqlquery;
 import fluentlenium.RepoDashFluentLeniumTest;
 import fluentlenium.RepoDashPage;
 import models.SqlQueryExecution;
+import models.SqlQueryExecution.Status;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
@@ -60,8 +61,8 @@ public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPag
         return find(id("sqlQuery")).getText();
     }
 
-    public void fillStatus(SqlQueryExecution.Status... statuses) {
-        for (SqlQueryExecution.Status status : statuses) {
+    public void fillStatus(Status... statuses) {
+        for (Status status : statuses) {
             find(id(status.name().toLowerCase() + "CheckBox")).click();
         }
     }
@@ -82,11 +83,35 @@ public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPag
         fill("#executionEndEnd").with(date);
     }
 
+    public void fillResultCount(int resultCount) {
+       fill("#resultCount").with(String.valueOf(resultCount));
+    }
+
+    public void clickPrevious() {
+        find(id("previous")).click();
+    }
+
+    public void clickNext() {
+        find(id("next")).click();
+    }
+
     public void filter() {
         find(id("filterButton")).click();
     }
 
     public void waitForFilterResult(int expectedRowCount) {
         await().atMost(30, TimeUnit.SECONDS).until("#executionListTableBody tr").hasSize(expectedRowCount);
+    }
+
+    public void waitForStatus(Status status) {
+        await().atMost(30, TimeUnit.SECONDS).until(".status").hasText(status.name());
+    }
+
+    public boolean isNextEnabled() {
+        return find(By.id("next")).first().isEnabled();
+    }
+
+    public boolean isPreviousEnabled() {
+        return find(By.id("previous")).first().isEnabled();
     }
 }

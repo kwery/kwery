@@ -5,6 +5,7 @@ import java.util.List;
 public class SqlQueryExecutionListDto {
     private String sqlQuery;
     private List<SqlQueryExecutionDto> sqlQueryExecutionDtos;
+    private long totalCount;
 
     public String getSqlQuery() {
         return sqlQuery;
@@ -20,5 +21,13 @@ public class SqlQueryExecutionListDto {
 
     public void setSqlQueryExecutionDtos(List<SqlQueryExecutionDto> sqlQueryExecutionDtos) {
         this.sqlQueryExecutionDtos = sqlQueryExecutionDtos;
+    }
+
+    public long getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(long totalCount) {
+        this.totalCount = totalCount;
     }
 }

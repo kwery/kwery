@@ -49,7 +49,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class ListSqlQueryExecutionTest extends AbstractPostLoginApiTest {
+public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
     @Before
     public void before() {
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
@@ -130,6 +130,7 @@ public class ListSqlQueryExecutionTest extends AbstractPostLoginApiTest {
         assertThat(json, isJson());
         assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(1));
+        assertThat(json, hasJsonPath("$.totalCount", is(1)));
 
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionStartTime", is("Sat Oct 01 2016 19:51")));
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionEndTime", is("Sat Oct 01 2016 20:21")));
@@ -159,6 +160,7 @@ public class ListSqlQueryExecutionTest extends AbstractPostLoginApiTest {
         assertThat(json, isJson());
         assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(1));
+        assertThat(json, hasJsonPath("$.totalCount", is(1)));
 
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionStartTime", is("Thu Sep 29 2016 19:49")));
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionEndTime", is("Thu Sep 29 2016 20:09")));
@@ -183,6 +185,7 @@ public class ListSqlQueryExecutionTest extends AbstractPostLoginApiTest {
 
         String jsonResponse = ninjaTestBrowser.postJson(getUrl(url), filter);
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
+        assertThat(json, hasJsonPath("$.totalCount", is(2)));
 
         assertThat(json, isJson());
         assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
@@ -221,6 +224,7 @@ public class ListSqlQueryExecutionTest extends AbstractPostLoginApiTest {
         assertThat(json, isJson());
         assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(2));
+        assertThat(json, hasJsonPath("$.totalCount", is(4)));
 
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionStartTime", is("Thu Sep 29 2016 19:49")));
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[1].sqlQueryExecutionStartTime", is("Fri Sep 30 2016 19:51")));
@@ -249,6 +253,7 @@ public class ListSqlQueryExecutionTest extends AbstractPostLoginApiTest {
         assertThat(json, isJson());
         assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(2));
+        assertThat(json, hasJsonPath("$.totalCount", is(4)));
 
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionStartTime", is("Sat Oct 01 2016 19:51")));
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[1].sqlQueryExecutionStartTime", is("Sun Oct 02 2016 20:02")));

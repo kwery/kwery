@@ -100,4 +100,50 @@ public class SqlQueryExecutionDao {
 
         return tq.getResultList();
     }
+
+    @UnitOfWork
+    public long count(SqlQueryExecutionSearchFilter filter) {
+        EntityManager m = entityManagerProvider.get();
+
+        CriteriaBuilder c = m.getCriteriaBuilder();
+        CriteriaQuery<Long> q = c.createQuery(Long.class);
+
+        Root<SqlQueryExecution> root = q.from(SqlQueryExecution.class);
+
+        q.select(c.count(root));
+
+        List<Predicate> predicates = new LinkedList<>();
+
+        if (filter.getSqlQueryId() != 0) {
+            predicates.add(c.equal(root.get("sqlQuery").get("id"), filter.getSqlQueryId()));
+        }
+
+        if (filter.getExecutionStartStart() != 0) {
+            predicates.add(c.greaterThan(root.get("executionStart"), filter.getExecutionStartStart()));
+        }
+
+        if (filter.getExecutionStartEnd() != 0) {
+            predicates.add(c.lessThan(root.get("executionStart"), filter.getExecutionStartEnd()));
+        }
+
+        if (filter.getExecutionEndStart() != 0) {
+            predicates.add(c.greaterThan(root.get("executionEnd"), filter.getExecutionEndStart()));
+        }
+
+        if (filter.getExecutionEndEnd() != 0) {
+            predicates.add(c.lessThan(root.get("executionEnd"), filter.getExecutionEndEnd()));
+        }
+
+        if (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) {
+            predicates.add(root.get("status").in(filter.getStatuses()));
+        }
+
+        if (!"".equals(Strings.nullToEmpty(filter.getExecutionId()))) {
+            predicates.add(c.equal(root.get("executionId"), filter.getExecutionId()));
+        }
+
+        q.where(predicates.toArray(new Predicate[]{}));
+
+        return m.createQuery(q).getSingleResult();
+    }
 }

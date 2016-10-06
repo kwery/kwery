@@ -61,6 +61,12 @@
         </div>
         <div class="row">
             <div class="twelve columns">
+                <label data-bind="text: ko.i18n('results.to.display')" for="resultCount"></label>
+                <input data-bind="value: resultCount" class="u-full-width" type="text" id="resultCount" name="resultCount">
+            </div>
+        </div>
+        <div class="row">
+            <div class="twelve columns">
                 <button data-bind="text: ko.i18n('filter')" class="button-primary" id="filterButton"></button>
             </div>
         </div>
@@ -80,11 +86,19 @@
                     <tr>
                         <td data-bind="text: sqlQueryExecutionStartTime"></td>
                         <td data-bind="text: sqlQueryExecutionEndTime"></td>
-                        <td data-bind="text: status"></td>
+                        <td data-bind="text: status" class="status"></td>
                         <td data-bind="text: result"></td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="row">
+            <div class="six columns">
+                <button data-bind="click: previous, enable: hasPrevious, text:ko.i18n('prev')" class="button-primary" id="previous"></button>
+            </div>
+            <div class="six columns">
+                <button data-bind="click: next, enable: hasNext, text:ko.i18n('next')" class="button-primary" id="next"></button>
+            </div>
         </div>
     </div>
 </div>

@@ -172,6 +172,7 @@ public class SqlQueryApiController {
         SqlQueryExecutionListDto sqlQueryExecutionListDto = new SqlQueryExecutionListDto();
         sqlQueryExecutionListDto.setSqlQuery(sqlQuery.getQuery());
         sqlQueryExecutionListDto.setSqlQueryExecutionDtos(sqlQueryExecutionDtos);
+        sqlQueryExecutionListDto.setTotalCount(sqlQueryExecutionDao.count(dbFilter));
 
         return Results.json().render(sqlQueryExecutionListDto);
     }

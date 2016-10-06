@@ -98,8 +98,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
                                 .values(28, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, null, FAILURE, 2) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
                                 .values(29, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, null, KILLED, 1) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
                                 .values(30, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, null, KILLED, 2) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
-                                .values(31, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, 1) //Fri Sep 30 19:51:47 IST 2016
-                                .values(32, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, 2) //Fri Sep 30 19:51:47 IST 2016
+                                .values(31, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, 1) //Sun Oct 02 20:02:05 IST 2016
+                                .values(32, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, 2) //Sun Oct 02 20:02:05 IST 2016
                                 .build()
                 )
         );
@@ -145,6 +145,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         SqlQueryExecution fromDb = sqlQueryExecutions.get(0);
 
         assertThat(fromDb, sameBeanAs(execution));
+
+        assertThat(sqlQueryExecutionDao.count(filter), is(1l));
     }
 
     @Test
@@ -154,6 +156,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
 
         List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
         assertThat(sqlQueryExecutions, hasSize(16));
+
+        assertThat(sqlQueryExecutionDao.count(filter), is(16l));
     }
 
     @Test
@@ -176,6 +180,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         assertThat(sqlQueryExecutions, hasSize(2));
         assertThat(sqlQueryExecutions.get(0).getId(), is(5));
         assertThat(sqlQueryExecutions.get(1).getId(), is(7));
+
+        assertThat(sqlQueryExecutionDao.count(filter), is(16l));
     }
 
     @Test
@@ -195,6 +201,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         );
 
         assertThat(ids, containsInAnyOrder(expectedIds.toArray(new Integer[expectedIds.size()])));
+
+        assertThat(sqlQueryExecutionDao.count(filter), is(8l));
     }
 
     @Test
@@ -229,6 +237,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         expectedIds = ImmutableList.of(2);
 
         assertThat(ids, containsInAnyOrder(expectedIds.toArray(new Integer[expectedIds.size()])));
+
+        assertThat(sqlQueryExecutionDao.count(filter), is(8l));
     }
 
     @Test
@@ -248,6 +258,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         );
 
         assertThat(ids, containsInAnyOrder(expectedIds.toArray(new Integer[expectedIds.size()])));
+
+        assertThat(sqlQueryExecutionDao.count(filter), is(32l));
     }
 
     @Test
@@ -268,6 +280,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         }
 
         assertThat(ids, containsInAnyOrder(expectedIds.toArray(new Integer[expectedIds.size()])));
+
+        assertThat(sqlQueryExecutionDao.count(filter), is(24l));
     }
 
     @Test
@@ -289,5 +303,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         }
 
         assertThat(ids, containsInAnyOrder(expectedIds.toArray(new Integer[expectedIds.size()])));
+
+        assertThat(sqlQueryExecutionDao.count(filter), is(24l));
     }
 }
