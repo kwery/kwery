@@ -98,6 +98,12 @@ public class SqlQueryApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
+    public Result listSqlQueries() {
+        List<SqlQuery> sqlQueries = sqlQueryDao.getAll();
+        return Results.json().render(sqlQueries);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
     public Result executingSqlQueries() {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(ONGOING));

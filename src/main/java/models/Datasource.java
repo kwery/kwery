@@ -45,6 +45,7 @@ public class Datasource {
     @NotNull(message = "username.validation")
     private String username;
 
+    //TODO - Should be excluded from toString or from JSON serialization
     @Column(name = COLUMN_PASSWORD)
     private String password;
 
