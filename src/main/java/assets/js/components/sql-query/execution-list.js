@@ -6,22 +6,37 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
         //No of results to show in the page
         var RESULT_COUNT = 4;
 
+        var pageNumber = 0;
+        var resultCount = RESULT_COUNT;
+        var executionStartStart = "";
+        var executionStartEnd = "";
+        var executionEndStart = "";
+        var executionEndEnd = "";
+        var statuses = "";
+
+        if (params["?q"] !== undefined) {
+            resultCount = params["?q"].resultCount || resultCount;
+            pageNumber = params["?q"].pageNumber || pageNumber;
+            executionStartStart = params["?q"].executionStartStart || executionStartStart;
+            executionStartEnd = params["?q"].executionStartEnd || executionStartEnd;
+            executionEndStart = params["?q"].executionEndStart || executionEndStart;
+            executionEndEnd = params["?q"].executionEndEnd || executionEndEnd;
+            statuses = params["?q"].statuses || statuses;
+        }
+
+        //Filter form parameters
+        self.executionStartStart = ko.observable(executionStartStart);
+        self.executionStartEnd = ko.observable(executionStartEnd);
+        self.executionEndStart = ko.observable(executionEndStart);
+        self.executionEndEnd = ko.observable(executionEndEnd);
+        self.statuses = ko.observableArray(statuses !== "" ? statuses.split(",") : []);
+
+        self.pageNumber = ko.observable(pageNumber);
+        self.pageNumber.extend({notify: 'always'});
+
+        self.resultCount = ko.observable(resultCount);
+
         self.totalCount = ko.observable(0);
-        self.pageNumber = ko.observable(0);
-
-        //Even if the value does not change, call the page number subscriber function.
-        //This is needed because we get the result list on page number update
-        //If we are on the default page, apply filter and submit we update pageNumber from 0 to 0
-        //but we still want the execution list to be fetched which is hooked to pageNumber change
-        //subscription.
-        self.pageNumber.extend({notify: "always"});
-
-        //Get result list on every pagination click
-        self.pageNumber.subscribe(function(){
-            self.getExecutionList();
-        });
-
-        self.resultCount = ko.observable(RESULT_COUNT);
 
         self.hasNext = ko.computed(function(){
             return self.totalCount() > ((self.pageNumber() + 1) * self.resultCount());
@@ -36,18 +51,25 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
             return self.pageNumber() == 0;
         }, self);
 
+        self.navigate = function () {
+            window.location.href = "/#sql-query/" + params.sqlQueryId + "/execution-list/?" +
+                "executionStartStart=" + self.executionStartStart() +
+                "&executionStartEnd=" + self.executionStartEnd() +
+                "&executionEndStart=" + self.executionEndStart() +
+                "&executionEndEnd=" + self.executionEndEnd() +
+                "&statuses=" + self.statuses().join(",") +
+                "&pageNumber=" + self.pageNumber() +
+                "&resultCount=" + self.resultCount();
+        };
+
+        self.pageNumber.subscribe(function(){
+            self.navigate();
+        });
+
         self.executions = ko.observableArray([]);
         self.sqlQuery = ko.observable("");
 
-        //Filter form parameters
-        self.executionStartStart = ko.observable("");
-        self.executionStartEnd = ko.observable("");
-        self.executionEndStart = ko.observable("");
-        self.executionEndEnd = ko.observable("");
-        self.statuses = ko.observableArray([]);
-
-        //Reset the page on filter request
-        self.submit = function(formElem) {
+        self.submit = function (formElem) {
             self.pageNumber(0);
         };
 
@@ -59,28 +81,23 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
             self.pageNumber(self.pageNumber() + 1);
         };
 
-        self.getExecutionList = function() {
-            $.ajax("/api/sql-query/" + params.sqlQueryId + "/execution", {
-                data: ko.toJSON({
-                    executionStartStart: self.executionStartStart(),
-                    executionStartEnd: self.executionStartEnd(),
-                    executionEndStart: self.executionEndStart(),
-                    executionEndEnd: self.executionEndEnd(),
-                    statuses: self.statuses(),
-                    pageNumber: self.pageNumber(),
-                    resultCount: self.resultCount()
-                }),
-                type: "post", contentType: "application/json",
-                success: function(result) {
-                    self.executions(result.sqlQueryExecutionDtos);
-                    self.sqlQuery(result.sqlQuery);
-                    self.totalCount(result.totalCount);
-                }
-            });
-        };
-
-        //Default display list without any filtering
-        self.getExecutionList();
+        $.ajax("/api/sql-query/" + params.sqlQueryId + "/execution", {
+            data: ko.toJSON({
+                executionStartStart: self.executionStartStart(),
+                executionStartEnd: self.executionStartEnd(),
+                executionEndStart: self.executionEndStart(),
+                executionEndEnd: self.executionEndEnd(),
+                statuses: self.statuses(),
+                pageNumber: self.pageNumber(),
+                resultCount: self.resultCount()
+            }),
+            type: "post", contentType: "application/json",
+            success: function(result) {
+                self.executions(result.sqlQueryExecutionDtos);
+                self.sqlQuery(result.sqlQuery);
+                self.totalCount(result.totalCount);
+            }
+        });
 
         return self;
     }

@@ -12,7 +12,6 @@ import models.SqlQueryExecution;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.UUID;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -102,5 +101,25 @@ public class ListSqlQueryExecutionTestPagination extends RepoDashFluentLeniumTes
 
         assertThat(page.isNextEnabled(), is(false));
         assertThat(page.isPreviousEnabled(), is(true));
+    }
+
+    @Test
+    public void testResetOnResultCountChange() {
+        page.fillResultCount(1);
+        page.filter();
+
+        page.waitForFilterResult(1);
+
+        assertThat(page.isPreviousEnabled(), is(false));
+
+        page.clickNext();
+
+        page.waitForStatus(FAILURE);
+
+        page.fillResultCount(1);
+        page.filter();
+
+        page.waitForStatus(SUCCESS);
+        //Page got reset
     }
 }
