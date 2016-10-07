@@ -1,5 +1,6 @@
 package controllers.apis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -29,6 +30,7 @@ import services.scheduler.SqlQueryExecutionNotFoundException;
 import services.scheduler.SqlQueryExecutionSearchFilter;
 import views.ActionResult;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -177,8 +179,29 @@ public class SqlQueryApiController {
         return Results.json().render(sqlQueryExecutionListDto);
     }
 
-    private long getTime(String date) throws ParseException {
-        return new SimpleDateFormat(FILTER_DATE_FORMAT).parse(date).getTime();
+    public Result sqlQueryExecutionResult(@PathParam("sqlQueryId") Integer sqlQueryId, @PathParam("sqlQueryExecutionId") String sqlQueryExecutionId) throws IOException {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(sqlQueryId);
+        filter.setExecutionId(sqlQueryExecutionId);
+
+        List<List<?>> jsonResult = null;
+
+        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+
+        if (sqlQueryExecutions.size() == 0) {
+            jsonResult = new LinkedList<>(new LinkedList<>());
+        } else {
+            SqlQueryExecution sqlQueryExecution = sqlQueryExecutions.get(0);
+
+            //TODO - Generic type
+            ObjectMapper objectMapper = new ObjectMapper();
+            jsonResult = objectMapper.readValue(
+                    sqlQueryExecution.getResult(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
+            );
+        }
+
+        return Results.json().render(jsonResult);
     }
 
     public SqlQueryExecutionDto from(SqlQueryExecution model) {
@@ -197,6 +220,10 @@ public class SqlQueryApiController {
         dto.setStatus(model.getStatus().name());
         dto.setResult(model.getResult());
         return dto;
+    }
+
+    private long getTime(String date) throws ParseException {
+        return new SimpleDateFormat(FILTER_DATE_FORMAT).parse(date).getTime();
     }
 
     public static class SqlQueryExecutionIdContainer {
