@@ -79,15 +79,17 @@
                         <th data-bind="text: ko.i18n('start')"></th>
                         <th data-bind="text: ko.i18n('end')"></th>
                         <th data-bind="text: ko.i18n('status')"></th>
-                        <th data-bind="text: ko.i18n('result')"></th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: executions" id="executionListTableBody">
                     <tr>
                         <td data-bind="text: sqlQueryExecutionStartTime"></td>
                         <td data-bind="text: sqlQueryExecutionEndTime"></td>
-                        <td data-bind="text: status" class="status"></td>
-                        <td data-bind="text: result"></td>
+                        <td class="status">
+                            <span data-bind="visible: !showLink(), text: status" class="status-text"></span>
+                            <a data-bind="visible: showLink, attr: {href: resultLink}, text: status" class="status-link">
+                            </a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
