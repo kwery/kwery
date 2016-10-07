@@ -93,6 +93,22 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
             }),
             type: "post", contentType: "application/json",
             success: function(result) {
+                var modified = [];
+
+                ko.utils.arrayPushAll(
+                    self.executions(),
+                    result.sqlQueryExecutionDtos.map(function(obj){
+                        if (obj.status === "SUCCESS") {
+                            obj.resultLink = "/#sql-query/" + params.sqlQueryId + "/execution/" + obj.sqlQueryExecutionId;
+                            obj.showLink = ko.observable(true);
+                        } else {
+                            obj.showLink = ko.observable(false);
+                            obj.resultLink = "";
+                        }
+                        return obj;
+                    })
+                );
+
                 self.executions(result.sqlQueryExecutionDtos);
                 self.sqlQuery(result.sqlQuery);
                 self.totalCount(result.totalCount);

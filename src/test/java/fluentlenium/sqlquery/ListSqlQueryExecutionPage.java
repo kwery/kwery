@@ -13,9 +13,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
 public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPage {
+    public static final int RESULT_TABLE_COLUMN_COUNT = 3;
+
     @Override
     public boolean isRendered() {
         await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, TimeUnit.SECONDS).until("#executionListTableBody").isDisplayed();
@@ -28,7 +31,7 @@ public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPag
     }
 
     public List<String> getExecutionListHeaders() {
-        List<String> headers = new ArrayList<>(4);
+        List<String> headers = new ArrayList<>(RESULT_TABLE_COLUMN_COUNT);
         List<FluentWebElement> headerColumns = $("#executionListTable thead th");
         for (FluentWebElement headerColumn : headerColumns) {
             headers.add(headerColumn.getText());
@@ -43,7 +46,7 @@ public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPag
         List<FluentWebElement> rows = $("#executionListTableBody tr");
 
         for (FluentWebElement row : rows) {
-            List<String> resultColumns = new ArrayList<>(4);
+            List<String> resultColumns = new ArrayList<>(RESULT_TABLE_COLUMN_COUNT);
 
             List<FluentWebElement> columns = row.find(By.tagName("td"));
 
@@ -108,10 +111,22 @@ public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPag
     }
 
     public boolean isNextEnabled() {
-        return find(By.id("next")).first().isEnabled();
+        return find(id("next")).first().isEnabled();
     }
 
     public boolean isPreviousEnabled() {
-        return find(By.id("previous")).first().isEnabled();
+        return find(id("previous")).first().isEnabled();
+    }
+
+    public String statusLink(int position) {
+        return find(className("status-link")).get(position).getAttribute("href");
+    }
+
+    public boolean isStatusText(int position) {
+        return find(className("status")).get(position).find(By.tagName("span")).first().isDisplayed();
+    }
+
+    public boolean isStatusLink(int position) {
+        return find(className("status")).get(position).find(By.tagName("a")).first().isDisplayed();
     }
 }
