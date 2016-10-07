@@ -36,6 +36,7 @@ define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($,
             crossroads.parse(newHash);
         }
         crossroads.normalizeFn = crossroads.NORM_AS_OBJECT;
+        crossroads.shouldTypecast = true;
 
         hasher.initialized.add(parseHash);
         hasher.changed.add(parseHash);
