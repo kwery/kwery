@@ -44,4 +44,7 @@ public class Messages {
     public static final String QUERY_M = "Query";
     public static final String START_M = "Start";
     public static final String DATASOURCE_M = "Datasource";
+    public static final String END_M = "End";
+    public static final String STATUS_M = "Status";
+    public static final String RESULT_M = "Result";
 }

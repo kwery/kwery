@@ -3,9 +3,12 @@ package dtos;
 public class SqlQueryExecutionDto {
     private String sqlQueryLabel;
     private String sqlQueryExecutionStartTime;
+    private String sqlQueryExecutionEndTime;
     private String datasourceLabel;
     private Integer sqlQueryId;
     private String sqlQueryExecutionId;
+    private String status;
+    private String result;
 
     public String getSqlQueryLabel() {
         return sqlQueryLabel;
@@ -21,6 +24,14 @@ public class SqlQueryExecutionDto {
 
     public void setSqlQueryExecutionStartTime(String sqlQueryExecutionStartTime) {
         this.sqlQueryExecutionStartTime = sqlQueryExecutionStartTime;
+    }
+
+    public String getSqlQueryExecutionEndTime() {
+        return sqlQueryExecutionEndTime;
+    }
+
+    public void setSqlQueryExecutionEndTime(String sqlQueryExecutionEndTime) {
+        this.sqlQueryExecutionEndTime = sqlQueryExecutionEndTime;
     }
 
     public String getDatasourceLabel() {
@@ -45,5 +56,21 @@ public class SqlQueryExecutionDto {
 
     public void setSqlQueryExecutionId(String sqlQueryExecutionId) {
         this.sqlQueryExecutionId = sqlQueryExecutionId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 }

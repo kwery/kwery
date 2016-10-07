@@ -1,4 +1,4 @@
-package controllers.apis.integration.queryrunapicontroller;
+package controllers.apis.integration.sqlqueryapicontroller;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

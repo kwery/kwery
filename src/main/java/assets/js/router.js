@@ -6,7 +6,8 @@ define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($,
 
         ko.utils.arrayForEach(componentMapping, function (mapping) {
             var addedRoute = crossroads.addRoute(mapping.url, function (requestParams) {
-                currentRoute(ko.utils.extend(requestParams, {page: mapping.component}));
+                var routeObject = ko.utils.extend(requestParams, {page: mapping.component});
+                currentRoute(routeObject);
             });
 
             addedRoute.rules = {

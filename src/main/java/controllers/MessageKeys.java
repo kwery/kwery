@@ -40,4 +40,7 @@ public class MessageKeys {
     public static final String KILLING = "killing";
     public static final String KILLED = "killed";
     public static final String KILL_QUERY_NOT_FOUND = "kill.query.not.found";
+    public static final String END = "end";
+    public static final String STATUS = "status";
+    public static final String RESULT = "result";
 }

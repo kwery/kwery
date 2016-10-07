@@ -1,5 +1,7 @@
 package models;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -43,6 +45,7 @@ public class SqlQueryExecution {
     private Status status;
 
     @Column(name = COLUMN_RESULT)
+    @Type(type = "text")
     private String result;
 
     @JoinColumn(name = COLUMN_QUERY_RUN_ID_FK)

@@ -30,7 +30,7 @@ create table query_run_execution (
   executionEnd bigint,
   executionId varchar(255),
   executionStart bigint,
-  result varchar(255),
+  result long varchar,
   status varchar(255),
   query_run_id_fk integer,
   primary key (id)

@@ -20,6 +20,7 @@ public class Routes implements ApplicationRoutes {
     public static final String ALL_DATASOURCES_API = "/api/datasource/all";
     public static final String EXECUTING_SQL_QUERY_API = "/api/sql-query/executing";
     public static final String KILL_SQL_QUERY_API = "/api/sql-query/kill/{sqlQueryId}";
+    public static final String LIST_SQL_QUERY_EXECUTION_API = "/api/sql-query/{sqlQueryId}/execution";
 
     @Override
     public void init(Router router) {
@@ -35,6 +36,7 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(ALL_DATASOURCES_API).with(DatasourceApiController.class, "allDatasources");
         router.GET().route(EXECUTING_SQL_QUERY_API).with(SqlQueryApiController.class, "executingSqlQueries");
         router.POST().route(KILL_SQL_QUERY_API).with(SqlQueryApiController.class, "killSqlQuery");
+        router.POST().route(LIST_SQL_QUERY_EXECUTION_API).with(SqlQueryApiController.class, "listSqlQueryExecution");
         //Api - End
 
         //Static asset
