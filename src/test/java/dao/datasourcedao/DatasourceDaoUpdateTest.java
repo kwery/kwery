@@ -1,17 +1,10 @@
 package dao.datasourcedao;
 
-import com.google.common.io.Resources;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import dao.DatasourceDao;
 import fluentlenium.utils.DbUtil;
 import models.Datasource;
-import org.dbunit.Assertion;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
-import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
 import org.junit.Before;
 import org.junit.Test;
 import util.RepoDashDaoTestBase;
@@ -56,14 +49,6 @@ public class DatasourceDaoUpdateTest extends RepoDashDaoTestBase {
 
         datasourceDao.update(datasource);
 
-        IDatabaseConnection connection = new DatabaseConnection(DbUtil.getDatasource().getConnection());
-
-        IDataSet databaseDataSet = connection.createDataSet();
-        ITable actualTable = databaseDataSet.getTable(Datasource.TABLE);
-
-        IDataSet expectedDataSet = new FlatXmlDataFileLoader().loadDataSet(Resources.getResource("datasourceDaoUpdateTest.xml"));
-        ITable expectedTable = expectedDataSet.getTable(Datasource.TABLE);
-
-        Assertion.assertEquals(expectedTable, actualTable);
+        DbUtil.assertDbState(Datasource.TABLE, "datasourceDaoUpdateTest.xml");
     }
 }
