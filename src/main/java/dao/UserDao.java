@@ -69,4 +69,11 @@ public class UserDao {
             return users.get(0);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    @UnitOfWork
+    public List<User> list() {
+        EntityManager m = entityManagerProvider.get();
+        return m.createQuery("SELECT u FROM User u").getResultList();
+    }
 }
