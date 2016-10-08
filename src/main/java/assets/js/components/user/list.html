@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="row">
+        <div class="twelve columns">
+            <table class="u-full-width" id="usersListTable">
+                <thead>
+                    <tr>
+                        <th data-bind="text: ko.i18n('user.name')"></th>
+                        <th data-bind="text: ko.i18n('password')"></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: users" id="usersListTableBody">
+                    <tr>
+                        <td data-bind="text: username"></td>
+                        <td data-bind="text: password"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
