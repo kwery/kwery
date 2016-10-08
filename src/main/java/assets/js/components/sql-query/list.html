@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="twelve columns">
+            <table class="u-full-width" id="sqlQueriesListTable">
+                <thead>
+                    <tr>
+                        <th data-bind="text: ko.i18n('label')"></th>
+                        <th data-bind="text: ko.i18n('cron.expression')"></th>
+                        <th data-bind="text: ko.i18n('query')"></th>
+                        <th data-bind="text: ko.i18n('datasource')"></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: sqlQueries" id="sqlQueriesListTableBody">
+                    <tr>
+                        <td>
+                            <a data-bind="attr: {href: queryLink}, text: label">
+                            </a>
+                        </td>
+                        <td data-bind="text: cronExpression"></td>
+                        <td data-bind="text: query"></td>
+                        <td data-bind="text: datasource.label"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

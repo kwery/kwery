@@ -25,6 +25,7 @@
                 {url: "sql-query/executing", auth: true, component: "sql-query-executing"},
                 {url: "sql-query/{sqlQueryId}/execution-list/:?q:", auth: true, component: "sql-query-execution-list"},
                 {url: "sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}", auth: true, component: "sql-query-execution-result"},
+                {url: "sql-query/list", auth: true, component: "sql-query-list"},
             ];
 
             var componentMapping = {
