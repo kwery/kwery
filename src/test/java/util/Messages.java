@@ -49,4 +49,5 @@ public class Messages {
     public static final String RESULT_M = "Result";
     public static final String LABEL_M = "Label";
     public static final String CRON_EXPRESSION_M = "Cron Expression";
+    public static final String URL_M = "URL";
 }
