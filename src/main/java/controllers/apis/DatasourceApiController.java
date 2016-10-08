@@ -4,13 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dao.DatasourceDao;
 import filters.DashRepoSecureFilter;
-import it.sauronsoftware.cron4j.Scheduler;
 import models.Datasource;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
+import ninja.params.PathParam;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import services.datasource.MysqlDatasourceService;
@@ -42,14 +42,8 @@ public class DatasourceApiController {
     @Inject
     private MysqlDatasourceService mysqlDatasourceService;
 
-    @Inject
-    private Scheduler scheduler;
-
     @FilterWith(DashRepoSecureFilter.class)
-    public Result addDatasource(
-            @JSR303Validation Datasource datasource,
-            Context context,
-            Validation validation) {
+    public Result addDatasource(@JSR303Validation Datasource datasource, Context context, Validation validation) {
         Result json = Results.json();
         ActionResult actionResult = null;
 
@@ -104,6 +98,11 @@ public class DatasourceApiController {
     public Result allDatasources() {
         Result json = Results.json();
         return json.render(datasourceDao.getAll());
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result datasource(@PathParam("datasourceId") int datasourceId) {
+        return Results.json().render(datasourceDao.getById(datasourceId));
     }
 
     public void setMessages(Messages messages) {
