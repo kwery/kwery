@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <datasource id="1" username="newUsername" password="newPassword" label="foo" url="bar.com" port="3307" type="MYSQL"/>
+</dataset>
