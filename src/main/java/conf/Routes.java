@@ -23,6 +23,7 @@ public class Routes implements ApplicationRoutes {
     public static final String LIST_SQL_QUERY_EXECUTION_API = "/api/sql-query/{sqlQueryId}/execution";
     public static final String SQL_QUERY_EXECUTION_RESULT_API = "/api/sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}";
     public static final String LIST_SQL_QUERIES_API = "/api/sql-query/list";
+    public static final String LIST_USERS_API = "/api/user/list";
 
     @Override
     public void init(Router router) {
@@ -31,11 +32,14 @@ public class Routes implements ApplicationRoutes {
         //Api - Start
         router.POST().route(ADD_ADMIN_USER_API).with(UserApiController.class, "addAdminUser");
         router.POST().route(LOGIN_API).with(UserApiController.class, "login");
+        router.GET().route(LIST_USERS_API).with(UserApiController.class, "list");
+        router.GET().route(USER).with(UserApiController.class, "user");
+
         router.POST().route(ADD_DATASOURCE_API).with(DatasourceApiController.class, "addDatasource");
         router.POST().route(MYSQL_DATASOURCE_CONNECTION_TEST_API).with(DatasourceApiController.class, "testConnection");
-        router.GET().route(USER).with(UserApiController.class, "user");
-        router.POST().route(ADD_SQL_QUERY_API).with(SqlQueryApiController.class, "addSqlQuery");
         router.GET().route(ALL_DATASOURCES_API).with(DatasourceApiController.class, "allDatasources");
+
+        router.POST().route(ADD_SQL_QUERY_API).with(SqlQueryApiController.class, "addSqlQuery");
         router.GET().route(EXECUTING_SQL_QUERY_API).with(SqlQueryApiController.class, "executingSqlQueries");
         router.POST().route(KILL_SQL_QUERY_API).with(SqlQueryApiController.class, "killSqlQuery");
         router.POST().route(LIST_SQL_QUERY_EXECUTION_API).with(SqlQueryApiController.class, "listSqlQueryExecution");

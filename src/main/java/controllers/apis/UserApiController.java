@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dao.UserDao;
 import filters.DashRepoSecureFilter;
-import it.sauronsoftware.cron4j.Scheduler;
 import models.User;
 import ninja.Context;
 import ninja.FilterWith;
@@ -33,9 +32,6 @@ public class UserApiController {
 
     @Inject
     private Messages messages;
-
-    @Inject
-    private Scheduler scheduler;
 
     public Result addAdminUser(
             Context context,
@@ -89,6 +85,11 @@ public class UserApiController {
         Result json = Results.json();
         json.render(user);
         return json;
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result list() {
+        return Results.json().render(userDao.list());
     }
 
     public void setUserDao(UserDao userDao) {
