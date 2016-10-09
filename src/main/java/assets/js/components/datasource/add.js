@@ -10,6 +10,29 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
+        var isUpdate = params.datasourceId !== undefined;
+
+        if (isUpdate) {
+            self.actionLabel = ko.observable(ko.i18n('update'));
+        } else {
+            self.actionLabel = ko.observable(ko.i18n('create'));
+        }
+
+        if (isUpdate) {
+            $.ajax("/api/datasource/" + params.datasourceId, {
+                type: "GET",
+                contentType: "application/json",
+                success: function(datasource) {
+                    self.username(datasource.username);
+                    self.password(datasource.password);
+                    self.url(datasource.url);
+                    self.port(datasource.port);
+                    self.label(datasource.label);
+                    self.type(datasource.type);
+                }
+            });
+        }
+
         var validate = $('form').validate({
             debug: true,
             messages: {
@@ -35,15 +58,21 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
 
         self.submit = function(formElem) {
             if ($(formElem).valid()) {
+                var datasource = {
+                    url: self.url,
+                    port: self.port,
+                    username: self.username,
+                    password: self.password,
+                    label: self.label,
+                    type: "MYSQL"
+                };
+
+                if (isUpdate) {
+                    datasource.id = params.datasourceId;
+                }
+
                 $.ajax("/api/datasource/add-datasource", {
-                    data: ko.toJSON({
-                        url: self.url,
-                        port: self.port,
-                        username: self.username,
-                        password: self.password,
-                        label: self.label,
-                        type: "MYSQL"
-                    }),
+                    data: ko.toJSON(datasource),
                     type: "post", contentType: "application/json",
                     success: function(result) {
                         self.status(result.status);
