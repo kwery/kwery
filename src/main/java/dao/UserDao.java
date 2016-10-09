@@ -76,4 +76,11 @@ public class UserDao {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT u FROM User u").getResultList();
     }
+
+    @Transactional
+    public void update(User user) {
+        EntityManager m = entityManagerProvider.get();
+        m.merge(user);
+        m.flush();
+    }
 }
