@@ -24,6 +24,13 @@ public class DatasourceDao {
         m.flush();
     }
 
+    @Transactional
+    public void update(Datasource d) {
+        EntityManager m = entityManagerProvider.get();
+        m.merge(d);
+        m.flush();
+    }
+
     @UnitOfWork
     public Datasource getByLabel(String label) {
         EntityManager m = entityManagerProvider.get();

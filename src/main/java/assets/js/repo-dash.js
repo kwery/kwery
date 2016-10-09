@@ -20,13 +20,14 @@
                 {url: "", auth: false, component: "onboarding-welcome"},
                 {url: "onboarding/add-admin-user", auth: false, component: "onboarding-add-admin-user"},
                 {url: "onboarding/add-datasource", auth: true, component: "onboarding-add-datasource"},
+                {url: "datasource/list", auth: true, component: "datasource-list"},
+                {url: "datasource/{datasourceId}", auth: true, component: "onboarding-add-datasource"},
                 {url: "user/login{?query}", auth: false, component: "user-login"},
                 {url: "sql-query/add", auth: true, component: "sql-query-add"},
                 {url: "sql-query/executing", auth: true, component: "sql-query-executing"},
                 {url: "sql-query/{sqlQueryId}/execution-list/:?q:", auth: true, component: "sql-query-execution-list"},
                 {url: "sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}", auth: true, component: "sql-query-execution-result"},
                 {url: "sql-query/list", auth: true, component: "sql-query-list"},
-                {url: "datasource/list", auth: true, component: "datasource-list"},
                 {url: "user/list", auth: true, component: "user-list"},
             ];
 

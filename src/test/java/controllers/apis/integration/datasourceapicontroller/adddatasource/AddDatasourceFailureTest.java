@@ -27,6 +27,7 @@ public class AddDatasourceFailureTest extends AbstractPostLoginApiTest {
 
     @Test
     public void test() throws IOException {
+        datasource.setId(null);
         ActionResult failureResult = actionResult(ninjaTestBrowser.postJson(getUrl(ADD_DATASOURCE_API), datasource));
         assertFailure(failureResult,
                 format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, datasource.getLabel()),

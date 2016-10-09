@@ -5,13 +5,17 @@ import com.xebialabs.overcast.host.CloudHostFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import util.Messages;
 import util.TestUtil;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.openqa.selenium.By.id;
 
 public class AddDatasourceSuccessTest extends DatasourceTest {
     protected CloudHost cloudHost;
-
     @Before
     public void setUpAddDatasourceSuccessTest() {
         cloudHost = CloudHostFactory.getCloudHost("mysql");
@@ -30,6 +34,7 @@ public class AddDatasourceSuccessTest extends DatasourceTest {
 
     @Test
     public void test() {
+        assertThat(page.actionLabel(), is(Messages.CREATE_M.toUpperCase()));
         page.submitForm(datasource.getUrl(), String.valueOf(datasource.getPort()), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
         page.waitForSuccessMessage(datasource.getLabel());
     }

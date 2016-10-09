@@ -13,6 +13,7 @@ import java.util.List;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static models.Datasource.Type.MYSQL;
+import static org.openqa.selenium.By.id;
 import static util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 
@@ -57,11 +58,11 @@ public class AddDatasourcePage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForFailureMessage(String label) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_error p").hasText(format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, label));
+        await().atMost(30, SECONDS).until(".isa_error p").hasText(format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, label));
     }
 
     public void waitForFailureMessage() {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_error").isDisplayed();
+        await().atMost(30, SECONDS).until(".isa_error").isDisplayed();
     }
 
     public List<String> errorMessages() {
@@ -75,5 +76,9 @@ public class AddDatasourcePage extends FluentPage implements RepoDashPage {
     @Override
     public String getUrl() {
         return "/#onboarding/add-datasource";
+    }
+
+    public String actionLabel() {
+        return find(id("create")).getText();
     }
 }

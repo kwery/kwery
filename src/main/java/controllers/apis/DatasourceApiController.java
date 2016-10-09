@@ -4,13 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dao.DatasourceDao;
 import filters.DashRepoSecureFilter;
-import it.sauronsoftware.cron4j.Scheduler;
 import models.Datasource;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
+import ninja.params.PathParam;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import services.datasource.MysqlDatasourceService;
@@ -25,6 +25,8 @@ import static com.google.common.base.Optional.of;
 import static controllers.ControllerUtil.fieldMessages;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
+import static controllers.MessageKeys.DATASOURCE_UPDATE_FAILURE;
+import static controllers.MessageKeys.DATASOURCE_UPDATE_SUCCESS;
 import static controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_FAILURE;
 import static controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_SUCCESS;
 import static models.Datasource.Type.MYSQL;
@@ -42,16 +44,12 @@ public class DatasourceApiController {
     @Inject
     private MysqlDatasourceService mysqlDatasourceService;
 
-    @Inject
-    private Scheduler scheduler;
-
     @FilterWith(DashRepoSecureFilter.class)
-    public Result addDatasource(
-            @JSR303Validation Datasource datasource,
-            Context context,
-            Validation validation) {
+    public Result addDatasource(@JSR303Validation Datasource datasource, Context context, Validation validation) {
         Result json = Results.json();
         ActionResult actionResult = null;
+
+        boolean isUpdate = isUpdate(datasource);
 
         Map<String, List<String>> fieldMessages = new HashMap<>();
         if (validation.hasViolations()) {
@@ -60,8 +58,15 @@ public class DatasourceApiController {
         } else {
             List<String> errorMessages = new LinkedList<>();
 
-            if (datasourceDao.getByLabel(datasource.getLabel()) != null) {
-                errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+            Datasource fromDb = datasourceDao.getByLabel(datasource.getLabel());
+            if (isUpdate) {
+                if (fromDb != null && !datasource.getId().equals(fromDb.getId())) {
+                    errorMessages.add(messages.get(DATASOURCE_UPDATE_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+                }
+            } else {
+                if (fromDb != null) {
+                    errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+                }
             }
 
             if (!mysqlDatasourceService.testConnection(datasource)) {
@@ -71,13 +76,29 @@ public class DatasourceApiController {
             if (errorMessages.size() > 0) {
                 actionResult = new ActionResult(failure, errorMessages);
             } else {
-                datasourceDao.save(datasource);
-                String msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+                if (isUpdate) {
+                    datasourceDao.update(datasource);
+                } else {
+                    datasourceDao.save(datasource);
+                }
+
+                String msg = "";
+
+                if (isUpdate) {
+                    msg = messages.get(DATASOURCE_UPDATE_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+                } else {
+                    msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+                }
+
                 actionResult = new ActionResult(success, msg);
             }
         }
 
         return json.render(actionResult);
+    }
+
+    public boolean isUpdate(Datasource datasource) {
+        return datasource.getId() != null && datasource.getId() > 0;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -104,6 +125,11 @@ public class DatasourceApiController {
     public Result allDatasources() {
         Result json = Results.json();
         return json.render(datasourceDao.getAll());
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result datasource(@PathParam("datasourceId") int datasourceId) {
+        return Results.json().render(datasourceDao.getById(datasourceId));
     }
 
     public void setMessages(Messages messages) {
