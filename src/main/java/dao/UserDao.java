@@ -76,4 +76,26 @@ public class UserDao {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT u FROM User u").getResultList();
     }
+
+    @Transactional
+    public void update(User user) {
+        EntityManager m = entityManagerProvider.get();
+
+        //TODO - Use the method
+        User fromDb = m.find(User.class, user.getId());;
+
+        if (!user.getUsername().equals(fromDb.getUsername())) {
+            throw new CannotModifyUsernameException();
+        }
+
+        fromDb.setPassword(user.getPassword());
+
+        m.flush();
+    }
+
+    @UnitOfWork
+    public User getById(int id) {
+        EntityManager m = entityManagerProvider.get();
+        return m.find(User.class, id);
+    }
 }

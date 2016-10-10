@@ -29,6 +29,7 @@
                 {url: "sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}", auth: true, component: "sql-query-execution-result"},
                 {url: "sql-query/list", auth: true, component: "sql-query-list"},
                 {url: "user/list", auth: true, component: "user-list"},
+                {url: "user/update/{userId}", auth: true, component: "user-update"},
             ];
 
             var componentMapping = {
