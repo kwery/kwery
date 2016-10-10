@@ -24,6 +24,13 @@ public class SqlQueryDao {
         m.flush();
     }
 
+    @Transactional
+    public void update(SqlQuery q) {
+        EntityManager m = entityManagerProvider.get();
+        m.merge(q);
+        m.flush();
+    }
+
     @UnitOfWork
     public SqlQuery getByLabel(String label) {
         EntityManager m = entityManagerProvider.get();

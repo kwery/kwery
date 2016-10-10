@@ -50,6 +50,11 @@ public class SchedulerService {
         queryRunSchedulerMap.put(sqlQuery.getId(), sqlQueryTaskScheduler);
     }
 
+    public void stopScheduler(int sqlQueryId) {
+        queryRunSchedulerMap.get(sqlQueryId).stopScheduler();
+        queryRunSchedulerMap.remove(sqlQueryId);
+    }
+
     public List<OngoingSqlQueryTask> ongoingQueryTasks(Integer sqlQueryId) {
         return queryRunSchedulerMap.get(sqlQueryId).ongoingQueryTasks();
     }

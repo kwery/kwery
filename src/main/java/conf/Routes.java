@@ -22,6 +22,7 @@ public class Routes implements ApplicationRoutes {
     public static final String EXECUTING_SQL_QUERY_API = "/api/sql-query/executing";
     public static final String KILL_SQL_QUERY_API = "/api/sql-query/kill/{sqlQueryId}";
     public static final String LIST_SQL_QUERY_EXECUTION_API = "/api/sql-query/{sqlQueryId}/execution";
+    public static final String SQL_QUERY_API = "/api/sql-query/{sqlQueryId}";
     public static final String SQL_QUERY_EXECUTION_RESULT_API = "/api/sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}";
     public static final String LIST_SQL_QUERIES_API = "/api/sql-query/list";
     public static final String LIST_USERS_API = "/api/user/list";
@@ -49,6 +50,7 @@ public class Routes implements ApplicationRoutes {
         router.POST().route(LIST_SQL_QUERY_EXECUTION_API).with(SqlQueryApiController.class, "listSqlQueryExecution");
         router.GET().route(SQL_QUERY_EXECUTION_RESULT_API).with(SqlQueryApiController.class, "sqlQueryExecutionResult");
         router.GET().route(LIST_SQL_QUERIES_API).with(SqlQueryApiController.class, "listSqlQueries");
+        router.GET().route(SQL_QUERY_API).with(SqlQueryApiController.class, "sqlQuery");
         //Api - End
 
         //Static asset

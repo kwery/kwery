@@ -11,6 +11,10 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
 
         self.datasources = ko.observableArray([]);
 
+        self.actionLabel = ko.observable(ko.i18n("create"));
+
+        var isUpdate = params.sqlQueryId || false;
+
         var Datasource = function(id, label) {
             this.id = id;
             this.label = label;
@@ -24,6 +28,26 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
                 ko.utils.arrayForEach(datasources, function(datasource){
                     self.datasources.push(new Datasource(datasource.id, datasource.label));
                 });
+
+                if (isUpdate) {
+                    self.actionLabel(ko.i18n("update"));
+                    $.ajax({
+                        url: "/api/sql-query/" + params.sqlQueryId,
+                        type: "GET",
+                        contentType: "application/json",
+                        success: function(result) {
+                            self.query(result.query);
+                            self.cronExpression(result.cronExpression);
+                            self.label(result.label);
+
+                            ko.utils.arrayForEach(self.datasources(), function(datasource){
+                                if (datasource.id == result.datasource.id) {
+                                    self.datasource(datasource);
+                                }
+                            });
+                        }
+                    });
+                }
             }
         });
 
@@ -36,7 +60,7 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
                 },
                 cronExpression: {
                     required: ko.i18n("cron.expression.validation"),
-                    minlength: ko.i18n("cron.expression.validation"),
+                    minlength: ko.i18n("cron.expression.validation")
                 },
                 label: {
                     required: ko.i18n("label.validation"),
@@ -47,14 +71,21 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
 
         self.submit = function(formElem) {
             if ($(formElem).valid()) {
+                var sqlQuery = {
+                    query: self.query(),
+                    cronExpression: self.cronExpression(),
+                    label: self.label(),
+                    datasourceId: self.datasource().id
+                };
+
+                if (isUpdate) {
+                    sqlQuery.id = params.sqlQueryId;
+                }
+
                 $.ajax("/api/sql-query/add", {
-                    data: ko.toJSON({
-                        query: self.query(),
-                        cronExpression: self.cronExpression(),
-                        label: self.label(),
-                        datasourceId: self.datasource().id
-                    }),
-                    type: "post", contentType: "application/json",
+                    data: ko.toJSON(sqlQuery),
+                    type: "post",
+                    contentType: "application/json",
                     success: function(result) {
                         self.status(result.status);
 

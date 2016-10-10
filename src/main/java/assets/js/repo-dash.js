@@ -16,6 +16,7 @@
                 }
             };
 
+            //Do not change this order unless you know what you are doing, changing the order may affect route resolution
             var _componentMapping = [
                 {url: "", auth: false, component: "onboarding-welcome"},
                 {url: "onboarding/add-admin-user", auth: false, component: "onboarding-add-admin-user"},
@@ -24,6 +25,7 @@
                 {url: "datasource/{datasourceId}", auth: true, component: "onboarding-add-datasource"},
                 {url: "user/login{?query}", auth: false, component: "user-login"},
                 {url: "sql-query/add", auth: true, component: "sql-query-add"},
+                {url: "sql-query/{sqlQueryId}", auth: true, component: "sql-query-add"},
                 {url: "sql-query/executing", auth: true, component: "sql-query-executing"},
                 {url: "sql-query/{sqlQueryId}/execution-list/:?q:", auth: true, component: "sql-query-execution-list"},
                 {url: "sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}", auth: true, component: "sql-query-execution-result"},

@@ -5,7 +5,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import controllers.MessageKeys;
 import dao.DatasourceDao;
 import dao.SqlQueryDao;
 import dao.SqlQueryExecutionDao;
@@ -41,6 +40,8 @@ import java.util.List;
 import static controllers.ControllerUtil.fieldMessages;
 import static controllers.MessageKeys.DATASOURCE_VALIDATION;
 import static controllers.MessageKeys.QUERY_RUN_ADDITION_FAILURE;
+import static controllers.MessageKeys.QUERY_RUN_ADDITION_SUCCESS;
+import static controllers.MessageKeys.QUERY_RUN_UPDATE_SUCCESS;
 import static models.SqlQueryExecution.Status.ONGOING;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
@@ -69,13 +70,27 @@ public class SqlQueryApiController {
         Result json = Results.json();
         ActionResult actionResult = null;
 
+        boolean isUpdate = false;
+
+        if (sqlQueryDto.getId() != 0) {
+            isUpdate = true;
+        }
+
         if (validation.hasViolations()) {
             actionResult = new ActionResult(failure, fieldMessages(validation, context, messages, json));
         } else {
             List<String> errorMessages = new LinkedList<>();
 
-            if (sqlQueryDao.getByLabel(sqlQueryDto.getLabel()) != null) {
-                errorMessages.add(messages.get(QUERY_RUN_ADDITION_FAILURE, context, Optional.of(json), sqlQueryDto.getLabel()).get());
+            SqlQuery fromDb = sqlQueryDao.getByLabel(sqlQueryDto.getLabel());
+
+            if (isUpdate) {
+                if (fromDb != null && !fromDb.getId().equals(sqlQueryDto.getId())) {
+                    errorMessages.add(messages.get(QUERY_RUN_ADDITION_FAILURE, context, Optional.of(json), sqlQueryDto.getLabel()).get());
+                }
+            } else {
+                if (fromDb != null) {
+                    errorMessages.add(messages.get(QUERY_RUN_ADDITION_FAILURE, context, Optional.of(json), sqlQueryDto.getLabel()).get());
+                }
             }
 
             Datasource datasource = datasourceDao.getById(sqlQueryDto.getDatasourceId());
@@ -86,11 +101,24 @@ public class SqlQueryApiController {
             if (errorMessages.size() > 0) {
                 actionResult = new ActionResult(failure, errorMessages);
             } else {
-                schedulerService.schedule(sqlQueryDto);
-                actionResult = new ActionResult(
-                        success,
-                        messages.get(MessageKeys.QUERY_RUN_ADDITION_SUCCESS, context, Optional.of(json)).get()
-                );
+                SqlQuery model = toSqlQueryModel(sqlQueryDto);
+
+                if (isUpdate) {
+                    //Stop existing schedules
+                    schedulerService.stopScheduler(sqlQueryDto.getId());
+                    sqlQueryDao.update(model);
+                    actionResult = new ActionResult(
+                            success,
+                            messages.get(QUERY_RUN_UPDATE_SUCCESS, context, Optional.of(json)).get()
+                    );
+                } else {
+                    sqlQueryDao.save(model);
+                    actionResult = new ActionResult(
+                            success,
+                            messages.get(QUERY_RUN_ADDITION_SUCCESS, context, Optional.of(json)).get()
+                    );
+                }
+                schedulerService.schedule(model);
             }
         }
 
@@ -185,6 +213,7 @@ public class SqlQueryApiController {
         return Results.json().render(sqlQueryExecutionListDto);
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
     public Result sqlQueryExecutionResult(@PathParam("sqlQueryId") Integer sqlQueryId, @PathParam("sqlQueryExecutionId") String sqlQueryExecutionId) throws IOException {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(sqlQueryId);
@@ -208,6 +237,11 @@ public class SqlQueryApiController {
         }
 
         return Results.json().render(jsonResult);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result sqlQuery(@PathParam("sqlQueryId") int id) {
+        return Results.json().render(sqlQueryDao.getById(id));
     }
 
     public SqlQueryExecutionDto from(SqlQueryExecution model) {
@@ -242,5 +276,19 @@ public class SqlQueryApiController {
         public void setSqlQueryExecutionId(String sqlQueryExecutionId) {
             this.sqlQueryExecutionId = sqlQueryExecutionId;
         }
+    }
+
+    public SqlQuery toSqlQueryModel(SqlQueryDto dto) {
+        SqlQuery model = new SqlQuery();
+        model.setId(dto.getId());
+        model.setCronExpression(dto.getCronExpression());
+        model.setLabel(dto.getLabel());
+        model.setQuery(dto.getQuery());
+        model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
+        return model;
+    }
+
+    public void setDatasourceDao(DatasourceDao datasourceDao) {
+        this.datasourceDao = datasourceDao;
     }
 }

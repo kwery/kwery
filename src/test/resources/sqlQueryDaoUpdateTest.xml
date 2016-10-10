@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <query_run id="1" cron_expression="*" label="testQuery2" query="select * from bar" datasource_id_fk="2"/>
+    <query_run id="2" cron_expression="* * * * *" label="testQuery1" query="select * from foo" datasource_id_fk="1"/>
+</dataset>

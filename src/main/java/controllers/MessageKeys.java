@@ -38,6 +38,7 @@ public class MessageKeys {
     public static final String CRON_EXPRESSION_VALIDATION = "cron.expression.validation";
     public static final String DATASOURCE_VALIDATION = "datasource.validation";
     public static final String QUERY_RUN_ADDITION_SUCCESS = "query.run.addition.success";
+    public static final String QUERY_RUN_UPDATE_SUCCESS = "query.run.update.success";
     public static final String QUERY_RUN_ADDITION_FAILURE = "query.run.addition.failure";
     public static final String KILL_QUERY = "kill.query";
     public static final String KILL = "kill";

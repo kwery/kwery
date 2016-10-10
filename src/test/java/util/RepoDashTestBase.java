@@ -58,7 +58,7 @@ public class RepoDashTestBase {
      * @param clazz
      * @return DAO
      */
-    protected <T> T getInstance(Class<T> clazz) {
+    public <T> T getInstance(Class<T> clazz) {
         return injector.getInstance(clazz);
     }
 }
