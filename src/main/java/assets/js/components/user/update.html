@@ -1,0 +1,20 @@
+<div class="container">
+    <action-result params="status: status, messages: messages"></action-result>
+    <form data-bind="submit: submit" id="createAdminUserForm">
+        <div class="row">
+            <div class="six columns">
+                <label data-bind="text: ko.i18n('user.name')" for="username"></label>
+                <input data-bind="value: username" disabled class="u-full-width" type="text" id="username" name="username">
+            </div>
+            <div class="six columns">
+                <label data-bind="text: ko.i18n('password')" for="password"></label>
+                <input data-bind="value: password" minlength="1" required class="u-full-width" type="password" id="password" name="password">
+            </div>
+        </div>
+        <div class="row">
+            <div class="twelve columns">
+                <button data-bind="text: ko.i18n('update')" class="button-primary" id="createAdminUser"></button>
+            </div>
+        </div>
+    </form>
+</div>

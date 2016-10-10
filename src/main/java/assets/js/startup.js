@@ -40,6 +40,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("user-list", {
         require: "components/user/list"
     });
+    ko.components.register("user-update", {
+        require: "components/user/update"
+    });
 
     ko.applyBindings({ route: router.currentRoute });
 

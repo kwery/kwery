@@ -53,4 +53,5 @@ public class Messages {
     public static final String CRON_EXPRESSION_M = "Cron Expression";
     public static final String URL_M = "URL";
     public static final String UPDATE_M = "Update";
+    public static final String USER_UPDATE_SUCCESS_M = "User with user name {0} updated successfully";
 }

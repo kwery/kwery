@@ -81,7 +81,7 @@ public class UserDao {
     public void update(User user) {
         EntityManager m = entityManagerProvider.get();
 
-        User fromDb = getById(user.getId());
+        User fromDb = m.find(User.class, user.getId());;
 
         if (!user.getUsername().equals(fromDb.getUsername())) {
             throw new CannotModifyUsernameException();
@@ -92,6 +92,7 @@ public class UserDao {
         m.flush();
     }
 
+    @UnitOfWork
     public User getById(int id) {
         EntityManager m = entityManagerProvider.get();
         return m.find(User.class, id);
