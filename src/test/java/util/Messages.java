@@ -54,4 +54,5 @@ public class Messages {
     public static final String URL_M = "URL";
     public static final String UPDATE_M = "Update";
     public static final String USER_UPDATE_SUCCESS_M = "User with user name {0} updated successfully";
+    public static final String QUERY_RUN_UPDATE_SUCCESS_M = "Query has been successfully updated";
 }

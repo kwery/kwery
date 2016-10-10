@@ -1,24 +1,22 @@
-package dao.sqlquerydao;
+package controllers.apis.integration.sqlqueryapicontroller;
 
+import com.google.common.collect.ImmutableMap;
+import com.jayway.jsonpath.matchers.JsonPathMatchers;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import dao.DatasourceDao;
-import dao.SqlQueryDao;
+import controllers.apis.SqlQueryApiController;
+import controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import fluentlenium.utils.DbUtil;
 import models.Datasource;
 import models.SqlQuery;
-import org.dbunit.DatabaseUnitException;
+import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
-import util.RepoDashDaoTestBase;
 
-import javax.persistence.PersistenceException;
-import java.io.IOException;
-import java.sql.SQLException;
-
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static fluentlenium.utils.DbUtil.assertDbState;
 import static models.Datasource.COLUMN_ID;
 import static models.Datasource.COLUMN_LABEL;
 import static models.Datasource.COLUMN_PASSWORD;
@@ -30,44 +28,43 @@ import static models.Datasource.Type.MYSQL;
 import static models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static models.SqlQuery.COLUMN_QUERY;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
-public class SqlQueryDaoUpdateTest extends RepoDashDaoTestBase {
-    protected SqlQueryDao sqlQueryDao;
-
+public class SqlQueryApiControllerSqlQueryGetByIdTest extends AbstractPostLoginApiTest {
     @Before
-    public void setUpSqlQueryDaoUpdateTest() {
+    public void SqlQueryApiControllerSqlQueryGetByIdTest () {
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
                 Operations.sequenceOf(
                         insertInto(Datasource.TABLE)
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource0", "password", 3306, MYSQL.name(), "foo.com", "foo")
-                                .values(2, "testDatasource1", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
+                                .build(),
                         insertInto(SqlQuery.TABLE)
                                 .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
                                 .values(1, "* * * * *", "testQuery0", "select * from foo", 1)
-                                .values(2, "* * * * *", "testQuery1", "select * from foo", 1).build()
+                                .build()
                 )
         ).launch();
-
-        sqlQueryDao = getInstance(SqlQueryDao.class);
     }
 
     @Test
-    public void test() throws DatabaseUnitException, SQLException, IOException {
-        SqlQuery fromDb = sqlQueryDao.getById(1);
-        fromDb.setQuery("select * from bar");
-        fromDb.setLabel("testQuery2");
-        fromDb.setCronExpression("*");
-        fromDb.setDatasource(getInstance(DatasourceDao.class).getById(2));
-        sqlQueryDao.update(fromDb);
-        assertDbState(SqlQuery.TABLE, "sqlQueryDaoUpdateTest.xml");
-    }
+    public void test() {
+        String url = getInjector().getInstance(Router.class).getReverseRoute(
+                SqlQueryApiController.class,
+                "sqlQuery",
+                ImmutableMap.of(
+                        "sqlQueryId", 1
+                )
+        );
+        String response = ninjaTestBrowser.makeJsonRequest(getUrl(url));
 
-    @Test(expected = PersistenceException.class)
-    public void testUpdateLabelToExistingValue() {
-        SqlQuery fromDb = sqlQueryDao.getById(1);
-        fromDb.setLabel("testQuery1");
-        sqlQueryDao.update(fromDb);
+        assertThat(response, isJson());
+        assertThat(response, hasJsonPath("$.id", is(1)));
+        assertThat(response, hasJsonPath("$.cronExpression", is("* * * * *")));
+        assertThat(response, hasJsonPath("$.query", is("select * from foo")));
+        assertThat(response, hasJsonPath("$.label", is("testQuery0")));
+        assertThat(response, hasJsonPath("$.datasource.id", is(1)));
     }
 }
