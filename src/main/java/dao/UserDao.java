@@ -81,6 +81,7 @@ public class UserDao {
     public void update(User user) {
         EntityManager m = entityManagerProvider.get();
 
+        //TODO - Use the method
         User fromDb = m.find(User.class, user.getId());;
 
         if (!user.getUsername().equals(fromDb.getUsername())) {
