@@ -80,7 +80,20 @@ public class UserDao {
     @Transactional
     public void update(User user) {
         EntityManager m = entityManagerProvider.get();
-        m.merge(user);
+
+        User fromDb = getById(user.getId());
+
+        if (!user.getUsername().equals(fromDb.getUsername())) {
+            throw new CannotModifyUsernameException();
+        }
+
+        fromDb.setPassword(user.getPassword());
+
         m.flush();
+    }
+
+    public User getById(int id) {
+        EntityManager m = entityManagerProvider.get();
+        return m.find(User.class, id);
     }
 }
