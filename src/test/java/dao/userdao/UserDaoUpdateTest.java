@@ -3,6 +3,7 @@ package dao.userdao;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import dao.CannotModifyUsernameException;
 import dao.UserDao;
 import fluentlenium.utils.DbUtil;
 import fluentlenium.utils.UserTableUtil;
@@ -35,13 +36,21 @@ public class UserDaoUpdateTest extends RepoDashDaoTestBase {
     @Test
     public void test() {
         User user = userTableUtil.firstRow();
-        user.setUsername("foo");
+        String updatedPassword = "foo";
+        user.setPassword(updatedPassword);
 
         userDao.update(user);
 
-        User fromDb = userDao.getByUsername("foo");
+        User fromDb = userDao.getById(1);
 
-        assertThat(fromDb.getId(), is(1));
-        assertThat(fromDb.getPassword(), is(user.getPassword()));
+        assertThat(fromDb.getUsername(), is(user.getUsername()));
+        assertThat(fromDb.getPassword(), is(updatedPassword));
+    }
+
+    @Test(expected = CannotModifyUsernameException.class)
+    public void testUpdateUsername() {
+        User user = userTableUtil.firstRow();
+        user.setUsername("foo");
+        userDao.update(user);
     }
 }
