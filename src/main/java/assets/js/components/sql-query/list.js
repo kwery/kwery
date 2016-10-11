@@ -3,6 +3,8 @@ define(["knockout", "jquery", "text!components/sql-query/list.html"], function (
         var self = this;
 
         self.sqlQueries = ko.observableArray([]);
+        self.status = ko.observable("");
+        self.messages = ko.observableArray([]);
 
         $.ajax({
             url: "/api/sql-query/list",
@@ -17,6 +19,22 @@ define(["knockout", "jquery", "text!components/sql-query/list.html"], function (
                 );
             }
         });
+
+        self.delete = function(sqlQuery) {
+            $.ajax({
+                url: "/api/sql-query/delete/" + sqlQuery.id,
+                type: "POST",
+                contentType: "application/json",
+                success: function(result) {
+                    self.status(result.status);
+                    self.messages(result.messages || []);
+
+                    if (result.status === "success") {
+                        self.sqlQueries.remove(sqlQuery);
+                    }
+                }
+            });
+        };
 
         return self;
     }

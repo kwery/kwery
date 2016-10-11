@@ -52,4 +52,5 @@ public class MessageKeys {
     public static final String USER_DELETE_YOURSELF = "user.delete.yourself";
     public static final String DATASOURCE_DELETE_SQL_QUERIES_PRESENT = "datasource.delete.sql.queries.present";
     public static final String DATASOURCE_DELETE_SUCCESS = "datasource.delete.success";
+    public static final String SQL_QUERY_DELETE_SUCCESS = "sql.query.delete.success";
 }

@@ -25,6 +25,7 @@ public class Routes implements ApplicationRoutes {
     public static final String LIST_SQL_QUERY_EXECUTION_API = "/api/sql-query/{sqlQueryId}/execution";
     public static final String SQL_QUERY_API = "/api/sql-query/{sqlQueryId}";
     public static final String SQL_QUERY_EXECUTION_RESULT_API = "/api/sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}";
+    public static final String DELETE_SQL_QUERY_API = "/api/sql-query/delete/{sqlQueryId}";
     public static final String LIST_SQL_QUERIES_API = "/api/sql-query/list";
     public static final String LIST_USERS_API = "/api/user/list";
     public static final String DATASOURCE_API = "/api/datasource/{datasourceId}";
@@ -46,6 +47,7 @@ public class Routes implements ApplicationRoutes {
         router.POST().route(MYSQL_DATASOURCE_CONNECTION_TEST_API).with(DatasourceApiController.class, "testConnection");
         router.GET().route(ALL_DATASOURCES_API).with(DatasourceApiController.class, "allDatasources");
         router.GET().route(DATASOURCE_API).with(DatasourceApiController.class, "datasource");
+        router.POST().route(DELETE_DATASOURCE_API).with(DatasourceApiController.class, "delete");
 
         router.POST().route(ADD_SQL_QUERY_API).with(SqlQueryApiController.class, "addSqlQuery");
         router.GET().route(EXECUTING_SQL_QUERY_API).with(SqlQueryApiController.class, "executingSqlQueries");
@@ -54,7 +56,7 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(SQL_QUERY_EXECUTION_RESULT_API).with(SqlQueryApiController.class, "sqlQueryExecutionResult");
         router.GET().route(LIST_SQL_QUERIES_API).with(SqlQueryApiController.class, "listSqlQueries");
         router.GET().route(SQL_QUERY_API).with(SqlQueryApiController.class, "sqlQuery");
-        router.POST().route(DELETE_DATASOURCE_API).with(DatasourceApiController.class, "delete");
+        router.POST().route(DELETE_SQL_QUERY_API).with(SqlQueryApiController.class, "delete");
         //Api - End
 
         //Static asset
