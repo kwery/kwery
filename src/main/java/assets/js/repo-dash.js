@@ -25,11 +25,11 @@
                 {url: "datasource/{datasourceId}", auth: true, component: "onboarding-add-datasource"},
                 {url: "user/login{?query}", auth: false, component: "user-login"},
                 {url: "sql-query/add", auth: true, component: "sql-query-add"},
-                {url: "sql-query/{sqlQueryId}", auth: true, component: "sql-query-add"},
                 {url: "sql-query/executing", auth: true, component: "sql-query-executing"},
                 {url: "sql-query/{sqlQueryId}/execution-list/:?q:", auth: true, component: "sql-query-execution-list"},
                 {url: "sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}", auth: true, component: "sql-query-execution-result"},
                 {url: "sql-query/list", auth: true, component: "sql-query-list"},
+                {url: "sql-query/{sqlQueryId}", auth: true, component: "sql-query-add"},
                 {url: "user/list", auth: true, component: "user-list"},
                 {url: "user/update/{userId}", auth: true, component: "user-update"},
             ];

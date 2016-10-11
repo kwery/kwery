@@ -28,6 +28,7 @@ public class Routes implements ApplicationRoutes {
     public static final String LIST_SQL_QUERIES_API = "/api/sql-query/list";
     public static final String LIST_USERS_API = "/api/user/list";
     public static final String DATASOURCE_API = "/api/datasource/{datasourceId}";
+    public static final String DELETE_DATASOURCE_API = "/api/datasource/delete/{datasourceId}";
 
     @Override
     public void init(Router router) {
@@ -53,6 +54,7 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(SQL_QUERY_EXECUTION_RESULT_API).with(SqlQueryApiController.class, "sqlQueryExecutionResult");
         router.GET().route(LIST_SQL_QUERIES_API).with(SqlQueryApiController.class, "listSqlQueries");
         router.GET().route(SQL_QUERY_API).with(SqlQueryApiController.class, "sqlQuery");
+        router.POST().route(DELETE_DATASOURCE_API).with(DatasourceApiController.class, "delete");
         //Api - End
 
         //Static asset

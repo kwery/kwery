@@ -72,4 +72,10 @@ public class DatasourceDao {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT d FROM Datasource d").getResultList();
     }
+
+    @Transactional
+    public void delete(int datasourceId) {
+        EntityManager m = entityManagerProvider.get();
+        m.remove(m.find(Datasource.class, datasourceId));
+    }
 }
