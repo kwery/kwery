@@ -58,4 +58,6 @@ public class Messages {
     public static final String USER_DELETE_SUCCESS_M = "User {0} deleted successfully";
     public static final String USER_DELETE_YOURSELF_M = "You cannot delete yourself";
     public static final String DELETE_M = "Delete";
+    public static final String DATASOURCE_DELETE_SUCCESS_M = "Datasource {0} deleted successfully";
+    public static final String DATASOURCE_DELETE_SQL_QUERIES_PRESENT_M = "There are SQL queries which use this datasource, please delete them before deleting the datasource";
 }

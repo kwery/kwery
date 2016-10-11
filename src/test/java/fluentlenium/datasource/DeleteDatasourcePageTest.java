@@ -7,15 +7,14 @@ import fluentlenium.user.login.LoginPage;
 import fluentlenium.utils.DbUtil;
 import fluentlenium.utils.UserTableUtil;
 import models.Datasource;
+import models.SqlQuery;
 import org.junit.Before;
 import org.junit.Test;
-import util.Messages;
 
 import java.util.List;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
-import static fluentlenium.datasource.ListDatasourcesPage.COLUMNS;
 import static junit.framework.TestCase.fail;
 import static models.Datasource.COLUMN_ID;
 import static models.Datasource.COLUMN_LABEL;
@@ -25,21 +24,18 @@ import static models.Datasource.COLUMN_TYPE;
 import static models.Datasource.COLUMN_URL;
 import static models.Datasource.COLUMN_USERNAME;
 import static models.Datasource.Type.MYSQL;
+import static models.SqlQuery.COLUMN_CRON_EXPRESSION;
+import static models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
+import static models.SqlQuery.COLUMN_QUERY;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static util.Messages.DELETE_M;
-import static util.Messages.LABEL_M;
-import static util.Messages.PASSWORD_M;
-import static util.Messages.PORT_M;
-import static util.Messages.URL_M;
-import static util.Messages.USER_NAME_M;
 
-public class ListDatasourcesPageTest extends RepoDashFluentLeniumTest {
+public class DeleteDatasourcePageTest extends RepoDashFluentLeniumTest {
     protected ListDatasourcesPage page;
 
     @Before
-    public void setUpListDatasourcesPageTest() {
+    public void setUpDeleteDatasourcePageTest() {
         UserTableUtil userTableUtil = new UserTableUtil();
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
@@ -49,6 +45,10 @@ public class ListDatasourcesPageTest extends RepoDashFluentLeniumTest {
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource0", "password0", 3306, MYSQL.name(), "foo.com", "user0")
                                 .values(2, "testDatasource1", "password1", 3307, MYSQL.name(), "bar.com", "user1")
+                                .build(),
+                        insertInto(SqlQuery.TABLE)
+                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
+                                .values(1, "* * * * *", "testQuery0", "select * from foo", 2)
                                 .build()
                 )
         );
@@ -74,36 +74,22 @@ public class ListDatasourcesPageTest extends RepoDashFluentLeniumTest {
     }
 
     @Test
-    public void test() {
-        page.waitForRows(2);
-        List<String> headers = page.headers();
-        assertThat(headers, hasSize(COLUMNS));
-
-        assertThat(headers.get(0), is(LABEL_M));
-        assertThat(headers.get(1), is(URL_M));
-        assertThat(headers.get(2), is(PORT_M));
-        assertThat(headers.get(3), is(USER_NAME_M));
-        assertThat(headers.get(4), is(PASSWORD_M));
-        assertThat(headers.get(5), is(DELETE_M));
-
+    public void testSuccess() {
+        page.delete(0);
+        page.waitForDeleteSuccessMessage("testDatasource0");
         List<List<String>> rows = page.rows();
+        assertThat(rows, hasSize(1));
+        assertThat(rows.get(0).get(0), is("testDatasource1"));
+    }
 
+    @Test
+    public void testDeleteDatasourceWithSqlQuery() {
+        page.delete(1);
+        page.waitForDeleteFailureSqlQueryMessage();
+        List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(2));
-
-        List<String> first = rows.get(0);
-
-        assertThat(first.get(0), is("testDatasource0"));
-        assertThat(first.get(1), is("foo.com"));
-        assertThat(first.get(2), is("3306"));
-        assertThat(first.get(3), is("user0"));
-        assertThat(first.get(4), is("password0"));
-
-        List<String> second = rows.get(1);
-
-        assertThat(second.get(0), is("testDatasource1"));
-        assertThat(second.get(1), is("bar.com"));
-        assertThat(second.get(2), is("3307"));
-        assertThat(second.get(3), is("user1"));
-        assertThat(second.get(4), is("password1"));
+        assertThat(rows.get(0).get(0), is("testDatasource0"));
+        assertThat(rows.get(1).get(0), is("testDatasource1"));
     }
 }
+
