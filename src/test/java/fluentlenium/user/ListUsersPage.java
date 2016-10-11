@@ -2,19 +2,25 @@ package fluentlenium.user;
 
 import fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static java.text.MessageFormat.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.By.tagName;
+import static util.Messages.USER_DELETE_SUCCESS_M;
+import static util.Messages.USER_DELETE_YOURSELF_M;
 
 public class ListUsersPage extends FluentPage implements RepoDashPage {
-    public static final int COLUMNS = 2;
+    public static final int COLUMNS = 3;
 
     @Override
     public boolean isRendered() {
@@ -27,7 +33,7 @@ public class ListUsersPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForRows(int rowCount) {
-        await().atMost(30, TimeUnit.SECONDS).until("#usersListTableBody tr").hasSize(rowCount);
+        await().atMost(30, SECONDS).until("#usersListTableBody tr").hasSize(rowCount);
     }
 
     public List<String> headers() {
@@ -50,5 +56,19 @@ public class ListUsersPage extends FluentPage implements RepoDashPage {
         }
 
         return rows;
+    }
+
+    public void delete(int row) {
+        FluentList<FluentWebElement> fluentWebElements = find("#usersListTableBody tr");
+        FluentWebElement tr = fluentWebElements.get(row);
+        tr.find(className("delete")).click();
+    }
+
+    public void waitForDeleteSuccessMessage(String username) {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_info p").hasText(format(USER_DELETE_SUCCESS_M, username));
+    }
+
+    public void waitForDeleteYourselfMessage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_error p").hasText(USER_DELETE_YOURSELF_M);
     }
 }

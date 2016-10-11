@@ -55,4 +55,7 @@ public class Messages {
     public static final String UPDATE_M = "Update";
     public static final String USER_UPDATE_SUCCESS_M = "User with user name {0} updated successfully";
     public static final String QUERY_RUN_UPDATE_SUCCESS_M = "Query has been successfully updated";
+    public static final String USER_DELETE_SUCCESS_M = "User {0} deleted successfully";
+    public static final String USER_DELETE_YOURSELF_M = "You cannot delete yourself";
+    public static final String DELETE_M = "Delete";
 }

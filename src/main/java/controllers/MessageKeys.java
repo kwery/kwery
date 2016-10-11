@@ -48,4 +48,6 @@ public class MessageKeys {
     public static final String END = "end";
     public static final String STATUS = "status";
     public static final String RESULT = "result";
+    public static final String USER_DELETE_SUCCESS = "user.delete.success";
+    public static final String USER_DELETE_YOURSELF = "user.delete.yourself";
 }

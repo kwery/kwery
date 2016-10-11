@@ -1,4 +1,5 @@
 <div class="container">
+    <action-result params="status: status, messages: messages"></action-result>
     <div class="row">
         <div class="twelve columns">
             <table class="u-full-width" id="usersListTable">
@@ -6,12 +7,16 @@
                     <tr>
                         <th data-bind="text: ko.i18n('user.name')"></th>
                         <th data-bind="text: ko.i18n('password')"></th>
+                        <th data-bind="text: ko.i18n('delete')"></th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: users" id="usersListTableBody">
                     <tr>
                         <td data-bind="text: username"></td>
                         <td data-bind="text: password"></td>
+                        <td>
+                            <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="delete">Delete</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

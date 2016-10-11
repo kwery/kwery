@@ -21,6 +21,8 @@ import static controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
 import static controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
 import static controllers.MessageKeys.LOGIN_FAILURE;
 import static controllers.MessageKeys.LOGIN_SUCCESS;
+import static controllers.MessageKeys.USER_DELETE_SUCCESS;
+import static controllers.MessageKeys.USER_DELETE_YOURSELF;
 import static controllers.MessageKeys.USER_UPDATE_SUCCESS;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
@@ -101,6 +103,22 @@ public class UserApiController {
         Result json = Results.json();
         json.render(user);
         return json;
+    }
+
+    public Result delete(@PathParam("userId") int userId, Context context) {
+        String deletedUsername = userDao.getById(userId).getUsername();
+        ActionResult actionResult = null;
+        Result json = Results.json();
+        if (deletedUsername.equals(context.getSession().get(SESSION_USERNAME_KEY))) {
+            String message = messages.get(USER_DELETE_YOURSELF, context, of(json)).get();
+            actionResult = new ActionResult(failure, message);
+        } else {
+            userDao.delete(userId);
+            String message = messages.get(USER_DELETE_SUCCESS, context, of(json), deletedUsername).get();
+            actionResult = new ActionResult(success, message);
+        }
+
+        return json.render(actionResult);
     }
 
     @FilterWith(DashRepoSecureFilter.class)

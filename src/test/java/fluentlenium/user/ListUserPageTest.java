@@ -19,6 +19,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static util.Messages.DELETE_M;
 import static util.Messages.PASSWORD_M;
 import static util.Messages.USER_NAME_M;
 
@@ -68,6 +69,7 @@ public class ListUserPageTest extends RepoDashFluentLeniumTest {
 
         assertThat(headers.get(0), is(USER_NAME_M));
         assertThat(headers.get(1), is(PASSWORD_M));
+        assertThat(headers.get(2), is(DELETE_M));
 
         List<List<String>> rows = page.rows();
 
