@@ -98,4 +98,10 @@ public class UserDao {
         EntityManager m = entityManagerProvider.get();
         return m.find(User.class, id);
     }
+
+    @Transactional
+    public void delete(int userId) {
+        EntityManager m = entityManagerProvider.get();
+        m.remove(m.find(User.class, userId));
+    }
 }
