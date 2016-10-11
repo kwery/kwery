@@ -3,6 +3,7 @@ package controllers.apis;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dao.DatasourceDao;
+import dao.SqlQueryDao;
 import filters.DashRepoSecureFilter;
 import models.Datasource;
 import ninja.Context;
@@ -25,6 +26,8 @@ import static com.google.common.base.Optional.of;
 import static controllers.ControllerUtil.fieldMessages;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
 import static controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
+import static controllers.MessageKeys.DATASOURCE_DELETE_SQL_QUERIES_PRESENT;
+import static controllers.MessageKeys.DATASOURCE_DELETE_SUCCESS;
 import static controllers.MessageKeys.DATASOURCE_UPDATE_FAILURE;
 import static controllers.MessageKeys.DATASOURCE_UPDATE_SUCCESS;
 import static controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_FAILURE;
@@ -43,6 +46,9 @@ public class DatasourceApiController {
 
     @Inject
     private MysqlDatasourceService mysqlDatasourceService;
+
+    @Inject
+    private SqlQueryDao sqlQueryDao;
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result addDatasource(@JSR303Validation Datasource datasource, Context context, Validation validation) {
@@ -123,13 +129,29 @@ public class DatasourceApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result allDatasources() {
-        Result json = Results.json();
-        return json.render(datasourceDao.getAll());
+        return Results.json().render(datasourceDao.getAll());
     }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result datasource(@PathParam("datasourceId") int datasourceId) {
         return Results.json().render(datasourceDao.getById(datasourceId));
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result delete(@PathParam("datasourceId") int datasourceId, Context context) {
+        Result json = Results.json();
+        ActionResult actionResult = null;
+        if (sqlQueryDao.countSqlQueriesWithDatasourceId(datasourceId) > 0) {
+            String message = messages.get(DATASOURCE_DELETE_SQL_QUERIES_PRESENT, context, of(json)).get();
+            actionResult = new ActionResult(failure, message);
+        } else {
+            Datasource datasource = datasourceDao.getById(datasourceId);
+            datasourceDao.delete(datasourceId);
+            String message = messages.get(DATASOURCE_DELETE_SUCCESS, context, of(json), datasource.getLabel()).get();
+            actionResult = new ActionResult(success, message);
+        }
+
+        return json.render(actionResult);
     }
 
     public void setMessages(Messages messages) {

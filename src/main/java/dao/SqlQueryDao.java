@@ -1,16 +1,21 @@
 package dao;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import models.SqlQuery;
+import models.SqlQueryExecution;
 import ninja.jpa.UnitOfWork;
+import services.scheduler.SqlQueryExecutionSearchFilter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SqlQueryDao {
@@ -71,5 +76,24 @@ public class SqlQueryDao {
             return null;
         }
         return m.get(0);
+    }
+
+    @UnitOfWork
+    public long countSqlQueriesWithDatasourceId(int datasourceId) {
+        EntityManager m = entityManagerProvider.get();
+
+        CriteriaBuilder c = m.getCriteriaBuilder();
+        CriteriaQuery<Long> q = c.createQuery(Long.class);
+
+        Root<SqlQuery> root = q.from(SqlQuery.class);
+
+        q.select(c.count(root));
+
+        List<Predicate> predicates = new LinkedList<>();
+        predicates.add(c.equal(root.get("datasource").get("id"), datasourceId));
+
+        q.where(predicates.toArray(new Predicate[]{}));
+
+        return m.createQuery(q).getSingleResult();
     }
 }
