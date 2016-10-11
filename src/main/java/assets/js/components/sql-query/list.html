@@ -1,4 +1,5 @@
 <div class="container">
+    <action-result params="status: status, messages: messages"></action-result>
     <div class="row">
         <div class="twelve columns">
             <table class="u-full-width" id="sqlQueriesListTable">
@@ -8,6 +9,7 @@
                         <th data-bind="text: ko.i18n('cron.expression')"></th>
                         <th data-bind="text: ko.i18n('query')"></th>
                         <th data-bind="text: ko.i18n('datasource')"></th>
+                        <th data-bind="text: ko.i18n('delete')"></th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: sqlQueries" id="sqlQueriesListTableBody">
@@ -19,6 +21,9 @@
                         <td data-bind="text: cronExpression"></td>
                         <td data-bind="text: query"></td>
                         <td data-bind="text: datasource.label"></td>
+                        <td>
+                            <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="delete">Delete</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

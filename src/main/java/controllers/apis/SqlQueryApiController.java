@@ -42,6 +42,7 @@ import static controllers.MessageKeys.DATASOURCE_VALIDATION;
 import static controllers.MessageKeys.QUERY_RUN_ADDITION_FAILURE;
 import static controllers.MessageKeys.QUERY_RUN_ADDITION_SUCCESS;
 import static controllers.MessageKeys.QUERY_RUN_UPDATE_SUCCESS;
+import static controllers.MessageKeys.SQL_QUERY_DELETE_SUCCESS;
 import static models.SqlQueryExecution.Status.ONGOING;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
@@ -244,6 +245,17 @@ public class SqlQueryApiController {
         return Results.json().render(sqlQueryDao.getById(id));
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result delete(@PathParam("sqlQueryId") int sqlQueryId, Context context) {
+        SqlQuery sqlQuery = sqlQueryDao.getById(sqlQueryId);
+        //TODO - This should be part of service layer
+        sqlQueryDao.delete(sqlQueryId);
+        schedulerService.stopScheduler(sqlQueryId);
+        Result json = Results.json();
+        String message = messages.get(SQL_QUERY_DELETE_SUCCESS, context, Optional.of(json), sqlQuery.getLabel()).get();
+        return json.render(new ActionResult(success, message));
+    }
+
     public SqlQueryExecutionDto from(SqlQueryExecution model) {
         SqlQueryExecutionDto dto = new SqlQueryExecutionDto();
         dto.setSqlQueryLabel(model.getSqlQuery().getLabel());
@@ -280,7 +292,13 @@ public class SqlQueryApiController {
 
     public SqlQuery toSqlQueryModel(SqlQueryDto dto) {
         SqlQuery model = new SqlQuery();
-        model.setId(dto.getId());
+
+        if (dto.getId() == 0) {
+            model.setId(null);
+        } else {
+            model.setId(dto.getId());
+        }
+
         model.setCronExpression(dto.getCronExpression());
         model.setLabel(dto.getLabel());
         model.setQuery(dto.getQuery());

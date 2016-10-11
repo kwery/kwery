@@ -2,16 +2,21 @@ package fluentlenium.sqlquery;
 
 import fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static java.text.MessageFormat.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.By.tagName;
+import static util.Messages.SQL_QUERY_DELETE_SUCCESS_M;
 
 public class ListSqlQueriesPage extends FluentPage implements RepoDashPage {
     public static final int LIST_SQL_QUERIES_COLUMNS = 4;
@@ -51,6 +56,16 @@ public class ListSqlQueriesPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForRows(int rowCount) {
-        await().atMost(30, TimeUnit.SECONDS).until("#sqlQueriesListTableBody tr").hasSize(rowCount);
+        await().atMost(30, SECONDS).until("#sqlQueriesListTableBody tr").hasSize(rowCount);
+    }
+
+    public void delete(int row) {
+        FluentList<FluentWebElement> fluentWebElements = find("#sqlQueriesListTableBody tr");
+        FluentWebElement tr = fluentWebElements.get(row);
+        tr.find(className("delete")).click();
+    }
+
+    public void waitForDeleteSuccessMessage(String label) {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_info p").hasText(format(SQL_QUERY_DELETE_SUCCESS_M, label));
     }
 }

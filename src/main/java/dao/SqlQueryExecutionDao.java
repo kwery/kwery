@@ -146,4 +146,14 @@ public class SqlQueryExecutionDao {
 
         return m.createQuery(q).getSingleResult();
     }
+
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public void deleteBySqlQueryId(int sqlQueryId) {
+        EntityManager m = entityManagerProvider.get();
+        m.createQuery(
+                "delete from SqlQueryExecution e where e.sqlQuery.id = :sqlQueryId")
+                .setParameter("sqlQueryId", sqlQueryId
+        ).executeUpdate();
+    }
 }

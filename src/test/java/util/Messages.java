@@ -60,4 +60,5 @@ public class Messages {
     public static final String DELETE_M = "Delete";
     public static final String DATASOURCE_DELETE_SUCCESS_M = "Datasource {0} deleted successfully";
     public static final String DATASOURCE_DELETE_SQL_QUERIES_PRESENT_M = "There are SQL queries which use this datasource, please delete them before deleting the datasource";
+    public static final String SQL_QUERY_DELETE_SUCCESS_M = "SQL query {0} deleted successfully";
 }

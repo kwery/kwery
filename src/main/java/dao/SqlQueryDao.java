@@ -1,6 +1,5 @@
 package dao;
 
-import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
@@ -21,6 +20,9 @@ import java.util.List;
 public class SqlQueryDao {
     @Inject
     private Provider<EntityManager> entityManagerProvider;
+
+    @Inject
+    protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
     @Transactional
     public void save(SqlQuery q) {
@@ -95,5 +97,12 @@ public class SqlQueryDao {
         q.where(predicates.toArray(new Predicate[]{}));
 
         return m.createQuery(q).getSingleResult();
+    }
+
+    @Transactional
+    public void delete(int sqlQueryId) {
+        EntityManager m = entityManagerProvider.get();
+        sqlQueryExecutionDao.deleteBySqlQueryId(sqlQueryId);
+        m.remove(m.find(SqlQuery.class, sqlQueryId));
     }
 }

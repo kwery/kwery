@@ -1,5 +1,6 @@
 package models;
 
+import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -13,15 +14,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import static javax.persistence.EnumType.STRING;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 @Entity
 @Table(name = SqlQueryExecution.TABLE)
 public class SqlQueryExecution {
     public static final String TABLE = "query_run_execution";
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_EXECUTION_ID = "executionId";
-    public static final String COLUMN_EXECUTION_START = "executionStart";
-    public static final String COLUMN_EXECUTION_END = "executionEnd";
+    public static final String COLUMN_EXECUTION_ID = "execution_id";
+    public static final String COLUMN_EXECUTION_START = "execution_start";
+    public static final String COLUMN_EXECUTION_END = "execution_end";
     public static final String COLUMN_STATUS = "status";
     public static final String COLUMN_RESULT = "result";
     public static final String COLUMN_QUERY_RUN_ID_FK = "query_run_id_fk";
