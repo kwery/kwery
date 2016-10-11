@@ -16,17 +16,17 @@ define(["knockout", "jquery", "text!components/user/list.html"], function (ko, $
             }
         });
 
-        self.delete = function(toDeleteUser) {
+        self.delete = function(user) {
             $.ajax({
-                url: "/api/user/delete/" + toDeleteUser.id,
+                url: "/api/user/delete/" + user.id,
                 type: "POST",
                 contentType: "application/json",
                 success: function(result) {
                     self.status(result.status);
                     self.messages(result.messages || []);
 
-                    if (result.success) {
-                        self.users.remove(toDeleteUser);
+                    if (result.status === "success") {
+                        self.users.remove(user);
                     }
                 }
             });
