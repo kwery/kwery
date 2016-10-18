@@ -1,32 +1,28 @@
 <div class="container">
     <action-result params="status: status, messages: messages"></action-result>
-    <div class="row">
-        <div class="twelve columns">
-            <table class="u-full-width" id="sqlQueriesListTable">
-                <thead>
-                    <tr>
-                        <th data-bind="text: ko.i18n('label')"></th>
-                        <th data-bind="text: ko.i18n('cron.expression')"></th>
-                        <th data-bind="text: ko.i18n('query')"></th>
-                        <th data-bind="text: ko.i18n('datasource')"></th>
-                        <th data-bind="text: ko.i18n('delete')"></th>
-                    </tr>
-                </thead>
-                <tbody data-bind="foreach: sqlQueries" id="sqlQueriesListTableBody">
-                    <tr>
-                        <td>
-                            <a data-bind="attr: {href: queryLink}, text: label">
-                            </a>
-                        </td>
-                        <td data-bind="text: cronExpression"></td>
-                        <td data-bind="text: query"></td>
-                        <td data-bind="text: datasource.label"></td>
-                        <td>
-                            <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="delete">Delete</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <table class="table" id="sqlQueriesListTable">
+        <thead>
+            <tr>
+                <th data-bind="text: ko.i18n('label')"></th>
+                <th data-bind="text: ko.i18n('cron.expression')"></th>
+                <th data-bind="text: ko.i18n('query')"></th>
+                <th data-bind="text: ko.i18n('datasource')"></th>
+                <th data-bind="text: ko.i18n('delete')"></th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: sqlQueries" id="sqlQueriesListTableBody">
+            <tr>
+                <td>
+                    <a data-bind="attr: {href: queryLink}, text: label">
+                    </a>
+                </td>
+                <td data-bind="text: cronExpression"></td>
+                <td data-bind="text: query"></td>
+                <td data-bind="text: datasource.label"></td>
+                <td>
+                    <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="btn btn-default delete">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
