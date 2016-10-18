@@ -1,40 +1,29 @@
 <div class="container">
     <action-result params="status: status, messages: messages"></action-result>
     <form data-bind="submit: submit" id="addDatasourceForm">
-        <div class="row">
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('url')" for="url"></label>
-                <input data-bind="value: url" minlength="1" required class="u-full-width" type="text" id="url" name="url">
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('url')" for="url"></label>
+            <input data-bind="value: url" minlength="1" required class="form-control" type="text" id="url" name="url">
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('port')" for="port"></label>
-                <input data-bind="value: port" minlength="1" min="1" required class="u-full-width" type="text" id="port" name="port">
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('port')" for="port"></label>
+            <input data-bind="value: port" minlength="1" min="1" required class="form-control" type="text" id="port"
+                   name="port">
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('user.name')" for="username"></label>
-                <input data-bind="value: username" minlength="1" required class="u-full-width" type="text" id="username" name="username">
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('user.name')" for="username"></label>
+            <input data-bind="value: username" minlength="1" required class="form-control" type="text" id="username"
+                   name="username">
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('password')" for="password"></label>
-                <input data-bind="value: password" class="u-full-width" type="password" id="password" name="password">
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('password')" for="password"></label>
+            <input data-bind="value: password" class="form-control" type="password" id="password" name="password">
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('label')" for="label"></label>
-                <input data-bind="value: label" minlength="1" required class="u-full-width" type="text" id="label" name="label">
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('label')" for="label"></label>
+            <input data-bind="value: label" minlength="1" required class="form-control" type="text" id="label"
+                   name="label">
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <button data-bind="text: actionLabel" class="button-primary" id="create"></button>
-            </div>
-        </div>
+        <button data-bind="text: actionLabel" class="btn btn-default" id="create"></button>
     </form>
 </div>
