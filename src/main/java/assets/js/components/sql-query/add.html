@@ -3,31 +3,25 @@
                 messages: messages">
     </action-result>
     <form data-bind="submit: submit" id="queryRunForm">
-        <div class="row">
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('query')" for="query"></label>
-                <input data-bind="value: query" minlength="1" required class="u-full-width" type="text" id="query" name="query">
-            </div>
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('datasource')" for="datasourceId"></label>
-                <select id="datasourceId" name="datasoruceId" data-bind="options: datasources,
-                                                                            optionsText: 'label',
-                                                                            value: datasource">
-                </select>
-            </div>
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('cron.expression')" for="cronExpression"></label>
-                <input data-bind="value: cronExpression" minlength="1" required class="u-full-width" type="text" id="cronExpression" name="cronExpression">
-            </div>
-            <div class="twelve columns">
-                <label data-bind="text: ko.i18n('label')" for="label"></label>
-                <input data-bind="value: label" minlength="1" required class="u-full-width" type="text" id="label" name="label">
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('query')" for="query"></label>
+            <input data-bind="value: query" minlength="1" required type="text" class="form-control" id="query" name="query">
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <button data-bind="text: actionLabel" class="button-primary" id="create"></button>
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('datasource')" for="datasourceId"></label>
+            <select id="datasourceId" name="datasoruceId" class="form-control" data-bind="options: datasources,
+                                                                        optionsText: 'label',
+                                                                        value: datasource">
+            </select>
         </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('cron.expression')" for="cronExpression"></label>
+            <input data-bind="value: cronExpression" minlength="1" required type="text" class="form-control" id="cronExpression" name="cronExpression">
+        </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('label')" for="label"></label>
+            <input data-bind="value: label" minlength="1" required type="text"  class="form-control"id="label" name="label">
+        </div>
+        <button data-bind="text: actionLabel" class="btn btn-default" id="create"></button>
     </form>
 </div>
