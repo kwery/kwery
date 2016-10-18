@@ -1,26 +1,22 @@
 <div class="container">
-    <div class="row">
-        <div class="twelve columns">
-            <p data-bind="visible: fetchingResult">Fetching ...</p>
+    <p data-bind="visible: fetchingResult">Fetching ...</p>
 
-            <p data-bind="visible: noResult">No Result</p>
+    <p data-bind="visible: noResult">No Result</p>
 
-            <table class="u-full-width" id="executionResultTable">
-                <thead>
-                    <tr data-bind="foreach: header" id="resultHeader">
-                        <th data-bind="text: $data"></th>
-                    </tr>
-                </thead>
-                <tbody id="resultContent">
-                    <!-- ko foreach: contents -->
-                    <tr>
-                        <!-- ko foreach: $data -->
-                        <td data-bind="text: $data"></td>
-                        <!-- /ko -->
-                    </tr>
-                    <!-- /ko -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <table class="table" id="executionResultTable">
+        <thead>
+        <tr data-bind="foreach: header" id="resultHeader">
+            <th data-bind="text: $data"></th>
+        </tr>
+        </thead>
+        <tbody id="resultContent">
+        <!-- ko foreach: contents -->
+        <tr>
+            <!-- ko foreach: $data -->
+            <td data-bind="text: $data"></td>
+            <!-- /ko -->
+        </tr>
+        <!-- /ko -->
+        </tbody>
+    </table>
 </div>
