@@ -2,7 +2,7 @@
     <action-result params="status: status, messages: messages"></action-result>
     <div class="row">
         <div class="twelve columns">
-            <table class="u-full-width" id="datasourcesListTable">
+            <table class="table" id="datasourcesListTable">
                 <thead>
                     <tr>
                         <th data-bind="text: ko.i18n('label')"></th>
@@ -21,7 +21,7 @@
                         <td data-bind="text: username"></td>
                         <td data-bind="text: password"></td>
                         <td>
-                            <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="delete">Delete</button>
+                            <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="btn btn-default delete">Delete</button>
                         </td>
                     </tr>
                 </tbody>
