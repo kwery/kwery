@@ -3,20 +3,14 @@
                 messages: messages">
     </action-result>
     <form data-bind="submit: submit" id="loginForm">
-        <div class="row">
-            <div class="six columns">
-                <label data-bind="text: ko.i18n('user.name')" for="userName"></label>
-                <input data-bind="value: username" class="u-full-width" type="text" id="username" name="username">
-            </div>
-            <div class="six columns">
-                <label data-bind="text: ko.i18n('password')" for="password"></label>
-                <input data-bind="value: password" class="u-full-width" type="password" id="password" name="password">
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('user.name')" for="username"></label>
+            <input data-bind="value: username, attr: {placeholder: ko.i18n('user.name')}" class="form-control" name="username" id="username">
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <button data-bind="text: ko.i18n('login')" class="button-primary" id="login"></button>
-            </div>
+        <div class="form-group">
+            <label data-bind="text: ko.i18n('password')" for="password"></label>
+            <input  data-bind="value: password, attr: {placeholder: ko.i18n('password')}" type="password" class="form-control" id="password">
         </div>
+        <button data-bind="text: ko.i18n('login')" type="submit" class="btn btn-default" id="login"></button>
     </form>
 </div>
