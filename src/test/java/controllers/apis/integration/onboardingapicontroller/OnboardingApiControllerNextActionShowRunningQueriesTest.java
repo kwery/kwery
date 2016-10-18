@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static dtos.OnboardingNextActionDto.Action.SHOW_RUNNING_QUERIES;
+import static dtos.OnboardingNextActionDto.Action.SHOW_EXECUTING_QUERIES;
 import static models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static models.SqlQuery.COLUMN_ID;
@@ -39,6 +39,6 @@ public class OnboardingApiControllerNextActionShowRunningQueriesTest extends Onb
         String response = ninjaTestBrowser.makeJsonRequest(getUrl(url));
 
         assertThat(response, isJson());
-        assertThat(response, hasJsonPath("$.action", is(SHOW_RUNNING_QUERIES.name())));
+        assertThat(response, hasJsonPath("$.action", is(SHOW_EXECUTING_QUERIES.name())));
     }
 }

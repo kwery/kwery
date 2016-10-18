@@ -9,7 +9,7 @@ package util;
  */
 public class Messages {
     public static final String TITLE_M = "RepoDash - Create reports, dashboards and visualizations from datasources in a jiffy";
-    public static final String INSTALLATION_WELCOME_M = "Welcome to RepoDash, reporting, dashboarding and visualistion made easy. As the first step, let us create an administrative user to manage the application.";
+    public static final String INSTALLATION_WELCOME_M = "Welcome to RepoDash, determining the steps for onboarding.";
     public static final String CREATE_ADMIN_USER_M = "Create Admin User";
     public static final String USER_NAME_M = "User Name";
     public static final String PASSWORD_M = "Password";

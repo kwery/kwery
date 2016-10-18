@@ -18,7 +18,7 @@
 
             //Do not change this order unless you know what you are doing, changing the order may affect route resolution
             var _componentMapping = [
-                {url: "", auth: false, component: "onboarding-welcome"},
+                {url: "", auth: false, component: "onboarding"},
                 {url: "onboarding/add-admin-user", auth: false, component: "onboarding-add-admin-user"},
                 {url: "onboarding/add-datasource", auth: true, component: "onboarding-add-datasource"},
                 {url: "datasource/list", auth: true, component: "datasource-list"},

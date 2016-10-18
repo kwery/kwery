@@ -6,7 +6,6 @@ import dao.DatasourceDao;
 import dao.SqlQueryDao;
 import dao.UserDao;
 import dtos.OnboardingNextActionDto;
-import models.Datasource;
 import models.User;
 import ninja.Context;
 import ninja.Result;
@@ -18,7 +17,7 @@ import static controllers.MessageKeys.ONBOARDING_ROOT_USER_CREATED;
 import static dtos.OnboardingNextActionDto.Action.ADD_ADMIN_USER;
 import static dtos.OnboardingNextActionDto.Action.ADD_DATASOURCE;
 import static dtos.OnboardingNextActionDto.Action.ADD_SQL_QUERY;
-import static dtos.OnboardingNextActionDto.Action.SHOW_RUNNING_QUERIES;
+import static dtos.OnboardingNextActionDto.Action.SHOW_EXECUTING_QUERIES;
 import static ninja.Results.json;
 import static views.ActionResult.Status.success;
 
@@ -65,7 +64,7 @@ public class OnboardingApiController {
         } else if(!doesSqlQueryExist()) {
             return json().render(new OnboardingNextActionDto(ADD_SQL_QUERY));
         } else {
-            return json().render(new OnboardingNextActionDto(SHOW_RUNNING_QUERIES));
+            return json().render(new OnboardingNextActionDto(SHOW_EXECUTING_QUERIES));
         }
     }
 
