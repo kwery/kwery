@@ -14,7 +14,8 @@ var require = {
         "repo-dash": "repo-dash",
         "router": "router",
         "polyglot": "polyglot",
-        "jquery-validate": "jquery.validate"
+        "jquery-validate": "jquery.validate",
+        "bootstrap": "/assets/bootstrap/js/bootstrap"
     },
     shim: {
         "jquery-migrate": {
@@ -22,6 +23,9 @@ var require = {
             exports: "jquery"
         },
         "jquery-validate": {
+            deps: ["jquery"]
+        },
+        "bootstrap": {
             deps: ["jquery"]
         }
     }
