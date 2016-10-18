@@ -1,8 +1,6 @@
 define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "knockout-projections"], function ($, ko, router, polyglot) {
-    ko.components.register("onboarding-welcome", {
-        template: {
-            require: "text!components/onboarding/welcome.html"
-        }
+    ko.components.register("onboarding", {
+        require: "components/onboarding/onboarding"
     });
     ko.components.register("action-result", {
         require: "components/action-result"

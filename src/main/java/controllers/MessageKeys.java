@@ -53,4 +53,5 @@ public class MessageKeys {
     public static final String DATASOURCE_DELETE_SQL_QUERIES_PRESENT = "datasource.delete.sql.queries.present";
     public static final String DATASOURCE_DELETE_SUCCESS = "datasource.delete.success";
     public static final String SQL_QUERY_DELETE_SUCCESS = "sql.query.delete.success";
+    public static final String ONBOARDING_ROOT_USER_CREATED = "onboarding.root.user.created";
 }
