@@ -61,4 +61,5 @@ public class Messages {
     public static final String DATASOURCE_DELETE_SUCCESS_M = "Datasource {0} deleted successfully";
     public static final String DATASOURCE_DELETE_SQL_QUERIES_PRESENT_M = "There are SQL queries which use this datasource, please delete them before deleting the datasource";
     public static final String SQL_QUERY_DELETE_SUCCESS_M = "SQL query {0} deleted successfully";
+    public static final String ONBOARDING_ROOT_USER_CREATED_M = "An admin user with username {0} and password {1} has been created. This is the only time you will see this password, hence please keep note of it. Please log in with user name {0} and password {1} to complete the setup.";
 }

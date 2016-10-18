@@ -2,6 +2,7 @@ package conf;
 
 import controllers.IndexController;
 import controllers.apis.DatasourceApiController;
+import controllers.apis.OnboardingApiController;
 import controllers.apis.SqlQueryApiController;
 import controllers.apis.UserApiController;
 import ninja.AssetsController;
@@ -30,6 +31,8 @@ public class Routes implements ApplicationRoutes {
     public static final String LIST_USERS_API = "/api/user/list";
     public static final String DATASOURCE_API = "/api/datasource/{datasourceId}";
     public static final String DELETE_DATASOURCE_API = "/api/datasource/delete/{datasourceId}";
+    public static final String ONBOARDING_ADD_ROOT_USER_API = "/api/onboarding/user/add";
+    public static final String ONBOARDING_NEXT_ACTION_API = "/api/onboarding/next-action";
 
     @Override
     public void init(Router router) {
@@ -57,6 +60,9 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(LIST_SQL_QUERIES_API).with(SqlQueryApiController.class, "listSqlQueries");
         router.GET().route(SQL_QUERY_API).with(SqlQueryApiController.class, "sqlQuery");
         router.POST().route(DELETE_SQL_QUERY_API).with(SqlQueryApiController.class, "delete");
+
+        router.POST().route(ONBOARDING_ADD_ROOT_USER_API).with(OnboardingApiController.class, "addRootUser");
+        router.GET().route(ONBOARDING_NEXT_ACTION_API).with(OnboardingApiController.class, "nextAction");
         //Api - End
 
         //Static asset
