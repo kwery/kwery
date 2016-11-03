@@ -1,4 +1,4 @@
-define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "knockout-projections"], function ($, ko, router, polyglot) {
+define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "knockout-projections", "bootstrap"], function ($, ko, router, polyglot) {
     ko.components.register("onboarding", {
         require: "components/onboarding/onboarding"
     });

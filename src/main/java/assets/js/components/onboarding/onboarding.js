@@ -3,6 +3,7 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
         var self = this;
 
         self.message = ko.observable(ko.i18n("onboarding.welcome"));
+        self.heading = ko.observable(ko.i18n("welcome"));
 
         $.ajax({
             url: "/api/onboarding/next-action",
@@ -38,6 +39,10 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
                     }
                 }
             });
+        };
+
+        self.login = function() {
+            window.location.href = "/#user/login";
         };
 
         return self;
