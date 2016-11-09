@@ -2,7 +2,7 @@
     <action-result params="status: status, messages: messages"></action-result>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Users</h3>
+            <h3 data-bind="text: ko.i18n('user.list.title')" class="panel-title"></h3>
         </div>
         <div class="panel-body">
             <table class="table" id="usersListTable">
@@ -15,7 +15,7 @@
                 </thead>
                 <tbody data-bind="foreach: users" id="usersListTableBody">
                 <tr>
-                    <td data-bind="text: username"></td>
+                    <td><a data-bind="text: username, attr: {href: updateLink}"></a></td>
                     <td data-bind="text: password"></td>
                     <td>
                         <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="btn btn-default delete">Delete</button>

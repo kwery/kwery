@@ -12,6 +12,9 @@ define(["knockout", "jquery", "text!components/user/list.html"], function (ko, $
             type: "GET",
             contentType: "application/json",
             success: function(result){
+                ko.utils.arrayForEach(result, function (user) {
+                    user.updateLink = "/#user/update/" + user.id;
+                });
                 self.users(result);
             }
         });
