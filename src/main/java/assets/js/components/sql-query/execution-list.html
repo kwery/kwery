@@ -1,88 +1,98 @@
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <p data-bind="text:sqlQuery" id="sqlQuery"></p>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 data-bind="text: ko.i18n('query')" class="panel-title"></h3>
+        </div>
+        <div data-bind="text:sqlQuery" class="panel-body">
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <form data-bind="submit: submit" id="filterExecutionListForm">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label data-bind="text: ko.i18n('execution.start.start')" for="executionStartStart"></label>
-                            <input data-bind="value: executionStartStart" type="text" class="form-control"
-                                   id="executionStartStart" name="executionStartStart">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label data-bind="text: ko.i18n('execution.start.end')" for="executionStartEnd"></label>
-                            <input data-bind="value: executionStartEnd" type="text" class="form-control"
-                                   id="executionStartEnd" name="executionStartEnd">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label data-bind="text: ko.i18n('execution.end.start')" for="executionEndStart"></label>
-                            <input data-bind="value: executionEndStart" class="form-control" type="text"
-                                   id="executionEndStart" name="executionEndStart">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label data-bind="text: ko.i18n('execution.end.end')" for="executionEndEnd"></label>
-                            <input data-bind="value: executionEndEnd" class="form-control" type="text"
-                                   id="executionEndEnd" name="executionEndEnd">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label data-bind="text: ko.i18n('status')"></label>
-                            <div class="checkbox">
-                                <!-- TODO Status should be picked from back end -->
-                                <label class="example-send-yourself-copy">
-                                    <input data-bind="checked: statuses" type="checkbox" value="ONGOING">
-                                    <span id="ongoingCheckBox">ONGOING</span>
-                                </label>
-                                <label class="example-send-yourself-copy">
-                                    <input data-bind="checked: statuses" type="checkbox" value="SUCCESS">
-                                    <span id="successCheckBox">SUCCESS</span>
-                                </label>
-                                <label class="example-send-yourself-copy">
-                                    <input data-bind="checked: statuses" type="checkbox" value="FAILURE">
-                                    <span id="failureCheckBox">FAILURE</span>
-                                </label>
-                                <label class="example-send-yourself-copy">
-                                    <input data-bind="checked: statuses" type="checkbox" value="KILLED">
-                                    <span id="killedCheckBox">KILLED</span>
-                                </label>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 data-bind="text: ko.i18n('filter.execution')" class="panel-title"></h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <form data-bind="submit: submit" id="filterExecutionListForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('execution.start.start')" for="executionStartStart"></label>
+                                    <input data-bind="value: executionStartStart" type="text" class="form-control"
+                                           id="executionStartStart" name="executionStartStart">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('execution.start.end')" for="executionStartEnd"></label>
+                                    <input data-bind="value: executionStartEnd" type="text" class="form-control"
+                                           id="executionStartEnd" name="executionStartEnd">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label data-bind="text: ko.i18n('results.to.display')" for="resultCount"></label>
-                            <input data-bind="value: resultCount" class="form-control" type="text" id="resultCount"
-                                   name="resultCount">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('execution.end.start')" for="executionEndStart"></label>
+                                    <input data-bind="value: executionEndStart" class="form-control" type="text"
+                                           id="executionEndStart" name="executionEndStart">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('execution.end.end')" for="executionEndEnd"></label>
+                                    <input data-bind="value: executionEndEnd" class="form-control" type="text"
+                                           id="executionEndEnd" name="executionEndEnd">
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('status')"></label>
+                                    <div class="checkbox">
+                                        <!-- TODO Status should be picked from back end -->
+                                        <label class="example-send-yourself-copy">
+                                            <input data-bind="checked: statuses" type="checkbox" value="ONGOING">
+                                            <span id="ongoingCheckBox">ONGOING</span>
+                                        </label>
+                                        <label class="example-send-yourself-copy">
+                                            <input data-bind="checked: statuses" type="checkbox" value="SUCCESS">
+                                            <span id="successCheckBox">SUCCESS</span>
+                                        </label>
+                                        <label class="example-send-yourself-copy">
+                                            <input data-bind="checked: statuses" type="checkbox" value="FAILURE">
+                                            <span id="failureCheckBox">FAILURE</span>
+                                        </label>
+                                        <label class="example-send-yourself-copy">
+                                            <input data-bind="checked: statuses" type="checkbox" value="KILLED">
+                                            <span id="killedCheckBox">KILLED</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('results.to.display')" for="resultCount"></label>
+                                    <input data-bind="value: resultCount" class="form-control" type="text" id="resultCount"
+                                           name="resultCount">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button data-bind="text: ko.i18n('filter')" class="btn btn-default" id="filterButton"></button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <button data-bind="text: ko.i18n('filter')" class="btn btn-default" id="filterButton"></button>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
+
 
     <div class="row">
         <div class="col-md-12">
