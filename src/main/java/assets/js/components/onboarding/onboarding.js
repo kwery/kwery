@@ -51,7 +51,7 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
         };
 
         self.login = function() {
-            window.location.href = "/#user/login";
+            window.location.href = "/#onboarding";
         };
 
         return self;
