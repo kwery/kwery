@@ -11,10 +11,10 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("kill-sql-query", {
         require: "components/kill-sql-query"
     });
-    ko.components.register("onboarding-add-admin-user", {
+    ko.components.register("user-add", {
         require: "components/user/admin/add"
     });
-    ko.components.register("onboarding-add-datasource", {
+    ko.components.register("datasource-add", {
         require: "components/datasource/add"
     });
     ko.components.register("user-login", {

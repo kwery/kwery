@@ -21,7 +21,7 @@ public class AddAdminUserPage extends FluentPage implements RepoDashPage {
 
     @Override
     public String getUrl() {
-        return "/#onboarding/add-admin-user";
+        return "/#user/add";
     }
 
     public void submitForm(String... inputs) {

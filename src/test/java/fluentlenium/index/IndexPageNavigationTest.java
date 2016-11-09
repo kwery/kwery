@@ -11,6 +11,6 @@ public class IndexPageNavigationTest extends IndexPageTest {
         assertThat(page.getNextActionButton().isDisplayed(), is(true));
         assertThat(page.getNextActionButton().getText(), is(page.expectedNextActionButtonText()));
         page.clickNextActionButton();
-        assertThat(url(), is(page.getBaseUrl() + "/#onboarding/add-admin-user"));
+        assertThat(url(), is(page.getBaseUrl() + "/#user/add"));
     }
 }
