@@ -2,26 +2,33 @@
     <action-result params="status: status,
                 messages: messages">
     </action-result>
-    <form data-bind="submit: submit" id="queryRunForm">
-        <div class="form-group">
-            <label data-bind="text: ko.i18n('query')" for="query"></label>
-            <input data-bind="value: query" minlength="1" required type="text" class="form-control" id="query" name="query">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Schedule SQL Query</h3>
         </div>
-        <div class="form-group">
-            <label data-bind="text: ko.i18n('datasource')" for="datasourceId"></label>
-            <select id="datasourceId" name="datasoruceId" class="form-control" data-bind="options: datasources,
+        <div class="panel-body">
+            <form data-bind="submit: submit" id="queryRunForm">
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('query')" for="query"></label>
+                    <input data-bind="value: query" minlength="1" required type="text" class="form-control" id="query" name="query">
+                </div>
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('datasource')" for="datasourceId"></label>
+                    <select id="datasourceId" name="datasoruceId" class="form-control" data-bind="options: datasources,
                                                                         optionsText: 'label',
                                                                         value: datasource">
-            </select>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('cron.expression')" for="cronExpression"></label>
+                    <input data-bind="value: cronExpression" minlength="1" required type="text" class="form-control" id="cronExpression" name="cronExpression">
+                </div>
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('label')" for="label"></label>
+                    <input data-bind="value: label" minlength="1" required type="text"  class="form-control"id="label" name="label">
+                </div>
+                <button data-bind="text: actionLabel" class="btn btn-default" id="create"></button>
+            </form>
         </div>
-        <div class="form-group">
-            <label data-bind="text: ko.i18n('cron.expression')" for="cronExpression"></label>
-            <input data-bind="value: cronExpression" minlength="1" required type="text" class="form-control" id="cronExpression" name="cronExpression">
-        </div>
-        <div class="form-group">
-            <label data-bind="text: ko.i18n('label')" for="label"></label>
-            <input data-bind="value: label" minlength="1" required type="text"  class="form-control"id="label" name="label">
-        </div>
-        <button data-bind="text: actionLabel" class="btn btn-default" id="create"></button>
-    </form>
+    </div>
 </div>
