@@ -1,5 +1,5 @@
 ;(function(){
-    var factory = function($){
+    var factory = function($, ko){
         var repoDash = (function(){
             var _userAuthenticated = false;
 
@@ -11,8 +11,10 @@
                 isAuthenticated: function() {
                     return _userAuthenticated;
                 },
+                userAuthenticationBroadcaster: new ko.subscribable(),
                 setAuthenticated: function(authenticated) {
                     _userAuthenticated = authenticated;
+                    user.userAuthenticationBroadcaster.notifySubscribers(authenticated, "userLogin");
                 }
             };
 
@@ -61,11 +63,11 @@
     };
 
     if (typeof define === "function" && define.amd) {
-        define(["jquery"], factory);
+        define(["jquery", "knockout"], factory);
     } else if (typeof exports === "object") {
-        module.exports = factory(require("jquery"));
+        module.exports = factory(require("jquery", "knockout"));
     } else {
         /*jshint sub:true */
-        window["repoDash"] = factory(window["jquery"]);
+        window["repoDash"] = factory(window["jquery"], window["knockout"]);
     }
 }());

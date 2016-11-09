@@ -18,13 +18,8 @@
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->
         </head>
         <body>
-        <div class="container">
-            <#include "header.ftl"/>
-
+            <nav-bar></nav-bar>
             <#nested/>
-
-            <#include "footer.ftl"/>
-        </div> <!-- /container -->
         </body>
         <script src="/assets/app/require.config.js"></script>
         <script data-main="startup" src="/assets/js/require.js"></script>
