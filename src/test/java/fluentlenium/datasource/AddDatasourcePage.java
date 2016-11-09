@@ -75,7 +75,7 @@ public class AddDatasourcePage extends FluentPage implements RepoDashPage {
 
     @Override
     public String getUrl() {
-        return "/#onboarding/add-datasource";
+        return "/#datasource/add";
     }
 
     public String actionLabel() {
