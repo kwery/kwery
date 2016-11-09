@@ -11,6 +11,9 @@ define(["knockout", "jquery", "text!components/datasource/list.html"], function 
             type: "get",
             contentType: "application/json",
             success: function (result) {
+                ko.utils.arrayForEach(result, function(datasource){
+                    datasource.updateLink = "/#datasource/" + datasource.id
+                });
                 self.datasources(result);
             }
         });

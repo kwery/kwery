@@ -1,27 +1,34 @@
 <div class="container">
     <action-result params="status: status, messages: messages"></action-result>
-    <table class="table" id="datasourcesListTable">
-        <thead>
-            <tr>
-                <th data-bind="text: ko.i18n('label')"></th>
-                <th data-bind="text: ko.i18n('url')"></th>
-                <th data-bind="text: ko.i18n('port')"></th>
-                <th data-bind="text: ko.i18n('user.name')"></th>
-                <th data-bind="text: ko.i18n('password')"></th>
-                <th data-bind="text: ko.i18n('delete')"></th>
-            </tr>
-        </thead>
-        <tbody data-bind="foreach: datasources" id="datasourcesListTableBody">
-            <tr>
-                <td data-bind="text: label"></td>
-                <td data-bind="text: url"></td>
-                <td data-bind="text: port"></td>
-                <td data-bind="text: username"></td>
-                <td data-bind="text: password"></td>
-                <td>
-                    <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="btn btn-default delete">Delete</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 data-bind="text: ko.i18n('datasource.list.title')" class="panel-title"></h3>
+        </div>
+        <div class="panel-body">
+            <table class="table" id="datasourcesListTable">
+                <thead>
+                <tr>
+                    <th data-bind="text: ko.i18n('label')"></th>
+                    <th data-bind="text: ko.i18n('url')"></th>
+                    <th data-bind="text: ko.i18n('port')"></th>
+                    <th data-bind="text: ko.i18n('user.name')"></th>
+                    <th data-bind="text: ko.i18n('password')"></th>
+                    <th data-bind="text: ko.i18n('delete')"></th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: datasources" id="datasourcesListTableBody">
+                <tr>
+                    <td><a data-bind="text: label, attr: {href: updateLink}"></a></td>
+                    <td data-bind="text: url"></td>
+                    <td data-bind="text: port"></td>
+                    <td data-bind="text: username"></td>
+                    <td data-bind="text: password"></td>
+                    <td>
+                        <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="btn btn-default delete">Delete</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
