@@ -38,12 +38,18 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
 
         self.totalCount = ko.observable(0);
 
-        self.hasNext = ko.computed(function(){
-            return self.totalCount() > ((self.pageNumber() + 1) * self.resultCount());
-        }, self);
+        self.nextStatus = ko.pureComputed(function () {
+            if (self.totalCount() <= ((self.pageNumber() + 1) * self.resultCount())) {
+                return "disabled";
+            }
+            return "";
+        });
 
-        self.hasPrevious = ko.computed(function(){
-            return self.pageNumber() > 0;
+        self.previousStatus = ko.pureComputed(function(){
+            if (self.pageNumber() <= 0) {
+                return "disabled";
+            }
+            return "";
         }, self);
 
         //Can be changed only on the first page, cannot be changed in between pagination
@@ -76,6 +82,7 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
         self.previous = function() {
             self.pageNumber(self.pageNumber() - 1);
         };
+
 
         self.next = function() {
             self.pageNumber(self.pageNumber() + 1);
