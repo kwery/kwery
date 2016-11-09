@@ -1,0 +1,42 @@
+<nav data-bind="visible: showNavBar" class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a data-bind="text: ko.i18n('product.name')" class="navbar-brand" href="/"></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Datasources <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a data-bind="text: ko.i18n('add')" href="/#onboarding/add-datasource"></a></li>
+                        <li><a data-bind="text: ko.i18n('list')" href="/#datasource/list"></a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Queries <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a data-bind="text: ko.i18n('add')" href="/#sql-query/add"></a></li>
+                        <li><a data-bind="text: ko.i18n('list')" href="/#sql-query/list"></a></li>
+                        <li><a data-bind="text: ko.i18n('executing')" href="/#sql-query/executing"></a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a data-bind="text: ko.i18n('add')" href="/#onboarding/add-admin-user"></a></li>
+                        <li><a data-bind="text: ko.i18n('list')"href="/#user/list"></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a data-bind="text: username, attr: {href: url}"></a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
