@@ -2,6 +2,11 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
     function viewModel(params) {
         var self = this;
 
+        self.showLogin = ko.observable(false);
+        self.showNextSteps = ko.observable(false);
+        self.showAddDatasource = ko.observable(false);
+        self.showAddSqlQuery = ko.observable(false);
+
         self.message = ko.observable(ko.i18n("onboarding.welcome"));
         self.heading = ko.observable(ko.i18n("welcome"));
 
@@ -13,12 +18,16 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
                 switch (response.action) {
                     case "ADD_ADMIN_USER":
                         self.addAdminUser();
+                        self.showLogin(true);
                         break;
                     case "ADD_DATASOURCE":
-                        window.location.href = "/#onboarding/add-datasource";
+                        self.showNextSteps(true);
+                        self.showAddSqlQuery(true);
+                        self.showAddDatasource(true);
                         break;
                     case "ADD_SQL_QUERY":
-                        window.location.href = "/#sql-query/add";
+                        self.showNextSteps(true);
+                        self.showAddSqlQuery(true);
                         break;
                     case "SHOW_EXECUTING_QUERIES":
                         window.location.href = "/#sql-query/executing";
@@ -42,7 +51,7 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
         };
 
         self.login = function() {
-            window.location.href = "/#user/login";
+            window.location.href = "/#onboarding";
         };
 
         return self;
