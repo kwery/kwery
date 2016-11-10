@@ -7,8 +7,7 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
         self.showAddDatasource = ko.observable(false);
         self.showAddSqlQuery = ko.observable(false);
 
-        self.message = ko.observable(ko.i18n("onboarding.welcome"));
-        self.heading = ko.observable(ko.i18n("welcome"));
+        self.message = ko.observable(ko.i18n("onboarding.default.message"));
 
         $.ajax({
             url: "/api/onboarding/next-action",

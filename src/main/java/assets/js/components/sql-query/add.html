@@ -10,7 +10,7 @@
             <form data-bind="submit: submit" id="queryRunForm">
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('query')" for="query"></label>
-                    <input data-bind="value: query" minlength="1" required type="text" class="form-control" id="query" name="query">
+                    <textarea data-bind="value: query" minlength="1" required type="text" class="form-control" id="query" name="query"></textarea>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('datasource')" for="datasourceId"></label>
@@ -27,7 +27,7 @@
                     <label data-bind="text: ko.i18n('label')" for="label"></label>
                     <input data-bind="value: label" minlength="1" required type="text"  class="form-control"id="label" name="label">
                 </div>
-                <button data-bind="text: actionLabel" class="btn btn-default" id="create"></button>
+                <button data-bind="text: actionLabel" class="btn btn-primary" id="create"></button>
             </form>
         </div>
     </div>

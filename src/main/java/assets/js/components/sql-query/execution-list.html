@@ -84,7 +84,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <button data-bind="text: ko.i18n('filter')" class="btn btn-default" id="filterButton"></button>
+                                <button data-bind="text: ko.i18n('filter')" class="btn btn-primary" id="filterButton"></button>
                             </div>
                         </div>
                     </form>
@@ -110,8 +110,7 @@
                     <td data-bind="text: sqlQueryExecutionEndTime"></td>
                     <td class="status">
                         <span data-bind="visible: !showLink(), text: status" class="status-text"></span>
-                        <a data-bind="visible: showLink, attr: {href: resultLink}, text: status" class="status-link">
-                        </a>
+                        <a data-bind="visible: showLink, attr: {href: resultLink}, text: status" class="status-link"></a>
                     </td>
                 </tr>
                 </tbody>
