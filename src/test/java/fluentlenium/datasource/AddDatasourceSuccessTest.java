@@ -34,7 +34,7 @@ public class AddDatasourceSuccessTest extends DatasourceTest {
 
     @Test
     public void test() {
-        assertThat(page.actionLabel(), is(Messages.CREATE_M.toUpperCase()));
+        assertThat(page.actionLabel().toLowerCase(), is(Messages.CREATE_M.toLowerCase()));
         page.submitForm(datasource.getUrl(), String.valueOf(datasource.getPort()), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
         page.waitForSuccessMessage(datasource.getLabel());
     }

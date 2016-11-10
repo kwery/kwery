@@ -9,6 +9,7 @@ import org.openqa.selenium.support.FindBy;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -54,23 +55,19 @@ public class AddDatasourcePage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage(String label) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_info p").hasText(format(DATASOURCE_ADDITION_SUCCESS_M, MYSQL, label));
+        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(format(DATASOURCE_ADDITION_SUCCESS_M, MYSQL, label));
     }
 
     public void waitForFailureMessage(String label) {
-        await().atMost(30, SECONDS).until(".isa_error p").hasText(format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, label));
+        await().atMost(30, SECONDS).until(".f-failure-message p").hasText(format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, label));
     }
 
     public void waitForFailureMessage() {
-        await().atMost(30, SECONDS).until(".isa_error").isDisplayed();
+        await().atMost(30, SECONDS).until(".f-failure-message").isDisplayed();
     }
 
     public List<String> errorMessages() {
-        List<String> messages = new LinkedList<>();
-        for (FluentWebElement e : $(".isa_error p")) {
-            messages.add(e.getText());
-        }
-        return messages;
+        return $(".f-failure-message p").stream().map(FluentWebElement::getText).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override

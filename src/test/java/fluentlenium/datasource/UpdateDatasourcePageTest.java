@@ -95,7 +95,7 @@ public class UpdateDatasourcePageTest extends RepoDashFluentLeniumTest {
         assertThat(fields.get(3), is(datasource.getPassword()));
         assertThat(fields.get(4), is(datasource.getLabel()));
 
-        assertThat(page.actionLabel(), is(UPDATE_M.toUpperCase()));
+        assertThat(page.actionLabel().toLowerCase(), is(UPDATE_M.toLowerCase()));
 
         String newLabel = "newLabel";
         page.fillLabel(newLabel);
