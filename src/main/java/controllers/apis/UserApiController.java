@@ -93,6 +93,7 @@ public class UserApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result logout(Context context) {
+        //TODO needs refinement
         context.getSession().clear();
         return Results.json();
     }
