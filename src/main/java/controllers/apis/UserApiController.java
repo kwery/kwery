@@ -92,6 +92,12 @@ public class UserApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
+    public Result logout(Context context) {
+        context.getSession().clear();
+        return Results.json();
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
     public Result userById(@PathParam("userId") int userId) {
         return Results.json().render(userDao.getById(userId));
     }

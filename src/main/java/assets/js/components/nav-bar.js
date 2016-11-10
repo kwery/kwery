@@ -20,6 +20,18 @@ define(["knockout", "jquery", "repo-dash", "text!components/nav-bar.html"], func
             }
         });
 
+        self.logout = function() {
+            $.ajax("/api/user/logout", {
+                type: "POST",
+                contentType: "application/json",
+                success: function(result) {
+                    repoDash.user.setAuthenticated(false);
+                    window.location = "/";
+                }
+            });
+            return false;
+        };
+
         return self;
     }
     return { viewModel: viewModel, template: template };
