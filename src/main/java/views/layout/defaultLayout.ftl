@@ -37,6 +37,10 @@
                 body {
                     font-family: 'Roboto', sans-serif !important;
                 }
+
+                .jumbotron {
+                    background: white !important;
+                }
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->

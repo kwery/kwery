@@ -1,8 +1,8 @@
 <div class="container">
     <div data-bind="visible: showLogin" class="jumbotron">
-        <h1>Welcome!!!!</h1>
-        <p data-bind="text: message"></p>
-        <button data-bind="text: ko.i18n('login'), click: login" class="btn btn-default"></button>
+        <h1 data-bind="text: ko.i18n('onboarding.header')"></h1>
+        <p data-bind="html: message"></p>
+        <button data-bind="text: ko.i18n('login'), click: login" class="btn btn-primary"></button>
     </div>
     <div data-bind="visible: showNextSteps">
         <h1>Next Steps:</h1>
