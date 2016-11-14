@@ -10,7 +10,6 @@ import fluentlenium.utils.UserTableUtil;
 import models.User;
 import org.junit.Before;
 import org.junit.Test;
-import util.TestUtil;
 
 import javax.sql.DataSource;
 import java.io.IOException;

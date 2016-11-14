@@ -14,7 +14,6 @@ import static controllers.apis.OnboardingApiController.ROOT_USERNAME;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static util.Messages.ONBOARDING_ROOT_USER_CREATED_HTML_M;
-import static util.Messages.ONBOARDING_ROOT_USER_CREATED_M;
 import static views.ActionResult.Status.success;
 
 public class OnboardingApiControllerAddRootUserTest extends AbstractApiTest {
