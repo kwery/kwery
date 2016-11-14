@@ -9,7 +9,21 @@
 
             <title>${title}</title>
 
-            <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+            <style type="text/css">
+                @font-face {
+                    font-family: 'Roboto';
+                    font-weight: 400;
+                    font-style: normal;
+                    src: url('/assets/fonts/Roboto-regular/Roboto-regular.eot');
+                    src: url('/assets/fonts/Roboto-regular/Roboto-regular.eot?#iefix') format('embedded-opentype'),
+                    local('Roboto'),
+                    local('Roboto-regular'),
+                    url('/assets/fonts/Roboto-regular/Roboto-regular.woff2') format('woff2'),
+                    url('/assets/fonts/Roboto-regular/Roboto-regular.woff') format('woff'),
+                    url('/assets/fonts/Roboto-regular/Roboto-regular.ttf') format('truetype'),
+                    url('/assets/fonts/Roboto-regular/Roboto-regular.svg#Roboto') format('svg');
+                }
+            </style>
 
             <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
             <link href="/assets/css/custom.css" rel="stylesheet">
