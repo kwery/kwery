@@ -24,6 +24,7 @@ import static views.ActionResult.Status.success;
 @Singleton
 public class OnboardingApiController {
     public static final String ROOT_USERNAME = "root";
+    public static final String ROOT_PASSWORD = "foobarmoo";
 
     @Inject
     protected Messages messages;
@@ -43,10 +44,9 @@ public class OnboardingApiController {
 
         //TODO - Take care of else case
         if (!doesRootUserExist()) {
-            String password = "foobarmoo";
             User root = new User();
             root.setUsername(ROOT_USERNAME);
-            root.setPassword(password);
+            root.setPassword(ROOT_PASSWORD);
             userDao.save(root);
 
             String message = messages.get(ONBOARDING_ROOT_USER_CREATED, context, of(json), root.getUsername(), root.getPassword()).get();
