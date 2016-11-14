@@ -1,12 +1,18 @@
 package controllers.apis.integration.userapicontroller.addadmin;
 
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import controllers.apis.integration.AbstractApiTest;
 import dao.UserDao;
+import fluentlenium.utils.DbUtil;
+import fluentlenium.utils.UserTableUtil;
 import models.User;
 import org.junit.Before;
 import org.junit.Test;
 import util.TestUtil;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 
 import static conf.Routes.ADD_ADMIN_USER_API;
@@ -17,13 +23,25 @@ import static util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
 
 public class AddAdminUserExistsFailureTest extends AbstractApiTest {
     private UserDao userDao;
-    protected User user;
+    private User user;
 
     @Before
     public void addAdminUserExistsFailureTestSetup() {
+        UserTableUtil userTableUtil = new UserTableUtil();
+        DataSource datasource = DbUtil.getDatasource();
+
+        DbSetup dbSetup = new DbSetup(new DataSourceDestination(datasource),
+                Operations.sequenceOf(
+                        userTableUtil.insertOperation()
+                )
+        );
+
+        dbSetup.launch();
+
+        user = userTableUtil.firstRow();
+        user.setId(null);
+
         userDao = getInjector().getInstance(UserDao.class);
-        user = TestUtil.user();
-        userDao.save(user);
     }
 
     @Test

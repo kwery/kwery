@@ -41,7 +41,7 @@ public class UserApiController {
     @Inject
     private Messages messages;
 
-    //TODO - Should go behind login
+    @FilterWith(DashRepoSecureFilter.class)
     public Result addAdminUser(Context context, @JSR303Validation User user, Validation validation) {
         if (logger.isTraceEnabled()) logger.trace(">");
         logger.info("Creating user - " + user);
