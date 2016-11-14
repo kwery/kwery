@@ -66,6 +66,6 @@ public class ListSqlQueriesPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForDeleteSuccessMessage(String label) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_info p").hasText(format(SQL_QUERY_DELETE_SUCCESS_M, label));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(SQL_QUERY_DELETE_SUCCESS_M, label));
     }
 }

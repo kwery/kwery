@@ -65,10 +65,10 @@ public class ListUsersPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForDeleteSuccessMessage(String username) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_info p").hasText(format(USER_DELETE_SUCCESS_M, username));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(format(USER_DELETE_SUCCESS_M, username));
     }
 
     public void waitForDeleteYourselfMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_error p").hasText(USER_DELETE_YOURSELF_M);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(USER_DELETE_YOURSELF_M);
     }
 }

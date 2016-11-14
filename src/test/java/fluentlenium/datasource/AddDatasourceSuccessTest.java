@@ -5,14 +5,12 @@ import com.xebialabs.overcast.host.CloudHostFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import util.Messages;
 import util.TestUtil;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.openqa.selenium.By.id;
 
 public class AddDatasourceSuccessTest extends DatasourceTest {
     protected CloudHost cloudHost;

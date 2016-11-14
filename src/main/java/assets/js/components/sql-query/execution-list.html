@@ -3,7 +3,7 @@
         <div class="panel-heading">
             <h3 data-bind="text: ko.i18n('query')" class="panel-title"></h3>
         </div>
-        <div data-bind="text:sqlQuery" class="panel-body">
+        <div data-bind="text:sqlQuery" class="panel-body f-sql-query">
         </div>
     </div>
 
@@ -120,10 +120,10 @@
 
     <nav>
         <ul class="pager">
-            <li data-bind="css: previousStatus" class="previous">
+            <li data-bind="css: previousStatus" class="previous f-previous">
                 <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous"></a>
             </li>
-            <li data-bind="css: nextStatus" class="next">
+            <li data-bind="css: nextStatus" class="next f-next">
                 <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next"></a>
             </li>
         </ul>

@@ -77,7 +77,7 @@ public class ListSqlQueriesPageTest extends RepoDashFluentLeniumTest {
 
         List<String> headers = page.headers();
 
-        assertThat(headers, hasSize(4));
+        assertThat(headers, hasSize(5));
 
         assertThat(headers.get(0), is(Messages.LABEL_M));
         assertThat(headers.get(1), is(Messages.CRON_EXPRESSION_M));

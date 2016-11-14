@@ -94,7 +94,7 @@ public class UpdateSqlQueryPageTest extends RepoDashFluentLeniumTest {
     public void testUpdateSuccess() {
         page.waitForForm("label", "selectQuery");
 
-        assertThat(page.actionLabel(), is(Messages.UPDATE_M.toUpperCase()));
+        assertThat(page.actionLabel().toLowerCase(), is(Messages.UPDATE_M.toLowerCase()));
 
         page.fillLabel("foo");
         page.fillQuery("select sleep(86400)");
@@ -109,7 +109,7 @@ public class UpdateSqlQueryPageTest extends RepoDashFluentLeniumTest {
     public void testDuplicateLabel() {
         page.waitForForm("label", "selectQuery");
 
-        assertThat(page.actionLabel(), is(Messages.UPDATE_M.toUpperCase()));
+        assertThat(page.actionLabel().toLowerCase(), is(Messages.UPDATE_M.toLowerCase()));
 
         page.fillLabel("sleepQuery");
         //TODO - For some reason, label is being sent to the server as null if the other fields are not filled in, debug this

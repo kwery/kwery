@@ -51,11 +51,11 @@ public class UpdateSqlQueryPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_info p").hasText(QUERY_RUN_UPDATE_SUCCESS_M);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(QUERY_RUN_UPDATE_SUCCESS_M);
     }
 
     public void waitForDuplicateLabelMessage(String label) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_error p").hasText(format(QUERY_RUN_ADDITION_FAILURE_M, label));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(format(QUERY_RUN_ADDITION_FAILURE_M, label));
     }
 
     public void waitForForm(String fieldName, String value) {

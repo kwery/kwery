@@ -1,6 +1,5 @@
 package fluentlenium.user.admin;
 
-import fluentlenium.RepoDashFluentLeniumTest;
 import fluentlenium.RepoDashPage;
 import models.User;
 import org.fluentlenium.core.FluentPage;
@@ -8,6 +7,7 @@ import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.support.FindBy;
 
+import static fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
@@ -48,13 +48,15 @@ public class AddAdminUserPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage(User user) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until("#actionResultDialog p")
-                .hasText(format(ADMIN_USER_ADDITION_SUCCESS_M, user.getUsername()));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(format(ADMIN_USER_ADDITION_SUCCESS_M, user.getUsername()));
+    }
+
+    public void foo(String username) {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until("#actionResultDialog p").hasText(format(ADMIN_USER_ADDITION_SUCCESS_M, username));
     }
 
     public void waitForFailureMessage(User user) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_error p")
-                .hasText(format(ADMIN_USER_ADDITION_FAILURE_M, user.getUsername()));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(format(ADMIN_USER_ADDITION_FAILURE_M, user.getUsername()));
     }
 
     public String nextActionName() {
@@ -74,6 +76,6 @@ public class AddAdminUserPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForNextPage() {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until("#loginForm").isPresent();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until("#loginForm").isPresent();
     }
 }

@@ -42,6 +42,6 @@ public class LoginPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForFailureMessage() {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-failure").hasText(LOGIN_FAILURE_M);
+        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").hasText(LOGIN_FAILURE_M);
     }
 }

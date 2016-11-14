@@ -107,11 +107,11 @@ public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
         assertThat(columns.get(0).getText(), is("testQuery"));
         assertThat(columns.get(1).getText(), is("Fri Sep 30 2016 11:32"));
         assertThat(columns.get(2).getText(), is("testDatasource"));
-        assertThat(columns.get(3).getText(), is(Messages.KILL_M.toUpperCase()));
+        assertThat(columns.get(3).getText().toLowerCase(), is(Messages.KILL_M.toLowerCase()));
 
         assertThat(columns.get(4).getText(), is("testQuery"));
         assertThat(columns.get(5).getText(), is("Fri Sep 30 2016 11:34"));
         assertThat(columns.get(6).getText(), is("testDatasource"));
-        assertThat(columns.get(7).getText(), is(Messages.KILL_M.toUpperCase()));
+        assertThat(columns.get(7).getText().toLowerCase(), is(Messages.KILL_M.toLowerCase()));
     }
 }
