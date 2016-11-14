@@ -25,7 +25,7 @@ public class UpdateDatasourcePage extends AddDatasourcePage {
     }
 
     public void waitForSuccessMessage(String label) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_info p").hasText(MessageFormat.format(DATASOURCE_UPDATE_SUCCESS_M, MYSQL, label));
+        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(MessageFormat.format(DATASOURCE_UPDATE_SUCCESS_M, MYSQL, label));
     }
 
     public List<String> formFields() {

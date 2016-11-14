@@ -78,10 +78,10 @@ public class ListExecutingSqlQueriesCancelSuccessTest extends RepoDashFluentLeni
     @Test
     public void test() throws InterruptedException {
         FluentWebElement killButton = $("#executingSqlQueriesTable tr td button", 0);
-        assertThat(killButton.getText(), is(KILL_M.toUpperCase()));
+        assertThat(killButton.getText().toLowerCase(), is(KILL_M.toLowerCase()));
         killButton.click();
         TimeUnit.SECONDS.sleep(30);
-        assertThat($("#executingSqlQueriesTable tr td button", 0).getText(), is(KILLED_M.toUpperCase()));
+        assertThat($("#executingSqlQueriesTable tr td button", 0).getText().toLowerCase(), is(KILLED_M.toLowerCase()));
     }
 
     @After

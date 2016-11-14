@@ -13,6 +13,8 @@ import ninja.i18n.Messages;
 import ninja.params.PathParam;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import views.ActionResult;
 
 import static com.google.common.base.Optional.of;
@@ -29,6 +31,8 @@ import static views.ActionResult.Status.success;
 
 @Singleton
 public class UserApiController {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     public static final String SESSION_USERNAME_KEY = "username";
 
     @Inject
@@ -37,8 +41,11 @@ public class UserApiController {
     @Inject
     private Messages messages;
 
-    //TODO - Should go behind login
+    @FilterWith(DashRepoSecureFilter.class)
     public Result addAdminUser(Context context, @JSR303Validation User user, Validation validation) {
+        if (logger.isTraceEnabled()) logger.trace(">");
+        logger.info("Creating user - " + user);
+
         Result json = Results.json();
         ActionResult actionResult = null;
 
@@ -70,6 +77,7 @@ public class UserApiController {
             }
         }
 
+        if (logger.isTraceEnabled()) logger.trace("<");
         return json.render(actionResult);
     }
 

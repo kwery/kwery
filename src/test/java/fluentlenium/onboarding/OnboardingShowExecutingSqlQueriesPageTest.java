@@ -1,4 +1,4 @@
-package fluentlenium.sqlquery;
+package fluentlenium.onboarding;
 
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
@@ -10,13 +10,10 @@ import fluentlenium.utils.UserTableUtil;
 import models.Datasource;
 import models.SqlQuery;
 import models.SqlQueryExecution;
-import org.fluentlenium.core.domain.FluentWebElement;
 import org.junit.Before;
 import org.junit.Test;
-import util.Messages;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static junit.framework.TestCase.fail;
@@ -38,20 +35,10 @@ import static models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
 import static models.SqlQueryExecution.COLUMN_RESULT;
 import static models.SqlQueryExecution.COLUMN_STATUS;
 import static models.SqlQueryExecution.Status.ONGOING;
-import static models.SqlQueryExecution.Status.SUCCESS;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static util.Messages.DATASOURCE_M;
-import static util.Messages.KILL_QUERY_M;
-import static util.Messages.QUERY_M;
-import static util.Messages.START_M;
 
-public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
-    protected ListExecutingSqlQueriesPage page;
-
+public class OnboardingShowExecutingSqlQueriesPageTest extends RepoDashFluentLeniumTest {
     @Before
-    public void setUpListOngoingQueriesTest() {
+    public void setUpOnboardingShowExecutingSqlQueriesPageTest() throws InterruptedException {
         UserTableUtil userTableUtil = new UserTableUtil();
         DataSource datasource = DbUtil.getDatasource();
 
@@ -66,7 +53,6 @@ public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
                                 .values(1, "* * * * *", "testQuery", "select * from foo", 1).build(),
                         insertInto(SqlQueryExecution.TABLE)
                                 .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
-                                .values(1, null, "sjfljkl", 1475215495171l, "status", SUCCESS, 1)
                                 .values(2, null, "sjfljkl", 1475215495171l, null, ONGOING, 1)
                                 .values(3, null, "sdjfklj", 1475215333445l, null, ONGOING, 1).build()
                 )
@@ -83,35 +69,11 @@ public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
         loginPage.waitForSuccessMessage(userTableUtil.firstRow());
 
-        page = createPage(ListExecutingSqlQueriesPage.class);
-        page.withDefaultUrl(getServerAddress());
-        goTo(page);
-        if (!page.isRendered()) {
-            fail("Could not render list ongoing SQL queries page");
-        }
+        goTo(getServerAddress() + "/");
     }
 
     @Test
     public void test() {
-        List<FluentWebElement> headerColumns = $("#executingSqlQueriesTable thead th");
-        assertThat(headerColumns, hasSize(4));
-
-        assertThat(headerColumns.get(0).getText(), is(QUERY_M));
-        assertThat(headerColumns.get(1).getText(), is(START_M));
-        assertThat(headerColumns.get(2).getText(), is(DATASOURCE_M));
-        assertThat(headerColumns.get(3).getText(), is(KILL_QUERY_M));
-
-        List<FluentWebElement> columns = $("#executingSqlQueriesTable tr td");
-        assertThat(columns, hasSize(8));
-
-        assertThat(columns.get(0).getText(), is("testQuery"));
-        assertThat(columns.get(1).getText(), is("Fri Sep 30 2016 11:32"));
-        assertThat(columns.get(2).getText(), is("testDatasource"));
-        assertThat(columns.get(3).getText().toLowerCase(), is(Messages.KILL_M.toLowerCase()));
-
-        assertThat(columns.get(4).getText(), is("testQuery"));
-        assertThat(columns.get(5).getText(), is("Fri Sep 30 2016 11:34"));
-        assertThat(columns.get(6).getText(), is("testDatasource"));
-        assertThat(columns.get(7).getText().toLowerCase(), is(Messages.KILL_M.toLowerCase()));
+        await().atMost(TIMEOUT_SECONDS).until("#executingSqlQueriesTable").isDisplayed();
     }
 }

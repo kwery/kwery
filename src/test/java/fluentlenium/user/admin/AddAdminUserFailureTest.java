@@ -5,11 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class AddAdminUserFailureTest extends AddAdminUserTest {
-    @Before
-    public void saveUser() {
-        getInjector().getInstance(UserDao.class).save(user);
-    }
-
     @Test
     public void test() {
         page.submitForm(user.getUsername(), user.getPassword());

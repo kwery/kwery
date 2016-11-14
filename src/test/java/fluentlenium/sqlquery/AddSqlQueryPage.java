@@ -22,7 +22,8 @@ public class AddSqlQueryPage extends FluentPage implements RepoDashPage {
     protected FluentWebElement form;
 
     public void submitForm(SqlQueryDto dto) {
-        fill("input").with(dto.getQuery(), dto.getCronExpression(), dto.getLabel());
+        fill("textarea").with(dto.getQuery());
+        fill("input").with(dto.getCronExpression(), dto.getLabel());
         fillSelect("#datasourceId").withIndex(0);
         click("#create");
     }
@@ -32,11 +33,11 @@ public class AddSqlQueryPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_info p").hasText(QUERY_RUN_ADDITION_SUCCESS_M);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(QUERY_RUN_ADDITION_SUCCESS_M);
     }
 
     public void waitForDuplicateLabelMessage(String label) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".isa_error p").hasText(format(QUERY_RUN_ADDITION_FAILURE_M, label));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(format(QUERY_RUN_ADDITION_FAILURE_M, label));
     }
 
     public List<String> validationMessages() {

@@ -2,13 +2,13 @@ package fluentlenium.sqlquery;
 
 import fluentlenium.RepoDashFluentLeniumTest;
 import fluentlenium.RepoDashPage;
-import models.SqlQueryExecution;
 import models.SqlQueryExecution.Status;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -61,7 +61,7 @@ public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPag
     }
 
     public String sqlQuery() {
-        return find(id("sqlQuery")).getText();
+        return find(By.className("f-sql-query")).getText();
     }
 
     public void fillStatus(Status... statuses) {
@@ -111,11 +111,11 @@ public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPag
     }
 
     public boolean isNextEnabled() {
-        return find(id("next")).first().isEnabled();
+        return !Arrays.asList(find(By.className("f-next")).getAttribute("class").split(" ")).contains("disabled");
     }
 
     public boolean isPreviousEnabled() {
-        return find(id("previous")).first().isEnabled();
+        return !Arrays.asList(find(By.className("f-previous")).getAttribute("class").split(" ")).contains("disabled");
     }
 
     public String statusLink(int position) {

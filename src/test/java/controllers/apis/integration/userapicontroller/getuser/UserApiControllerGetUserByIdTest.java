@@ -18,14 +18,14 @@ public class UserApiControllerGetUserByIdTest extends AbstractPostLoginApiTest {
                 UserApiController.class,
                 "userById",
                 ImmutableMap.of(
-                        "userId", 1
+                        "userId", loggedInUser.getId()
                 )
         );
 
         String response = ninjaTestBrowser.makeJsonRequest(getUrl(url));
 
         assertThat(response, isJson());
-        assertThat(response, hasJsonPath("$.id", is(1)));
+        assertThat(response, hasJsonPath("$.id", is(loggedInUser.getId())));
         assertThat(response, hasJsonPath("$.username", is(loggedInUser.getUsername())));
         assertThat(response, hasJsonPath("$.password", is(loggedInUser.getPassword())));
     }

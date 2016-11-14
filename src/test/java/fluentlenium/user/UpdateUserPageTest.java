@@ -44,6 +44,7 @@ public class UpdateUserPageTest extends RepoDashFluentLeniumTest {
         }
 
         page = createPage(UpdateUserPage.class);
+        page.withDefaultUrl(getServerAddress());
         goTo(page);
 
         if (!page.isRendered()) {

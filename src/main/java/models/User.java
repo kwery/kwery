@@ -22,7 +22,7 @@ public class User {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = COLUMN_USERNAME, unique = true)
+    @Column(name = COLUMN_USERNAME)
     @Size(min = 1, message = "username.validation")
     @NotNull(message = "username.validation")
     private String username;
@@ -54,5 +54,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

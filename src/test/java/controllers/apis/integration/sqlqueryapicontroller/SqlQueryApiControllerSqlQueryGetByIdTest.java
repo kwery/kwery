@@ -1,7 +1,6 @@
 package controllers.apis.integration.sqlqueryapicontroller;
 
 import com.google.common.collect.ImmutableMap;
-import com.jayway.jsonpath.matchers.JsonPathMatchers;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;

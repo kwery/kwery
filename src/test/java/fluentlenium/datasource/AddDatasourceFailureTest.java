@@ -11,7 +11,6 @@ import models.Datasource;
 import models.User;
 import org.junit.Before;
 import org.junit.Test;
-import util.TestUtil;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static java.text.MessageFormat.format;

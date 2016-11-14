@@ -13,7 +13,7 @@ import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static controllers.apis.OnboardingApiController.ROOT_USERNAME;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static util.Messages.ONBOARDING_ROOT_USER_CREATED_M;
+import static util.Messages.ONBOARDING_ROOT_USER_CREATED_HTML_M;
 import static views.ActionResult.Status.success;
 
 public class OnboardingApiControllerAddRootUserTest extends AbstractApiTest {
@@ -25,6 +25,6 @@ public class OnboardingApiControllerAddRootUserTest extends AbstractApiTest {
         assertThat(response, isJson());
 
         assertThat(response, hasJsonPath("$.status", is(success.name())));
-        assertThat(response, hasJsonPath("$.messages[0]", is(MessageFormat.format(ONBOARDING_ROOT_USER_CREATED_M, ROOT_USERNAME, "foobarmoo"))));
+        assertThat(response, hasJsonPath("$.messages[0]", is(MessageFormat.format(ONBOARDING_ROOT_USER_CREATED_HTML_M, ROOT_USERNAME, "foobarmoo"))));
     }
 }

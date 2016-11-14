@@ -34,14 +34,14 @@ public class LoginPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage(User user) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_info").hasText(format(LOGIN_SUCCESS_M, user.getUsername()));
+        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(LOGIN_SUCCESS_M, user.getUsername()));
     }
 
     public void waitForSuccessMessage(String username) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_info").hasText(format(LOGIN_SUCCESS_M, username));
+        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(LOGIN_SUCCESS_M, username));
     }
 
     public void waitForFailureMessage() {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".isa_error").hasText(LOGIN_FAILURE_M);
+        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").hasText(LOGIN_FAILURE_M);
     }
 }

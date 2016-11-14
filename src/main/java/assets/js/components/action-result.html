@@ -7,13 +7,13 @@
             <a data-bind="text: nextActionName, attr: {href: nextAction}" id="nextAction" class="button button-primary"></a>
         </div>
 
-        <div data-bind="visible: showSuccess" class="alert alert-success">
+        <div data-bind="visible: showSuccess" class="alert alert-success f-success-message">
             <!-- ko foreach: messages -->
             <p data-bind="text: $data"></p>
             <!-- /ko -->
         </div>
 
-        <div data-bind="visible: showFailure" class="alert alert-danger">
+        <div data-bind="visible: showFailure" class="alert alert-danger f-failure-message">
             <!-- ko foreach: messages -->
             <p data-bind="text: $data"></p>
             <!-- /ko -->
