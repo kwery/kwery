@@ -39,12 +39,12 @@ create table query_run_execution (
   primary key (id)
 );
 
-alter table kwery_user add constraint UK_oi2a6rr9bbna339uej0kywhfy  unique (username);
+alter table kwery_user add constraint uc_kwery_user_username  unique (username);
 
-alter table datasource add constraint UK_2kxqjqmgkpln474giultd222s  unique (label);
+alter table datasource add constraint uc_datasource_label  unique (label);
 
-alter table query_run add constraint UK_o8o3g7ixjl43k37fvshp3hu8q  unique (label);
+alter table query_run add constraint uc_query_run_label  unique (label);
 
-alter table query_run add constraint FK_ktt4mf7e34jmw0f0ogm78ouq0 foreign key (datasource_id_fk) references datasource;
+alter table query_run add constraint fk_query_run_datasource_fk_id foreign key (datasource_id_fk) references datasource;
 
-alter table query_run_execution add constraint FK_91fufdgwmkr99ayu6eegqqx95 foreign key (query_run_id_fk) references query_run;
+alter table query_run_execution add constraint fk_query_run_execution_query_run_id_fk foreign key (query_run_id_fk) references query_run;
