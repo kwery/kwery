@@ -13,7 +13,7 @@
             <property name="hibernate.connection.url" value="${db.connection.url}" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect" />
             <property name="hibernate.hbm2ddl.auto" value="validate" />
-            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.format_sql" value="true" />
             
             <!-- Connection Pooling settings -->
@@ -39,7 +39,7 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect" />
             <!-- you may want to enable the ddl if you do not use migrations. -->
             <property name="hibernate.hbm2ddl.auto" value="validate" />
-            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.format_sql" value="true" />
             
             <!-- Connection Pooling settings -->
