@@ -1,6 +1,7 @@
 package controllers.apis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -19,11 +20,13 @@ import models.SqlQueryExecution;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.i18n.Messages;
 import ninja.params.PathParam;
+import ninja.validation.FieldViolation;
 import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import services.scheduler.SchedulerService;
 import services.scheduler.SqlQueryExecutionNotFoundException;
 import services.scheduler.SqlQueryExecutionSearchFilter;
@@ -44,10 +47,13 @@ import static controllers.MessageKeys.QUERY_RUN_ADDITION_SUCCESS;
 import static controllers.MessageKeys.QUERY_RUN_UPDATE_SUCCESS;
 import static controllers.MessageKeys.SQL_QUERY_DELETE_SUCCESS;
 import static models.SqlQueryExecution.Status.ONGOING;
+import static ninja.Results.json;
 import static views.ActionResult.Status.failure;
 import static views.ActionResult.Status.success;
 
 public class SqlQueryApiController {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     public static final String DISPLAY_DATE_FORMAT = "EEE MMM dd yyyy HH:mm";
     public static final String FILTER_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
@@ -68,7 +74,11 @@ public class SqlQueryApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result addSqlQuery(@JSR303Validation SqlQueryDto sqlQueryDto, Context context, Validation validation) {
-        Result json = Results.json();
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        logger.info("Sql query with payload - " + sqlQueryDto);
+
+        Result json = json();
         ActionResult actionResult = null;
 
         boolean isUpdate = false;
@@ -77,7 +87,26 @@ public class SqlQueryApiController {
             isUpdate = true;
         }
 
+        if (isUpdate) {
+            logger.info("Updating sql query with payload - " + sqlQueryDto);
+        } else {
+            logger.info("Adding sql query with payload - " + sqlQueryDto);
+        }
+
         if (validation.hasViolations()) {
+            List<String> violations = new ArrayList<>();
+            violations.add("Validation errors:");
+
+            for (FieldViolation fieldViolation : validation.getBeanViolations()) {
+                violations.add(fieldViolation.constraintViolation.getMessageKey());
+            }
+
+            for (FieldViolation fieldViolation : validation.getFieldViolations()) {
+                violations.add(fieldViolation.constraintViolation.getMessageKey());
+            }
+
+            logger.error(Joiner.on(System.getProperty("line.separator")).join(violations));
+
             actionResult = new ActionResult(failure, fieldMessages(validation, context, messages, json));
         } else {
             List<String> errorMessages = new LinkedList<>();
@@ -86,16 +115,19 @@ public class SqlQueryApiController {
 
             if (isUpdate) {
                 if (fromDb != null && !fromDb.getId().equals(sqlQueryDto.getId())) {
+                    logger.error("{} SQL query already exists with label {}", fromDb.getId(), sqlQueryDto.getLabel());
                     errorMessages.add(messages.get(QUERY_RUN_ADDITION_FAILURE, context, Optional.of(json), sqlQueryDto.getLabel()).get());
                 }
             } else {
                 if (fromDb != null) {
+                    logger.error("{} SQL query already exists with label {}", fromDb.getId(), sqlQueryDto.getLabel());
                     errorMessages.add(messages.get(QUERY_RUN_ADDITION_FAILURE, context, Optional.of(json), sqlQueryDto.getLabel()).get());
                 }
             }
 
             Datasource datasource = datasourceDao.getById(sqlQueryDto.getDatasourceId());
             if (datasource == null) {
+                logger.error("Cannot add SQL query without datasource");
                 errorMessages.add(messages.get(DATASOURCE_VALIDATION, context, Optional.of(json)).get());
             }
 
@@ -106,6 +138,7 @@ public class SqlQueryApiController {
 
                 if (isUpdate) {
                     //Stop existing schedules
+                    logger.info("Stopping existing scheduler");
                     schedulerService.stopScheduler(sqlQueryDto.getId());
                     sqlQueryDao.update(model);
                     actionResult = new ActionResult(
@@ -123,17 +156,21 @@ public class SqlQueryApiController {
             }
         }
 
+        if (logger.isTraceEnabled()) logger.trace("<");
         return json.render(actionResult);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result listSqlQueries() {
+        if (logger.isTraceEnabled()) logger.trace(">");
         List<SqlQuery> sqlQueries = sqlQueryDao.getAll();
-        return Results.json().render(sqlQueries);
+        if (logger.isTraceEnabled()) logger.trace("<");
+        return json().render(sqlQueries);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result executingSqlQueries() {
+        if (logger.isTraceEnabled()) logger.trace(">");
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(ONGOING));
         List<SqlQueryExecution> models = sqlQueryExecutionDao.filter(filter);
@@ -145,24 +182,33 @@ public class SqlQueryApiController {
             dtos.add(from(model));
         }
 
-        return Results.json().render(dtos);
+        if (logger.isTraceEnabled()) logger.trace("<");
+        return json().render(dtos);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result killSqlQuery(@PathParam("sqlQueryId") Integer sqlQueryId, SqlQueryExecutionIdContainer sqlQueryExecutionId) {
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        logger.info("Killing SQL query with id {}", sqlQueryId);
+
         ActionResult actionResult = new ActionResult(success, new LinkedList<>());
 
         try {
             schedulerService.stopExecution(sqlQueryId, sqlQueryExecutionId.getSqlQueryExecutionId());
         } catch (SqlQueryExecutionNotFoundException e) {
+            logger.error("Exception while killing sql query with id {}", sqlQueryId, e);
             actionResult.setStatus(failure);
         }
 
-        return Results.json().render(actionResult);
+        if (logger.isTraceEnabled()) logger.trace("<");
+        return json().render(actionResult);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result listSqlQueryExecution(@PathParam("sqlQueryId") Integer sqlQueryId, SqlQueryExecutionListFilterDto filterDto) throws ParseException {
+        if (logger.isTraceEnabled()) logger.trace(">");
+
         SqlQueryExecutionSearchFilter dbFilter = new SqlQueryExecutionSearchFilter();
         dbFilter.setSqlQueryId(sqlQueryId);
 
@@ -211,11 +257,15 @@ public class SqlQueryApiController {
         sqlQueryExecutionListDto.setSqlQueryExecutionDtos(sqlQueryExecutionDtos);
         sqlQueryExecutionListDto.setTotalCount(sqlQueryExecutionDao.count(dbFilter));
 
-        return Results.json().render(sqlQueryExecutionListDto);
+        if (logger.isTraceEnabled()) logger.trace("<");
+
+        return json().render(sqlQueryExecutionListDto);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result sqlQueryExecutionResult(@PathParam("sqlQueryId") Integer sqlQueryId, @PathParam("sqlQueryExecutionId") String sqlQueryExecutionId) throws IOException {
+        if (logger.isTraceEnabled()) logger.trace(">");
+
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(sqlQueryId);
         filter.setExecutionId(sqlQueryExecutionId);
@@ -237,22 +287,36 @@ public class SqlQueryApiController {
             );
         }
 
-        return Results.json().render(jsonResult);
+        if (logger.isTraceEnabled()) logger.trace("<");
+        return json().render(jsonResult);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result sqlQuery(@PathParam("sqlQueryId") int id) {
-        return Results.json().render(sqlQueryDao.getById(id));
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        SqlQuery sqlQuery = sqlQueryDao.getById(id);
+
+        if (logger.isTraceEnabled()) logger.trace("<");
+
+        return json().render(sqlQuery);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result delete(@PathParam("sqlQueryId") int sqlQueryId, Context context) {
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        logger.info("Deleting SQL query - " + sqlQueryId);
+
         SqlQuery sqlQuery = sqlQueryDao.getById(sqlQueryId);
         //TODO - This should be part of service layer
         sqlQueryDao.delete(sqlQueryId);
         schedulerService.stopScheduler(sqlQueryId);
-        Result json = Results.json();
+        Result json = json();
         String message = messages.get(SQL_QUERY_DELETE_SUCCESS, context, Optional.of(json), sqlQuery.getLabel()).get();
+
+        if (logger.isTraceEnabled()) logger.trace("<");
+
         return json.render(new ActionResult(success, message));
     }
 
