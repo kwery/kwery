@@ -58,6 +58,7 @@ public class SqlQueryDaoQueryTest extends RepoDashDaoTestBase {
     @Test
     public void testGetById() {
         assertThat(dao.getById(queryRunId), notNullValue());
-        assertThat(dao.getById(100), nullValue());
+        //The id is a random number which is chosen under the assumption that that particular id will not be present in the db
+        assertThat(dao.getById(Integer.MAX_VALUE), nullValue());
     }
 }
