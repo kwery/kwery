@@ -11,6 +11,7 @@ dependency-reduced-pom.xml
 #Derby db file, has to be fixed later
 #TODO - Fix this
 derby.log
-myEmbeddedDB
-repodashDb
+kwery_db
+kwery.log
+kwery.*.log.gz
 

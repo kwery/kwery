@@ -110,7 +110,7 @@ public class TestUtil {
     public static boolean waitForMysql(String host, int port) {
         long start = System.currentTimeMillis();
         do {
-            try (Connection connection = DriverManager.getConnection(String.format("jdbc:mysql://%s:%d", host, port), "root", "root")) {
+            try (Connection connection = DriverManager.getConnection(String.format("jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger", host, port), "root", "root")) {
                 return true;
             } catch (SQLException e) {
                 try {

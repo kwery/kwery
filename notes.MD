@@ -1,0 +1,2 @@
+mvn -Dninja.jvmArgs="-DoutputToConsole=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" clean compile install  ninja:run -DskipTests -Dninja.mode=dev
+sudo docker daemon -D -H tcp://0.0.0.0:2375

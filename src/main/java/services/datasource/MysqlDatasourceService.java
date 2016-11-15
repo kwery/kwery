@@ -12,7 +12,7 @@ public class MysqlDatasourceService {
     private static Logger logger = LoggerFactory.getLogger(MysqlDatasourceService.class);
 
     public boolean testConnection(Datasource datasource) {
-        try (Connection connection = DriverManager.getConnection(String.format("jdbc:mysql://%s:%d", datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword())) {
+        try (Connection connection = DriverManager.getConnection(String.format("jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger", datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword())) {
             logger.info(String.format("Successfully connected to MySQL datasource %s with label %s", datasource.getUrl(), datasource.getLabel()));
             return true;
         } catch (SQLException e) {
