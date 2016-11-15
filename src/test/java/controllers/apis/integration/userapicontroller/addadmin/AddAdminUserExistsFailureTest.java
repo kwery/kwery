@@ -3,7 +3,7 @@ package controllers.apis.integration.userapicontroller.addadmin;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import controllers.apis.integration.AbstractApiTest;
+import controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import dao.UserDao;
 import fluentlenium.utils.DbUtil;
 import fluentlenium.utils.UserTableUtil;
@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
 
-public class AddAdminUserExistsFailureTest extends AbstractApiTest {
+public class AddAdminUserExistsFailureTest extends AbstractPostLoginApiTest {
     private UserDao userDao;
     private User user;
 

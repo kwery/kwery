@@ -10,6 +10,8 @@ import models.User;
 import ninja.Context;
 import ninja.Result;
 import ninja.i18n.Messages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import views.ActionResult;
 
 import static com.google.common.base.Optional.of;
@@ -23,6 +25,8 @@ import static views.ActionResult.Status.success;
 
 @Singleton
 public class OnboardingApiController {
+    protected Logger logger = LoggerFactory.getLogger(OnboardingApiController.class);
+
     public static final String ROOT_USERNAME = "root";
     public static final String ROOT_PASSWORD = "foobarmoo";
 
@@ -39,6 +43,8 @@ public class OnboardingApiController {
     protected SqlQueryDao sqlQueryDao;
 
     public Result addRootUser(Context context) {
+        if (logger.isTraceEnabled()) logger.trace(">");
+
         Result json = json();
         ActionResult actionResult = null;
 
@@ -51,19 +57,28 @@ public class OnboardingApiController {
 
             String message = messages.get(ONBOARDING_ROOT_USER_CREATED, context, of(json), root.getUsername(), root.getPassword()).get();
             actionResult = new ActionResult(success, message);
+        } else {
+            logger.error("{} user exists, hence not adding", ROOT_USERNAME);
         }
 
+        if (logger.isTraceEnabled()) logger.trace("<");
         return json.render(actionResult);
     }
 
     public Result nextAction() {
+        if (logger.isTraceEnabled()) logger.trace(">");
+
         if (!doesRootUserExist()) {
+            if (logger.isTraceEnabled()) logger.trace("<");
             return json().render(new OnboardingNextActionDto(ADD_ADMIN_USER));
         } else if (!doesDatasourceExist()) {
+            if (logger.isTraceEnabled()) logger.trace("<");
             return json().render(new OnboardingNextActionDto(ADD_DATASOURCE));
         } else if(!doesSqlQueryExist()) {
+            if (logger.isTraceEnabled()) logger.trace("<");
             return json().render(new OnboardingNextActionDto(ADD_SQL_QUERY));
         } else {
+            if (logger.isTraceEnabled()) logger.trace("<");
             return json().render(new OnboardingNextActionDto(SHOW_EXECUTING_QUERIES));
         }
     }

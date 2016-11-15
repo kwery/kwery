@@ -56,6 +56,7 @@ public class User {
         this.password = password;
     }
 
+    //TODO - Mask password
     @Override
     public String toString() {
         return "User{" +
