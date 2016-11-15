@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = User.TABLE_DASH_REPO_USER)
 public class User {
-    public static final String TABLE_DASH_REPO_USER = "dash_repo_user";
+    public static final String TABLE_DASH_REPO_USER = "kwery_user";
     public static final String COLUMN_USERNAME = "username";
     public static final String COLUMN_PASSWORD = "password";
     public static final String COLUMN_ID = "id";
