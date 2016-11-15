@@ -2,7 +2,7 @@ package controllers.apis.integration.userapicontroller.addadmin;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import controllers.apis.integration.AbstractApiTest;
+import controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import dao.UserDao;
 import models.User;
 import org.junit.Before;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 import static util.Messages.PASSWORD_VALIDATION_M;
 import static util.Messages.USERNAME_VALIDATION_M;
 
-public class AddAdminUserValidationFailureTest extends AbstractApiTest {
+public class AddAdminUserValidationFailureTest extends AbstractPostLoginApiTest {
     protected UserDao userDao;
 
     protected static final Map<String, List<String>> EXPECTED_MESSAGE_MAP = ImmutableMap.of(
