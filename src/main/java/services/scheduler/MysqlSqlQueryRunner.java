@@ -16,8 +16,8 @@ public class MysqlSqlQueryRunner implements SqlQueryRunner {
     @Override
     public void run(Datasource datasource, SqlQuery sqlQuery) throws SQLException {
         try (Connection connection = DriverManager.getConnection(
-                String.format("jdbc:mysql://%s:%d", datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword())) {
-            PreparedStatement p = connection.prepareCall(sqlQuery.getQuery());
+                String.format("jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger", datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword())) {
+            PreparedStatement p = connection.prepareStatement(sqlQuery.getQuery());
             p.executeQuery();
             logger.info(String.format("Successfully executed query %s against datasource %s", sqlQuery.getQuery(), datasource.getLabel()));
             p.close();
