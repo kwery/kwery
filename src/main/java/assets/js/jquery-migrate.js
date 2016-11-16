@@ -180,7 +180,7 @@
 
 // Now jQuery.expr.pseudos is the standard incantation
     migrateWarnProp( jQuery.expr, "filters", jQuery.expr.pseudos,
-        "jQuery.expr.filters is now jQuery.expr.pseudos" );
+        "jQuery.expr.com.kwery.tests.filters is now jQuery.expr.pseudos" );
     migrateWarnProp( jQuery.expr, ":", jQuery.expr.pseudos,
         "jQuery.expr[\":\"] is now jQuery.expr.pseudos" );
 

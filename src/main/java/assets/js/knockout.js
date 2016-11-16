@@ -2962,7 +2962,7 @@
                 // contexts, use bindingContext.createChildContext or bindingContext.extend.
                 ko.bindingContext = function(dataItemOrAccessor, parentContext, dataItemAlias, extendCallback) {
 
-                    // The binding context object includes static properties for the current, parent, and root view models.
+                    // The binding context object includes static properties for the current, parent, and root view com.kwery.tests.models.
                     // If a view model is actually stored in an observable, the corresponding binding context object, and
                     // any child contexts, must be updated when the view model is changed.
                     function updateContext() {
@@ -3243,7 +3243,7 @@
                         var bindingsUpdater = ko.dependentObservable(
                             function() {
                                 bindings = sourceBindings ? sourceBindings(bindingContext, node) : getBindings.call(provider, node, bindingContext);
-                                // Register a dependency on the binding context to support observable view models.
+                                // Register a dependency on the binding context to support observable view com.kwery.tests.models.
                                 if (bindings && bindingContext._subscribable)
                                     bindingContext._subscribable();
                                 return bindings;
