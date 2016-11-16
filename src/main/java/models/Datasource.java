@@ -126,7 +126,7 @@ public class Datasource {
                 ", url='" + url + '\'' +
                 ", port=" + port +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", password='" + "X" + '\'' +
                 ", label='" + label + '\'' +
                 ", type=" + type +
                 '}';
