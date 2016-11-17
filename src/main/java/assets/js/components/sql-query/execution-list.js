@@ -13,15 +13,18 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
         var executionEndStart = "";
         var executionEndEnd = "";
         var statuses = "";
+        //By default filter section is collapsed
+        var collapseFilter = true;
 
         if (params["?q"] !== undefined) {
-            resultCount = params["?q"].resultCount || resultCount;
-            pageNumber = params["?q"].pageNumber || pageNumber;
-            executionStartStart = params["?q"].executionStartStart || executionStartStart;
-            executionStartEnd = params["?q"].executionStartEnd || executionStartEnd;
-            executionEndStart = params["?q"].executionEndStart || executionEndStart;
-            executionEndEnd = params["?q"].executionEndEnd || executionEndEnd;
-            statuses = params["?q"].statuses || statuses;
+            resultCount = params["?q"].resultCount;
+            pageNumber = params["?q"].pageNumber;
+            executionStartStart = params["?q"].executionStartStart;
+            executionStartEnd = params["?q"].executionStartEnd;
+            executionEndStart = params["?q"].executionEndStart;
+            executionEndEnd = params["?q"].executionEndEnd;
+            statuses = params["?q"].statuses;
+            collapseFilter = params["?q"].collapseFilter;
         }
 
         //Filter form parameters
@@ -37,6 +40,8 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
         self.resultCount = ko.observable(resultCount);
 
         self.totalCount = ko.observable(0);
+
+        self.collapseFilter = ko.observable(collapseFilter);
 
         self.nextStatus = ko.pureComputed(function () {
             if (self.totalCount() <= ((self.pageNumber() + 1) * self.resultCount())) {
@@ -65,6 +70,7 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
                 "&executionEndEnd=" + self.executionEndEnd() +
                 "&statuses=" + self.statuses().join(",") +
                 "&pageNumber=" + self.pageNumber() +
+                "&collapseFilter=" + self.collapseFilter() +
                 "&resultCount=" + self.resultCount();
         };
 
@@ -75,7 +81,13 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
         self.executions = ko.observableArray([]);
         self.sqlQuery = ko.observable("");
 
+        self.collapseCss = ko.computed(function(){
+            return self.collapseFilter() ? "collapse" : "collapse in";
+        }, self);
+
         self.submit = function (formElem) {
+            //Only if filter is explicitly clicked then in next pages filter section should be open
+            self.collapseFilter(false);
             self.pageNumber(0);
         };
 
@@ -120,6 +132,14 @@ define(["knockout", "jquery", "text!components/sql-query/execution-list.html"], 
                 self.sqlQuery(result.sqlQuery);
                 self.totalCount(result.totalCount);
             }
+        });
+
+        $('#executionList').on('hidden.bs.collapse', function () {
+            self.collapseFilter(true);
+        });
+
+        $('#executionList').on('shown.bs.collapse', function () {
+            self.collapseFilter(false);
         });
 
         return self;

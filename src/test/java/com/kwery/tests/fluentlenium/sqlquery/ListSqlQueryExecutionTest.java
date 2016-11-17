@@ -116,6 +116,7 @@ public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
     @Test
     public void testFilterStatus() {
         pageInvariant();
+        page.openCollapsedFilter();
 
         page.fillStatus(SUCCESS, FAILURE);
         page.fillResultCount(1);
@@ -151,6 +152,7 @@ public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
     @Test
     public void testFilterExecutionStartStartAndEnd() {
         pageInvariant();
+        page.openCollapsedFilter();
 
         page.fillExecutionStartStart("29/09/2016 19:48");
         page.fillExecutionStartEnd("30/09/2016 19:52");
@@ -186,6 +188,7 @@ public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
     @Test
     public void testFilterExecutionEndStartAndEnd() {
         pageInvariant();
+        page.openCollapsedFilter();
         //Fri Sep 30 20:11:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
         page.fillExecutionEndStart("30/09/2016 20:10");
         page.fillExecutionEndEnd("01/10/2016 20:22");

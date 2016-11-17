@@ -88,6 +88,8 @@ public class ListSqlQueryExecutionTestPagination extends RepoDashFluentLeniumTes
 
     @Test
     public void test() {
+        page.openCollapsedFilter();
+
         page.fillResultCount(1);
         page.filter();
 
@@ -105,6 +107,8 @@ public class ListSqlQueryExecutionTestPagination extends RepoDashFluentLeniumTes
 
     @Test
     public void testResetOnResultCountChange() {
+        page.openCollapsedFilter();
+
         page.fillResultCount(1);
         page.filter();
 
