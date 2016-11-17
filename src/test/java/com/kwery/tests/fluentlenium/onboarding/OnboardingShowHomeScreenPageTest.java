@@ -1,22 +1,19 @@
 package com.kwery.tests.fluentlenium.onboarding;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.LoginPage;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
+import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
+import com.kwery.tests.fluentlenium.user.login.LoginPage;
+import com.kwery.tests.fluentlenium.utils.UserTableUtil;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
 
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static junit.framework.TestCase.fail;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
 import static com.kwery.models.Datasource.COLUMN_PASSWORD;
@@ -34,13 +31,16 @@ import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_START;
 import static com.kwery.models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
 import static com.kwery.models.SqlQueryExecution.COLUMN_RESULT;
 import static com.kwery.models.SqlQueryExecution.COLUMN_STATUS;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static junit.framework.TestCase.fail;
 
-public class OnboardingShowExecutingSqlQueriesPageTest extends RepoDashFluentLeniumTest {
+public class OnboardingShowHomeScreenPageTest extends RepoDashFluentLeniumTest {
     @Before
     public void setUpOnboardingShowExecutingSqlQueriesPageTest() throws InterruptedException {
         UserTableUtil userTableUtil = new UserTableUtil();
-        DataSource datasource = DbUtil.getDatasource();
+        DataSource datasource = getDatasource();
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(datasource),
                 Operations.sequenceOf(
@@ -53,8 +53,8 @@ public class OnboardingShowExecutingSqlQueriesPageTest extends RepoDashFluentLen
                                 .values(1, "* * * * *", "testQuery", "select * from foo", 1).build(),
                         insertInto(SqlQueryExecution.TABLE)
                                 .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
-                                .values(2, null, "sjfljkl", 1475215495171l, null, ONGOING, 1)
-                                .values(3, null, "sdjfklj", 1475215333445l, null, ONGOING, 1).build()
+                                .values(1, 1475159940797l, "thik-3456-lkdsjkfkl-lskjdfkl", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
+                                .build()
                 )
         );
 
@@ -74,6 +74,6 @@ public class OnboardingShowExecutingSqlQueriesPageTest extends RepoDashFluentLen
 
     @Test
     public void test() {
-        await().atMost(TIMEOUT_SECONDS).until("#executingSqlQueriesTable").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS).until(".f-execution-summary-table").isDisplayed();
     }
 }

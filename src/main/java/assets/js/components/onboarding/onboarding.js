@@ -28,8 +28,8 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
                         self.showNextSteps(true);
                         self.showAddSqlQuery(true);
                         break;
-                    case "SHOW_EXECUTING_QUERIES":
-                        window.location.href = "/#sql-query/executing";
+                    case "SHOW_HOME_SCREEN":
+                        window.location.href = "/#sql-query/execution-summary";
                         break;
                 }
             }

@@ -16,7 +16,7 @@ public class OnboardingNextActionDto {
     }
 
     public static enum Action {
-        ADD_ADMIN_USER, ADD_DATASOURCE, ADD_SQL_QUERY, SHOW_EXECUTING_QUERIES
+        ADD_ADMIN_USER, ADD_DATASOURCE, ADD_SQL_QUERY, SHOW_HOME_SCREEN
     }
 }
 
