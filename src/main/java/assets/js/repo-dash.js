@@ -32,6 +32,7 @@
                 {url: "sql-query/{sqlQueryId}/execution-list/:?q:", auth: true, component: "sql-query-execution-list"},
                 {url: "sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}", auth: true, component: "sql-query-execution-result"},
                 {url: "sql-query/list", auth: true, component: "sql-query-list"},
+                {url: "sql-query/execution-summary", auth: true, component: "sql-query-execution-summary"},
                 {url: "sql-query/{sqlQueryId}", auth: true, component: "sql-query-add"},
                 {url: "user/list", auth: true, component: "user-list"},
                 {url: "user/update/{userId}", auth: true, component: "user-update"},

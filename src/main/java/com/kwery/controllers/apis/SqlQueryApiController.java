@@ -320,6 +320,27 @@ public class SqlQueryApiController {
         return json.render(new ActionResult(success, message));
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result latestSqlQueryExecutions() {
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        List<SqlQuery> sqlQueries = sqlQueryDao.getAll();
+
+        List<Integer> sqlQueryIds = new ArrayList<>(sqlQueries.size());
+
+        for (SqlQuery sqlQuery : sqlQueries) {
+            sqlQueryIds.add(sqlQuery.getId());
+        }
+
+        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.lastSuccessfulExecution(sqlQueryIds);
+
+        List<SqlQueryExecutionDto> dtos = from(sqlQueryExecutions);
+
+        if (logger.isTraceEnabled()) logger.trace("<");
+
+        return json().render(dtos);
+    }
+
     public SqlQueryExecutionDto from(SqlQueryExecution model) {
         SqlQueryExecutionDto dto = new SqlQueryExecutionDto();
         dto.setSqlQueryLabel(model.getSqlQuery().getLabel());
@@ -336,6 +357,16 @@ public class SqlQueryApiController {
         dto.setStatus(model.getStatus().name());
         dto.setResult(model.getResult());
         return dto;
+    }
+
+    public List<SqlQueryExecutionDto> from(List<SqlQueryExecution> models) {
+        List<SqlQueryExecutionDto> dtos = new ArrayList<>(models.size());
+
+        for (SqlQueryExecution model : models) {
+            dtos.add(from(model));
+        }
+
+        return dtos;
     }
 
     private long getTime(String date) throws ParseException {

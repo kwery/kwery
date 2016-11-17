@@ -10,10 +10,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+
 public class SqlQueryExecutionResultPage extends FluentPage implements RepoDashPage {
     @Override
     public boolean isRendered() {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, TimeUnit.SECONDS).until("#executionResultTable").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).until("#executionResultTable").isDisplayed();
         return find(By.id("executionResultTable")).first().isDisplayed();
     }
 

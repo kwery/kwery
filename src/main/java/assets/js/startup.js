@@ -35,6 +35,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("sql-query-list", {
         require: "components/sql-query/list"
     });
+    ko.components.register("sql-query-execution-summary", {
+        require: "components/sql-query/execution-summary"
+    });
     ko.components.register("datasource-list", {
         require: "components/datasource/list"
     });

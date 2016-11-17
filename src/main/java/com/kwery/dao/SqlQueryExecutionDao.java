@@ -17,6 +17,8 @@ import javax.persistence.criteria.Root;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+
 public class SqlQueryExecutionDao {
     @Inject
     private Provider<EntityManager> entityManagerProvider;
@@ -147,7 +149,6 @@ public class SqlQueryExecutionDao {
         return m.createQuery(q).getSingleResult();
     }
 
-    @SuppressWarnings("unchecked")
     @Transactional
     public void deleteBySqlQueryId(int sqlQueryId) {
         EntityManager m = entityManagerProvider.get();
@@ -155,5 +156,29 @@ public class SqlQueryExecutionDao {
                 "delete from SqlQueryExecution e where e.sqlQuery.id = :sqlQueryId")
                 .setParameter("sqlQueryId", sqlQueryId
         ).executeUpdate();
+    }
+
+    @UnitOfWork
+    public List<SqlQueryExecution> lastSuccessfulExecution(List<Integer> sqlQueryIds) {
+        //TODO - Simplify
+        EntityManager m = entityManagerProvider.get();
+
+        List<SqlQueryExecution> sqlQueryExecutions = new LinkedList<>();
+
+        for (Integer sqlQueryId : sqlQueryIds) {
+            SqlQueryExecution sqlQueryExecution = m.createQuery(
+                    "select e from SqlQueryExecution e where e.status = :status and e.sqlQuery.id = :sqlQueryId and e.executionEnd is not null order by e.executionEnd desc", SqlQueryExecution.class
+
+            ).setParameter("sqlQueryId", sqlQueryId)
+                    .setParameter("status", SUCCESS)
+                    .setMaxResults(1)
+                    .getSingleResult();
+
+            if (sqlQueryExecution != null) {
+                sqlQueryExecutions.add(sqlQueryExecution);
+            }
+        }
+
+        return sqlQueryExecutions;
     }
 }
