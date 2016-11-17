@@ -19,7 +19,7 @@ import static com.kwery.controllers.MessageKeys.ONBOARDING_ROOT_USER_CREATED;
 import static com.kwery.dtos.OnboardingNextActionDto.Action.ADD_ADMIN_USER;
 import static com.kwery.dtos.OnboardingNextActionDto.Action.ADD_DATASOURCE;
 import static com.kwery.dtos.OnboardingNextActionDto.Action.ADD_SQL_QUERY;
-import static com.kwery.dtos.OnboardingNextActionDto.Action.SHOW_EXECUTING_QUERIES;
+import static com.kwery.dtos.OnboardingNextActionDto.Action.SHOW_HOME_SCREEN;
 import static ninja.Results.json;
 import static com.kwery.views.ActionResult.Status.success;
 
@@ -79,7 +79,7 @@ public class OnboardingApiController {
             return json().render(new OnboardingNextActionDto(ADD_SQL_QUERY));
         } else {
             if (logger.isTraceEnabled()) logger.trace("<");
-            return json().render(new OnboardingNextActionDto(SHOW_EXECUTING_QUERIES));
+            return json().render(new OnboardingNextActionDto(SHOW_HOME_SCREEN));
         }
     }
 

@@ -5,7 +5,7 @@ package com.kwery.tests.util;
  * should have an equivalent entry in messages.properties file.
  *
  * Convention for key name is to convert the corresponding key in messages.properties to upper case, replace dots
- * with hyphens and append _M.
+ * with hyphens and append _M. Append _HTML_M if the message is HTML.
  */
 public class Messages {
     public static final String TITLE_M = "RepoDash - Create reports, dashboards and visualizations from datasources in a jiffy";
@@ -66,4 +66,7 @@ public class Messages {
     public static final String NEXT_STEP_ADD_DATASOURCE_M = "Add Datasource";
     public static final String NEXT_STEP_ADD_SQL_QUERY_M = "Schedule SQL Query";
     public static final String NEXT_STEP_HEADER_M = "Next Steps";
+    public static final String DATE_M = "Date";
+    public static final String REPORT_M = "Report";
+    public static final String REPORTS_M = "Reports";
 }

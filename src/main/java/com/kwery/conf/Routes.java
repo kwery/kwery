@@ -25,6 +25,7 @@ public class Routes implements ApplicationRoutes {
     public static final String EXECUTING_SQL_QUERY_API = "/api/sql-query/executing";
     public static final String KILL_SQL_QUERY_API = "/api/sql-query/kill/{sqlQueryId}";
     public static final String LIST_SQL_QUERY_EXECUTION_API = "/api/sql-query/{sqlQueryId}/execution";
+    public static final String LIST_LATEST_SQL_QUERY_EXECUTIONS_API = "/api/sql-query/latest-execution";
     public static final String SQL_QUERY_API = "/api/sql-query/{sqlQueryId}";
     public static final String SQL_QUERY_EXECUTION_RESULT_API = "/api/sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}";
     public static final String DELETE_SQL_QUERY_API = "/api/sql-query/delete/{sqlQueryId}";
@@ -60,6 +61,7 @@ public class Routes implements ApplicationRoutes {
         router.POST().route(LIST_SQL_QUERY_EXECUTION_API).with(SqlQueryApiController.class, "listSqlQueryExecution");
         router.GET().route(SQL_QUERY_EXECUTION_RESULT_API).with(SqlQueryApiController.class, "sqlQueryExecutionResult");
         router.GET().route(LIST_SQL_QUERIES_API).with(SqlQueryApiController.class, "listSqlQueries");
+        router.GET().route(LIST_LATEST_SQL_QUERY_EXECUTIONS_API).with(SqlQueryApiController.class, "latestSqlQueryExecutions");
         router.GET().route(SQL_QUERY_API).with(SqlQueryApiController.class, "sqlQuery");
         router.POST().route(DELETE_SQL_QUERY_API).with(SqlQueryApiController.class, "delete");
 

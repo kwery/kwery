@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.dtos.OnboardingNextActionDto.Action.SHOW_EXECUTING_QUERIES;
+import static com.kwery.dtos.OnboardingNextActionDto.Action.SHOW_HOME_SCREEN;
 import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_ID;
@@ -21,7 +21,7 @@ import static com.kwery.models.SqlQuery.TABLE;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class OnboardingApiControllerNextActionShowRunningQueriesTest extends OnboardingApiControllerNextActionAddSqlQueryTest {
+public class OnboardingApiControllerNextActionShowHomeScreenTest extends OnboardingApiControllerNextActionAddSqlQueryTest {
     @Before
     public void setUpOnboardingApiControllerNextActionShowExecutionQueriesTest () {
         new DbSetup(
@@ -39,6 +39,6 @@ public class OnboardingApiControllerNextActionShowRunningQueriesTest extends Onb
         String response = ninjaTestBrowser.makeJsonRequest(getUrl(url));
 
         assertThat(response, isJson());
-        assertThat(response, hasJsonPath("$.action", is(SHOW_EXECUTING_QUERIES.name())));
+        assertThat(response, hasJsonPath("$.action", is(SHOW_HOME_SCREEN.name())));
     }
 }
