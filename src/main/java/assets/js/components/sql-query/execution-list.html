@@ -7,11 +7,12 @@
         </div>
     </div>
 
-    <div class="panel panel-default">
+    <div class="panel panel-default" id="executionList">
         <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('filter.execution')" class="panel-title"></h3>
+            <a data-bind="text: ko.i18n('filter.execution')" data-toggle="collapse" href="#collapseOne" class="panel-title f-collapse">
+            </a>
         </div>
-        <div class="panel-body">
+        <div data-bind="css: collapseCss" id="collapseOne" class="panel-body">
             <div class="row">
                 <div class="col-md-12">
                     <form data-bind="submit: submit" id="filterExecutionListForm">

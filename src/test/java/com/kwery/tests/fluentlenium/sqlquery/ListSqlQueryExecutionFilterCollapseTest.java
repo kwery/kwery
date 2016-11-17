@@ -1,21 +1,19 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.kwery.models.Datasource;
+import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryExecution;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.user.login.LoginPage;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.fluentlenium.utils.UserTableUtil;
-import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.UUID;
 
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
 import static com.kwery.models.Datasource.COLUMN_PASSWORD;
@@ -35,11 +33,13 @@ import static com.kwery.models.SqlQueryExecution.COLUMN_RESULT;
 import static com.kwery.models.SqlQueryExecution.COLUMN_STATUS;
 import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
-public class ListSqlQueryExecutionTestPagination extends RepoDashFluentLeniumTest {
+public class ListSqlQueryExecutionFilterCollapseTest extends RepoDashFluentLeniumTest {
     protected ListSqlQueryExecutionPage page;
 
     @Before
@@ -62,6 +62,9 @@ public class ListSqlQueryExecutionTestPagination extends RepoDashFluentLeniumTes
                                 .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
                                 .values(1, 1475159940797l, "executionId", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
                                 .values(2, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
+                                .values(3, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
+                                .values(4, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
+                                .values(5, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
                                 .build()
                 )
         );
@@ -87,43 +90,32 @@ public class ListSqlQueryExecutionTestPagination extends RepoDashFluentLeniumTes
     }
 
     @Test
-    public void test() {
-        page.clickFilter();
-
-        page.fillResultCount(1);
-        page.filter();
-
-        page.waitForFilterResult(1);
-
-        assertThat(page.isPreviousEnabled(), is(false));
-
-        page.clickNext();
-
-        page.waitForStatus(FAILURE);
-
-        assertThat(page.isNextEnabled(), is(false));
-        assertThat(page.isPreviousEnabled(), is(true));
+    public void testDefaultFilterState() {
+        assertThat(page.isFilterCollapsed(), is(true));
     }
 
     @Test
-    public void testResetOnResultCountChange() {
+    public void testUseFilterAndPaginateFilterOpen() {
         page.clickFilter();
-
         page.fillResultCount(1);
-        page.filter();
-
-        page.waitForFilterResult(1);
-
-        assertThat(page.isPreviousEnabled(), is(false));
-
         page.clickNext();
+        assertThat(page.isFilterCollapsed(), is(false));
+    }
 
-        page.waitForStatus(FAILURE);
-
+    @Test
+    public void testUseFilterAndCloseAndPaginate() {
+        page.clickFilter();
         page.fillResultCount(1);
-        page.filter();
+        page.clickFilter();
+        page.clickNext();
+        assertThat(page.isFilterCollapsed(), is(false));
+    }
 
-        page.waitForStatus(SUCCESS);
-        //Page got reset
+    @Test
+    public void testPaginateWithoutUsingFilter() {
+        page.clickNext();
+        assertThat(page.isFilterCollapsed(), is(true));
+        page.clickPrevious();
+        assertThat(page.isFilterCollapsed(), is(true));
     }
 }
