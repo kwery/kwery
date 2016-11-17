@@ -36,8 +36,6 @@ public class SqlQuery {
     private String label;
 
     @Column(name = COLUMN_CRON_EXPRESSION)
-    @Size(min = 1, message = "cron.expression.validation")
-    @NotNull(message = "cron.expression.validation")
     private String cronExpression;
 
     @JoinColumn(name = COLUMN_DATASOURCE_ID_FK)

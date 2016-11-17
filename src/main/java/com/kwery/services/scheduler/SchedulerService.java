@@ -78,8 +78,8 @@ public class SchedulerService {
 
     @Start
     public void scheduleAllQueries() {
-        logger.info("Scheduling all queries");
-        sqlQueryDao.getAll().forEach(this::schedule);
+        logger.info("Scheduling all queries with schedule");
+        sqlQueryDao.getAllWithSchedule().forEach(this::schedule);
     }
 
     @Dispose
