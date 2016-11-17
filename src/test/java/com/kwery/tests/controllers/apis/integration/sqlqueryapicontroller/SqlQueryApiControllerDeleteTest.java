@@ -1,26 +1,24 @@
 package com.kwery.tests.controllers.apis.integration.sqlqueryapicontroller;
 
 import com.google.common.collect.ImmutableMap;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.controllers.apis.SqlQueryApiController;
-import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
+import com.kwery.services.scheduler.SchedulerService;
+import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
+import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.services.scheduler.SchedulerService;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
-import static java.text.MessageFormat.format;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
 import static com.kwery.models.Datasource.COLUMN_PASSWORD;
@@ -33,14 +31,18 @@ import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_QUERY;
 import static com.kwery.models.SqlQuery.TABLE;
+import static com.kwery.tests.util.Messages.SQL_QUERY_DELETE_SUCCESS_M;
+import static com.kwery.views.ActionResult.Status.success;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
+import static java.text.MessageFormat.format;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
-import static com.kwery.tests.util.Messages.SQL_QUERY_DELETE_SUCCESS_M;
-import static com.kwery.views.ActionResult.Status.success;
 
 public class SqlQueryApiControllerDeleteTest extends AbstractPostLoginApiTest {
     protected SchedulerService schedulerService;
+    protected SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
 
     @Before
     public void testSqlQueryApiControllerDeleteTest() {
@@ -60,6 +62,8 @@ public class SqlQueryApiControllerDeleteTest extends AbstractPostLoginApiTest {
 
         schedulerService = getInjector().getInstance(SchedulerService.class);
         schedulerService.schedule(getInjector().getInstance(SqlQueryDao.class).getById(1));
+
+        sqlQueryTaskSchedulerHolder = getInjector().getInstance(SqlQueryTaskSchedulerHolder.class);
     }
 
     @Test
@@ -81,6 +85,6 @@ public class SqlQueryApiControllerDeleteTest extends AbstractPostLoginApiTest {
         assertThat(response, hasJsonPath("$.messages.length()", is(1)));
         assertThat(response, hasJsonPath("$.messages[0]", is(format(SQL_QUERY_DELETE_SUCCESS_M, "testQuery0"))));
 
-        assertThat(schedulerService.getQueryRunSchedulerMap().get(1), nullValue());
+        assertThat(sqlQueryTaskSchedulerHolder.get(1), nullValue());
     }
 }

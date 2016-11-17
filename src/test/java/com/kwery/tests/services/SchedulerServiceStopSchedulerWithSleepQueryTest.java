@@ -1,24 +1,24 @@
 package com.kwery.tests.services;
 
+import com.kwery.dao.SqlQueryDao;
+import com.kwery.dao.SqlQueryExecutionDao;
+import com.kwery.models.Datasource;
+import com.kwery.models.SqlQuery;
+import com.kwery.services.scheduler.SchedulerService;
+import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.tests.util.MySqlDocker;
+import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.kwery.dao.SqlQueryDao;
-import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.services.scheduler.SchedulerService;
-import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.tests.util.MySqlDocker;
-import com.kwery.tests.util.RepoDashTestBase;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
 import static com.kwery.models.Datasource.COLUMN_PASSWORD;
@@ -30,14 +30,16 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_QUERY;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class SchedulerServiceStopSchedulerWithSleepQueryTest extends RepoDashTestBase {
     protected MySqlDocker mySqlDocker;
     protected SchedulerService schedulerService;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
+    protected SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
 
     @Before
     public void setUpSchedulerServiceStopSchedulerWithRegularQueryTest() {
@@ -64,6 +66,7 @@ public class SchedulerServiceStopSchedulerWithSleepQueryTest extends RepoDashTes
         schedulerService.schedule(getInstance(SqlQueryDao.class).getById(1));
 
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
+        sqlQueryTaskSchedulerHolder = getInstance(SqlQueryTaskSchedulerHolder.class);
     }
 
     @Test
@@ -78,7 +81,7 @@ public class SchedulerServiceStopSchedulerWithSleepQueryTest extends RepoDashTes
         TimeUnit.SECONDS.sleep(70);
         long countAfterSleep = sqlQueryExecutionDao.count(filter);
 
-        assertThat(schedulerService.getQueryRunSchedulerMap().get(1), nullValue());
+        assertThat(sqlQueryTaskSchedulerHolder.get(1), empty());
         assertThat("No new query was executed after stopping the scheduler", countBeforeSleep, is(countAfterSleep));
     }
 
