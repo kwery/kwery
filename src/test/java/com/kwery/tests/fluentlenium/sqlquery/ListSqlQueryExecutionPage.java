@@ -70,9 +70,17 @@ public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPag
         }
     }
 
-    public void openCollapsedFilter() {
+    public void clickFilter() {
         $(className("f-collapse")).click();
         await().atMost(30, SECONDS).until("#collapseOne").isDisplayed();
+    }
+
+    public boolean isFilterCollapsed() {
+        return !$(id("collapseOne")).first().isDisplayed();
+    }
+
+    public boolean isFilterOpen() {
+        return !isFilterCollapsed();
     }
 
     public void fillExecutionStartStart(String date) {
