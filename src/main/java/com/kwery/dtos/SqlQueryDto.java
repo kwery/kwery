@@ -15,8 +15,6 @@ public class SqlQueryDto {
     @Size(min = 1, message = "label.validation")
     private String label;
 
-    @Size(min = 1, message = "cron.expression.validation")
-    @NotNull(message = "cron.expression.validation")
     private String cronExpression;
 
     @Min(value = 1, message= "datasource.validation")
