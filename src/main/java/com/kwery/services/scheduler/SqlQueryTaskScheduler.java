@@ -1,14 +1,17 @@
 package com.kwery.services.scheduler;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 import com.kwery.dao.SqlQueryExecutionDao;
-import it.sauronsoftware.cron4j.Scheduler;
-import it.sauronsoftware.cron4j.SchedulerListener;
-import it.sauronsoftware.cron4j.TaskExecutor;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
+import it.sauronsoftware.cron4j.Scheduler;
+import it.sauronsoftware.cron4j.SchedulerListener;
+import it.sauronsoftware.cron4j.Task;
+import it.sauronsoftware.cron4j.TaskExecutionContext;
+import it.sauronsoftware.cron4j.TaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,26 +30,43 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
     private final SqlQueryTaskExecutorListener sqlQueryTaskExecutorListener;
     private final SqlQueryTaskFactory sqlQueryTaskFactory;
     private final Provider<SqlQueryExecution> queryRunExecutionProvider;
+    private final SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
+    private final OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper;
 
     @Inject
-    public SqlQueryTaskScheduler(Scheduler scheduler, SqlQueryExecutionDao sqlQueryExecutionDao, SqlQueryTaskFactory sqlQueryTaskFactory,
-                                 Provider<SqlQueryExecution> queryRunExecutionProvider, SqlQueryTaskExecutorListener sqlQueryTaskExecutorListener,
-                                 @Assisted List<TaskExecutor> ongoingExecutions, @Assisted SqlQuery sqlQuery) {
+    public SqlQueryTaskScheduler(Scheduler scheduler,
+                                 SqlQueryExecutionDao sqlQueryExecutionDao,
+                                 SqlQueryTaskFactory sqlQueryTaskFactory,
+                                 Provider<SqlQueryExecution> queryRunExecutionProvider,
+                                 SqlQueryTaskExecutorListener sqlQueryTaskExecutorListener,
+                                 SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder,
+                                 OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper,
+                                 @Assisted List<TaskExecutor> ongoingExecutions,
+                                 @Assisted SqlQuery sqlQuery) {
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.sqlQueryTaskExecutorListener = sqlQueryTaskExecutorListener;
         this.sqlQueryTaskFactory = sqlQueryTaskFactory;
         this.ongoingExecutions = ongoingExecutions;
         this.queryRunExecutionProvider = queryRunExecutionProvider;
         this.scheduler = scheduler;
+        this.sqlQueryTaskSchedulerHolder = sqlQueryTaskSchedulerHolder;
+        this.oneOffSqlQueryTaskSchedulerReaper = oneOffSqlQueryTaskSchedulerReaper;
+
         this.scheduler.addSchedulerListener(this);
-        this.scheduler.schedule(sqlQuery.getCronExpression(), sqlQueryTaskFactory.create(sqlQuery));
-        this.scheduler.start();
+
+        if ("".equals(Strings.nullToEmpty(sqlQuery.getCronExpression()))) {
+            this.scheduler.start();
+            this.scheduler.launch(sqlQueryTaskFactory.create(sqlQuery));
+        } else {
+            this.scheduler.schedule(sqlQuery.getCronExpression(), sqlQueryTaskFactory.create(sqlQuery));
+            this.scheduler.start();
+        }
     }
 
     @Override
     public void taskLaunching(TaskExecutor executor) {
         SqlQuery sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
-        logger.info("Starting query {} with label {} running on datasource {}", sqlQuery.getQuery(), sqlQuery.getLabel(), sqlQuery.getDatasource().getLabel());
+        logger.info("Launching query {} with label {} running on datasource {}", sqlQuery.getQuery(), sqlQuery.getLabel(), sqlQuery.getDatasource().getLabel());
 
         SqlQueryExecution e = queryRunExecutionProvider.get();
         e.setExecutionId(executor.getGuid());
@@ -58,11 +78,20 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         executor.addTaskExecutorListener(sqlQueryTaskExecutorListener);
 
         ongoingExecutions.add(executor);
+
+        if (isOneOffExecution(sqlQuery)) {
+            oneOffSqlQueryTaskSchedulerReaper.add(new SqlQueryTaskSchedulerExecutorPair(this, executor));
+        }
     }
 
     @Override
     public void taskSucceeded(TaskExecutor executor) {
+        SqlQuery sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
+        logger.info("Query {} with label {} running on datasource {} succeeded", sqlQuery.getQuery(), sqlQuery.getLabel(), sqlQuery.getDatasource().getLabel());
         ongoingExecutions.remove(executor);
+        if (isOneOffExecution(sqlQuery)) {
+            cleanUp(sqlQuery);
+        }
     }
 
     @Override
@@ -70,6 +99,9 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         SqlQuery sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
         logger.info("Query {} with label {} running on datasource {} failed due to", sqlQuery.getQuery(), sqlQuery.getLabel(), sqlQuery.getDatasource().getLabel(), exception);
         ongoingExecutions.remove(executor);
+        if (isOneOffExecution(sqlQuery)) {
+            cleanUp(sqlQuery);
+        }
     }
 
     public List<OngoingSqlQueryTask> ongoingQueryTasks() {
@@ -105,16 +137,31 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         }
     }
 
-    public void stopScheduler() {
-        scheduler.stop();
+    private void cleanUp(SqlQuery sqlQuery) {
+        logger.info("Cleaning up post one off execution");
+        sqlQueryTaskSchedulerHolder.remove(sqlQuery.getId(), this);
+    }
+
+    private boolean isOneOffExecution(SqlQuery sqlQuery) {
+        return "".equals(Strings.nullToEmpty(sqlQuery.getCronExpression()));
+    }
+
+    public synchronized void stopScheduler() {
+        if (scheduler.isStarted()) {
+            logger.info("> Stopping scheduler");
+            scheduler.stop();
+            logger.info("< Stopping scheduler");
+        } else {
+            logger.info("Scheduler has already been stopped");
+        }
     }
 
     public boolean hasSchedulerStopped() {
         return !scheduler.isStarted();
     }
 
-    public static void main(String[] args) throws InterruptedException {
-/*        Datasource datasource = new Datasource();
+/*    public static void main(String[] args) throws InterruptedException, SqlQueryExecutionNotFoundException {
+        Datasource datasource = new Datasource();
         datasource.setUrl("localhost");
         datasource.setUsername("root");
         datasource.setPassword("root");
@@ -142,6 +189,6 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
                 System.out.println(task.getExecutionId() + " - " + new Date(task.getStartTime()));
                 scheduler.stopExecution(task.getExecutionId());
             }
-        }*/
-    }
+        }
+    }*/
 }

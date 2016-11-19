@@ -27,7 +27,7 @@ public class SqlQueryTaskSchedulerHolder {
         return map.get(sqlQueryId);
     }
 
-    public Collection<SqlQueryTaskScheduler> all() {
+    public synchronized Collection<SqlQueryTaskScheduler> all() {
         return map.values();
     }
 }

@@ -100,14 +100,20 @@ public class SchedulerService {
 
     @Start
     public void scheduleAllQueries() {
-        logger.info("Scheduling all queries with schedule");
-        sqlQueryDao.getAllWithSchedule().forEach(this::schedule);
+        List<SqlQuery> allWithSchedule = sqlQueryDao.getAllWithSchedule();
+        logger.info("Scheduling {} queries with schedule", allWithSchedule.size());
+        allWithSchedule.forEach(this::schedule);
     }
 
     @Dispose
     public void shutdownSchedulers() {
         logger.info("Stopping all schedulers");
-        for (SqlQueryTaskScheduler sqlQueryTaskScheduler : sqlQueryTaskSchedulerHolder.all()) {
+
+        Collection<SqlQueryTaskScheduler> all = sqlQueryTaskSchedulerHolder.all();
+
+        logger.info("Stopping {} schedulers", all.size());
+
+        for (SqlQueryTaskScheduler sqlQueryTaskScheduler : all) {
             sqlQueryTaskScheduler.stopScheduler();
         }
     }

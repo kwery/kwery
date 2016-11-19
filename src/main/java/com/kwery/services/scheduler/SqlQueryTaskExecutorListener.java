@@ -47,11 +47,14 @@ public class SqlQueryTaskExecutorListener implements TaskExecutorListener {
 
         if (executor.isStopped()) {
             sqlQueryExecution.setStatus(KILLED);
+            logger.info("Execution status - " + KILLED);
         } else {
             if (exception != null) {
                 sqlQueryExecution.setStatus(FAILURE);
+                logger.info("Execution status - " + FAILURE);
             } else {
                 sqlQueryExecution.setStatus(SUCCESS);
+                logger.info("Execution status - " + SUCCESS);
             }
         }
 

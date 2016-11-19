@@ -21,6 +21,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.kwery.custom.TemplateEngineJsFreemarker;
+import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
 import it.sauronsoftware.cron4j.Scheduler;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
@@ -37,11 +38,14 @@ public class Module extends AbstractModule {
     protected void configure() {
         bind(TemplateEngineJsFreemarker.class);
         bind(SqlQueryRunner.class).to(MysqlSqlQueryRunner.class);
+        bind(SchedulerService.class);
+        bind(OneOffSqlQueryTaskSchedulerReaper.class);
+
+
         install(new FactoryModuleBuilder().build(SqlQueryTaskFactory.class));
         install(new FactoryModuleBuilder().build(QueryTaskSchedulerFactory.class));
         install(new FactoryModuleBuilder().build(ResultSetProcessorFactory.class));
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
-        bind(SchedulerService.class);
     }
 
     @Provides

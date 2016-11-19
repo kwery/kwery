@@ -1,30 +1,34 @@
 package com.kwery.tests.services;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Provider;
 import com.kwery.dao.SqlQueryExecutionDao;
-import it.sauronsoftware.cron4j.Scheduler;
-import it.sauronsoftware.cron4j.Task;
-import it.sauronsoftware.cron4j.TaskExecutor;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryTask;
 import com.kwery.services.scheduler.SqlQueryTaskExecutorListener;
 import com.kwery.services.scheduler.SqlQueryTaskFactory;
 import com.kwery.services.scheduler.SqlQueryTaskScheduler;
+import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
+import it.sauronsoftware.cron4j.Scheduler;
+import it.sauronsoftware.cron4j.Task;
+import it.sauronsoftware.cron4j.TaskExecutor;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.tests.util.TestUtil.queryRun;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
@@ -35,8 +39,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static com.kwery.tests.util.TestUtil.datasource;
-import static com.kwery.tests.util.TestUtil.queryRun;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SqlQueryTaskSchedulerTest {
@@ -54,6 +56,10 @@ public class SqlQueryTaskSchedulerTest {
     private TaskExecutor taskExecutor;
     @Mock
     private SqlQueryTask sqlQueryTask;
+    @Mock
+    private SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
+    @Mock
+    private OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper;
 
     private SqlQuery sqlQuery;
     private Datasource datasource;
@@ -82,8 +88,17 @@ public class SqlQueryTaskSchedulerTest {
     @Test
     public void testTaskLaunching() {
         List<TaskExecutor> ongoingExecutions = new LinkedList<>();
-        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(scheduler, sqlQueryExecutionDao, sqlQueryTaskFactory, provider,
-                sqlQueryTaskExecutorListener, ongoingExecutions, sqlQuery);
+        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(
+                scheduler,
+                sqlQueryExecutionDao,
+                sqlQueryTaskFactory,
+                provider,
+                sqlQueryTaskExecutorListener,
+                sqlQueryTaskSchedulerHolder,
+                oneOffSqlQueryTaskSchedulerReaper,
+                ongoingExecutions,
+                sqlQuery
+        );
 
         sqlQueryTaskScheduler.taskLaunching(taskExecutor);
 
@@ -96,10 +111,19 @@ public class SqlQueryTaskSchedulerTest {
 
     @Test
     public void testTaskSucceeded() {
-        List<TaskExecutor> ongoingExecutions = Lists.newArrayList(taskExecutor);
+        List<TaskExecutor> ongoingExecutions = newArrayList(taskExecutor);
 
-        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(scheduler, sqlQueryExecutionDao, sqlQueryTaskFactory, provider,
-                sqlQueryTaskExecutorListener, ongoingExecutions, sqlQuery);
+        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(
+                scheduler,
+                sqlQueryExecutionDao,
+                sqlQueryTaskFactory,
+                provider,
+                sqlQueryTaskExecutorListener,
+                sqlQueryTaskSchedulerHolder,
+                oneOffSqlQueryTaskSchedulerReaper,
+                ongoingExecutions,
+                sqlQuery
+        );
 
         sqlQueryTaskScheduler.taskSucceeded(taskExecutor);
 
@@ -108,9 +132,18 @@ public class SqlQueryTaskSchedulerTest {
 
     @Test
     public void testTaskFailed() {
-        List<TaskExecutor> ongoingExecutions = Lists.newArrayList(taskExecutor);
-        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(scheduler, sqlQueryExecutionDao, sqlQueryTaskFactory, provider,
-                sqlQueryTaskExecutorListener, ongoingExecutions, sqlQuery);
+        List<TaskExecutor> ongoingExecutions = newArrayList(taskExecutor);
+        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(
+                scheduler,
+                sqlQueryExecutionDao,
+                sqlQueryTaskFactory,
+                provider,
+                sqlQueryTaskExecutorListener,
+                sqlQueryTaskSchedulerHolder,
+                oneOffSqlQueryTaskSchedulerReaper,
+                ongoingExecutions,
+                sqlQuery
+        );
 
         sqlQueryTaskScheduler.taskFailed(taskExecutor, new RuntimeException());
         assertThat(ongoingExecutions, hasSize(0));
@@ -118,9 +151,18 @@ public class SqlQueryTaskSchedulerTest {
 
     @Test
     public void testOngoingQueryTasks() {
-        List<TaskExecutor> ongoingExecutions = Lists.newArrayList(taskExecutor);
-        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(scheduler, sqlQueryExecutionDao, sqlQueryTaskFactory, provider,
-                sqlQueryTaskExecutorListener, ongoingExecutions, sqlQuery);
+        List<TaskExecutor> ongoingExecutions = newArrayList(taskExecutor);
+        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(
+                scheduler,
+                sqlQueryExecutionDao,
+                sqlQueryTaskFactory,
+                provider,
+                sqlQueryTaskExecutorListener,
+                sqlQueryTaskSchedulerHolder,
+                oneOffSqlQueryTaskSchedulerReaper,
+                ongoingExecutions,
+                sqlQuery
+        );
 
         List<OngoingSqlQueryTask> tasks = sqlQueryTaskScheduler.ongoingQueryTasks();
 
@@ -138,10 +180,19 @@ public class SqlQueryTaskSchedulerTest {
         TaskExecutor another = mock(TaskExecutor.class);
         when(another.getGuid()).thenReturn("");
 
-        List<TaskExecutor> ongoingExecutions = Lists.newArrayList(taskExecutor, another);
+        List<TaskExecutor> ongoingExecutions = newArrayList(taskExecutor, another);
 
-        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(scheduler, sqlQueryExecutionDao, sqlQueryTaskFactory, provider,
-                sqlQueryTaskExecutorListener, ongoingExecutions, sqlQuery);
+        SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(
+                scheduler,
+                sqlQueryExecutionDao,
+                sqlQueryTaskFactory,
+                provider,
+                sqlQueryTaskExecutorListener,
+                sqlQueryTaskSchedulerHolder,
+                oneOffSqlQueryTaskSchedulerReaper,
+                ongoingExecutions,
+                sqlQuery
+        );
 
         sqlQueryTaskScheduler.stopExecution(taskExecutorGuid);
 

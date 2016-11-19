@@ -8,8 +8,12 @@ import ninja.utils.NinjaModeHelper;
 import ninja.utils.NinjaPropertiesImpl;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RepoDashTestBase {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * Guice Injector to get DAOs
      */
@@ -49,8 +53,11 @@ public class RepoDashTestBase {
 
     @After
     public final void stop() {
+        logger.info("Shutting down RepoDashTestBase");
         bootstrap.shutdown();
     }
+
+
 
     /**
      * Get the DAO instances ready to use
