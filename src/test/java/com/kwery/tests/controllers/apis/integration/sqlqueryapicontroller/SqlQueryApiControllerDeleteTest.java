@@ -36,8 +36,8 @@ import static com.kwery.views.ActionResult.Status.success;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static java.text.MessageFormat.format;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryApiControllerDeleteTest extends AbstractPostLoginApiTest {
@@ -85,6 +85,6 @@ public class SqlQueryApiControllerDeleteTest extends AbstractPostLoginApiTest {
         assertThat(response, hasJsonPath("$.messages.length()", is(1)));
         assertThat(response, hasJsonPath("$.messages[0]", is(format(SQL_QUERY_DELETE_SUCCESS_M, "testQuery0"))));
 
-        assertThat(sqlQueryTaskSchedulerHolder.get(1), nullValue());
+        assertThat(sqlQueryTaskSchedulerHolder.get(1), hasSize(0));
     }
 }
