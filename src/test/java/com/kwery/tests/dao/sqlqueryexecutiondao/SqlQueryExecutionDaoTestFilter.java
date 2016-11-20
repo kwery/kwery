@@ -1,25 +1,23 @@
 package com.kwery.tests.dao.sqlqueryexecutiondao;
 
 import com.google.common.collect.ImmutableList;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
+import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
 import static com.kwery.models.Datasource.COLUMN_PASSWORD;
@@ -41,6 +39,9 @@ import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
 import static com.kwery.models.SqlQueryExecution.Status.KILLED;
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.Operations.sequenceOf;
+import static org.exparity.hamcrest.BeanMatchers.theSameAs;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -132,6 +133,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         sqlQuery.setId(1);
         sqlQuery.setLabel("testQuery0");
         sqlQuery.setCronExpression("* * * * *");
+        sqlQuery.setDependentQueries(new LinkedList<>());
 
         SqlQueryExecution execution = new SqlQueryExecution();
         execution.setSqlQuery(sqlQuery);
@@ -144,7 +146,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
 
         SqlQueryExecution fromDb = sqlQueryExecutions.get(0);
 
-        assertThat(fromDb, sameBeanAs(execution));
+        assertThat(fromDb, theSameAs(execution));
 
         assertThat(sqlQueryExecutionDao.count(filter), is(1l));
     }

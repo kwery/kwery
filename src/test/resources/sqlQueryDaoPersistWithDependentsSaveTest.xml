@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <query_run_dependent query_run_id_fk="100" dependent_query_run_id_fk="1"/>
+
+    <query_run id="1" cron_expression="" label="selectQuery" query="select * from mysql.db" datasource_id_fk="1"/>
+    <query_run id="2" cron_expression="" label="sleepQuery" query="select sleep(100000)" datasource_id_fk="1"/>
+    <query_run id="100" cron_expression="* * * * *" label="test query run" query="select * from foo" datasource_id_fk="1"/>
+</dataset>
