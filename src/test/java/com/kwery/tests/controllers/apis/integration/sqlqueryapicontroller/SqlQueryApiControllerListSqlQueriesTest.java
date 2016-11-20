@@ -42,7 +42,7 @@ public class SqlQueryApiControllerListSqlQueriesTest extends AbstractPostLoginAp
                         insertInto(SqlQuery.TABLE)
                                 .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
                                 .values(1, "*", "testQuery0", "select * from foo", 1)
-                                .values(2, "* *", "testQuery1", "select * from foo", 1)
+                                .values(2, "", "testQuery1", "select * from foo", 1)
                                 .build()
                 )
         );
@@ -63,7 +63,7 @@ public class SqlQueryApiControllerListSqlQueriesTest extends AbstractPostLoginAp
         assertThat(json, hasJsonPath("$[1].id", is(2)));
 
         assertThat(json, hasJsonPath("$[0].cronExpression", is("*")));
-        assertThat(json, hasJsonPath("$[1].cronExpression", is("* *")));
+        assertThat(json, hasJsonPath("$[1].cronExpression", is("")));
 
         assertThat(json, hasJsonPath("$[0].label", is("testQuery0")));
         assertThat(json, hasJsonPath("$[1].label", is("testQuery1")));

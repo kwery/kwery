@@ -3,7 +3,6 @@ package com.kwery.controllers.apis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.kwery.dao.DatasourceDao;
@@ -40,12 +39,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static com.kwery.controllers.ControllerUtil.fieldMessages;
 import static com.kwery.controllers.MessageKeys.DATASOURCE_VALIDATION;
 import static com.kwery.controllers.MessageKeys.ONE_OFF_EXECUTION_SUCCESS_MESSAGE;
 import static com.kwery.controllers.MessageKeys.QUERY_RUN_ADDITION_FAILURE;
-import static com.kwery.controllers.MessageKeys.QUERY_RUN_ADDITION_SUCCESS;
 import static com.kwery.controllers.MessageKeys.QUERY_RUN_UPDATE_SUCCESS;
+import static com.kwery.controllers.MessageKeys.QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS;
+import static com.kwery.controllers.MessageKeys.QUERY_RUN_WITH_CRON_ADDITION_SUCCESS;
 import static com.kwery.controllers.MessageKeys.SQL_QUERY_DELETE_SUCCESS;
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
 import static com.kwery.views.ActionResult.Status.failure;
@@ -148,20 +149,29 @@ public class SqlQueryApiController {
                     );
                 } else {
                     sqlQueryDao.save(model);
-                    actionResult = new ActionResult(
-                            success,
-                            messages.get(QUERY_RUN_ADDITION_SUCCESS, context, Optional.of(json)).get()
-                    );
-                }
 
-                if (!"".equals(Strings.nullToEmpty(model.getCronExpression()))) {
-                    schedulerService.schedule(model);
+                    if (isOneOffSqlQuery(sqlQueryDto)) {
+                        actionResult = new ActionResult(
+                                success,
+                                messages.get(QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS, context, Optional.of(json)).get()
+                        );
+                    } else {
+                        actionResult = new ActionResult(
+                                success,
+                                messages.get(QUERY_RUN_WITH_CRON_ADDITION_SUCCESS, context, Optional.of(json)).get()
+                        );
+                        schedulerService.schedule(model);
+                    }
                 }
             }
         }
 
         if (logger.isTraceEnabled()) logger.trace("<");
         return json.render(actionResult);
+    }
+
+    protected boolean isOneOffSqlQuery(SqlQueryDto sqlQueryDto) {
+        return "".equals(nullToEmpty(sqlQueryDto.getCronExpression()));
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -219,19 +229,19 @@ public class SqlQueryApiController {
         dbFilter.setPageNumber(filterDto.getPageNumber());
         dbFilter.setResultCount(filterDto.getResultCount());
 
-        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionStartStart()))) {
+        if (!"".equals(nullToEmpty(filterDto.getExecutionStartStart()))) {
             dbFilter.setExecutionStartStart(getTime(filterDto.getExecutionStartStart()));
         }
 
-        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionStartEnd()))) {
+        if (!"".equals(nullToEmpty(filterDto.getExecutionStartEnd()))) {
             dbFilter.setExecutionStartEnd(getTime(filterDto.getExecutionStartEnd()));
         }
 
-        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionEndStart()))) {
+        if (!"".equals(nullToEmpty(filterDto.getExecutionEndStart()))) {
             dbFilter.setExecutionEndStart(getTime(filterDto.getExecutionEndStart()));
         }
 
-        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionEndEnd()))) {
+        if (!"".equals(nullToEmpty(filterDto.getExecutionEndEnd()))) {
             dbFilter.setExecutionEndEnd(getTime(filterDto.getExecutionEndEnd()));
         }
 
@@ -418,7 +428,7 @@ public class SqlQueryApiController {
             model.setId(dto.getId());
         }
 
-        model.setCronExpression(dto.getCronExpression());
+        model.setCronExpression(nullToEmpty(dto.getCronExpression()).trim());
         model.setLabel(dto.getLabel());
         model.setQuery(dto.getQuery());
         model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));

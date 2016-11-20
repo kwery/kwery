@@ -12,7 +12,7 @@ import java.util.List;
 
 import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
 import static com.kwery.tests.util.Messages.QUERY_RUN_ADDITION_FAILURE_M;
-import static com.kwery.tests.util.Messages.QUERY_RUN_ADDITION_SUCCESS_M;
+import static com.kwery.tests.util.Messages.QUERY_RUN_WITH_CRON_ADDITION_SUCCESS_M;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -33,7 +33,7 @@ public class AddSqlQueryPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(QUERY_RUN_ADDITION_SUCCESS_M);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(QUERY_RUN_WITH_CRON_ADDITION_SUCCESS_M);
     }
 
     public void waitForDuplicateLabelMessage(String label) {

@@ -1,5 +1,7 @@
 package com.kwery.controllers;
 
+import static com.sun.deploy.security.ruleset.DRSResult.Type.RUN;
+
 /**
  * Holds keys present in messages.properties file.
  *
@@ -37,7 +39,8 @@ public class MessageKeys {
     public static final String QUERY_VALIDATION = "query.validation";
     public static final String CRON_EXPRESSION_VALIDATION = "cron.expression.validation";
     public static final String DATASOURCE_VALIDATION = "datasource.validation";
-    public static final String QUERY_RUN_ADDITION_SUCCESS = "query.run.addition.success";
+    public static final String QUERY_RUN_WITH_CRON_ADDITION_SUCCESS = "query.run.with.cron.addition.success";
+    public static final String QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS = "query.run.without.cron.addition.success";
     public static final String QUERY_RUN_UPDATE_SUCCESS = "query.run.update.success";
     public static final String QUERY_RUN_ADDITION_FAILURE = "query.run.addition.failure";
     public static final String KILL_QUERY = "kill.query";
