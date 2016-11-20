@@ -32,6 +32,7 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
 import static com.kwery.tests.util.TestUtil.queryRun;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 
+//TODO - This should be merged with SqlQueryDaoPersistTest
 public class SqlQueryDaoPersistWithDependentsTest extends RepoDashDaoTestBase {
     protected DatasourceDao datasourceDao;
     protected SqlQueryDao sqlQueryDao;
