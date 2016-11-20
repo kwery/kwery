@@ -1,11 +1,11 @@
-package com.kwery.tests.services;
+package com.kwery.tests.services.oneoffexecution;
 
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
+import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
 import com.kwery.services.scheduler.SchedulerService;
-import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.MySqlDocker;
@@ -15,9 +15,6 @@ import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
-
-import java.util.concurrent.TimeUnit;
 
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
@@ -31,18 +28,21 @@ import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_QUERY;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
-public class SchedulerServiceStopSchedulerWithSleepQueryTest extends RepoDashTestBase {
+public class SchedulerServiceOneOffExecutionBaseTest extends RepoDashTestBase {
     protected MySqlDocker mySqlDocker;
     protected SchedulerService schedulerService;
+    protected SqlQueryDao sqlQueryDao;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
     protected SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
+    protected OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper;
+
+    protected int successQueryId = 1;
+    protected int sleepQueryId = 2;
+    protected int failQueryId = 3;
 
     @Before
-    public void setUpSchedulerServiceStopSchedulerWithRegularQueryTest() {
+    public void setUpSchedulerServiceOneOffExecutionBaseTest() {
         mySqlDocker = new MySqlDocker();
         mySqlDocker.start();
 
@@ -57,36 +57,23 @@ public class SchedulerServiceStopSchedulerWithSleepQueryTest extends RepoDashTes
                                 .build(),
                         insertInto(SqlQuery.TABLE)
                                 .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
-                                .values(1, "* * * * *", "testQuery0", "select sleep(84000)", 1)
+                                .values(successQueryId, "", "selectQuery", "select * from mysql.db", 1)
+                                .values(sleepQueryId, "", "sleepQuery", "select sleep(100000)", 1)
+                                .values(failQueryId, "", "failQuery", "select * from foo", 1)
                                 .build()
                 )
         ).launch();
 
         schedulerService = getInstance(SchedulerService.class);
-        schedulerService.schedule(getInstance(SqlQueryDao.class).getById(1));
-
+        sqlQueryDao = getInstance(SqlQueryDao.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
+
         sqlQueryTaskSchedulerHolder = getInstance(SqlQueryTaskSchedulerHolder.class);
-    }
-
-    @Test
-    public void test() throws InterruptedException {
-        TimeUnit.SECONDS.sleep(70);
-        schedulerService.stopScheduler(1);
-
-        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
-        filter.setSqlQueryId(1);
-
-        long countBeforeSleep = sqlQueryExecutionDao.count(filter);
-        TimeUnit.SECONDS.sleep(70);
-        long countAfterSleep = sqlQueryExecutionDao.count(filter);
-
-        assertThat(sqlQueryTaskSchedulerHolder.get(1), empty());
-        assertThat("No new query was executed after stopping the scheduler", countBeforeSleep, is(countAfterSleep));
+        oneOffSqlQueryTaskSchedulerReaper = getInstance(OneOffSqlQueryTaskSchedulerReaper.class);
     }
 
     @After
-    public void tearDownSchedulerServiceStopSchedulerWithRegularQueryTest() {
+    public void tearDownSchedulerServiceTestDirectExecution() {
         mySqlDocker.tearDown();
     }
 }

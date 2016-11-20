@@ -6,6 +6,8 @@ define(["knockout", "jquery", "text!components/sql-query/list.html"], function (
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
+        self.executeNowButtonLabel = ko.observable("Execute Now");
+
         $.ajax({
             url: "/api/sql-query/list",
             type: "get",
@@ -31,6 +33,21 @@ define(["knockout", "jquery", "text!components/sql-query/list.html"], function (
 
                     if (result.status === "success") {
                         self.sqlQueries.remove(sqlQuery);
+                    }
+                }
+            });
+        };
+
+        self.executeNow = function(sqlQuery) {
+            $.ajax({
+                url: "/api/sql-query/one-off-execution/" + sqlQuery.id,
+                type: "POST",
+                contentType: "application/json",
+                success: function(result) {
+                    //TODO - Handle else case
+                    if (result.status === "success") {
+                        self.status(result.status);
+                        self.messages(result.messages);
                     }
                 }
             });

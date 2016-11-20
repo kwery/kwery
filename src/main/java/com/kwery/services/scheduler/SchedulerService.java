@@ -1,10 +1,8 @@
 package com.kwery.services.scheduler;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
@@ -14,9 +12,9 @@ import ninja.lifecycle.Start;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Singleton
@@ -27,44 +25,56 @@ public class SchedulerService {
     protected SqlQueryDao sqlQueryDao;
 
     @Inject
-    private DatasourceDao datasourceDao;
-
-    @Inject
     protected QueryTaskSchedulerFactory queryTaskSchedulerFactory;
 
     @Inject
     protected Provider<SqlQuery> queryRunProvider;
 
-    protected Map<Integer, SqlQueryTaskScheduler> queryRunSchedulerMap = new HashMap<>();
-
-    //TODO Rollback on error
-    public void schedule(SqlQueryDto dto) {
-        Datasource datasource = datasourceDao.getById(dto.getDatasourceId());
-        SqlQuery model = toModel(dto, datasource);
-        sqlQueryDao.save(model);
-        schedule(model);
-    }
+    @Inject
+    protected SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
 
     public void schedule(SqlQuery sqlQuery) {
         SqlQueryTaskScheduler sqlQueryTaskScheduler = queryTaskSchedulerFactory.create(new CopyOnWriteArrayList<>(), sqlQuery);
-        queryRunSchedulerMap.put(sqlQuery.getId(), sqlQueryTaskScheduler);
+        sqlQueryTaskSchedulerHolder.add(sqlQuery.getId(), sqlQueryTaskScheduler);
     }
 
     public void stopScheduler(int sqlQueryId) {
-        queryRunSchedulerMap.get(sqlQueryId).stopScheduler();
-        queryRunSchedulerMap.remove(sqlQueryId);
+        sqlQueryTaskSchedulerHolder.get(sqlQueryId).forEach(SqlQueryTaskScheduler::stopScheduler);
+        sqlQueryTaskSchedulerHolder.remove(sqlQueryId);
     }
 
     public List<OngoingSqlQueryTask> ongoingQueryTasks(Integer sqlQueryId) {
-        return queryRunSchedulerMap.get(sqlQueryId).ongoingQueryTasks();
+        List<OngoingSqlQueryTask> ongoingSqlQueryTasks = new LinkedList<>();
+
+        for (SqlQueryTaskScheduler sqlQueryTaskScheduler : sqlQueryTaskSchedulerHolder.get(sqlQueryId)) {
+            ongoingSqlQueryTasks.addAll(sqlQueryTaskScheduler.ongoingQueryTasks());
+        }
+
+        return ongoingSqlQueryTasks;
     }
 
     public void stopExecution(int sqlQueryId, String sqlQueryExecutionId) throws SqlQueryExecutionNotFoundException {
-        SqlQueryTaskScheduler sqlQueryTaskScheduler = queryRunSchedulerMap.get(sqlQueryId);
-        if (sqlQueryTaskScheduler == null) {
+        Collection<SqlQueryTaskScheduler> sqlQueryTaskSchedulers = sqlQueryTaskSchedulerHolder.get(sqlQueryId);
+
+        if (sqlQueryTaskSchedulers == null) {
             throw new SqlQueryExecutionNotFoundException();
         }
-        sqlQueryTaskScheduler.stopExecution(sqlQueryExecutionId);
+
+        //TODO - This is ugly, fix this
+        boolean found = false;
+        for (SqlQueryTaskScheduler sqlQueryTaskScheduler : sqlQueryTaskSchedulers) {
+            try {
+                sqlQueryTaskScheduler.stopExecution(sqlQueryExecutionId);
+                found = true;
+                break;
+            } catch (SqlQueryExecutionNotFoundException e) {
+                //Ignore
+            }
+        }
+
+        if (!found) {
+            throw new SqlQueryExecutionNotFoundException();
+        }
     }
 
     public SqlQuery toModel(SqlQueryDto dto, Datasource datasource) {
@@ -78,32 +88,33 @@ public class SchedulerService {
 
     @Start
     public void scheduleAllQueries() {
-        logger.info("Scheduling all queries");
-        sqlQueryDao.getAll().forEach(this::schedule);
+        List<SqlQuery> allWithSchedule = sqlQueryDao.getAllWithSchedule();
+        logger.info("Scheduling {} queries with schedule", allWithSchedule.size());
+        allWithSchedule.forEach(this::schedule);
     }
 
     @Dispose
     public void shutdownSchedulers() {
         logger.info("Stopping all schedulers");
-        for (SqlQueryTaskScheduler sqlQueryTaskScheduler : queryRunSchedulerMap.values()) {
+
+        Collection<SqlQueryTaskScheduler> all = sqlQueryTaskSchedulerHolder.all();
+
+        logger.info("Stopping {} schedulers", all.size());
+
+        for (SqlQueryTaskScheduler sqlQueryTaskScheduler : all) {
             sqlQueryTaskScheduler.stopScheduler();
         }
-    }
-
-    @VisibleForTesting
-    public Map<Integer, SqlQueryTaskScheduler> getQueryRunSchedulerMap() {
-        return queryRunSchedulerMap;
     }
 
     public void setSqlQueryDao(SqlQueryDao sqlQueryDao) {
         this.sqlQueryDao = sqlQueryDao;
     }
 
-    public void setDatasourceDao(DatasourceDao datasourceDao) {
-        this.datasourceDao = datasourceDao;
-    }
-
     public void setQueryRunProvider(Provider<SqlQuery> queryRunProvider) {
         this.queryRunProvider = queryRunProvider;
+    }
+
+    public void setSqlQueryTaskSchedulerHolder(SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder) {
+        this.sqlQueryTaskSchedulerHolder = sqlQueryTaskSchedulerHolder;
     }
 }

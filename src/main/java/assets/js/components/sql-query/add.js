@@ -58,10 +58,6 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
                     required: ko.i18n("query.validation"),
                     minlength: ko.i18n("query.validation")
                 },
-                cronExpression: {
-                    required: ko.i18n("cron.expression.validation"),
-                    minlength: ko.i18n("cron.expression.validation")
-                },
                 label: {
                     required: ko.i18n("label.validation"),
                     minlength: ko.i18n("label.validation")

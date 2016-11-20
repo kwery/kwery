@@ -3,7 +3,6 @@ package com.kwery.controllers.apis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.kwery.dao.DatasourceDao;
@@ -17,6 +16,10 @@ import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
+import com.kwery.services.scheduler.SchedulerService;
+import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
+import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -27,10 +30,6 @@ import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.kwery.services.scheduler.SchedulerService;
-import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
-import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.views.ActionResult;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -40,16 +39,19 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static com.kwery.controllers.ControllerUtil.fieldMessages;
 import static com.kwery.controllers.MessageKeys.DATASOURCE_VALIDATION;
+import static com.kwery.controllers.MessageKeys.ONE_OFF_EXECUTION_SUCCESS_MESSAGE;
 import static com.kwery.controllers.MessageKeys.QUERY_RUN_ADDITION_FAILURE;
-import static com.kwery.controllers.MessageKeys.QUERY_RUN_ADDITION_SUCCESS;
 import static com.kwery.controllers.MessageKeys.QUERY_RUN_UPDATE_SUCCESS;
+import static com.kwery.controllers.MessageKeys.QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS;
+import static com.kwery.controllers.MessageKeys.QUERY_RUN_WITH_CRON_ADDITION_SUCCESS;
 import static com.kwery.controllers.MessageKeys.SQL_QUERY_DELETE_SUCCESS;
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
-import static ninja.Results.json;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
+import static ninja.Results.json;
 
 public class SqlQueryApiController {
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -147,17 +149,29 @@ public class SqlQueryApiController {
                     );
                 } else {
                     sqlQueryDao.save(model);
-                    actionResult = new ActionResult(
-                            success,
-                            messages.get(QUERY_RUN_ADDITION_SUCCESS, context, Optional.of(json)).get()
-                    );
+
+                    if (isOneOffSqlQuery(sqlQueryDto)) {
+                        actionResult = new ActionResult(
+                                success,
+                                messages.get(QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS, context, Optional.of(json)).get()
+                        );
+                    } else {
+                        actionResult = new ActionResult(
+                                success,
+                                messages.get(QUERY_RUN_WITH_CRON_ADDITION_SUCCESS, context, Optional.of(json)).get()
+                        );
+                        schedulerService.schedule(model);
+                    }
                 }
-                schedulerService.schedule(model);
             }
         }
 
         if (logger.isTraceEnabled()) logger.trace("<");
         return json.render(actionResult);
+    }
+
+    protected boolean isOneOffSqlQuery(SqlQueryDto sqlQueryDto) {
+        return "".equals(nullToEmpty(sqlQueryDto.getCronExpression()));
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -215,19 +229,19 @@ public class SqlQueryApiController {
         dbFilter.setPageNumber(filterDto.getPageNumber());
         dbFilter.setResultCount(filterDto.getResultCount());
 
-        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionStartStart()))) {
+        if (!"".equals(nullToEmpty(filterDto.getExecutionStartStart()))) {
             dbFilter.setExecutionStartStart(getTime(filterDto.getExecutionStartStart()));
         }
 
-        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionStartEnd()))) {
+        if (!"".equals(nullToEmpty(filterDto.getExecutionStartEnd()))) {
             dbFilter.setExecutionStartEnd(getTime(filterDto.getExecutionStartEnd()));
         }
 
-        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionEndStart()))) {
+        if (!"".equals(nullToEmpty(filterDto.getExecutionEndStart()))) {
             dbFilter.setExecutionEndStart(getTime(filterDto.getExecutionEndStart()));
         }
 
-        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionEndEnd()))) {
+        if (!"".equals(nullToEmpty(filterDto.getExecutionEndEnd()))) {
             dbFilter.setExecutionEndEnd(getTime(filterDto.getExecutionEndEnd()));
         }
 
@@ -341,6 +355,26 @@ public class SqlQueryApiController {
         return json().render(dtos);
     }
 
+    //TODO - Error handling
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result oneOffSqlQueryExecution(@PathParam("sqlQueryId") int sqlQueryId, Context context) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+
+        logger.info("One off execution of query - " + sqlQueryId);
+
+        SqlQuery sqlQuery = sqlQueryDao.getById(sqlQueryId);
+        sqlQuery.setCronExpression("");
+
+        schedulerService.schedule(sqlQuery);
+
+        Result json = json();
+        String message = messages.get(ONE_OFF_EXECUTION_SUCCESS_MESSAGE, context, Optional.of(json), sqlQuery.getLabel()).get();
+
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        return json().render(new ActionResult(ActionResult.Status.success, message));
+    }
+
     public SqlQueryExecutionDto from(SqlQueryExecution model) {
         SqlQueryExecutionDto dto = new SqlQueryExecutionDto();
         dto.setSqlQueryLabel(model.getSqlQuery().getLabel());
@@ -394,7 +428,7 @@ public class SqlQueryApiController {
             model.setId(dto.getId());
         }
 
-        model.setCronExpression(dto.getCronExpression());
+        model.setCronExpression(nullToEmpty(dto.getCronExpression()).trim());
         model.setLabel(dto.getLabel());
         model.setQuery(dto.getQuery());
         model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
