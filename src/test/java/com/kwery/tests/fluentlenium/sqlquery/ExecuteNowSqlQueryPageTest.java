@@ -20,7 +20,6 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
@@ -33,7 +32,9 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_QUERY;
+import static com.kwery.tests.util.Messages.EXECUTE_NOW_M;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -124,13 +125,14 @@ public class ExecuteNowSqlQueryPageTest extends RepoDashFluentLeniumTest {
 
             if (label.equals(row.get(0))) {
                 page.executeNow(i);
+                assertThat(page.executeNowLabel(i), is(EXECUTE_NOW_M));
                 break;
             }
         }
 
         page.waitForExecuteNowSuccessMessage(label);
 
-        TimeUnit.SECONDS.sleep(30);
+        SECONDS.sleep(30);
 
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(labelQueryIdMap.get(label));

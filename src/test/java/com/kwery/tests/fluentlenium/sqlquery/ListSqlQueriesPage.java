@@ -66,10 +66,22 @@ public class ListSqlQueriesPage extends FluentPage implements RepoDashPage {
         tr.find(className("delete")).click();
     }
 
+    public String deleteLabel(int row) {
+        FluentList<FluentWebElement> fluentWebElements = find("#sqlQueriesListTableBody tr");
+        FluentWebElement tr = fluentWebElements.get(row);
+        return tr.find(className("delete")).getText();
+    }
+
     public void executeNow(int row) {
         FluentList<FluentWebElement> fluentWebElements = find("#sqlQueriesListTableBody tr");
         FluentWebElement tr = fluentWebElements.get(row);
         tr.find(className("f-execute-now")).click();
+    }
+
+    public String executeNowLabel(int row) {
+        FluentList<FluentWebElement> fluentWebElements = find("#sqlQueriesListTableBody tr");
+        FluentWebElement tr = fluentWebElements.get(row);
+        return tr.find(className("f-execute-now")).getText();
     }
 
     public void waitForDeleteSuccessMessage(String label) {

@@ -69,4 +69,5 @@ public class Messages {
     public static final String REPORT_M = "Report";
     public static final String REPORTS_M = "Reports";
     public static final String ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M = "{0} SQL Query will be executed soon";
+    public static final String EXECUTE_NOW_M = "Execute Now";
 }
