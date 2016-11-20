@@ -385,6 +385,7 @@
             <version>2.5.3</version>
             <scope>test</scope>
         </dependency>
+        <!-- TODO Remove shazamcrest dependency -->
         <dependency>
             <groupId>org.exparity</groupId>
             <artifactId>hamcrest-bean</artifactId>
