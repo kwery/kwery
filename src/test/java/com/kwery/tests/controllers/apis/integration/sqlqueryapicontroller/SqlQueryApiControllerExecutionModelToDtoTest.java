@@ -13,7 +13,7 @@ import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryExecutionModelToDtoTest {
+public class SqlQueryApiControllerExecutionModelToDtoTest {
     @Test
     public void test() {
         Datasource datasource = new Datasource();

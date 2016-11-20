@@ -1,27 +1,28 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.LoginPage;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.User;
-import org.junit.Before;
-import org.junit.Test;
 import com.kwery.services.scheduler.SchedulerService;
+import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
+import com.kwery.tests.fluentlenium.user.login.LoginPage;
+import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.tests.util.MySqlDocker;
 import com.kwery.tests.util.TestUtil;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.util.Messages.DELETE_M;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -87,6 +88,9 @@ public class DeleteSqlQueryPageTest extends RepoDashFluentLeniumTest {
     public void test() {
         page.waitForRows(2);
         page.delete(0);
+
+        assertThat(page.deleteLabel(0), is(DELETE_M));
+
         page.waitForDeleteSuccessMessage(queries.get(0).getLabel());
         List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(1));

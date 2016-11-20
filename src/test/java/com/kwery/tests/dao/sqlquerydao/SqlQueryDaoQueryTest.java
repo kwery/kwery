@@ -4,20 +4,15 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
+import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static com.kwery.tests.util.TestUtil.queryRun;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 public class SqlQueryDaoQueryTest extends RepoDashDaoTestBase {
     protected SqlQueryDao dao;
@@ -46,13 +41,6 @@ public class SqlQueryDaoQueryTest extends RepoDashDaoTestBase {
     public void testGetByLabel() {
         SqlQuery fromDb = dao.getByLabel(sqlQuery0.getLabel());
         assertThat(fromDb, notNullValue());
-    }
-
-    @Test
-    public void testGetAll() {
-        List<SqlQuery> sqlQueries = dao.getAll();
-        assertThat(sqlQueries, hasSize(2));
-        assertThat(sqlQueries, hasItems(instanceOf(SqlQuery.class)));
     }
 
     @Test

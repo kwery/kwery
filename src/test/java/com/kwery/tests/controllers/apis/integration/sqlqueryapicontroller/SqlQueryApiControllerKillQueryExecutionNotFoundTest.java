@@ -14,7 +14,7 @@ import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryKillQueryExecutionNotFoundTest extends AbstractPostLoginApiTest {
+public class SqlQueryApiControllerKillQueryExecutionNotFoundTest extends AbstractPostLoginApiTest {
     @Test
     public void test() {
         SqlQueryApiController.SqlQueryExecutionIdContainer sqlQueryExecutionIdContainer = new SqlQueryApiController.SqlQueryExecutionIdContainer();

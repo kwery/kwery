@@ -60,11 +60,16 @@ public class SqlQueryDao {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @UnitOfWork
     public List<SqlQuery> getAll() {
         EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT q FROM SqlQuery q").getResultList();
+        return m.createQuery("SELECT q FROM SqlQuery q", SqlQuery.class).getResultList();
+    }
+
+    @UnitOfWork
+    public List<SqlQuery> getAllWithSchedule() {
+        EntityManager m = entityManagerProvider.get();
+        return m.createQuery("SELECT q FROM SqlQuery q where q.cronExpression is not null and q.cronExpression <> ''", SqlQuery.class).getResultList();
     }
 
     @SuppressWarnings("unchecked")

@@ -35,6 +35,7 @@ public class Routes implements ApplicationRoutes {
     public static final String DELETE_DATASOURCE_API = "/api/datasource/delete/{datasourceId}";
     public static final String ONBOARDING_ADD_ROOT_USER_API = "/api/onboarding/user/add";
     public static final String ONBOARDING_NEXT_ACTION_API = "/api/onboarding/next-action";
+    public static final String SQL_QUERY_ONE_OFF_EXECUTION_API = "/api/sql-query/one-off-execution/{sqlQueryId}";
 
     @Override
     public void init(Router router) {
@@ -64,6 +65,7 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(LIST_LATEST_SQL_QUERY_EXECUTIONS_API).with(SqlQueryApiController.class, "latestSqlQueryExecutions");
         router.GET().route(SQL_QUERY_API).with(SqlQueryApiController.class, "sqlQuery");
         router.POST().route(DELETE_SQL_QUERY_API).with(SqlQueryApiController.class, "delete");
+        router.POST().route(SQL_QUERY_ONE_OFF_EXECUTION_API).with(SqlQueryApiController.class, "oneOffSqlQueryExecution");
 
         router.POST().route(ONBOARDING_ADD_ROOT_USER_API).with(OnboardingApiController.class, "addRootUser");
         router.GET().route(ONBOARDING_NEXT_ACTION_API).with(OnboardingApiController.class, "nextAction");

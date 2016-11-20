@@ -32,7 +32,7 @@ import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 import static com.kwery.tests.util.TestUtil.sleepSqlQuery;
 
-public class SqlQueryKillQuerySuccessTest extends AbstractPostLoginApiTest {
+public class SqlQueryApiControllerKillQuerySuccessTest extends AbstractPostLoginApiTest {
     protected MySqlDocker mySqlDocker = new MySqlDocker();
 
     protected SchedulerService schedulerService;

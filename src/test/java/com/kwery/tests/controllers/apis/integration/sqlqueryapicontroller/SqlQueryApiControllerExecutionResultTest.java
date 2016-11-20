@@ -43,7 +43,7 @@ import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryExecutionResultTest extends AbstractPostLoginApiTest {
+public class SqlQueryApiControllerExecutionResultTest extends AbstractPostLoginApiTest {
     protected String jsonResult;
     protected String executionId = "executionId";
 

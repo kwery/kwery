@@ -2,26 +2,25 @@ package com.kwery.tests.controllers.apis.integration.sqlqueryapicontroller;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dtos.SqlQueryDto;
-import org.junit.Before;
-import org.junit.Test;
+import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.util.Messages;
 import com.kwery.views.ActionResult;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import static com.kwery.conf.Routes.ADD_SQL_QUERY_API;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static com.kwery.tests.util.Messages.CRON_EXPRESSION_VALIDATION_M;
 import static com.kwery.tests.util.Messages.LABEL_VALIDATION_M;
 import static com.kwery.tests.util.Messages.QUERY_VALIDATION_M;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
-public class AddSqlQueryValidationTest extends AbstractPostLoginApiTest {
+public class SqlQueryApiControllerAddValidationTest extends AbstractPostLoginApiTest {
     protected SqlQueryDao dao;
 
     @Before
@@ -32,7 +31,6 @@ public class AddSqlQueryValidationTest extends AbstractPostLoginApiTest {
     protected static final Map<String, List<String>> EXPECTED_MESSAGE_MAP = ImmutableMap.of(
             "query", ImmutableList.of(QUERY_VALIDATION_M),
             "label", ImmutableList.of(LABEL_VALIDATION_M),
-            "cronExpression", ImmutableList.of(CRON_EXPRESSION_VALIDATION_M),
             "datasourceId", ImmutableList.of(Messages.DATASOURCE_VALIDATION_M)
     );
 

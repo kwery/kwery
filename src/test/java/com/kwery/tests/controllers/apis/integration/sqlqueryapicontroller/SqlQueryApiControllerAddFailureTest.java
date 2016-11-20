@@ -17,7 +17,7 @@ import static java.text.MessageFormat.format;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static com.kwery.tests.util.TestUtil.queryRunDto;
 
-public class AddSqlQueryFailureTest extends AbstractPostLoginApiTest {
+public class SqlQueryApiControllerAddFailureTest extends AbstractPostLoginApiTest {
     protected Datasource addedDatasource;
     protected SqlQueryDto dto;
     protected SqlQueryDao dao;
