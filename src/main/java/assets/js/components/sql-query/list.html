@@ -12,7 +12,7 @@
                     <th data-bind="text: ko.i18n('cron.expression')"></th>
                     <th data-bind="text: ko.i18n('query')"></th>
                     <th data-bind="text: ko.i18n('datasource')"></th>
-                    <th data-bind="text: ko.i18n('delete')"></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody data-bind="foreach: sqlQueries" id="sqlQueriesListTableBody">
@@ -25,7 +25,8 @@
                     <td data-bind="text: query"></td>
                     <td data-bind="text: datasource.label"></td>
                     <td>
-                        <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="btn btn-danger delete">Delete</button>
+                        <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="btn btn-danger delete"></button>
+                        <button data-bind="text: ko.i18n('execute.now'), click: $parent.executeNow" class="btn btn-primary f-execute-now"></button>
                     </td>
                 </tr>
                 </tbody>

@@ -17,6 +17,10 @@ import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
+import com.kwery.services.scheduler.SchedulerService;
+import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
+import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -27,10 +31,6 @@ import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.kwery.services.scheduler.SchedulerService;
-import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
-import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.views.ActionResult;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -42,14 +42,15 @@ import java.util.List;
 
 import static com.kwery.controllers.ControllerUtil.fieldMessages;
 import static com.kwery.controllers.MessageKeys.DATASOURCE_VALIDATION;
+import static com.kwery.controllers.MessageKeys.ONE_OFF_EXECUTION_SUCCESS_MESSAGE;
 import static com.kwery.controllers.MessageKeys.QUERY_RUN_ADDITION_FAILURE;
 import static com.kwery.controllers.MessageKeys.QUERY_RUN_ADDITION_SUCCESS;
 import static com.kwery.controllers.MessageKeys.QUERY_RUN_UPDATE_SUCCESS;
 import static com.kwery.controllers.MessageKeys.SQL_QUERY_DELETE_SUCCESS;
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
-import static ninja.Results.json;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
+import static ninja.Results.json;
 
 public class SqlQueryApiController {
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -152,7 +153,10 @@ public class SqlQueryApiController {
                             messages.get(QUERY_RUN_ADDITION_SUCCESS, context, Optional.of(json)).get()
                     );
                 }
-                schedulerService.schedule(model);
+
+                if (!"".equals(Strings.nullToEmpty(model.getCronExpression()))) {
+                    schedulerService.schedule(model);
+                }
             }
         }
 
@@ -339,6 +343,26 @@ public class SqlQueryApiController {
         if (logger.isTraceEnabled()) logger.trace("<");
 
         return json().render(dtos);
+    }
+
+    //TODO - Error handling
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result oneOffSqlQueryExecution(@PathParam("sqlQueryId") int sqlQueryId, Context context) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+
+        logger.info("One off execution of query - " + sqlQueryId);
+
+        SqlQuery sqlQuery = sqlQueryDao.getById(sqlQueryId);
+        sqlQuery.setCronExpression("");
+
+        schedulerService.schedule(sqlQuery);
+
+        Result json = json();
+        String message = messages.get(ONE_OFF_EXECUTION_SUCCESS_MESSAGE, context, Optional.of(json), sqlQuery.getLabel()).get();
+
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        return json().render(new ActionResult(ActionResult.Status.success, message));
     }
 
     public SqlQueryExecutionDto from(SqlQueryExecution model) {

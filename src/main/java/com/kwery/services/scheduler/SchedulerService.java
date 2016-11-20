@@ -3,7 +3,6 @@ package com.kwery.services.scheduler;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
@@ -26,9 +25,6 @@ public class SchedulerService {
     protected SqlQueryDao sqlQueryDao;
 
     @Inject
-    private DatasourceDao datasourceDao;
-
-    @Inject
     protected QueryTaskSchedulerFactory queryTaskSchedulerFactory;
 
     @Inject
@@ -36,14 +32,6 @@ public class SchedulerService {
 
     @Inject
     protected SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
-
-    //TODO Rollback on error
-    public void schedule(SqlQueryDto dto) {
-        Datasource datasource = datasourceDao.getById(dto.getDatasourceId());
-        SqlQuery model = toModel(dto, datasource);
-        sqlQueryDao.save(model);
-        schedule(model);
-    }
 
     public void schedule(SqlQuery sqlQuery) {
         SqlQueryTaskScheduler sqlQueryTaskScheduler = queryTaskSchedulerFactory.create(new CopyOnWriteArrayList<>(), sqlQuery);
@@ -120,10 +108,6 @@ public class SchedulerService {
 
     public void setSqlQueryDao(SqlQueryDao sqlQueryDao) {
         this.sqlQueryDao = sqlQueryDao;
-    }
-
-    public void setDatasourceDao(DatasourceDao datasourceDao) {
-        this.datasourceDao = datasourceDao;
     }
 
     public void setQueryRunProvider(Provider<SqlQuery> queryRunProvider) {

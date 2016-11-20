@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static com.kwery.tests.util.Messages.ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M;
+import static com.kwery.tests.util.Messages.SQL_QUERY_DELETE_SUCCESS_M;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.By.tagName;
-import static com.kwery.tests.util.Messages.SQL_QUERY_DELETE_SUCCESS_M;
 
 public class ListSqlQueriesPage extends FluentPage implements RepoDashPage {
     public static final int LIST_SQL_QUERIES_COLUMNS = 4;
@@ -65,7 +66,17 @@ public class ListSqlQueriesPage extends FluentPage implements RepoDashPage {
         tr.find(className("delete")).click();
     }
 
+    public void executeNow(int row) {
+        FluentList<FluentWebElement> fluentWebElements = find("#sqlQueriesListTableBody tr");
+        FluentWebElement tr = fluentWebElements.get(row);
+        tr.find(className("f-execute-now")).click();
+    }
+
     public void waitForDeleteSuccessMessage(String label) {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(SQL_QUERY_DELETE_SUCCESS_M, label));
+    }
+
+    public void waitForExecuteNowSuccessMessage(String label) {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M, label));
     }
 }
