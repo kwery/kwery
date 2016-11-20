@@ -14,7 +14,7 @@ import static com.kwery.tests.util.Messages.QUERY_RUN_ADDITION_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static com.kwery.tests.util.TestUtil.queryRunDto;
 
-public class AddSqlQuerySuccessTest extends AbstractPostLoginApiTest {
+public class SqlQueryApiControllerAddSuccessTest extends AbstractPostLoginApiTest {
     protected Datasource datasource;
 
     @Before

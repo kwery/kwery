@@ -20,7 +20,7 @@ import static com.kwery.tests.util.Messages.QUERY_VALIDATION_M;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class AddSqlQueryValidationTest extends AbstractPostLoginApiTest {
+public class SqlQueryApiControllerAddValidationTest extends AbstractPostLoginApiTest {
     protected SqlQueryDao dao;
 
     @Before

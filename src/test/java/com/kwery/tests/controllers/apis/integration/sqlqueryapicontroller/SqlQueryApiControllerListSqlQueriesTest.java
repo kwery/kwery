@@ -31,7 +31,7 @@ import static com.kwery.models.SqlQuery.COLUMN_QUERY;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ListSqlQueriesTest extends AbstractPostLoginApiTest {
+public class SqlQueryApiControllerListSqlQueriesTest extends AbstractPostLoginApiTest {
     @Before
     public void setUpListSqlQueriesTest() {
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
