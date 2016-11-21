@@ -147,8 +147,15 @@ public class SqlQueryApiController {
                             success,
                             messages.get(QUERY_RUN_UPDATE_SUCCESS, context, Optional.of(json)).get()
                     );
+                    schedulerService.schedule(model);
                 } else {
                     sqlQueryDao.save(model);
+
+                    if (sqlQueryDto.getDependsOnSqlQueryId() != null && sqlQueryDto.getDependsOnSqlQueryId() > 0) {
+                        SqlQuery dependsOnSqlQuery = sqlQueryDao.getById(sqlQueryDto.getDependsOnSqlQueryId());
+                        dependsOnSqlQuery.getDependentQueries().add(model);
+                        sqlQueryDao.update(dependsOnSqlQuery);
+                    }
 
                     if (isOneOffSqlQuery(sqlQueryDto)) {
                         actionResult = new ActionResult(
@@ -432,6 +439,7 @@ public class SqlQueryApiController {
         model.setLabel(dto.getLabel());
         model.setQuery(dto.getQuery());
         model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
+
         return model;
     }
 

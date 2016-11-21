@@ -9,22 +9,36 @@ import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.support.FindBy;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
 import static com.kwery.tests.util.Messages.QUERY_RUN_ADDITION_FAILURE_M;
+import static com.kwery.tests.util.Messages.QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS_M;
 import static com.kwery.tests.util.Messages.QUERY_RUN_WITH_CRON_ADDITION_SUCCESS_M;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.openqa.selenium.By.className;
+import static org.openqa.selenium.By.id;
 
 public class AddSqlQueryPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "queryRunForm")
     protected FluentWebElement form;
 
-    public void submitForm(SqlQueryDto dto) {
+    public void submitForm(SqlQueryDto dto, boolean fillCron) {
         fill("textarea").with(dto.getQuery());
-        fill("input").with(dto.getCronExpression(), dto.getLabel());
+
+        //TODO - Needs to be better
+        if (fillCron) {
+            fill("input").with(dto.getCronExpression(), dto.getLabel());
+        } else {
+            fill("input").with(dto.getLabel());
+        }
+
         fillSelect("#datasourceId").withIndex(0);
+        if (isDependsOnSqlQueryDisplayed()) {
+            fillSelect("#dependsOnSqlQueryId").withIndex(0);
+        }
         click("#create");
     }
 
@@ -32,8 +46,12 @@ public class AddSqlQueryPage extends FluentPage implements RepoDashPage {
         click("#create");
     }
 
-    public void waitForSuccessMessage() {
+    public void waitForScheduledMessageSuccess() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(QUERY_RUN_WITH_CRON_ADDITION_SUCCESS_M);
+    }
+
+    public void waitForDependsOnQueryMessageSuccess() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS_M);
     }
 
     public void waitForDuplicateLabelMessage(String label) {
@@ -55,5 +73,45 @@ public class AddSqlQueryPage extends FluentPage implements RepoDashPage {
     @Override
     public String getUrl() {
         return "/#sql-query/add";
+    }
+
+    public boolean isDependsOnSqlQueryDisplayed() {
+       return $(className("f-depends-on-sql-query")).first().isDisplayed();
+    }
+
+    public boolean enableDependsOnSqlQueryLinkDisplayed() {
+        return $(className("f-enable-depends-on-sql-query")).first().isDisplayed();
+    }
+
+    public boolean enableCronExpressionLinkDisplayed() {
+        return $(className("f-enable-cron-expression")).first().isDisplayed();
+    }
+
+    public boolean isDependsOnSqlQueryEnabled() {
+        return $(id("dependsOnSqlQueryId")).first().isEnabled();
+    }
+
+    public void awaitTillDependsOnSqlQueryIsEnabled() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($("#dependsOnSqlQueryId")).isEnabled();
+    }
+
+    public boolean isCronExpressionEnabled() {
+        return $(id("cronExpression")).first().isEnabled();
+    }
+
+    public void clickEnableCronExpression() {
+        $(className("f-enable-cron-expression")).click();
+    }
+
+    public void clickEnableDependsOnSqlQuery() {
+        $(className("f-enable-depends-on-sql-query")).click();
+    }
+
+    public void waitForEnableCronExpression() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until("#cronExpression").isEnabled();
+    }
+
+    public void waitForEnableDependsOnSqlQuery() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until("#dependsOnSqlQueryId").isEnabled();
     }
 }

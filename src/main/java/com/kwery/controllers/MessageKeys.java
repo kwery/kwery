@@ -1,7 +1,5 @@
 package com.kwery.controllers;
 
-import static com.sun.deploy.security.ruleset.DRSResult.Type.RUN;
-
 /**
  * Holds keys present in messages.properties file.
  *

@@ -5,15 +5,15 @@ import org.junit.Test;
 
 import static com.kwery.tests.util.TestUtil.queryRunDto;
 
-public class AddSqlQueryDuplicateLabelTest extends AddSqlQuerySuccessTest {
+public class AddSqlQueryWithoutDependsOnDuplicateLabelTest extends AddSqlQueryWithoutDependsOnSuccessTest {
     @Test
     public void test() {
         super.test();
 
         SqlQueryDto dto = queryRunDto();
-        dto.setDatasourceId(datasource.getId());
+        dto.setDatasourceId(datasourceId);
 
-        page.submitForm(dto);
+        page.submitForm(dto, true);
         page.waitForDuplicateLabelMessage(dto.getLabel());
     }
 }

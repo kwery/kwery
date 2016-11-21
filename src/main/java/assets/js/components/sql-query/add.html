@@ -21,7 +21,18 @@
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('cron.expression')" for="cronExpression"></label>
-                    <input data-bind="value: cronExpression" type="text" class="form-control" id="cronExpression" name="cronExpression">
+                    <a data-bind="click: enableCronExpression, text: ko.i18n('enable'), visible: cronExpressionEnableDisplay" class="pull-right f-enable-cron-expression"></a>
+                    <input data-bind="value: cronExpression, enable: cronExpressionEnabled" type="text" class="form-control" id="cronExpression" name="cronExpression">
+                </div>
+                <div class="form-group f-depends-on-sql-query" data-bind="visible: showDependsOnSqlQueries">
+                    <label  data-bind="text: ko.i18n('execute.after')" for="dependsOnSqlQueryId"></label>
+                    <a data-bind="click: enableDependsOnSqlQuery, text: ko.i18n('enable'), visible: dependsOnSqlQueryEnableDisplay"
+                       class="pull-right f-enable-depends-on-sql-query"></a>
+                    <select id="dependsOnSqlQueryId" name="dependsOnSqlQueryId" disabled class="form-control" data-bind="options: dependsOnSqlQueries,
+                                                                        optionsText: 'label',
+                                                                        value: dependsOnSqlQuery,
+                                                                        enable: dependsOnSqlQueryEnabled">
+                    </select>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('label')" for="label"></label>
