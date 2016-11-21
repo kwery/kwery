@@ -21,6 +21,8 @@ public class SqlQueryDto {
     @NotNull(message = "datasource.validation")
     private Integer datasourceId;
 
+    private Integer dependsOnSqlQueryId;
+
     public int getId() {
         return id;
     }
@@ -59,5 +61,13 @@ public class SqlQueryDto {
 
     public void setDatasourceId(Integer datasourceId) {
         this.datasourceId = datasourceId;
+    }
+
+    public Integer getDependsOnSqlQueryId() {
+        return dependsOnSqlQueryId;
+    }
+
+    public void setDependsOnSqlQueryId(Integer dependsOnSqlQueryId) {
+        this.dependsOnSqlQueryId = dependsOnSqlQueryId;
     }
 }

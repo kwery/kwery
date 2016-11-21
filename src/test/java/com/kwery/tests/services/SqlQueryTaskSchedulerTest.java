@@ -1,12 +1,14 @@
 package com.kwery.tests.services;
 
 import com.google.inject.Provider;
+import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
+import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryTask;
 import com.kwery.services.scheduler.SqlQueryTaskExecutorListener;
@@ -33,6 +35,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -60,6 +63,10 @@ public class SqlQueryTaskSchedulerTest {
     private SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
     @Mock
     private OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper;
+    @Mock
+    private SchedulerService schedulerService;
+    @Mock
+    private SqlQueryDao sqlQueryDao;
 
     private SqlQuery sqlQuery;
     private Datasource datasource;
@@ -70,6 +77,8 @@ public class SqlQueryTaskSchedulerTest {
     @Before
     public void setUpQueryTaskSchedulerTest() {
         sqlQuery = queryRun();
+        sqlQuery.setDependentQueries(new LinkedList<>());
+
         datasource = datasource();
         sqlQuery.setDatasource(datasource);
         sqlQueryExecution = new SqlQueryExecution();
@@ -96,6 +105,8 @@ public class SqlQueryTaskSchedulerTest {
                 sqlQueryTaskExecutorListener,
                 sqlQueryTaskSchedulerHolder,
                 oneOffSqlQueryTaskSchedulerReaper,
+                schedulerService,
+                sqlQueryDao,
                 ongoingExecutions,
                 sqlQuery
         );
@@ -113,6 +124,9 @@ public class SqlQueryTaskSchedulerTest {
     public void testTaskSucceeded() {
         List<TaskExecutor> ongoingExecutions = newArrayList(taskExecutor);
 
+        sqlQuery.setDependentQueries(new LinkedList<>());
+        when(sqlQueryDao.getById(anyInt())).thenReturn(sqlQuery);
+
         SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(
                 scheduler,
                 sqlQueryExecutionDao,
@@ -121,6 +135,8 @@ public class SqlQueryTaskSchedulerTest {
                 sqlQueryTaskExecutorListener,
                 sqlQueryTaskSchedulerHolder,
                 oneOffSqlQueryTaskSchedulerReaper,
+                schedulerService,
+                sqlQueryDao,
                 ongoingExecutions,
                 sqlQuery
         );
@@ -133,6 +149,10 @@ public class SqlQueryTaskSchedulerTest {
     @Test
     public void testTaskFailed() {
         List<TaskExecutor> ongoingExecutions = newArrayList(taskExecutor);
+
+        sqlQuery.setDependentQueries(new LinkedList<>());
+        when(sqlQueryDao.getById(anyInt())).thenReturn(sqlQuery);
+
         SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(
                 scheduler,
                 sqlQueryExecutionDao,
@@ -141,6 +161,8 @@ public class SqlQueryTaskSchedulerTest {
                 sqlQueryTaskExecutorListener,
                 sqlQueryTaskSchedulerHolder,
                 oneOffSqlQueryTaskSchedulerReaper,
+                schedulerService,
+                sqlQueryDao,
                 ongoingExecutions,
                 sqlQuery
         );
@@ -160,6 +182,8 @@ public class SqlQueryTaskSchedulerTest {
                 sqlQueryTaskExecutorListener,
                 sqlQueryTaskSchedulerHolder,
                 oneOffSqlQueryTaskSchedulerReaper,
+                schedulerService,
+                sqlQueryDao,
                 ongoingExecutions,
                 sqlQuery
         );
@@ -190,6 +214,8 @@ public class SqlQueryTaskSchedulerTest {
                 sqlQueryTaskExecutorListener,
                 sqlQueryTaskSchedulerHolder,
                 oneOffSqlQueryTaskSchedulerReaper,
+                schedulerService,
+                sqlQueryDao,
                 ongoingExecutions,
                 sqlQuery
         );

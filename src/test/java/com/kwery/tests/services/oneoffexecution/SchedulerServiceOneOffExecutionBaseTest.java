@@ -57,7 +57,7 @@ public class SchedulerServiceOneOffExecutionBaseTest extends RepoDashTestBase {
                                 .build(),
                         insertInto(SqlQuery.TABLE)
                                 .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
-                                .values(successQueryId, "", "selectQuery", "select * from mysql.db", 1)
+                                .values(successQueryId, "", "selectQuery", "select User from mysql.user where User = 'root'", 1)
                                 .values(sleepQueryId, "", "sleepQuery", "select sleep(100000)", 1)
                                 .values(failQueryId, "", "failQuery", "select * from foo", 1)
                                 .build()

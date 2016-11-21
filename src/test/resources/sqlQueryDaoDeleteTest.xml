@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-    <query_run/>
+    <query_run id="2" cron_expression="* * * * *" label="testQuery1" query="select * from foo" datasource_id_fk="1"/>
     <query_run_execution/>
+    <query_run_dependent/>
 </dataset>

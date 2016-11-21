@@ -105,6 +105,16 @@ public class SqlQueryDao {
     @Transactional
     public void delete(int sqlQueryId) {
         EntityManager m = entityManagerProvider.get();
+
+        //TODO - Should be a better way to handle this
+        //If we do not do the below, dependent SqlQuery gets removed from the db
+        SqlQuery sqlQuery = m.find(SqlQuery.class, sqlQueryId);
+
+        if (!sqlQuery.getDependentQueries().isEmpty()) {
+            sqlQuery.setDependentQueries(new LinkedList<>());
+            save(sqlQuery);
+        }
+
         sqlQueryExecutionDao.deleteBySqlQueryId(sqlQueryId);
         m.remove(m.find(SqlQuery.class, sqlQueryId));
     }

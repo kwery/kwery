@@ -39,6 +39,12 @@ create table query_run_execution (
   primary key (id)
 );
 
+create table query_run_dependent (
+  query_run_id_fk integer,
+  dependent_query_run_id_fk integer,
+  primary key (query_run_id_fk, dependent_query_run_id_fk)
+);
+
 alter table kwery_user add constraint uc_kwery_user_username  unique (username);
 
 alter table datasource add constraint uc_datasource_label  unique (label);
@@ -48,3 +54,6 @@ alter table query_run add constraint uc_query_run_label  unique (label);
 alter table query_run add constraint fk_query_run_datasource_fk_id foreign key (datasource_id_fk) references datasource;
 
 alter table query_run_execution add constraint fk_query_run_execution_query_run_id_fk foreign key (query_run_id_fk) references query_run;
+
+alter table query_run_dependent add constraint fk_query_run_dependent_query_run_id_fk foreign key (query_run_id_fk) references query_run;
+alter table query_run_dependent add constraint fk_query_run_dependent_dependent_query_run_id_fk foreign key (dependent_query_run_id_fk) references query_run;

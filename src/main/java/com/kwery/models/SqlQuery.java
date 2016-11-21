@@ -1,15 +1,9 @@
 package com.kwery.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = SqlQuery.TABLE)
@@ -20,6 +14,9 @@ public class SqlQuery {
     public static final String COLUMN_LABEL = "label";
     public static final String COLUMN_CRON_EXPRESSION = "cron_expression";
     public static final String COLUMN_DATASOURCE_ID_FK = "datasource_id_fk";
+    public static final String TABLE_QUERY_RUN_DEPENDENT = "query_run_dependent";
+    public static final String COLUMN_QUERY_RUN_ID_FK = "query_run_id_fk";
+    public static final String COLUMN_DEPENDENT_QUERY_RUN_ID_FK = "dependent_query_run_id_fk";
 
     @Column(name = COLUMN_ID)
     @Id
@@ -42,6 +39,15 @@ public class SqlQuery {
     @ManyToOne
     @NotNull
     private Datasource datasource;
+
+    //TODO - Fetch type can be lazy
+    @ManyToMany(fetch = FetchType.EAGER,  cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinTable(
+            name = TABLE_QUERY_RUN_DEPENDENT,
+            joinColumns = @JoinColumn(name = COLUMN_QUERY_RUN_ID_FK, referencedColumnName = SqlQuery.COLUMN_ID),
+            inverseJoinColumns = @JoinColumn(name = COLUMN_DEPENDENT_QUERY_RUN_ID_FK, referencedColumnName = SqlQuery.COLUMN_ID)
+    )
+    private List<SqlQuery> dependentQueries;
 
     public Integer getId() {
         return id;
@@ -81,5 +87,25 @@ public class SqlQuery {
 
     public void setDatasource(Datasource datasource) {
         this.datasource = datasource;
+    }
+
+    public List<SqlQuery> getDependentQueries() {
+        return dependentQueries;
+    }
+
+    public void setDependentQueries(List<SqlQuery> dependentQueries) {
+        this.dependentQueries = dependentQueries;
+    }
+
+    @Override
+    public String toString() {
+        return "SqlQuery{" +
+                "id=" + id +
+                ", query='" + query + '\'' +
+                ", label='" + label + '\'' +
+                ", cronExpression='" + cronExpression + '\'' +
+                ", datasource=" + datasource +
+                ", dependentQueries=" + dependentQueries +
+                '}';
     }
 }

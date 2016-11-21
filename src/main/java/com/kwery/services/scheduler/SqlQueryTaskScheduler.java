@@ -4,13 +4,12 @@ import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
+import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
-import it.sauronsoftware.cron4j.Task;
-import it.sauronsoftware.cron4j.TaskExecutionContext;
 import it.sauronsoftware.cron4j.TaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,8 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
     private final Provider<SqlQueryExecution> queryRunExecutionProvider;
     private final SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
     private final OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper;
+    private final SchedulerService schedulerService;
+    private final SqlQueryDao sqlQueryDao;
 
     @Inject
     public SqlQueryTaskScheduler(Scheduler scheduler,
@@ -41,6 +42,8 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
                                  SqlQueryTaskExecutorListener sqlQueryTaskExecutorListener,
                                  SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder,
                                  OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper,
+                                 SchedulerService schedulerService,
+                                 SqlQueryDao sqlQueryDao,
                                  @Assisted List<TaskExecutor> ongoingExecutions,
                                  @Assisted SqlQuery sqlQuery) {
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
@@ -51,6 +54,8 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         this.scheduler = scheduler;
         this.sqlQueryTaskSchedulerHolder = sqlQueryTaskSchedulerHolder;
         this.oneOffSqlQueryTaskSchedulerReaper = oneOffSqlQueryTaskSchedulerReaper;
+        this.schedulerService = schedulerService;
+        this.sqlQueryDao = sqlQueryDao;
 
         this.scheduler.addSchedulerListener(this);
 
@@ -91,6 +96,12 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         ongoingExecutions.remove(executor);
         if (isOneOffExecution(sqlQuery)) {
             cleanUp(sqlQuery);
+        }
+
+        //A dependent query might have been added after the QueryTask was created
+        for (SqlQuery query : sqlQueryDao.getById(sqlQuery.getId()).getDependentQueries()) {
+            logger.info("Scheduling dependent query {}", query.getLabel());
+            schedulerService.schedule(query);
         }
     }
 
