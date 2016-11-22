@@ -2,6 +2,7 @@ package com.kwery.conf;
 
 import com.kwery.controllers.IndexController;
 import com.kwery.controllers.apis.DatasourceApiController;
+import com.kwery.controllers.apis.MailApiController;
 import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.controllers.apis.SqlQueryApiController;
 import com.kwery.controllers.apis.UserApiController;
@@ -37,6 +38,8 @@ public class Routes implements ApplicationRoutes {
     public static final String ONBOARDING_NEXT_ACTION_API = "/api/onboarding/next-action";
     public static final String SQL_QUERY_ONE_OFF_EXECUTION_API = "/api/sql-query/one-off-execution/{sqlQueryId}";
 
+    public static final String MAIL_SAVE_SMTP_CONFIGURATION_API = "/api/mail/save-smtp-configuration";
+
     @Override
     public void init(Router router) {
         router.GET().route(INDEX).with(IndexController.class, "index");
@@ -69,6 +72,8 @@ public class Routes implements ApplicationRoutes {
 
         router.POST().route(ONBOARDING_ADD_ROOT_USER_API).with(OnboardingApiController.class, "addRootUser");
         router.GET().route(ONBOARDING_NEXT_ACTION_API).with(OnboardingApiController.class, "nextAction");
+
+        router.POST().route(MAIL_SAVE_SMTP_CONFIGURATION_API).with(MailApiController.class, "saveSmtpConfiguration");
         //Api - End
 
         //Static asset

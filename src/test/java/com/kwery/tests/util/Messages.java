@@ -71,4 +71,7 @@ public class Messages {
     public static final String REPORTS_M = "Reports";
     public static final String ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M = "{0} SQL Query will be executed soon";
     public static final String EXECUTE_NOW_M = "Execute Now";
+    public static final String SMTP_CONFIGURATION_ADDED_M = "SMTP configuration successfully added";
+    public static final String SMTP_CONFIGURATION_UPDATED_M = "SMTP configuration successfully updated";
+    public static final String SMTP_CONFIGURATION_ALREADY_PRESENT_M = "SMTP configuration is present, cannot add another one. Please edit the existing configuration";
 }
