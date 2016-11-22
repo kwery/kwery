@@ -1,4 +1,4 @@
-package com.kwery.services.mail;
+package com.kwery.services.mail.smtp;
 
 import com.google.inject.Inject;
 import com.kwery.dao.SmtpConfigurationDao;

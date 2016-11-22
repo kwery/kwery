@@ -1,9 +1,9 @@
-package com.kwery.tests.services.mail;
+package com.kwery.tests.services.mail.smtp;
 
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.services.mail.SmtpConfigurationNotFoundException;
-import com.kwery.services.mail.SmtpService;
-import com.kwery.services.mail.MultipleSmtpConfigurationFoundException;
+import com.kwery.services.mail.smtp.MultipleSmtpConfigurationFoundException;
+import com.kwery.services.mail.smtp.SmtpConfigurationAlreadyPresentException;
+import com.kwery.services.mail.smtp.SmtpService;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -14,9 +14,11 @@ import org.junit.Test;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 
-public class SmtpServiceGetSmtpConfigurationMultipleConfigurationTest extends RepoDashTestBase {
+public class SmtpServiceSaveMultipleSmtpConfigurationPresentTest extends RepoDashTestBase {
+    protected SmtpService smtpService;
+
     @Before
-    public void setUpSmtpDetailDaoGetTest() {
+    public void setUpSmtpServiceSaveMultipleSmtpConfigurationPresentTest() {
         for (int i = 1; i < 3; ++i) {
             SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
             smtpConfiguration.setId(i);
@@ -43,10 +45,12 @@ public class SmtpServiceGetSmtpConfigurationMultipleConfigurationTest extends Re
 
             dbSetup.launch();
         }
+
+        smtpService = getInstance(SmtpService.class);
     }
 
     @Test(expected = MultipleSmtpConfigurationFoundException.class)
-    public void test() throws SmtpConfigurationNotFoundException, MultipleSmtpConfigurationFoundException {
-        getInstance(SmtpService.class).getSmtpConfiguration();
+    public void test() throws SmtpConfigurationAlreadyPresentException, MultipleSmtpConfigurationFoundException {
+        smtpService.save(new SmtpConfiguration());
     }
 }

@@ -2,7 +2,7 @@ package com.kwery.custom;
 
 import com.google.inject.Inject;
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.services.mail.SmtpService;
+import com.kwery.services.mail.smtp.SmtpService;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.commonsmail.CommonsmailHelper;

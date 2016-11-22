@@ -1,4 +1,4 @@
-package com.kwery.services.mail;
+package com.kwery.services.mail.smtp;
 
 public class MultipleSmtpConfigurationFoundException extends Exception {
 }

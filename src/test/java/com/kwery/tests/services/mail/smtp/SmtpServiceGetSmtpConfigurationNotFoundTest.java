@@ -1,8 +1,8 @@
-package com.kwery.tests.services.mail;
+package com.kwery.tests.services.mail.smtp;
 
-import com.kwery.services.mail.SmtpConfigurationNotFoundException;
-import com.kwery.services.mail.SmtpService;
-import com.kwery.services.mail.MultipleSmtpConfigurationFoundException;
+import com.kwery.services.mail.smtp.SmtpConfigurationNotFoundException;
+import com.kwery.services.mail.smtp.SmtpService;
+import com.kwery.services.mail.smtp.MultipleSmtpConfigurationFoundException;
 import com.kwery.tests.util.RepoDashTestBase;
 import org.junit.Test;
 
