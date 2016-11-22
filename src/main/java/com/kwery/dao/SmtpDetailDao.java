@@ -19,8 +19,19 @@ public class SmtpDetailDao {
     @Transactional
     public void save(SmtpDetail smtpDetail) {
         EntityManager e = entityManagerProvider.get();
-        e.persist(smtpDetail);
+
+        if (smtpDetail.getId() != null && smtpDetail.getId() > 0) {
+            e.merge(smtpDetail);
+        } else {
+            e.persist(smtpDetail);
+        }
+
         e.flush();
+    }
+
+    @UnitOfWork
+    public SmtpDetail get(int id) {
+        return entityManagerProvider.get().find(SmtpDetail.class, id);
     }
 
     @UnitOfWork

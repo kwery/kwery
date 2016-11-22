@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
 
-public class SmtpDetailDaoSaveTest extends RepoDashDaoTestBase {
+public class SmtpDetailDaoSaveNewTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
         SmtpDetail details = new SmtpDetail();
