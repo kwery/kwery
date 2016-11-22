@@ -2,6 +2,7 @@ package com.kwery.tests.services.mail;
 
 import com.kwery.services.mail.MailConfigurationNotFoundException;
 import com.kwery.services.mail.MailService;
+import com.kwery.services.mail.MultipleSmtpConfigurationFoundException;
 import com.kwery.tests.dao.smtpdetaildao.SmtpDetailDaoGetTest;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ public class MailServiceGetSmptConfigurationTest extends SmtpDetailDaoGetTest {
     public void test() {
         try {
             assertThat(getInstance(MailService.class).getSmtpConfiguration(), theSameBeanAs(smtpDetail));
-        } catch (MailConfigurationNotFoundException e) {
+        } catch (MailConfigurationNotFoundException  | MultipleSmtpConfigurationFoundException e) {
             fail();
         }
     }

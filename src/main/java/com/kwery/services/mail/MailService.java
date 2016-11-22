@@ -14,10 +14,14 @@ public class MailService {
         this.smtpDetailDao = smtpDetailDao;
     }
 
-    public SmtpDetail getSmtpConfiguration() throws MailConfigurationNotFoundException {
+    public SmtpDetail getSmtpConfiguration() throws MailConfigurationNotFoundException, MultipleSmtpConfigurationFoundException {
         List<SmtpDetail> details = smtpDetailDao.get();
         if (details.isEmpty()) {
             throw new MailConfigurationNotFoundException();
+        }
+
+        if (details.size() > 1) {
+            throw new MultipleSmtpConfigurationFoundException();
         }
 
         return details.get(0);
