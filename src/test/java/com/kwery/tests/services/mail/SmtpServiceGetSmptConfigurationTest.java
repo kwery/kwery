@@ -1,6 +1,6 @@
 package com.kwery.tests.services.mail;
 
-import com.kwery.models.SmtpDetail;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.services.mail.MultipleSmtpConfigurationFoundException;
 import com.kwery.services.mail.SmtpConfigurationNotFoundException;
 import com.kwery.services.mail.SmtpService;
@@ -19,28 +19,28 @@ import static org.junit.Assert.assertThat;
 
 public class SmtpServiceGetSmptConfigurationTest extends RepoDashTestBase {
     protected SmtpService smtpService;
-    protected SmtpDetail smtpDetail;
+    protected SmtpConfiguration smtpConfiguration;
 
     @Before
     public void setUpSmtpDetailDaoGetTest() {
-        smtpDetail = new SmtpDetail();
-        smtpDetail.setId(1);
-        smtpDetail.setHost("foo.com");
-        smtpDetail.setPort(465);
-        smtpDetail.setSsl(true);
-        smtpDetail.setUsername("username");
-        smtpDetail.setPassword("password");
+        smtpConfiguration = new SmtpConfiguration();
+        smtpConfiguration.setId(1);
+        smtpConfiguration.setHost("foo.com");
+        smtpConfiguration.setPort(465);
+        smtpConfiguration.setSsl(true);
+        smtpConfiguration.setUsername("username");
+        smtpConfiguration.setPassword("password");
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 Operations.sequenceOf(
-                        insertInto(SmtpDetail.TABLE_SMTP_DETAILS)
+                        insertInto(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
                                 .row()
-                                .column(SmtpDetail.COLUMN_ID, smtpDetail.getId())
-                                .column(SmtpDetail.COLUMN_HOST, smtpDetail.getHost())
-                                .column(SmtpDetail.COLUMN_PORT, smtpDetail.getPort())
-                                .column(SmtpDetail.COLUMN_SSL, smtpDetail.isSsl())
-                                .column(SmtpDetail.COLUMN_USERNAME, smtpDetail.getUsername())
-                                .column(SmtpDetail.COLUMN_PASSWORD, smtpDetail.getPassword())
+                                .column(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
+                                .column(SmtpConfiguration.COLUMN_HOST, smtpConfiguration.getHost())
+                                .column(SmtpConfiguration.COLUMN_PORT, smtpConfiguration.getPort())
+                                .column(SmtpConfiguration.COLUMN_SSL, smtpConfiguration.isSsl())
+                                .column(SmtpConfiguration.COLUMN_USERNAME, smtpConfiguration.getUsername())
+                                .column(SmtpConfiguration.COLUMN_PASSWORD, smtpConfiguration.getPassword())
                                 .end()
                                 .build()
                 )
@@ -54,7 +54,7 @@ public class SmtpServiceGetSmptConfigurationTest extends RepoDashTestBase {
     @Test
     public void test() {
         try {
-            assertThat(getInstance(SmtpService.class).getSmtpConfiguration(), theSameBeanAs(smtpDetail));
+            assertThat(getInstance(SmtpService.class).getSmtpConfiguration(), theSameBeanAs(smtpConfiguration));
         } catch (SmtpConfigurationNotFoundException | MultipleSmtpConfigurationFoundException e) {
             fail();
         }

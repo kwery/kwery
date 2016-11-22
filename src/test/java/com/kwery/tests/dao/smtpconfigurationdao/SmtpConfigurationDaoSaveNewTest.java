@@ -1,10 +1,8 @@
-package com.kwery.tests.services.mail;
+package com.kwery.tests.dao.smtpconfigurationdao;
 
+import com.kwery.dao.SmtpConfigurationDao;
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.services.mail.MultipleSmtpConfigurationFoundException;
-import com.kwery.services.mail.SmtpConfigurationAlreadyPresentException;
-import com.kwery.services.mail.SmtpService;
-import com.kwery.tests.util.RepoDashTestBase;
+import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.dataset.builder.DataSetBuilder;
 import org.junit.Test;
@@ -14,9 +12,9 @@ import java.sql.SQLException;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
 
-public class SmtpServiceSaveTest extends RepoDashTestBase {
+public class SmtpConfigurationDaoSaveNewTest extends RepoDashDaoTestBase {
     @Test
-    public void test() throws DatabaseUnitException, SmtpConfigurationAlreadyPresentException, MultipleSmtpConfigurationFoundException, SQLException, IOException {
+    public void test() throws DatabaseUnitException, SQLException, IOException {
         SmtpConfiguration details = new SmtpConfiguration();
         details.setHost("foo.com");
         details.setPort(465);
@@ -24,7 +22,7 @@ public class SmtpServiceSaveTest extends RepoDashTestBase {
         details.setUsername("username");
         details.setPassword("password");
 
-        getInstance(SmtpService.class).save(details);
+        getInstance(SmtpConfigurationDao.class).save(details);
 
         DataSetBuilder builder = new DataSetBuilder();
 

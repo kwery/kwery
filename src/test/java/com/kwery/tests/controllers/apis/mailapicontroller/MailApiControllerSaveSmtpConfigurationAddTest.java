@@ -1,7 +1,7 @@
 package com.kwery.tests.controllers.apis.mailapicontroller;
 
 import com.kwery.controllers.apis.MailApiController;
-import com.kwery.models.SmtpDetail;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.util.TestUtil;
 import ninja.Router;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThat;
 public class MailApiControllerSaveSmtpConfigurationAddTest extends AbstractPostLoginApiTest {
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
-        SmtpDetail detail = new SmtpDetail();
+        SmtpConfiguration detail = new SmtpConfiguration();
         detail.setHost("foo.com");
         detail.setPort(446);
         detail.setSsl(true);
@@ -39,15 +39,15 @@ public class MailApiControllerSaveSmtpConfigurationAddTest extends AbstractPostL
 
         DataSetBuilder builder = new DataSetBuilder();
 
-        builder.newRow(SmtpDetail.TABLE_SMTP_DETAILS)
-                .with(SmtpDetail.COLUMN_ID, TestUtil.DB_START_ID)
-                .with(SmtpDetail.COLUMN_HOST, detail.getHost())
-                .with(SmtpDetail.COLUMN_PORT, detail.getPort())
-                .with(SmtpDetail.COLUMN_SSL, detail.isSsl())
-                .with(SmtpDetail.COLUMN_USERNAME, detail.getUsername())
-                .with(SmtpDetail.COLUMN_PASSWORD, detail.getPassword())
+        builder.newRow(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
+                .with(SmtpConfiguration.COLUMN_ID, TestUtil.DB_START_ID)
+                .with(SmtpConfiguration.COLUMN_HOST, detail.getHost())
+                .with(SmtpConfiguration.COLUMN_PORT, detail.getPort())
+                .with(SmtpConfiguration.COLUMN_SSL, detail.isSsl())
+                .with(SmtpConfiguration.COLUMN_USERNAME, detail.getUsername())
+                .with(SmtpConfiguration.COLUMN_PASSWORD, detail.getPassword())
                 .add();
 
-        assertDbState(SmtpDetail.TABLE_SMTP_DETAILS, builder.build());
+        assertDbState(SmtpConfiguration.TABLE_SMTP_CONFIGURATION, builder.build());
     }
 }

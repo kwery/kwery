@@ -3,7 +3,7 @@ package com.kwery.dao;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.kwery.models.SmtpDetail;
+import com.kwery.models.SmtpConfiguration;
 import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
@@ -12,35 +12,35 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
-public class SmtpDetailDao {
+public class SmtpConfigurationDao {
     @Inject
     private Provider<EntityManager> entityManagerProvider;
 
     @Transactional
-    public void save(SmtpDetail smtpDetail) {
+    public void save(SmtpConfiguration smtpConfiguration) {
         EntityManager e = entityManagerProvider.get();
 
-        if (smtpDetail.getId() != null && smtpDetail.getId() > 0) {
-            e.merge(smtpDetail);
+        if (smtpConfiguration.getId() != null && smtpConfiguration.getId() > 0) {
+            e.merge(smtpConfiguration);
         } else {
-            e.persist(smtpDetail);
+            e.persist(smtpConfiguration);
         }
 
         e.flush();
     }
 
     @UnitOfWork
-    public SmtpDetail get(int id) {
-        return entityManagerProvider.get().find(SmtpDetail.class, id);
+    public SmtpConfiguration get(int id) {
+        return entityManagerProvider.get().find(SmtpConfiguration.class, id);
     }
 
     @UnitOfWork
-    public List<SmtpDetail> get() {
+    public List<SmtpConfiguration> get() {
         EntityManager e = entityManagerProvider.get();
         CriteriaBuilder cb = e.getCriteriaBuilder();
-        CriteriaQuery<SmtpDetail> cq = cb.createQuery(SmtpDetail.class);
-        Root<SmtpDetail> root = cq.from(SmtpDetail.class);
-        CriteriaQuery<SmtpDetail> all = cq.select(root);
+        CriteriaQuery<SmtpConfiguration> cq = cb.createQuery(SmtpConfiguration.class);
+        Root<SmtpConfiguration> root = cq.from(SmtpConfiguration.class);
+        CriteriaQuery<SmtpConfiguration> all = cq.select(root);
         return e.createQuery(all).getResultList();
     }
 }

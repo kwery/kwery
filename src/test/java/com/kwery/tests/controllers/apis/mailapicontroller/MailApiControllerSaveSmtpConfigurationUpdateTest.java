@@ -1,7 +1,7 @@
 package com.kwery.tests.controllers.apis.mailapicontroller;
 
 import com.kwery.controllers.apis.MailApiController;
-import com.kwery.models.SmtpDetail;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -28,28 +28,28 @@ import static org.junit.Assert.assertThat;
 public class MailApiControllerSaveSmtpConfigurationUpdateTest extends AbstractPostLoginApiTest {
     protected int smtpDetailId = 1;
 
-    protected SmtpDetail smtpDetail;
+    protected SmtpConfiguration smtpConfiguration;
 
     @Before
     public void setUpMailApiControllerSaveSmtpConfigurationUpdateTest() {
-        smtpDetail = new SmtpDetail();
-        smtpDetail.setId(smtpDetailId);
-        smtpDetail.setHost("foo.com");
-        smtpDetail.setPort(465);
-        smtpDetail.setSsl(true);
-        smtpDetail.setUsername("username");
-        smtpDetail.setPassword("password");
+        smtpConfiguration = new SmtpConfiguration();
+        smtpConfiguration.setId(smtpDetailId);
+        smtpConfiguration.setHost("foo.com");
+        smtpConfiguration.setPort(465);
+        smtpConfiguration.setSsl(true);
+        smtpConfiguration.setUsername("username");
+        smtpConfiguration.setPassword("password");
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 Operations.sequenceOf(
-                        insertInto(SmtpDetail.TABLE_SMTP_DETAILS)
+                        insertInto(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
                                 .row()
-                                .column(SmtpDetail.COLUMN_ID, smtpDetail.getId())
-                                .column(SmtpDetail.COLUMN_HOST, smtpDetail.getHost())
-                                .column(SmtpDetail.COLUMN_PORT, smtpDetail.getPort())
-                                .column(SmtpDetail.COLUMN_SSL, smtpDetail.isSsl())
-                                .column(SmtpDetail.COLUMN_USERNAME, smtpDetail.getUsername())
-                                .column(SmtpDetail.COLUMN_PASSWORD, smtpDetail.getPassword())
+                                .column(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
+                                .column(SmtpConfiguration.COLUMN_HOST, smtpConfiguration.getHost())
+                                .column(SmtpConfiguration.COLUMN_PORT, smtpConfiguration.getPort())
+                                .column(SmtpConfiguration.COLUMN_SSL, smtpConfiguration.isSsl())
+                                .column(SmtpConfiguration.COLUMN_USERNAME, smtpConfiguration.getUsername())
+                                .column(SmtpConfiguration.COLUMN_PASSWORD, smtpConfiguration.getPassword())
                                 .end()
                                 .build()
                 )
@@ -61,7 +61,7 @@ public class MailApiControllerSaveSmtpConfigurationUpdateTest extends AbstractPo
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
         String url = getInjector().getInstance(Router.class).getReverseRoute(MailApiController.class, "saveSmtpConfiguration");
-        String response = ninjaTestBrowser.postJson(getUrl(url), smtpDetail);
+        String response = ninjaTestBrowser.postJson(getUrl(url), smtpConfiguration);
 
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
@@ -69,15 +69,15 @@ public class MailApiControllerSaveSmtpConfigurationUpdateTest extends AbstractPo
 
         DataSetBuilder builder = new DataSetBuilder();
 
-        builder.newRow(SmtpDetail.TABLE_SMTP_DETAILS)
-                .with(SmtpDetail.COLUMN_ID, smtpDetail.getId())
-                .with(SmtpDetail.COLUMN_HOST, smtpDetail.getHost())
-                .with(SmtpDetail.COLUMN_PORT, smtpDetail.getPort())
-                .with(SmtpDetail.COLUMN_SSL, smtpDetail.isSsl())
-                .with(SmtpDetail.COLUMN_USERNAME, smtpDetail.getUsername())
-                .with(SmtpDetail.COLUMN_PASSWORD, smtpDetail.getPassword())
+        builder.newRow(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
+                .with(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
+                .with(SmtpConfiguration.COLUMN_HOST, smtpConfiguration.getHost())
+                .with(SmtpConfiguration.COLUMN_PORT, smtpConfiguration.getPort())
+                .with(SmtpConfiguration.COLUMN_SSL, smtpConfiguration.isSsl())
+                .with(SmtpConfiguration.COLUMN_USERNAME, smtpConfiguration.getUsername())
+                .with(SmtpConfiguration.COLUMN_PASSWORD, smtpConfiguration.getPassword())
                 .add();
 
-        assertDbState(SmtpDetail.TABLE_SMTP_DETAILS, builder.build());
+        assertDbState(SmtpConfiguration.TABLE_SMTP_CONFIGURATION, builder.build());
     }
 }

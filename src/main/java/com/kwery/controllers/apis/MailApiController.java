@@ -3,7 +3,7 @@ package com.kwery.controllers.apis;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.kwery.filters.DashRepoSecureFilter;
-import com.kwery.models.SmtpDetail;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.services.mail.MultipleSmtpConfigurationFoundException;
 import com.kwery.services.mail.SmtpConfigurationAlreadyPresentException;
 import com.kwery.services.mail.SmtpService;
@@ -36,11 +36,11 @@ public class MailApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result saveSmtpConfiguration(SmtpDetail smtpDetail, Context context) {
+    public Result saveSmtpConfiguration(SmtpConfiguration smtpConfiguration, Context context) {
         if (logger.isTraceEnabled()) logger.trace("<");
 
         boolean isUpdate = false;
-        if (smtpDetail.getId() != null && smtpDetail.getId() > 0) {
+        if (smtpConfiguration.getId() != null && smtpConfiguration.getId() > 0) {
             isUpdate = true;
         }
 
@@ -49,7 +49,7 @@ public class MailApiController {
         ActionResult actionResult = null;
 
         try {
-            smtpService.save(smtpDetail);
+            smtpService.save(smtpConfiguration);
             String message = "";
 
             if (isUpdate) {

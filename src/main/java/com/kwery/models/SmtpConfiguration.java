@@ -8,9 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = SmtpDetail.TABLE_SMTP_DETAILS)
-public class SmtpDetail {
-    public static final String TABLE_SMTP_DETAILS = "smtp_detail";
+@Table(name = SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
+public class SmtpConfiguration {
+    public static final String TABLE_SMTP_CONFIGURATION = "smtp_configuration";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_HOST = "host";
     public static final String COLUMN_PORT = "port";
@@ -88,7 +88,7 @@ public class SmtpDetail {
 
     @Override
     public String toString() {
-        return "SmtpDetail{" +
+        return "SmtpConfiguration{" +
                 "id=" + id +
                 ", host='" + host + '\'' +
                 ", port=" + port +

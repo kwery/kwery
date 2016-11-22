@@ -1,6 +1,6 @@
 package com.kwery.tests.services.mail;
 
-import com.kwery.models.SmtpDetail;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.services.mail.MultipleSmtpConfigurationFoundException;
 import com.kwery.services.mail.SmtpConfigurationAlreadyPresentException;
 import com.kwery.services.mail.SmtpService;
@@ -27,24 +27,24 @@ public class SmtpServiceSaveUpdateTest extends RepoDashTestBase {
 
     @Before
     public void setUpSmtpServiceSaveUpdateTest () {
-        SmtpDetail smtpDetail = new SmtpDetail();
-        smtpDetail.setId(smtpDetailId);
-        smtpDetail.setHost("foo.com");
-        smtpDetail.setPort(465);
-        smtpDetail.setSsl(true);
-        smtpDetail.setUsername("username");
-        smtpDetail.setPassword("password");
+        SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
+        smtpConfiguration.setId(smtpDetailId);
+        smtpConfiguration.setHost("foo.com");
+        smtpConfiguration.setPort(465);
+        smtpConfiguration.setSsl(true);
+        smtpConfiguration.setUsername("username");
+        smtpConfiguration.setPassword("password");
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 Operations.sequenceOf(
-                        insertInto(SmtpDetail.TABLE_SMTP_DETAILS)
+                        insertInto(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
                                 .row()
-                                .column(SmtpDetail.COLUMN_ID, smtpDetail.getId())
-                                .column(SmtpDetail.COLUMN_HOST, smtpDetail.getHost())
-                                .column(SmtpDetail.COLUMN_PORT, smtpDetail.getPort())
-                                .column(SmtpDetail.COLUMN_SSL, smtpDetail.isSsl())
-                                .column(SmtpDetail.COLUMN_USERNAME, smtpDetail.getUsername())
-                                .column(SmtpDetail.COLUMN_PASSWORD, smtpDetail.getPassword())
+                                .column(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
+                                .column(SmtpConfiguration.COLUMN_HOST, smtpConfiguration.getHost())
+                                .column(SmtpConfiguration.COLUMN_PORT, smtpConfiguration.getPort())
+                                .column(SmtpConfiguration.COLUMN_SSL, smtpConfiguration.isSsl())
+                                .column(SmtpConfiguration.COLUMN_USERNAME, smtpConfiguration.getUsername())
+                                .column(SmtpConfiguration.COLUMN_PASSWORD, smtpConfiguration.getPassword())
                                 .end()
                                 .build()
                 )
@@ -57,7 +57,7 @@ public class SmtpServiceSaveUpdateTest extends RepoDashTestBase {
 
     @Test
     public void test() throws SmtpConfigurationAlreadyPresentException, MultipleSmtpConfigurationFoundException, DatabaseUnitException, SQLException, IOException {
-        SmtpDetail detail = new SmtpDetail();
+        SmtpConfiguration detail = new SmtpConfiguration();
         detail.setId(smtpDetailId);
         detail.setHost("bar.com");
         detail.setPort(466);
@@ -69,15 +69,15 @@ public class SmtpServiceSaveUpdateTest extends RepoDashTestBase {
 
         DataSetBuilder builder = new DataSetBuilder();
 
-        builder.newRow(SmtpDetail.TABLE_SMTP_DETAILS)
-                .with(SmtpDetail.COLUMN_ID, detail.getId())
-                .with(SmtpDetail.COLUMN_HOST, detail.getHost())
-                .with(SmtpDetail.COLUMN_PORT, detail.getPort())
-                .with(SmtpDetail.COLUMN_SSL, detail.isSsl())
-                .with(SmtpDetail.COLUMN_USERNAME, detail.getUsername())
-                .with(SmtpDetail.COLUMN_PASSWORD, detail.getPassword())
+        builder.newRow(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
+                .with(SmtpConfiguration.COLUMN_ID, detail.getId())
+                .with(SmtpConfiguration.COLUMN_HOST, detail.getHost())
+                .with(SmtpConfiguration.COLUMN_PORT, detail.getPort())
+                .with(SmtpConfiguration.COLUMN_SSL, detail.isSsl())
+                .with(SmtpConfiguration.COLUMN_USERNAME, detail.getUsername())
+                .with(SmtpConfiguration.COLUMN_PASSWORD, detail.getPassword())
                 .add();
 
-        assertDbState(SmtpDetail.TABLE_SMTP_DETAILS, builder.build());
+        assertDbState(SmtpConfiguration.TABLE_SMTP_CONFIGURATION, builder.build());
     }
 }

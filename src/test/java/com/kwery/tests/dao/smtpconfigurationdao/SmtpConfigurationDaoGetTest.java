@@ -1,24 +1,31 @@
-package com.kwery.tests.services.mail;
+package com.kwery.tests.dao.smtpconfigurationdao;
 
+import com.kwery.dao.SmtpConfigurationDao;
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.services.mail.MultipleSmtpConfigurationFoundException;
-import com.kwery.services.mail.SmtpConfigurationAlreadyPresentException;
-import com.kwery.services.mail.SmtpService;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.RepoDashTestBase;
+import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.ninja_squad.dbsetup.Operations.insertInto;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class SmtpServiceSaveMultipleSmtpConfigurationPresentTest extends RepoDashTestBase {
-    protected SmtpService smtpService;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.junit.Assert.assertThat;
+
+public class SmtpConfigurationDaoGetTest extends RepoDashDaoTestBase {
+    protected SmtpConfigurationDao smtpConfigurationDao;
+
+    protected Map<Integer, SmtpConfiguration> idDetailMap = new HashMap<>();
 
     @Before
-    public void setUpSmtpServiceSaveMultipleSmtpConfigurationPresentTest() {
+    public void setUpSmtpDetailDaoGetTest() {
         for (int i = 1; i < 3; ++i) {
             SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
             smtpConfiguration.setId(i);
@@ -27,6 +34,8 @@ public class SmtpServiceSaveMultipleSmtpConfigurationPresentTest extends RepoDas
             smtpConfiguration.setSsl(true);
             smtpConfiguration.setUsername("username");
             smtpConfiguration.setPassword("password");
+
+            idDetailMap.put(i, smtpConfiguration);
 
             DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                     Operations.sequenceOf(
@@ -46,11 +55,20 @@ public class SmtpServiceSaveMultipleSmtpConfigurationPresentTest extends RepoDas
             dbSetup.launch();
         }
 
-        smtpService = getInstance(SmtpService.class);
+        smtpConfigurationDao = getInstance(SmtpConfigurationDao.class);
     }
 
-    @Test(expected = MultipleSmtpConfigurationFoundException.class)
-    public void test() throws SmtpConfigurationAlreadyPresentException, MultipleSmtpConfigurationFoundException {
-        smtpService.save(new SmtpConfiguration());
+    @Test
+    public void testGet() {
+        List<SmtpConfiguration> smtpConfigurationList = smtpConfigurationDao.get();
+        assertThat(smtpConfigurationList, hasSize(2));
+        assertThat(smtpConfigurationList.get(0) , theSameBeanAs(idDetailMap.get(smtpConfigurationList.get(0).getId())));
+        assertThat(smtpConfigurationList.get(1) , theSameBeanAs(idDetailMap.get(smtpConfigurationList.get(1).getId())));
+    }
+
+    @Test
+    public void testGetById() {
+        assertThat(smtpConfigurationDao.get(1), theSameBeanAs(idDetailMap.get(1)));
+        assertThat(smtpConfigurationDao.get(2), theSameBeanAs(idDetailMap.get(2)));
     }
 }

@@ -1,32 +1,32 @@
 package com.kwery.services.mail;
 
 import com.google.inject.Inject;
-import com.kwery.dao.SmtpDetailDao;
-import com.kwery.models.SmtpDetail;
+import com.kwery.dao.SmtpConfigurationDao;
+import com.kwery.models.SmtpConfiguration;
 
 import java.util.List;
 
 public class SmtpService {
-    protected final SmtpDetailDao smtpDetailDao;
+    protected final SmtpConfigurationDao smtpConfigurationDao;
 
     @Inject
-    public SmtpService(SmtpDetailDao smtpDetailDao) {
-        this.smtpDetailDao = smtpDetailDao;
+    public SmtpService(SmtpConfigurationDao smtpConfigurationDao) {
+        this.smtpConfigurationDao = smtpConfigurationDao;
     }
 
-    public void save(SmtpDetail smtpDetail) throws SmtpConfigurationAlreadyPresentException, MultipleSmtpConfigurationFoundException {
+    public void save(SmtpConfiguration smtpConfiguration) throws SmtpConfigurationAlreadyPresentException, MultipleSmtpConfigurationFoundException {
         try {
-            SmtpDetail existing = getSmtpConfiguration();
-            if (!existing.getId().equals(smtpDetail.getId())) {
+            SmtpConfiguration existing = getSmtpConfiguration();
+            if (!existing.getId().equals(smtpConfiguration.getId())) {
                 throw new SmtpConfigurationAlreadyPresentException();
             }
         } catch (SmtpConfigurationNotFoundException e) {
         }
-        smtpDetailDao.save(smtpDetail);
+        smtpConfigurationDao.save(smtpConfiguration);
     }
 
-    public SmtpDetail getSmtpConfiguration() throws SmtpConfigurationNotFoundException, MultipleSmtpConfigurationFoundException {
-        List<SmtpDetail> details = smtpDetailDao.get();
+    public SmtpConfiguration getSmtpConfiguration() throws SmtpConfigurationNotFoundException, MultipleSmtpConfigurationFoundException {
+        List<SmtpConfiguration> details = smtpConfigurationDao.get();
         if (details.isEmpty()) {
             throw new SmtpConfigurationNotFoundException();
         }
