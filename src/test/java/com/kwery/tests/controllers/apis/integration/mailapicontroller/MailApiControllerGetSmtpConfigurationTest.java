@@ -1,4 +1,4 @@
-package com.kwery.tests.controllers.apis.mailapicontroller;
+package com.kwery.tests.controllers.apis.integration.mailapicontroller;
 
 import com.kwery.controllers.apis.MailApiController;
 import com.kwery.models.SmtpConfiguration;
@@ -8,28 +8,20 @@ import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import ninja.Router;
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.builder.DataSetBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
-import static com.kwery.tests.util.Messages.SMTP_CONFIGURATION_ALREADY_PRESENT_M;
-import static com.kwery.views.ActionResult.Status.failure;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class MailApiControllerSaveSmtpConfigurationAlreadyPresentTest extends AbstractPostLoginApiTest {
+public class MailApiControllerGetSmtpConfigurationTest extends AbstractPostLoginApiTest {
     protected SmtpConfiguration smtpConfiguration;
 
     @Before
-    public void setUpMailApiControllerSaveSmtpConfigurationAlreadyPresentTest() {
+    public void setUpMailApiControllerGetSmtpConfigurationTest() {
         smtpConfiguration = new SmtpConfiguration();
         smtpConfiguration.setId(1);
         smtpConfiguration.setHost("foo.com");
@@ -57,32 +49,17 @@ public class MailApiControllerSaveSmtpConfigurationAlreadyPresentTest extends Ab
     }
 
     @Test
-    public void test() throws DatabaseUnitException, SQLException, IOException {
-        SmtpConfiguration newDetail = new SmtpConfiguration();
-        newDetail.setHost("bar.com");
-        newDetail.setPort(465);
-        newDetail.setSsl(true);
-        newDetail.setUsername("username");
-        newDetail.setPassword("password");
-
-        String url = getInjector().getInstance(Router.class).getReverseRoute(MailApiController.class, "saveSmtpConfiguration");
-        String response = ninjaTestBrowser.postJson(getUrl(url), newDetail);
+    public void test() {
+        String url = getInjector().getInstance(Router.class).getReverseRoute(MailApiController.class, "getSmtpConfiguration");
+        String response = ninjaTestBrowser.makeJsonRequest(getUrl(url));
 
         assertThat(response, isJson());
-        assertThat(response, hasJsonPath("$.status", is(failure.name())));
-        assertThat(response, hasJsonPath("$.messages[0]", is(SMTP_CONFIGURATION_ALREADY_PRESENT_M)));
 
-        DataSetBuilder builder = new DataSetBuilder();
-
-        builder.newRow(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
-                .with(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
-                .with(SmtpConfiguration.COLUMN_HOST, smtpConfiguration.getHost())
-                .with(SmtpConfiguration.COLUMN_PORT, smtpConfiguration.getPort())
-                .with(SmtpConfiguration.COLUMN_SSL, smtpConfiguration.isSsl())
-                .with(SmtpConfiguration.COLUMN_USERNAME, smtpConfiguration.getUsername())
-                .with(SmtpConfiguration.COLUMN_PASSWORD, smtpConfiguration.getPassword())
-                .add();
-
-        assertDbState(SmtpConfiguration.TABLE_SMTP_CONFIGURATION, builder.build());
+        assertThat(response, hasJsonPath("$.id", is(smtpConfiguration.getId())));
+        assertThat(response, hasJsonPath("$.host", is(smtpConfiguration.getHost())));
+        assertThat(response, hasJsonPath("$.port", is(smtpConfiguration.getPort())));
+        assertThat(response, hasJsonPath("$.ssl", is(smtpConfiguration.isSsl())));
+        assertThat(response, hasJsonPath("$.username", is(smtpConfiguration.getUsername())));
+        assertThat(response, hasJsonPath("$.password", is(smtpConfiguration.getPassword())));
     }
 }

@@ -1,4 +1,4 @@
-package com.kwery.tests.controllers.apis.mailapicontroller;
+package com.kwery.tests.controllers.apis.integration.mailapicontroller;
 
 import com.kwery.controllers.apis.MailApiController;
 import com.kwery.models.SmtpConfiguration;

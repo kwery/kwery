@@ -3,9 +3,14 @@ package com.kwery.controllers.apis;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.kwery.filters.DashRepoSecureFilter;
+import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
+import com.kwery.services.mail.EmailConfigurationExistsException;
+import com.kwery.services.mail.EmailConfigurationService;
+import com.kwery.services.mail.MultipleEmailConfigurationException;
 import com.kwery.services.mail.smtp.MultipleSmtpConfigurationFoundException;
 import com.kwery.services.mail.smtp.SmtpConfigurationAlreadyPresentException;
+import com.kwery.services.mail.smtp.SmtpConfigurationNotFoundException;
 import com.kwery.services.mail.smtp.SmtpService;
 import com.kwery.views.ActionResult;
 import net.spy.memcached.compat.log.Logger;
@@ -16,6 +21,7 @@ import ninja.Result;
 import ninja.Results;
 import ninja.i18n.Messages;
 
+import static com.kwery.controllers.MessageKeys.EMAIL_CONFIGURATION_SAVED;
 import static com.kwery.controllers.MessageKeys.SMTP_CONFIGURATION_ADDED;
 import static com.kwery.controllers.MessageKeys.SMTP_CONFIGURATION_ALREADY_PRESENT;
 import static com.kwery.controllers.MessageKeys.SMTP_CONFIGURATION_UPDATED;
@@ -27,11 +33,13 @@ public class MailApiController {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     protected final SmtpService smtpService;
+    protected final EmailConfigurationService emailConfigurationService;
     protected final Messages messages;
 
     @Inject
-    public MailApiController(SmtpService smtpService, Messages messages) {
+    public MailApiController(SmtpService smtpService, EmailConfigurationService emailConfigurationService, Messages messages) {
         this.smtpService = smtpService;
+        this.emailConfigurationService = emailConfigurationService;
         this.messages = messages;
     }
 
@@ -76,6 +84,29 @@ public class MailApiController {
 
         if (logger.isTraceEnabled()) logger.trace(">");
 
+        return json.render(actionResult);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result getSmtpConfiguration() throws SmtpConfigurationNotFoundException, MultipleSmtpConfigurationFoundException {
+        if (logger.isTraceEnabled()) logger.trace("<");
+
+        SmtpConfiguration smtpConfiguration = smtpService.getSmtpConfiguration();
+
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        return Results.json().render(smtpConfiguration);
+
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result saveEmailConfiguration(EmailConfiguration emailConfiguration, Context context) throws MultipleEmailConfigurationException, EmailConfigurationExistsException {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        Result json = Results.json();
+        emailConfigurationService.save(emailConfiguration);
+        String message = messages.get(EMAIL_CONFIGURATION_SAVED, context, Optional.of(json)).get();
+        ActionResult actionResult = new ActionResult(success, message);
+        if (logger.isTraceEnabled()) logger.trace(">");
         return json.render(actionResult);
     }
 }

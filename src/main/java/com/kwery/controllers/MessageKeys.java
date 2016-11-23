@@ -60,4 +60,5 @@ public class MessageKeys {
     public static final String SMTP_MULTIPLE_CONFIGURATION = "smtp.multiple.configuration";
     public static final String SMTP_CONFIGURATION_ADDED = "smtp.configuration.added";
     public static final String SMTP_CONFIGURATION_UPDATED = "smtp.configuration.updated";
+    public static final String EMAIL_CONFIGURATION_SAVED = "email.configuration.saved";
 }

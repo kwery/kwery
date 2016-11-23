@@ -39,6 +39,8 @@ public class Routes implements ApplicationRoutes {
     public static final String SQL_QUERY_ONE_OFF_EXECUTION_API = "/api/sql-query/one-off-execution/{sqlQueryId}";
 
     public static final String MAIL_SAVE_SMTP_CONFIGURATION_API = "/api/mail/save-smtp-configuration";
+    public static final String MAIL_GET_SMTP_CONFIGURATION_API = "/api/mail/smtp-configuration";
+    public static final String MAIL_SAVE_EMAIL_CONFIGURATION_API = "/api/mail/save-email-configuration";
 
     @Override
     public void init(Router router) {
@@ -74,6 +76,8 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(ONBOARDING_NEXT_ACTION_API).with(OnboardingApiController.class, "nextAction");
 
         router.POST().route(MAIL_SAVE_SMTP_CONFIGURATION_API).with(MailApiController.class, "saveSmtpConfiguration");
+        router.GET().route(MAIL_GET_SMTP_CONFIGURATION_API).with(MailApiController.class, "getSmtpConfiguration");
+        router.POST().route(MAIL_SAVE_EMAIL_CONFIGURATION_API).with(MailApiController.class, "saveEmailConfiguration");
         //Api - End
 
         //Static asset
