@@ -88,10 +88,16 @@ public class MailApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result getSmtpConfiguration() throws SmtpConfigurationNotFoundException, MultipleSmtpConfigurationFoundException {
+    public Result getSmtpConfiguration() throws MultipleSmtpConfigurationFoundException {
         if (logger.isTraceEnabled()) logger.trace("<");
 
-        SmtpConfiguration smtpConfiguration = smtpService.getSmtpConfiguration();
+        SmtpConfiguration smtpConfiguration = null;
+        try {
+            smtpConfiguration = smtpService.getSmtpConfiguration();
+        } catch (SmtpConfigurationNotFoundException e) {
+            //Ignore
+            //TODO - Remove this stupid exception, stupid design :@
+        }
 
         if (logger.isTraceEnabled()) logger.trace(">");
 

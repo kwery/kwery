@@ -36,6 +36,7 @@
                 {url: "sql-query/{sqlQueryId}", auth: true, component: "sql-query-add"},
                 {url: "user/list", auth: true, component: "user-list"},
                 {url: "user/update/{userId}", auth: true, component: "user-update"},
+                {url: "mail-configuration/add", auth: true, component: "mail-configuration-add"},
             ];
 
             var componentMapping = {
