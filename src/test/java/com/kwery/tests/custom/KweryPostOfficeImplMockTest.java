@@ -14,12 +14,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KweryPostOfficeImplMockTest {
@@ -41,14 +43,14 @@ public class KweryPostOfficeImplMockTest {
         smtpConfiguration.setUsername("user");
         smtpConfiguration.setPassword("password");
 
-        Mockito.when(smtpService.getSmtpConfiguration()).thenReturn(smtpConfiguration);
+        when(smtpService.getSmtpConfiguration()).thenReturn(smtpConfiguration);
 
         EmailConfiguration emailConfiguration = new EmailConfiguration();
         emailConfiguration.setFrom("from@getquery.com");
         emailConfiguration.setBcc("bcc@getquery.com");
         emailConfiguration.setReplyTo("reply-to@getquery.com");
 
-        Mockito.when(emailConfigurationService.getEmailConfiguration()).thenReturn(emailConfiguration);
+        when(emailConfigurationService.getEmailConfiguration()).thenReturn(emailConfiguration);
 
         Mail mail = new KweryMailImpl();
         mail.setBodyText("body test");
@@ -59,10 +61,9 @@ public class KweryPostOfficeImplMockTest {
         mail.addReplyTo("defaultreply-to@getquery.com");
         mail.setSubject("test mail");
 
-        MultiPartEmail multiPartEmail = Mockito.mock(MultiPartEmail.class);
-        //Mockito.doNothing().when(multiPartEmail).send();
+        MultiPartEmail multiPartEmail = mock(MultiPartEmail.class);
 
-        Mockito.when(commonsmailHelper.createMultiPartEmailWithContent(mail)).thenReturn(multiPartEmail);
+        when(commonsmailHelper.createMultiPartEmailWithContent(mail)).thenReturn(multiPartEmail);
 
         postoffice.send(mail);
 
@@ -73,7 +74,7 @@ public class KweryPostOfficeImplMockTest {
         ArgumentCaptor<String> password = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Boolean> debug = ArgumentCaptor.forClass(Boolean.class);
 
-        Mockito.verify(commonsmailHelper).doSetServerParameter(ArgumentCaptor.forClass(MultiPartEmail.class).capture(), smtpHost.capture(), smtpPort.capture(), ssl.capture(), user.capture(), password.capture(), debug.capture());
+        verify(commonsmailHelper).doSetServerParameter(ArgumentCaptor.forClass(MultiPartEmail.class).capture(), smtpHost.capture(), smtpPort.capture(), ssl.capture(), user.capture(), password.capture(), debug.capture());
 
         assertThat(smtpHost.getValue(), is(smtpConfiguration.getHost()));
         assertThat(smtpConfiguration.getPort(), is(smtpConfiguration.getPort()));
