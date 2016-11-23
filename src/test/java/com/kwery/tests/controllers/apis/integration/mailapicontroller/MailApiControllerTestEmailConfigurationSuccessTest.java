@@ -89,8 +89,6 @@ public class MailApiControllerTestEmailConfigurationSuccessTest extends Abstract
     public void test() {
         String toEmail = "to@getkwery.com";
 
-        getInjector().getInstance(MailApiController.class).getMailService().setPostoffice(getInjector().getInstance(KweryPostofficeImpl.class));
-
         String url = getInjector().getInstance(Router.class).getReverseRoute(MailApiController.class, "testEmailConfiguration",
                 ImmutableMap.of("toEmail", toEmail));
 

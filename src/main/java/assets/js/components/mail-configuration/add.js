@@ -20,6 +20,8 @@ define(["knockout", "jquery", "text!components/mail-configuration/add.html"], fu
         self.smtpConfigurationPresent = ko.observable(false);
         self.emailConfigurationPresent = ko.observable(false);
 
+        self.toEmail = ko.observable();
+
         self.saveSmtpConfiguration = function(){
             var e = {
                 id: self.smtpConfigurationId(),
@@ -91,7 +93,14 @@ define(["knockout", "jquery", "text!components/mail-configuration/add.html"], fu
         });
 
         self.sendTestEmail = function() {
-
+            $.ajax("/api/mail/" + self.toEmail() + "/email-configuration-test", {
+                type: "POST",
+                contentType: "application/json",
+                success: function(result) {
+                    self.status(result.status);
+                    self.messages(result.messages);
+                }
+            });
         };
 
         self.configurationsPresent = ko.computed(function(){
