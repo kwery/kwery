@@ -12,6 +12,7 @@ import javax.persistence.Table;
 public class EmailConfiguration {
     public static final String TABLE_EMAIL_CONFIGURATION = "email_configuration";
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_FROM_EMAIL = "from_email";
     public static final String COLUMN_BCC = "bcc";
     public static final String COLUMN_REPLY_TO = "reply_to";
 
@@ -19,6 +20,9 @@ public class EmailConfiguration {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Integer id;
+
+    @Column(name = COLUMN_FROM_EMAIL)
+    public String from;
 
     @Column(name = COLUMN_BCC)
     public String bcc;
@@ -32,6 +36,14 @@ public class EmailConfiguration {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 
     public String getBcc() {
@@ -54,6 +66,7 @@ public class EmailConfiguration {
     public String toString() {
         return "EmailConfiguration{" +
                 "id=" + id +
+                ", from='" + from + '\'' +
                 ", bcc='" + bcc + '\'' +
                 ", replyTo='" + replyTo + '\'' +
                 '}';

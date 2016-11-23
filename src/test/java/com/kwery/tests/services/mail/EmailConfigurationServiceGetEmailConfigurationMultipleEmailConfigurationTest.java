@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
+import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
 import static com.kwery.models.EmailConfiguration.COLUMN_ID;
 import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
 import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
@@ -25,6 +26,7 @@ public class EmailConfigurationServiceGetEmailConfigurationMultipleEmailConfigur
         for (int i = 1; i < 3; ++i) {
             EmailConfiguration e = new EmailConfiguration();
             e.setId(i);
+            e.setFrom("from@foo.com");
             e.setBcc("foo@goo.com");
             e.setReplyTo("bar@moo.com");
 
@@ -35,6 +37,7 @@ public class EmailConfigurationServiceGetEmailConfigurationMultipleEmailConfigur
                                     TABLE_EMAIL_CONFIGURATION
                             ).row()
                                     .column(COLUMN_ID, e.getId())
+                                    .column(COLUMN_FROM_EMAIL, e.getFrom())
                                     .column(COLUMN_BCC, e.getBcc())
                                     .column(COLUMN_REPLY_TO, e.getReplyTo())
                                     .end()

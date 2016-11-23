@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
+import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
 import static com.kwery.models.EmailConfiguration.COLUMN_ID;
 import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
 import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
@@ -22,6 +23,7 @@ public class EmailConfigurationServiceSaveTest extends RepoDashTestBase {
     @Test
     public void test() throws EmailConfigurationExistsException, MultipleEmailConfigurationException, DatabaseUnitException, SQLException, IOException {
         EmailConfiguration e = new EmailConfiguration();
+        e.setFrom("from@foo.com");
         e.setBcc("foo@goo.com");
         e.setReplyTo("bar@cho.com");
 
@@ -31,6 +33,7 @@ public class EmailConfigurationServiceSaveTest extends RepoDashTestBase {
 
         builder.newRow(TABLE_EMAIL_CONFIGURATION)
                 .with(COLUMN_ID, e.getId())
+                .with(COLUMN_FROM_EMAIL, e.getFrom())
                 .with(COLUMN_BCC, e.getBcc())
                 .with(COLUMN_REPLY_TO, e.getReplyTo())
                 .add();

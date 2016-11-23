@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
+import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
 import static com.kwery.models.EmailConfiguration.COLUMN_ID;
 import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
 import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
@@ -20,6 +21,7 @@ public class EmailConfigurationDaoSaveNewTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
         EmailConfiguration e = new EmailConfiguration();
+        e.setFrom("foo@from.com");
         e.setBcc("foo@bar.com");
         e.setReplyTo("bar@foo.com");
 
@@ -28,6 +30,7 @@ public class EmailConfigurationDaoSaveNewTest extends RepoDashDaoTestBase {
         DataSetBuilder builder = new DataSetBuilder();
 
         builder.newRow(TABLE_EMAIL_CONFIGURATION)
+                .with(COLUMN_FROM_EMAIL, e.getFrom())
                 .with(COLUMN_BCC, e.getBcc())
                 .with(COLUMN_REPLY_TO, e.getReplyTo())
                 .add();
