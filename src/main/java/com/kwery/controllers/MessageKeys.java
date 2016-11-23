@@ -61,4 +61,8 @@ public class MessageKeys {
     public static final String SMTP_CONFIGURATION_ADDED = "smtp.configuration.added";
     public static final String SMTP_CONFIGURATION_UPDATED = "smtp.configuration.updated";
     public static final String EMAIL_CONFIGURATION_SAVED = "email.configuration.saved";
+    public static final String EMAIL_TEST_SUBJECT = "email.test.subject";
+    public static final String EMAIL_TEST_BODY = "email.test.body";
+    public static final String EMAIL_TEST_FAILURE = "email.test.failure";
+    public static final String EMAIL_TEST_SUCCESS = "email.test.success";
 }
