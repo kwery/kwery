@@ -41,6 +41,7 @@ public class Routes implements ApplicationRoutes {
     public static final String MAIL_SAVE_SMTP_CONFIGURATION_API = "/api/mail/save-smtp-configuration";
     public static final String MAIL_GET_SMTP_CONFIGURATION_API = "/api/mail/smtp-configuration";
     public static final String MAIL_SAVE_EMAIL_CONFIGURATION_API = "/api/mail/save-email-configuration";
+    public static final String MAIL_GET_EMAIL_CONFIGURATION_API = "/api/mail/email-configuration";
 
     @Override
     public void init(Router router) {
@@ -78,6 +79,7 @@ public class Routes implements ApplicationRoutes {
         router.POST().route(MAIL_SAVE_SMTP_CONFIGURATION_API).with(MailApiController.class, "saveSmtpConfiguration");
         router.GET().route(MAIL_GET_SMTP_CONFIGURATION_API).with(MailApiController.class, "getSmtpConfiguration");
         router.POST().route(MAIL_SAVE_EMAIL_CONFIGURATION_API).with(MailApiController.class, "saveEmailConfiguration");
+        router.GET().route(MAIL_GET_EMAIL_CONFIGURATION_API).with(MailApiController.class, "getEmailConfiguration");
         //Api - End
 
         //Static asset

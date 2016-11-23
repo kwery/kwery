@@ -109,4 +109,13 @@ public class MailApiController {
         if (logger.isTraceEnabled()) logger.trace(">");
         return json.render(actionResult);
     }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result getEmailConfiguration() throws MultipleEmailConfigurationException {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        Result json = Results.json();
+        EmailConfiguration emailConfiguration = emailConfigurationService.getEmailConfiguration();
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json.render(emailConfiguration);
+    }
 }
