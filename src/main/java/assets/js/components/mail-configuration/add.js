@@ -17,6 +17,9 @@ define(["knockout", "jquery", "text!components/mail-configuration/add.html"], fu
         self.bcc = ko.observable();
         self.replyTo = ko.observable();
 
+        self.smtpConfigurationPresent = ko.observable(false);
+        self.emailConfigurationPresent = ko.observable(false);
+
         self.saveSmtpConfiguration = function(){
             var e = {
                 id: self.smtpConfigurationId(),
@@ -49,6 +52,8 @@ define(["knockout", "jquery", "text!components/mail-configuration/add.html"], fu
                     self.ssl(conf.ssl.toString());
                     self.username(conf.username);
                     self.password(conf.password)
+
+                    self.smtpConfigurationPresent(true);
                 }
             }
         });
@@ -79,9 +84,19 @@ define(["knockout", "jquery", "text!components/mail-configuration/add.html"], fu
                     self.from(conf.from);
                     self.bcc(conf.bcc);
                     self.replyTo(conf.replyTo);
+
+                    self.emailConfigurationPresent(true);
                 }
             }
         });
+
+        self.sendTestEmail = function() {
+
+        };
+
+        self.configurationsPresent = ko.computed(function(){
+            return self.smtpConfigurationPresent() && self.emailConfigurationPresent();
+        }, self);
 
         return self;
     }
