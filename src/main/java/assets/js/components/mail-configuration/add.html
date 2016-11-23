@@ -70,9 +70,9 @@
             <form data-bind="submit: sendTestEmail">
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('email.test.configuration.to')" for="to"></label>
-                    <input data-bind="value: toEmail" minlength="1" required class="form-control" type="text" id="to" name="to">
+                    <input data-bind="value: toEmail, enable: configurationsPresent" minlength="1" required class="form-control" type="text" id="to" name="to">
                 </div>
-                <button data-bind="text: ko.i18n('email.test.configuration.send.email')" class="btn btn-primary"></button>
+                <button data-bind="text: ko.i18n('email.test.configuration.send.email'), enable: configurationsPresent" class="btn btn-primary"></button>
             </form>
         </div>
     </div>
