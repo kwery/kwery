@@ -35,6 +35,10 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label data-bind="text: ko.i18n('report.recipient.emails')" for="recipientEmailsCsv"></label>
+                    <input data-bind="value: recipientEmailsCsv" type="text" class="form-control" id="recipientEmailsCsv" name="recipientEmailsCsv">
+                </div>
+                <div class="form-group">
                     <label data-bind="text: ko.i18n('label')" for="label"></label>
                     <input data-bind="value: label" minlength="1" required type="text"  class="form-control"id="label" name="label">
                 </div>

@@ -17,7 +17,7 @@ public class JsonToHtmlTable {
         List<List<String>> table = objectMapper.readValue(json, typeReference);
 
         List<String> htmlTableParts = new LinkedList<>();
-        htmlTableParts.add("<table>");
+        htmlTableParts.add("<table style='border: 1px solid black; width: 100%;'>");
 
         //Has headers?
         if (!table.isEmpty()) {
@@ -25,10 +25,10 @@ public class JsonToHtmlTable {
 
             List<String> ths = new ArrayList<>(headers.size());
 
-            htmlTableParts.add("<tr>");
+            htmlTableParts.add("<tr style='border: 1px solid black;'>");
 
             for (String header : headers) {
-                String htmlHeader = "<th>" + header + "</th>";
+                String htmlHeader = "<th style='border: 1px solid black;'>" + header + "</th>";
                 ths.add(htmlHeader);
             }
 
@@ -41,13 +41,13 @@ public class JsonToHtmlTable {
             if (table.size() > 1) {
                 //Skip headers
                 for (int i = 1; i < table.size(); ++i) {
-                    htmlTableParts.add("<tr>");
+                    htmlTableParts.add("<tr style='border: 1px solid black;'>");
 
                     List<String> row = table.get(i);
                     List<String> tds = new ArrayList<>(row.size());
 
                     for (String s : row) {
-                        tds.add("<td>" + s + "</td>");
+                        tds.add("<td style='border: 1px solid black;'>" + s + "</td>");
                     }
                     htmlTableParts.add(Joiner.on("").join(tds));
 

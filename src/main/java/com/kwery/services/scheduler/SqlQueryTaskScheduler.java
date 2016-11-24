@@ -18,7 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
@@ -120,7 +122,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
 
         if (!sqlQuery.getRecipientEmails().isEmpty()) {
             SqlQueryExecution execution = sqlQueryExecutionDao.getByExecutionId(executor.getGuid());
-            String subject = execution.getExecutionEnd() + " - " + sqlQuery.getLabel();
+            String subject = new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(System.currentTimeMillis())) + " - " + sqlQuery.getLabel();
             try {
                 String htmlBody = jsonToHtmlTableProvider.get().convert(execution.getResult());
                 KweryMail kweryMail = kweryMailProvider.get();

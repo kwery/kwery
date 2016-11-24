@@ -23,6 +23,8 @@ public class SqlQueryDto {
 
     private Integer dependsOnSqlQueryId;
 
+    private String recipientEmailsCsv;
+
     public int getId() {
         return id;
     }
@@ -69,5 +71,13 @@ public class SqlQueryDto {
 
     public void setDependsOnSqlQueryId(Integer dependsOnSqlQueryId) {
         this.dependsOnSqlQueryId = dependsOnSqlQueryId;
+    }
+
+    public String getRecipientEmailsCsv() {
+        return recipientEmailsCsv;
+    }
+
+    public void setRecipientEmailsCsv(String recipientEmailsCsv) {
+        this.recipientEmailsCsv = recipientEmailsCsv;
     }
 }
