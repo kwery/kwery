@@ -15,7 +15,8 @@ var require = {
         "router": "router",
         "polyglot": "polyglot",
         "jquery-validate": "jquery.validate",
-        "bootstrap": "/assets/bootstrap/js/bootstrap"
+        "bootstrap": "/assets/bootstrap/js/bootstrap",
+        "validator": "/assets/bootstrap/js/validator"
     },
     shim: {
         "jquery-migrate": {
@@ -27,6 +28,10 @@ var require = {
         },
         "bootstrap": {
             deps: ["jquery"]
+        },
+        "validator": {
+            deps: ["jquery"],
+            exports: '$.fn.validator'
         }
     }
 };

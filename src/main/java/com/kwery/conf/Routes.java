@@ -2,6 +2,7 @@ package com.kwery.conf;
 
 import com.kwery.controllers.IndexController;
 import com.kwery.controllers.apis.DatasourceApiController;
+import com.kwery.controllers.apis.MailApiController;
 import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.controllers.apis.SqlQueryApiController;
 import com.kwery.controllers.apis.UserApiController;
@@ -37,6 +38,12 @@ public class Routes implements ApplicationRoutes {
     public static final String ONBOARDING_NEXT_ACTION_API = "/api/onboarding/next-action";
     public static final String SQL_QUERY_ONE_OFF_EXECUTION_API = "/api/sql-query/one-off-execution/{sqlQueryId}";
 
+    public static final String MAIL_SAVE_SMTP_CONFIGURATION_API = "/api/mail/save-smtp-configuration";
+    public static final String MAIL_GET_SMTP_CONFIGURATION_API = "/api/mail/smtp-configuration";
+    public static final String MAIL_SAVE_EMAIL_CONFIGURATION_API = "/api/mail/save-email-configuration";
+    public static final String MAIL_GET_EMAIL_CONFIGURATION_API = "/api/mail/email-configuration";
+    public static final String MAIL_CONFIGURATION_TEST_API = "/api/mail/{toEmail}/email-configuration-test";
+
     @Override
     public void init(Router router) {
         router.GET().route(INDEX).with(IndexController.class, "index");
@@ -69,6 +76,13 @@ public class Routes implements ApplicationRoutes {
 
         router.POST().route(ONBOARDING_ADD_ROOT_USER_API).with(OnboardingApiController.class, "addRootUser");
         router.GET().route(ONBOARDING_NEXT_ACTION_API).with(OnboardingApiController.class, "nextAction");
+
+        router.POST().route(MAIL_SAVE_SMTP_CONFIGURATION_API).with(MailApiController.class, "saveSmtpConfiguration");
+        router.GET().route(MAIL_GET_SMTP_CONFIGURATION_API).with(MailApiController.class, "getSmtpConfiguration");
+        router.POST().route(MAIL_SAVE_EMAIL_CONFIGURATION_API).with(MailApiController.class, "saveEmailConfiguration");
+        router.GET().route(MAIL_GET_EMAIL_CONFIGURATION_API).with(MailApiController.class, "getEmailConfiguration");
+        router.POST().route(MAIL_SAVE_EMAIL_CONFIGURATION_API).with(MailApiController.class, "saveEmailConfiguration");
+        router.POST().route(MAIL_CONFIGURATION_TEST_API).with(MailApiController.class, "testEmailConfiguration");
         //Api - End
 
         //Static asset

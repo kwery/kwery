@@ -33,11 +33,13 @@ import static com.kwery.models.SqlQuery.COLUMN_QUERY;
 import static com.kwery.tests.util.Messages.ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M;
 import static com.kwery.views.ActionResult.Status.success;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static java.text.MessageFormat.format;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryApiControllerOneOffExecutionTest extends AbstractPostLoginApiTest {
     protected MySqlDocker mySqlDocker;
+    protected String label = "selectQuery";
 
     @Before
     public void setUpSqlQueryApiControllerOneOffExecutionTest() {
@@ -55,7 +57,7 @@ public class SqlQueryApiControllerOneOffExecutionTest extends AbstractPostLoginA
                                 .build(),
                         insertInto(SqlQuery.TABLE)
                                 .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
-                                .values(1, "* * * * *", "selectQuery", "select User from mysql.user where User = 'root'", 1)
+                                .values(1, "* * * * *", label, "select User from mysql.user where User = 'root'", 1)
                                 .build()
                 )
         ).launch();
@@ -74,7 +76,7 @@ public class SqlQueryApiControllerOneOffExecutionTest extends AbstractPostLoginA
 
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
-        assertThat(response, hasJsonPath("$.messages[0]", is(ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M)));
+        assertThat(response, hasJsonPath("$.messages[0]", is(format(ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M, label))));
     }
 
 

@@ -56,4 +56,13 @@ public class MessageKeys {
     public static final String SQL_QUERY_DELETE_SUCCESS = "sql.query.delete.success";
     public static final String ONBOARDING_ROOT_USER_CREATED = "onboarding.root.user.created";
     public static final String ONE_OFF_EXECUTION_SUCCESS_MESSAGE = "one.off.execution.success.message";
+    public static final String SMTP_CONFIGURATION_ALREADY_PRESENT = "smtp.configuration.already.present";
+    public static final String SMTP_MULTIPLE_CONFIGURATION = "smtp.multiple.configuration";
+    public static final String SMTP_CONFIGURATION_ADDED = "smtp.configuration.added";
+    public static final String SMTP_CONFIGURATION_UPDATED = "smtp.configuration.updated";
+    public static final String EMAIL_CONFIGURATION_SAVED = "email.configuration.saved";
+    public static final String EMAIL_TEST_SUBJECT = "email.test.subject";
+    public static final String EMAIL_TEST_BODY = "email.test.body";
+    public static final String EMAIL_TEST_FAILURE = "email.test.failure";
+    public static final String EMAIL_TEST_SUCCESS = "email.test.success";
 }

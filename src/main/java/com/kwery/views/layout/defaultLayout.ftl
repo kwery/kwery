@@ -55,6 +55,10 @@
                 .jumbotron {
                     background: white !important;
                 }
+
+                .top-buffer {
+                    margin-top:20px;
+                }
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->
