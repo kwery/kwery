@@ -21,14 +21,22 @@
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('smtp.ssl')"></label>
                     <div>
-                        <input data-bind="checked: ssl" class="radio-inline" type="radio" name="ssl" value="true"><span data-bind="text: ko.i18n('smtp.true')"></span>
-                        <input data-bind="checked: ssl" class="radio-inline" type="radio" name="ssl" value="false"><span data-bind="text: ko.i18n('smtp.false')"></span>
+                        <div class="radio">
+                            <label>
+                                <input data-bind="checked: ssl" class="radio-inline" type="radio" name="ssl" value="true" required>
+                                True
+                            </label>
+                            <label>
+                                <input data-bind="checked: ssl" class="radio-inline" type="radio" name="ssl" value="false" required>
+                                False
+                            </label>
+                        </div>
+                        <div class="help-block with-errors"></div>
                     </div>
-                    <div class="help-block with-errors"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('user.name')" for="username"></label>
-                    <input data-bind="value: username" minlength="1" required class="form-control" type="text" id="username" name="username" required>
+                    <input data-bind="value: username" minlength="1" class="form-control" type="text" id="username" name="username" required>
                     <div class="help-block with-errors"></div>
                 </div>
                 <div class="form-group">
