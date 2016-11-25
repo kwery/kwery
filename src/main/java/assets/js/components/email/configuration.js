@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/mail-configuration/add.html", "validator"], function (ko, $, template, validator) {
+define(["knockout", "jquery", "text!components/email/configuration.html", "validator"], function (ko, $, template, validator) {
     function viewModel(params) {
         var self = this;
 
