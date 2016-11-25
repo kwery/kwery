@@ -28,6 +28,10 @@ public class DependentSqlQueriesSetUp extends SchedulerServiceOneOffExecutionBas
                                 .values(successQueryId, dependentSelectQueryId)
                                 .values(sleepQueryId, dependentSelectQueryId)
                                 .values(failQueryId, dependentSelectQueryId)
+                                .build(),
+                        insertInto(SqlQuery.TABLE_QUERY_RUN_EMAIL_RECIPIENT)
+                                .columns(SqlQuery.COLUMN_QUERY_RUN_ID_FK, SqlQuery.COLUMN_EMAIL)
+                                .values(dependentSelectQueryId, recipientEmail)
                                 .build()
                 )
         ).launch();

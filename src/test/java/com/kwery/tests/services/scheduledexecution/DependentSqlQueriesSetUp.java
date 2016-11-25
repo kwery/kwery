@@ -1,7 +1,6 @@
 package com.kwery.tests.services.scheduledexecution;
 
 import com.kwery.models.SqlQuery;
-import com.kwery.tests.services.oneoffexecution.SchedulerServiceOneOffExecutionBaseTest;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
@@ -29,6 +28,10 @@ public class DependentSqlQueriesSetUp extends SchedulerServiceScheduledExecution
                                 .values(successQueryId, dependentSelectQueryId)
                                 .values(sleepQueryId, dependentSelectQueryId)
                                 .values(failQueryId, dependentSelectQueryId)
+                                .build(),
+                        insertInto(SqlQuery.TABLE_QUERY_RUN_EMAIL_RECIPIENT)
+                                .columns(SqlQuery.COLUMN_QUERY_RUN_ID_FK, SqlQuery.COLUMN_EMAIL)
+                                .values(dependentSelectQueryId, recipientEmail)
                                 .build()
                 )
         ).launch();

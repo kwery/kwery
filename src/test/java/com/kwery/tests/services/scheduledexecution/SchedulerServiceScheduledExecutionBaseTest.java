@@ -38,6 +38,8 @@ public abstract class SchedulerServiceScheduledExecutionBaseTest extends RepoDas
     protected int sleepQueryId = 2;
     protected int failQueryId = 3;
 
+    protected String recipientEmail = "foo@getkwery.com";
+
     @Before
     public void setUpSchedulerServiceScheduledExecutionBaseTest () {
         mySqlDocker = new MySqlDocker();
@@ -57,6 +59,12 @@ public abstract class SchedulerServiceScheduledExecutionBaseTest extends RepoDas
                                 .values(successQueryId, "* * * * *", "selectQuery", "select User from mysql.user where User = 'root'", 1)
                                 .values(sleepQueryId, "* * * * *", "sleepQuery", "select sleep(100000)", 1)
                                 .values(failQueryId, "* * * * *", "failQuery", "select * from foo", 1)
+                                .build(),
+                        insertInto(SqlQuery.TABLE_QUERY_RUN_EMAIL_RECIPIENT)
+                                .columns(SqlQuery.COLUMN_QUERY_RUN_ID_FK, SqlQuery.COLUMN_EMAIL)
+                                .values(successQueryId, recipientEmail)
+                                .values(sleepQueryId, recipientEmail)
+                                .values(failQueryId, recipientEmail)
                                 .build()
                 )
         ).launch();
