@@ -2,8 +2,8 @@ package com.kwery.tests.fluentlenium.security;
 
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import com.kwery.tests.fluentlenium.datasource.AddDatasourcePage;
-import com.kwery.tests.fluentlenium.datasource.ListDatasourcesPage;
+import com.kwery.tests.fluentlenium.datasource.DatasourceAddPage;
+import com.kwery.tests.fluentlenium.datasource.DatasourceListPage;
 import com.kwery.tests.fluentlenium.datasource.UpdateDatasourcePage;
 import com.kwery.tests.fluentlenium.onboarding.OnboardingNextStepsPage;
 import com.kwery.tests.fluentlenium.sqlquery.AddSqlQueryPage;
@@ -47,9 +47,9 @@ public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTe
         pageClasses.put(UpdateUserPage.class, true);
         pageClasses.put(ListUsersPage.class, true);
 
-        pageClasses.put(AddDatasourcePage.class, true);
+        pageClasses.put(DatasourceAddPage.class, true);
         pageClasses.put(UpdateDatasourcePage.class, true);
-        pageClasses.put(ListDatasourcesPage.class, true);
+        pageClasses.put(DatasourceListPage.class, true);
 
         pageClasses.put(AddSqlQueryPage.class, true);
         pageClasses.put(ListSqlQueriesPage.class, true);

@@ -11,8 +11,8 @@ import static org.junit.Assert.fail;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static com.kwery.tests.util.TestUtil.user;
 
-public abstract class AbstractDatasourceTest extends RepoDashFluentLeniumTest {
-    protected AddDatasourcePage page;
+public abstract class DatasourceAbstractTest extends RepoDashFluentLeniumTest {
+    protected DatasourceAddPage page;
     protected Datasource datasource;
 
     @Before
@@ -31,7 +31,7 @@ public abstract class AbstractDatasourceTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(user.getUsername(), user.getPassword());
         loginPage.waitForSuccessMessage(user);
 
-        page = createPage(AddDatasourcePage.class);
+        page = createPage(DatasourceAddPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
         if (!page.isRendered()) {

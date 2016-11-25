@@ -14,7 +14,7 @@ import java.util.List;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
-import static com.kwery.tests.fluentlenium.datasource.ListDatasourcesPage.COLUMNS;
+import static com.kwery.tests.fluentlenium.datasource.DatasourceListPage.COLUMNS;
 import static junit.framework.TestCase.fail;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
@@ -34,8 +34,8 @@ import static com.kwery.tests.util.Messages.PORT_M;
 import static com.kwery.tests.util.Messages.URL_M;
 import static com.kwery.tests.util.Messages.USER_NAME_M;
 
-public class ListDatasourcesPageTest extends RepoDashFluentLeniumTest {
-    protected ListDatasourcesPage page;
+public class DatasourceListUiTest extends RepoDashFluentLeniumTest {
+    protected DatasourceListPage page;
 
     @Before
     public void setUpListDatasourcesPageTest() {
@@ -63,7 +63,7 @@ public class ListDatasourcesPageTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
         loginPage.waitForSuccessMessage(userTableUtil.firstRow());
 
-        page = createPage(ListDatasourcesPage.class);
+        page = createPage(DatasourceListPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 

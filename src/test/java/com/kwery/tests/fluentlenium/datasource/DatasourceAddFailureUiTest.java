@@ -3,7 +3,6 @@ package com.kwery.tests.fluentlenium.datasource;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.xebialabs.overcast.host.CloudHost;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.user.login.LoginPage;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
@@ -12,11 +11,9 @@ import com.kwery.models.Datasource;
 import com.kwery.models.User;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.MySqlDocker;
-
-import java.util.List;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static java.text.MessageFormat.format;
 import static junit.framework.TestCase.fail;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
@@ -26,34 +23,28 @@ import static com.kwery.models.Datasource.COLUMN_TYPE;
 import static com.kwery.models.Datasource.COLUMN_URL;
 import static com.kwery.models.Datasource.COLUMN_USERNAME;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
-import static com.kwery.tests.util.Messages.UPDATE_M;
+import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
+import static com.kwery.tests.util.Messages.MYSQL_DATASOURCE_CONNECTION_FAILURE_M;
+import static com.kwery.tests.util.TestUtil.datasource;
 
-public class UpdateDatasourcePageTest extends RepoDashFluentLeniumTest {
-    protected UserTableUtil userTableUtil;
-    protected UpdateDatasourcePage page;
-    protected CloudHost cloudHost;
-    private MySqlDocker mySqlDocker;
+public class DatasourceAddFailureUiTest extends RepoDashFluentLeniumTest {
+    protected DatasourceAddPage page;
     protected Datasource datasource;
 
     @Before
-    public void setUpUpdateDatasourcePageTest() {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
+    public void setUpAddDatasourceFailureTest() {
+        datasource = datasource();
 
-        datasource = mySqlDocker.datasource();
-
-        userTableUtil = new UserTableUtil(1);
+        UserTableUtil userTableUtil = new UserTableUtil(1);
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
                 Operations.sequenceOf(
                         userTableUtil.insertOperation(),
                         insertInto(Datasource.TABLE)
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(1, datasource.getLabel(), datasource.getPassword(), datasource.getPort(), MYSQL.name(), datasource.getUrl(), datasource.getUsername())
-                                .values(2, "foo", datasource.getPassword(), datasource.getPort(), MYSQL.name(), datasource.getUrl(), datasource.getUsername())
+                                .values(1, datasource.getLabel(), datasource.getPassword(), datasource.getPort(), datasource.getType(), datasource.getUrl(), datasource.getUsername())
                                 .build()
                 )
         ).launch();
@@ -72,7 +63,7 @@ public class UpdateDatasourcePageTest extends RepoDashFluentLeniumTest {
         loginPage.waitForSuccessMessage(user);
 
 
-        page = createPage(UpdateDatasourcePage.class);
+        page = createPage(DatasourceAddPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 
@@ -83,29 +74,14 @@ public class UpdateDatasourcePageTest extends RepoDashFluentLeniumTest {
 
     @Test
     public void test() {
-        page.waitForForm("label", "testDatasource0");
-
-        List<String> fields = page.formFields();
-
-        assertThat(fields, hasSize(5));
-
-        assertThat(fields.get(0), is(datasource.getUrl()));
-        assertThat(fields.get(1), is(String.valueOf(datasource.getPort())));
-        assertThat(fields.get(2), is(datasource.getUsername()));
-        assertThat(fields.get(3), is(datasource.getPassword()));
-        assertThat(fields.get(4), is(datasource.getLabel()));
-
-        assertThat(page.actionLabel().toLowerCase(), is(UPDATE_M.toLowerCase()));
-
-        String newLabel = "newLabel";
-        page.fillLabel(newLabel);
-        page.submit();
-
-        page.waitForSuccessMessage(newLabel);
-
-        page.fillLabel("foo");
-        page.submit();
-
-        page.waitForFailureMessage("foo");
+        page.submitForm(datasource.getUrl() + "sjdfldsjf", String.valueOf(datasource.getPort()), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
+        page.waitForFailureMessage();
+        assertThat(
+                page.errorMessages(),
+                containsInAnyOrder(
+                        format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, datasource.getLabel()),
+                        MYSQL_DATASOURCE_CONNECTION_FAILURE_M
+                )
+        );
     }
 }

@@ -31,8 +31,8 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class DeleteDatasourcePageTest extends RepoDashFluentLeniumTest {
-    protected ListDatasourcesPage page;
+public class DatasourceDeleteUiTest extends RepoDashFluentLeniumTest {
+    protected DatasourceListPage page;
 
     @Before
     public void setUpDeleteDatasourcePageTest() {
@@ -64,7 +64,7 @@ public class DeleteDatasourcePageTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
         loginPage.waitForSuccessMessage(userTableUtil.firstRow());
 
-        page = createPage(ListDatasourcesPage.class);
+        page = createPage(DatasourceListPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 

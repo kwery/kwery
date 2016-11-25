@@ -19,7 +19,7 @@ import static org.openqa.selenium.By.id;
 import static com.kwery.tests.util.Messages.DATASOURCE_DELETE_SQL_QUERIES_PRESENT_M;
 import static com.kwery.tests.util.Messages.DATASOURCE_DELETE_SUCCESS_M;
 
-public class ListDatasourcesPage extends FluentPage implements RepoDashPage {
+public class DatasourceListPage extends FluentPage implements RepoDashPage {
     public static final int COLUMNS = 6;
 
     @Override

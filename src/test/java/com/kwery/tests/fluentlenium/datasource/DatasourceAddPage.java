@@ -18,7 +18,7 @@ import static org.openqa.selenium.By.id;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 
-public class AddDatasourcePage extends FluentPage implements RepoDashPage {
+public class DatasourceAddPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "addDatasourceForm")
     protected FluentWebElement form;

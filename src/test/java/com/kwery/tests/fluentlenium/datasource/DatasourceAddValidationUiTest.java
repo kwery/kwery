@@ -9,7 +9,7 @@ import static com.kwery.tests.util.Messages.PORT_VALIDATION_M;
 import static com.kwery.tests.util.Messages.URL_VALIDATION_M;
 import static com.kwery.tests.util.Messages.USERNAME_VALIDATION_M;
 
-public class AddDatasourceValidationTest extends AbstractDatasourceTest {
+public class DatasourceAddValidationUiTest extends DatasourceAbstractTest {
     @Test
     public void testEmptyValues() {
         page.submitForm("", "", "", "", "");
