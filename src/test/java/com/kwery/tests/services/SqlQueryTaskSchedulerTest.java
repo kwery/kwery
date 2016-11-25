@@ -6,15 +6,10 @@ import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
-import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
-import com.kwery.services.scheduler.OngoingSqlQueryTask;
-import com.kwery.services.scheduler.SchedulerService;
-import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
-import com.kwery.services.scheduler.SqlQueryTask;
-import com.kwery.services.scheduler.SqlQueryTaskExecutorListener;
-import com.kwery.services.scheduler.SqlQueryTaskFactory;
-import com.kwery.services.scheduler.SqlQueryTaskScheduler;
-import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
+import com.kwery.services.mail.KweryMail;
+import com.kwery.services.mail.KweryMailImpl;
+import com.kwery.services.mail.MailService;
+import com.kwery.services.scheduler.*;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutor;
@@ -24,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,6 +63,8 @@ public class SqlQueryTaskSchedulerTest {
     private SchedulerService schedulerService;
     @Mock
     private SqlQueryDao sqlQueryDao;
+    @Mock
+    private MailService mailService;
 
     private SqlQuery sqlQuery;
     private Datasource datasource;
@@ -107,6 +105,9 @@ public class SqlQueryTaskSchedulerTest {
                 oneOffSqlQueryTaskSchedulerReaper,
                 schedulerService,
                 sqlQueryDao,
+                new JsonToHtmlProvider(),
+                mailService,
+                new KweryMailProvider(),
                 ongoingExecutions,
                 sqlQuery
         );
@@ -125,6 +126,8 @@ public class SqlQueryTaskSchedulerTest {
         List<TaskExecutor> ongoingExecutions = newArrayList(taskExecutor);
 
         sqlQuery.setDependentQueries(new LinkedList<>());
+        sqlQuery.setRecipientEmails(new HashSet<>());
+
         when(sqlQueryDao.getById(anyInt())).thenReturn(sqlQuery);
 
         SqlQueryTaskScheduler sqlQueryTaskScheduler = new SqlQueryTaskScheduler(
@@ -137,6 +140,9 @@ public class SqlQueryTaskSchedulerTest {
                 oneOffSqlQueryTaskSchedulerReaper,
                 schedulerService,
                 sqlQueryDao,
+                new JsonToHtmlProvider(),
+                mailService,
+                new KweryMailProvider(),
                 ongoingExecutions,
                 sqlQuery
         );
@@ -163,6 +169,9 @@ public class SqlQueryTaskSchedulerTest {
                 oneOffSqlQueryTaskSchedulerReaper,
                 schedulerService,
                 sqlQueryDao,
+                new JsonToHtmlProvider(),
+                mailService,
+                new KweryMailProvider(),
                 ongoingExecutions,
                 sqlQuery
         );
@@ -184,6 +193,9 @@ public class SqlQueryTaskSchedulerTest {
                 oneOffSqlQueryTaskSchedulerReaper,
                 schedulerService,
                 sqlQueryDao,
+                new JsonToHtmlProvider(),
+                mailService,
+                new KweryMailProvider(),
                 ongoingExecutions,
                 sqlQuery
         );
@@ -216,6 +228,9 @@ public class SqlQueryTaskSchedulerTest {
                 oneOffSqlQueryTaskSchedulerReaper,
                 schedulerService,
                 sqlQueryDao,
+                new JsonToHtmlProvider(),
+                mailService,
+                new KweryMailProvider(),
                 ongoingExecutions,
                 sqlQuery
         );
@@ -226,5 +241,19 @@ public class SqlQueryTaskSchedulerTest {
         verify(another, times(0)).stop();
 
         assertThat(ongoingExecutions, hasSize(2));
+    }
+
+    private static class JsonToHtmlProvider implements Provider<JsonToHtmlTable> {
+        @Override
+        public JsonToHtmlTable get() {
+            return new JsonToHtmlTable();
+        }
+    }
+
+    private static class KweryMailProvider implements Provider<KweryMail> {
+        @Override
+        public KweryMail get() {
+            return new KweryMailImpl();
+        }
     }
 }

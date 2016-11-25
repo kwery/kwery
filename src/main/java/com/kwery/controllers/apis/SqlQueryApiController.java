@@ -3,6 +3,8 @@ package com.kwery.controllers.apis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.kwery.dao.DatasourceDao;
@@ -40,6 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static com.google.common.collect.Sets.newHashSet;
 import static com.kwery.controllers.ControllerUtil.fieldMessages;
 import static com.kwery.controllers.MessageKeys.DATASOURCE_VALIDATION;
 import static com.kwery.controllers.MessageKeys.ONE_OFF_EXECUTION_SUCCESS_MESSAGE;
@@ -397,6 +400,7 @@ public class SqlQueryApiController {
         dto.setSqlQueryExecutionId(model.getExecutionId());
         dto.setStatus(model.getStatus().name());
         dto.setResult(model.getResult());
+
         return dto;
     }
 
@@ -439,6 +443,11 @@ public class SqlQueryApiController {
         model.setLabel(dto.getLabel());
         model.setQuery(dto.getQuery());
         model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
+
+        if (!"".equals(Strings.nullToEmpty(dto.getRecipientEmailsCsv()))) {
+            Iterable<String> emails = Splitter.on(",").trimResults().omitEmptyStrings().split(dto.getRecipientEmailsCsv());
+            model.setRecipientEmails(newHashSet(emails));
+        }
 
         return model;
     }

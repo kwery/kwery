@@ -2,7 +2,11 @@ package com.kwery.tests.services.oneoffexecution;
 
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
+import com.kwery.services.scheduler.JsonToHtmlTable;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import ninja.postoffice.Mail;
+import ninja.postoffice.Postoffice;
+import ninja.postoffice.mock.PostofficeMockImpl;
 import org.dbunit.DatabaseUnitException;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +19,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 import static com.kwery.tests.services.oneoffexecution.DependentSqlQueriesSetUp.dependentSelectQueryId;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -23,6 +28,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.junit.Assert.assertThat;
 
 
@@ -74,5 +80,12 @@ public class SchedulerServiceOneOffExecutionWithDependentsSuccessTest extends Sc
         assertThat(execution.getExecutionEnd(), greaterThan(execution.getExecutionStart()));
         assertThat(execution.getExecutionId(), notNullValue());
         assertThat(execution.getResult(), notNullValue());
+
+        Mail mail = ((PostofficeMockImpl)getInstance(Postoffice.class)).getLastSentMail();
+
+        assertThat(mail, notNullValue());
+        assertThat(mail.getTos(), containsInAnyOrder(recipientEmail));
+        assertThat(mail.getBodyHtml(), is(new JsonToHtmlTable().convert(execution.getResult())));
+        assertThat(mail.getSubject(), endsWith(sqlQueryDao.getById(dependentSelectQueryId).getLabel()));
     }
 }

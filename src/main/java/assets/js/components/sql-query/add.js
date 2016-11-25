@@ -5,6 +5,7 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
         self.cronExpression = ko.observable();
         self.label = ko.observable();
         self.datasource = ko.observable();
+        self.recipientEmailsCsv = ko.observable();
         self.dependsOnSqlQuery = ko.observable();
 
         self.status = ko.observable("");
@@ -17,6 +18,7 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
 
         self.cronExpressionEnabled = ko.observable(true);
         self.dependsOnSqlQueryEnabled = ko.observable(false);
+
 
         self.cronExpressionEnableDisplay = ko.computed(function(){
             return !self.cronExpressionEnabled();
@@ -85,6 +87,7 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
                             self.query(result.query);
                             self.cronExpression(result.cronExpression);
                             self.label(result.label);
+                            self.recipientEmailsCsv(result.recipientEmails.join(", "));
 
                             //Prepopulate existing datasource
                             ko.utils.arrayForEach(self.datasources(), function(datasource){
@@ -134,7 +137,8 @@ define(["knockout", "jquery", "text!components/sql-query/add.html"], function (k
                     cronExpression: self.cronExpression(),
                     label: self.label(),
                     datasourceId: self.datasource().id,
-                    dependsOnSqlQueryId: dependsOnSqlQuery
+                    dependsOnSqlQueryId: dependsOnSqlQuery,
+                    recipientEmailsCsv: self.recipientEmailsCsv()
                 };
 
                 if (isUpdate) {

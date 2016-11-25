@@ -6,6 +6,9 @@ import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryTaskScheduler;
+import ninja.postoffice.Mail;
+import ninja.postoffice.Postoffice;
+import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -76,5 +79,8 @@ public class SchedulerServiceScheduledExecutionOngoingAndKilledTest extends Sche
         }
 
         assertThat(stopped, is(true));
+
+        Mail mail = ((PostofficeMockImpl)getInstance(Postoffice.class)).getLastSentMail();
+        assertThat(mail, nullValue());
     }
 }

@@ -4,6 +4,9 @@ import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import ninja.postoffice.Mail;
+import ninja.postoffice.Postoffice;
+import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -78,5 +81,8 @@ public class SchedulerServiceOneOffExecutionOngoingAndKillExecutionTest extends 
         assertThat(sqlQueryTaskSchedulerHolder.all(), emptyIterable());
         assertThat(oneOffSqlQueryTaskSchedulerReaper.getSqlQueryTaskSchedulerExecutorPairs(), emptyIterable());
         assertThat(schedulerService.ongoingQueryTasks(sleepQueryId), emptyIterable());
+
+        Mail mail = ((PostofficeMockImpl)getInstance(Postoffice.class)).getLastSentMail();
+        assertThat("Report email is not sent in case query is killed", mail, nullValue());
     }
 }

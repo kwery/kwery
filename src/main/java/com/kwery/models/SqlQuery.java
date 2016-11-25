@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = SqlQuery.TABLE)
@@ -14,9 +15,13 @@ public class SqlQuery {
     public static final String COLUMN_LABEL = "label";
     public static final String COLUMN_CRON_EXPRESSION = "cron_expression";
     public static final String COLUMN_DATASOURCE_ID_FK = "datasource_id_fk";
+
     public static final String TABLE_QUERY_RUN_DEPENDENT = "query_run_dependent";
     public static final String COLUMN_QUERY_RUN_ID_FK = "query_run_id_fk";
     public static final String COLUMN_DEPENDENT_QUERY_RUN_ID_FK = "dependent_query_run_id_fk";
+
+    public static final String TABLE_QUERY_RUN_EMAIL_RECIPIENT = "query_run_email_recipient";
+    public static final String COLUMN_EMAIL = "email";
 
     @Column(name = COLUMN_ID)
     @Id
@@ -48,6 +53,14 @@ public class SqlQuery {
             inverseJoinColumns = @JoinColumn(name = COLUMN_DEPENDENT_QUERY_RUN_ID_FK, referencedColumnName = SqlQuery.COLUMN_ID)
     )
     private List<SqlQuery> dependentQueries;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = TABLE_QUERY_RUN_EMAIL_RECIPIENT,
+            joinColumns = @JoinColumn(name = COLUMN_QUERY_RUN_ID_FK)
+    )
+    @Column(name = COLUMN_EMAIL)
+    private Set<String> recipientEmails;
 
     public Integer getId() {
         return id;
@@ -97,6 +110,14 @@ public class SqlQuery {
         this.dependentQueries = dependentQueries;
     }
 
+    public Set<String> getRecipientEmails() {
+        return recipientEmails;
+    }
+
+    public void setRecipientEmails(Set<String> recipientEmails) {
+        this.recipientEmails = recipientEmails;
+    }
+
     @Override
     public String toString() {
         return "SqlQuery{" +
@@ -106,6 +127,7 @@ public class SqlQuery {
                 ", cronExpression='" + cronExpression + '\'' +
                 ", datasource=" + datasource +
                 ", dependentQueries=" + dependentQueries +
+                ", recipientEmails=" + recipientEmails +
                 '}';
     }
 }

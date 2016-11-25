@@ -1,6 +1,7 @@
 package com.kwery.tests.dao.sqlquerydao;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
@@ -9,10 +10,10 @@ import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import org.exparity.hamcrest.BeanMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_QUERY;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static org.exparity.hamcrest.BeanMatchers.theSameAs;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
@@ -56,6 +58,9 @@ public class SqlQueryDaoQueryTest extends RepoDashDaoTestBase {
         selectSqlQuery.setDatasource(datasource);
         selectSqlQuery.setLabel("selectQuery");
 
+        ImmutableSet<String> emails = ImmutableSet.of("foo@getkwery.com");
+        selectSqlQuery.setRecipientEmails(emails);
+
         dependentSelectSqlQuery = new SqlQuery();
         dependentSelectSqlQuery.setId(2);
         dependentSelectSqlQuery.setCronExpression("* * * * *");
@@ -63,6 +68,7 @@ public class SqlQueryDaoQueryTest extends RepoDashDaoTestBase {
         dependentSelectSqlQuery.setDatasource(datasource);
         dependentSelectSqlQuery.setLabel("dependentSelectQuery");
         dependentSelectSqlQuery.setDependentQueries(new LinkedList<>());
+        dependentSelectSqlQuery.setRecipientEmails(new HashSet<>());
 
         dependentSleepQuery = new SqlQuery();
         dependentSleepQuery.setId(3);
@@ -71,6 +77,7 @@ public class SqlQueryDaoQueryTest extends RepoDashDaoTestBase {
         dependentSleepQuery.setDatasource(datasource);
         dependentSleepQuery.setLabel("dependentSleepQuery");
         dependentSleepQuery.setDependentQueries(new LinkedList<>());
+        dependentSleepQuery.setRecipientEmails(new HashSet<>());
 
         selectSqlQuery.setDependentQueries(ImmutableList.of(dependentSelectSqlQuery, dependentSleepQuery));
 
@@ -95,6 +102,10 @@ public class SqlQueryDaoQueryTest extends RepoDashDaoTestBase {
                                 .columns(SqlQuery.COLUMN_QUERY_RUN_ID_FK, SqlQuery.COLUMN_DEPENDENT_QUERY_RUN_ID_FK)
                                 .values(1, 2)
                                 .values(1, 3)
+                                .build(),
+                        insertInto(SqlQuery.TABLE_QUERY_RUN_EMAIL_RECIPIENT)
+                                .columns(SqlQuery.COLUMN_QUERY_RUN_ID_FK, SqlQuery.COLUMN_EMAIL)
+                                .values(1, emails.iterator().next())
                                 .build()
                 )
         ).launch();
@@ -104,13 +115,13 @@ public class SqlQueryDaoQueryTest extends RepoDashDaoTestBase {
 
     @Test
     public void testGetByLabel() {
-        assertThat(dao.getByLabel(selectSqlQuery.getLabel()), BeanMatchers.theSameAs(selectSqlQuery));
+        assertThat(dao.getByLabel(selectSqlQuery.getLabel()), theSameAs(selectSqlQuery));
         assertThat(dao.getByLabel(UUID.randomUUID().toString()), nullValue());
     }
 
     @Test
     public void testGetById() {
-        assertThat(dao.getById(selectSqlQuery.getId()), BeanMatchers.theSameAs(selectSqlQuery));
+        assertThat(dao.getById(selectSqlQuery.getId()), theSameAs(selectSqlQuery));
         assertThat(dao.getById(Integer.MAX_VALUE), nullValue());
     }
 }

@@ -3,6 +3,9 @@ package com.kwery.tests.services.scheduledexecution;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import ninja.postoffice.Mail;
+import ninja.postoffice.Postoffice;
+import ninja.postoffice.mock.PostofficeMockImpl;
 import org.codehaus.jackson.JsonProcessingException;
 import org.junit.Test;
 
@@ -41,5 +44,8 @@ public class SchedulerServiceScheduledExecutionFailureTest extends SchedulerServ
             assertThat(execution.getExecutionId().length(), greaterThan(0));
             assertThat(execution.getResult(), nullValue());
         }
+
+        Mail mail = ((PostofficeMockImpl)getInstance(Postoffice.class)).getLastSentMail();
+        assertThat(mail, nullValue());
     }
 }

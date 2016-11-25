@@ -1,5 +1,6 @@
 package com.kwery.services.scheduler;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -8,17 +9,23 @@ import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
+import com.kwery.services.mail.KweryMail;
+import com.kwery.services.mail.MailService;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
 
+//TODO - Needs overhaul
 public class SqlQueryTaskScheduler implements SchedulerListener {
     protected Logger logger = LoggerFactory.getLogger(SqlQueryTaskScheduler.class);
 
@@ -33,6 +40,9 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
     private final OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper;
     private final SchedulerService schedulerService;
     private final SqlQueryDao sqlQueryDao;
+    private final Provider<JsonToHtmlTable> jsonToHtmlTableProvider;
+    private final MailService mailService;
+    private final Provider<KweryMail> kweryMailProvider;
 
     @Inject
     public SqlQueryTaskScheduler(Scheduler scheduler,
@@ -44,6 +54,9 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
                                  OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper,
                                  SchedulerService schedulerService,
                                  SqlQueryDao sqlQueryDao,
+                                 Provider<JsonToHtmlTable> jsonToHtmlTableProvider,
+                                 MailService mailService,
+                                 Provider<KweryMail> kweryMailProvider,
                                  @Assisted List<TaskExecutor> ongoingExecutions,
                                  @Assisted SqlQuery sqlQuery) {
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
@@ -56,6 +69,9 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         this.oneOffSqlQueryTaskSchedulerReaper = oneOffSqlQueryTaskSchedulerReaper;
         this.schedulerService = schedulerService;
         this.sqlQueryDao = sqlQueryDao;
+        this.jsonToHtmlTableProvider = jsonToHtmlTableProvider;
+        this.mailService = mailService;
+        this.kweryMailProvider = kweryMailProvider;
 
         this.scheduler.addSchedulerListener(this);
 
@@ -102,6 +118,27 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         for (SqlQuery query : sqlQueryDao.getById(sqlQuery.getId()).getDependentQueries()) {
             logger.info("Scheduling dependent query {}", query.getLabel());
             schedulerService.schedule(query);
+        }
+
+        if (!sqlQuery.getRecipientEmails().isEmpty()) {
+            SqlQueryExecution execution = sqlQueryExecutionDao.getByExecutionId(executor.getGuid());
+            String subject = new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(System.currentTimeMillis())) + " - " + sqlQuery.getLabel();
+            try {
+                String htmlBody = jsonToHtmlTableProvider.get().convert(execution.getResult());
+                KweryMail kweryMail = kweryMailProvider.get();
+                kweryMail.setSubject(subject);
+                kweryMail.setBodyHtml(htmlBody);
+                sqlQuery.getRecipientEmails().forEach(kweryMail::addTo);
+
+                try {
+                    mailService.send(kweryMail);
+                    logger.info("Sql query id {} and execution id {} email send to {}", sqlQuery.getId(), execution.getId(), Joiner.on(",").join(sqlQuery.getRecipientEmails()));
+                } catch (Exception e) {
+                    logger.error("Exception while trying to send report email for sql query id {} and execution id {}", sqlQuery.getId(), execution.getId(), e);
+                }
+            } catch (IOException e) {
+                logger.error("Exception while trying to convert result to html for sql query id {} and execution id {}", sqlQuery.getId(), execution.getId(), e);
+            }
         }
     }
 

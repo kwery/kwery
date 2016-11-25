@@ -9,6 +9,7 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
 
@@ -52,17 +53,7 @@ public class DbUtil {
     }
 
     public static void assertDbState(String tableName, IDataSet expectedDataSet) throws SQLException, DatabaseUnitException, IOException {
-        IDatabaseConnection connection = new DatabaseConnection(DbUtil.getDatasource().getConnection());
-        try {
-            IDataSet databaseDataSet = connection.createDataSet();
-            ITable actualTable = databaseDataSet.getTable(tableName);
-            ITable expectedTable = expectedDataSet.getTable(tableName);
-            assertEquals(expectedTable, actualTable);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
-        }
+        assertDbState(tableName, expectedDataSet, null);
     }
 
     public static void assertDbState(String tableName, IDataSet expectedDataSet, String... columnsToIgnore) throws SQLException, DatabaseUnitException, IOException {
@@ -77,7 +68,7 @@ public class DbUtil {
                 expectedTable = DefaultColumnFilter.excludedColumnsTable(expectedTable, columnsToIgnore);
             }
 
-            assertEquals(expectedTable, actualTable);
+            assertEquals(new SortedTable(expectedTable), new SortedTable(actualTable));
         } finally {
             if (connection != null) {
                 connection.close();

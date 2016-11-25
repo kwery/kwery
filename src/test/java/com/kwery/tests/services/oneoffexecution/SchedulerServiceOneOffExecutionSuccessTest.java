@@ -2,7 +2,11 @@ package com.kwery.tests.services.oneoffexecution;
 
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
+import com.kwery.services.scheduler.JsonToHtmlTable;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import ninja.postoffice.Mail;
+import ninja.postoffice.Postoffice;
+import ninja.postoffice.mock.PostofficeMockImpl;
 import org.dbunit.DatabaseUnitException;
 import org.junit.Test;
 
@@ -16,11 +20,13 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.junit.Assert.assertThat;
 
 public class SchedulerServiceOneOffExecutionSuccessTest extends SchedulerServiceOneOffExecutionBaseTest {
@@ -50,5 +56,12 @@ public class SchedulerServiceOneOffExecutionSuccessTest extends SchedulerService
         assertThat(sqlQueryTaskSchedulerHolder.all(), emptyIterable());
         assertThat(oneOffSqlQueryTaskSchedulerReaper.getSqlQueryTaskSchedulerExecutorPairs(), iterableWithSize(1));
         assertThat(schedulerService.ongoingQueryTasks(successQueryId), emptyIterable());
+
+        Mail mail = ((PostofficeMockImpl)getInstance(Postoffice.class)).getLastSentMail();
+
+        assertThat(mail, notNullValue());
+        assertThat(mail.getTos(), containsInAnyOrder(recipientEmail));
+        assertThat(mail.getBodyHtml(), is(new JsonToHtmlTable().convert(sqlQueryExecution.getResult())));
+        assertThat(mail.getSubject(), endsWith(sqlQuery.getLabel()));
     }
 }
