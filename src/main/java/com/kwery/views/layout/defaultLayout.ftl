@@ -62,6 +62,14 @@
                 .top-buffer {
                     margin-top:20px;
                 }
+
+/*                div[class="row"] {
+                    border: 1px dotted rgba(0, 0, 0, 0.5);
+                }
+
+                div[class^="col-"] {
+                    background-color: rgba(255, 0, 0, 0.2);
+                }*/
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->
