@@ -70,6 +70,7 @@ define(["knockout", "jquery", "text!components/mail-configuration/add.html", "va
                     success: function(result) {
                         self.status(result.status);
                         self.messages(result.messages);
+                        self.emailConfigurationPresent(true);
                     }
                 });
             }
@@ -97,6 +98,7 @@ define(["knockout", "jquery", "text!components/mail-configuration/add.html", "va
                     success: function(result) {
                         self.status(result.status);
                         self.messages(result.messages);
+                        self.smtpConfigurationPresent(true);
                     }
                 });
             }
