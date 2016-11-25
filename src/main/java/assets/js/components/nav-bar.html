@@ -12,20 +12,24 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="/#datasource/list">Datasources</a>
+                    <a data-bind="text: ko.i18n('navbar.menu.datasources')" href="/#datasource/list"></a>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Queries <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <!--ko text: ko.i18n('navbar.menu.queries') --><!--/ko--> <span class="caret"></span>
+                    </a>
                     <ul class="dropdown-menu">
-                        <li><a data-bind="text: ko.i18n('list')" href="/#sql-query/list"></a></li>
+                        <li><a data-bind="text: ko.i18n('navbar.menu.queries.dropdown.list')" href="/#sql-query/list"></a></li>
                         <li><a data-bind="text: ko.i18n('executing')" href="/#sql-query/executing"></a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <!--ko text: ko.i18n('navbar.menu.settings') --><!--/ko--> <span class="caret"></span>
+                    </span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/#user/list">Users</a></li>
-                        <li><a href="/#email/configuration">Email</a></li>
+                        <li><a data-bind="text: ko.i18n('navbar.menu.settings.dropdown.users')" href="/#user/list"></a></li>
+                        <li><a data-bind="text: ko.i18n('navbar.menu.settings.dropdown.email')" href="/#email/configuration"></a></li>
                     </ul>
                 </li>
             </ul>
@@ -33,8 +37,8 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle f-username" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span data-bind="text: username"></span><span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a data-bind="text: ko.i18n('update'), attr: {href: url}"></a></li>
-                        <li><a data-bind="text: ko.i18n('logout'), click: logout" class="f-logout"></a></li>
+                        <li><a data-bind="text: ko.i18n('navbar.menu.profile.dropdown.profile'), attr: {href: url}"></a></li>
+                        <li><a data-bind="text: ko.i18n('navbar.menu.profile.dropdown.logout'), click: logout" class="f-logout"></a></li>
                     </ul>
                 </li>
             </ul>
