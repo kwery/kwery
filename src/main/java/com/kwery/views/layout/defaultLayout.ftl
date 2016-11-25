@@ -32,20 +32,23 @@
             <link href="/assets/css/jquery-ui.theme.css" rel="stylesheet">
 
             <style type="text/css">
-                #navbar {
+/*                #navbar {
                     background: white !important;
                 }
 
                 .navbar-default {
                     background: white !important;
-                }
+                }*/
 
                 .panel-heading {
-                    background: #ffe169 !important;
+/*                    background: #ffe169 !important;*/
+                    background: #f4f9fb !important;
                 }
 
                 body {
-                    background: #f4f9fb !important;
+/*                    background: #f4f9fb !important;*/
+                    background: rgb(251, 249, 248) !important;
+
                 }
 
                 body {
