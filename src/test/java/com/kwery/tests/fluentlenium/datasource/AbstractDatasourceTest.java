@@ -11,7 +11,7 @@ import static org.junit.Assert.fail;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static com.kwery.tests.util.TestUtil.user;
 
-public class DatasourceTest extends RepoDashFluentLeniumTest {
+public abstract class AbstractDatasourceTest extends RepoDashFluentLeniumTest {
     protected AddDatasourcePage page;
     protected Datasource datasource;
 

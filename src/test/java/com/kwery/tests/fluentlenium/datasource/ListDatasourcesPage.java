@@ -61,7 +61,7 @@ public class ListDatasourcesPage extends FluentPage implements RepoDashPage {
     public void delete(int row) {
         FluentList<FluentWebElement> fluentWebElements = find("#datasourcesListTableBody tr");
         FluentWebElement tr = fluentWebElements.get(row);
-        tr.find(className("delete")).click();
+        tr.find(className("f-delete")).click();
     }
 
     public void waitForDeleteSuccessMessage(String label) {

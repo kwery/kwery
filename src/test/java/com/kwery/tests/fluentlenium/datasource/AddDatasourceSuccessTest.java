@@ -12,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class AddDatasourceSuccessTest extends DatasourceTest {
+public class AddDatasourceSuccessTest extends AbstractDatasourceTest {
     protected CloudHost cloudHost;
     @Before
     public void setUpAddDatasourceSuccessTest() {
