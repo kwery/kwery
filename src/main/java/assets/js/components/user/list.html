@@ -21,7 +21,9 @@
                     <td><a data-bind="text: username, attr: {href: updateLink}"></a></td>
                     <td data-bind="text: password"></td>
                     <td>
-                        <button data-bind="text: ko.i18n('delete'), click: $parent.delete" class="btn btn-danger delete">Delete</button>
+                        <button data-bind="click: $parent.delete, attr: {title: ko.i18n('user.list.delete.user.tooltip')}">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        </button>
                     </td>
                 </tr>
                 </tbody>
