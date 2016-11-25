@@ -5,12 +5,7 @@
             <div class="panel-title pull-left">
                 <h3 data-bind="text: ko.i18n('user.list.title')" class="panel-title text-left"></h3>
             </div>
-            <div class="panel-title pull-right">
-                <div class="text-right">
-                    <a href="/#user/add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-                </div>
-            </div>
-            <div class="clearfix"></div>
+            <panel-add-link params="url: '/#user/add', tooltipMessageKey: 'user.list.add.user.tooltip'"></panel-add-link>
         </div>
         <div class="panel-body">
             <table class="table" id="usersListTable">

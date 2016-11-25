@@ -35,6 +35,8 @@ define(["knockout", "jquery", "text!components/user/list.html"], function (ko, $
             });
         };
 
+        $('[data-toggle="tooltip"]').tooltip();
+
         return self;
     }
     return { viewModel: viewModel, template: template };

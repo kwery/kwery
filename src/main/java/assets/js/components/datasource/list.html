@@ -5,12 +5,7 @@
             <div class="panel-title pull-left">
                 <h3 data-bind="text: ko.i18n('datasource.list.title')" class="panel-title text-left"></h3>
             </div>
-            <div class="pull-right">
-                <div class="text-right">
-                    <a href="/#datasource/add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-                </div>
-            </div>
-            <div class="clearfix"></div>
+            <panel-add-link params="url: '/#datasource/add', tooltipMessageKey: 'datasource.list.add.datasource.tooltip'"></panel-add-link>
         </div>
         <div class="panel-body">
             <table class="table" id="datasourcesListTable">
