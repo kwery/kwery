@@ -26,14 +26,14 @@ public class JsonToHtmlTableTest {
 
         String expectedHtmlTable = Joiner.on("").join(
                 ImmutableList.of(
-                        "<table>",
-                            "<tr>",
-                                "<th>", "header0", "</th>",
-                                "<th>", "header1", "</th>",
+                        "<table style='border: 1px solid black; width: 100%;'>",
+                            "<tr style='border: 1px solid black;'>",
+                                "<th style='border: 1px solid black;'>", "header0", "</th>",
+                                "<th style='border: 1px solid black;'>", "header1", "</th>",
                             "</tr>",
-                            "<tr>",
-                                "<td>", "value0", "</td>",
-                                "<td>", "value1", "</td>",
+                            "<tr style='border: 1px solid black;'>",
+                                "<td style='border: 1px solid black;'>", "value0", "</td>",
+                                "<td style='border: 1px solid black;'>", "value1", "</td>",
                             "</tr>",
                         "</table>"
                 )
@@ -52,10 +52,10 @@ public class JsonToHtmlTableTest {
 
         String expectedHtmlTable = Joiner.on("").join(
                 ImmutableList.of(
-                        "<table>",
-                        "<tr>",
-                        "<th>", "header0", "</th>",
-                        "<th>", "header1", "</th>",
+                        "<table style='border: 1px solid black; width: 100%;'>",
+                        "<tr style='border: 1px solid black;'>",
+                        "<th style='border: 1px solid black;'>", "header0", "</th>",
+                        "<th style='border: 1px solid black;'>", "header1", "</th>",
                         "</tr>",
                         "</table>"
                 )
@@ -72,7 +72,7 @@ public class JsonToHtmlTableTest {
 
         String expectedHtmlTable = Joiner.on("").join(
                 ImmutableList.of(
-                        "<table>",
+                        "<table style='border: 1px solid black; width: 100%;'>",
                         "</table>"
                 )
         );
