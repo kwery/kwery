@@ -47,8 +47,8 @@ import static com.kwery.tests.util.Messages.KILL_QUERY_M;
 import static com.kwery.tests.util.Messages.QUERY_M;
 import static com.kwery.tests.util.Messages.START_M;
 
-public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
-    protected ListExecutingSqlQueriesPage page;
+public class SqlQueryListExecutingSqlQueryUiTest extends RepoDashFluentLeniumTest {
+    protected SqlQueryExecutingListPage page;
 
     @Before
     public void setUpListOngoingQueriesTest() {
@@ -83,7 +83,7 @@ public class ListExecutingSqlQueriesTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
         loginPage.waitForSuccessMessage(userTableUtil.firstRow());
 
-        page = createPage(ListExecutingSqlQueriesPage.class);
+        page = createPage(SqlQueryExecutingListPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
         if (!page.isRendered()) {

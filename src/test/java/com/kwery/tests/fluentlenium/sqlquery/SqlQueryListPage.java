@@ -19,7 +19,7 @@ import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.By.tagName;
 
-public class ListSqlQueriesPage extends FluentPage implements RepoDashPage {
+public class SqlQueryListPage extends FluentPage implements RepoDashPage {
     public static final int LIST_SQL_QUERIES_COLUMNS = 4;
 
     @Override

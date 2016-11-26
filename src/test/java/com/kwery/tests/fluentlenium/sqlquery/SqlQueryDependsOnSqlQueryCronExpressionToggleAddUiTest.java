@@ -29,8 +29,8 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class AddSqlQueryDependsOnSqlQueryCronExpressionToggleTest extends RepoDashFluentLeniumTest {
-    protected AddSqlQueryPage addSqlQueryPage;
+public class SqlQueryDependsOnSqlQueryCronExpressionToggleAddUiTest extends RepoDashFluentLeniumTest {
+    protected SqlQueryAddPage addSqlQueryPage;
 
     @Before
     public void setUpAddSqlQueryDependsOnSqlQueryCronExpressionToggleTest() {
@@ -62,7 +62,7 @@ public class AddSqlQueryDependsOnSqlQueryCronExpressionToggleTest extends RepoDa
         loginPage.submitForm(user.getUsername(), user.getPassword());
         loginPage.waitForSuccessMessage(user);
 
-        addSqlQueryPage = createPage(AddSqlQueryPage.class);
+        addSqlQueryPage = createPage(SqlQueryAddPage.class);
         addSqlQueryPage.withDefaultUrl(getServerAddress()).goTo(addSqlQueryPage);
         if (!addSqlQueryPage.isRendered()) {
             fail("Add SQL query page not rendered");

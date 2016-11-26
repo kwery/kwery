@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
+import com.google.common.collect.ImmutableList;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
@@ -9,10 +10,12 @@ import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.UUID;
+import java.io.IOException;
+import java.util.List;
 
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
@@ -31,19 +34,33 @@ import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_START;
 import static com.kwery.models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
 import static com.kwery.models.SqlQueryExecution.COLUMN_RESULT;
 import static com.kwery.models.SqlQueryExecution.COLUMN_STATUS;
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutionSummaryPage.COLUMN_COUNT;
+import static com.kwery.tests.util.Messages.DATE_M;
+import static com.kwery.tests.util.Messages.LABEL_M;
+import static com.kwery.tests.util.Messages.REPORT_M;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static junit.framework.TestCase.fail;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 
-public class ListSqlQueryExecutionFilterCollapseTest extends RepoDashFluentLeniumTest {
-    protected ListSqlQueryExecutionPage page;
+public class SqlQueryExecutionSummaryUiTest extends RepoDashFluentLeniumTest {
+    protected SqlQueryExecutionSummaryPage page;
 
     @Before
-    public void setUpListSqlQueryExecutionTest() {
+    public void setUpSqlQueryExecutionResultTest() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResult = objectMapper.writeValueAsString(
+                ImmutableList.of(
+                        ImmutableList.of("username", "password"),
+                        ImmutableList.of("raju", "cool"),
+                        ImmutableList.of("kaju", "dude")
+                )
+        );
+
         UserTableUtil userTableUtil = new UserTableUtil();
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
@@ -55,21 +72,13 @@ public class ListSqlQueryExecutionFilterCollapseTest extends RepoDashFluentLeniu
                         insertInto(SqlQuery.TABLE)
                                 .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
                                 .values(1, "* * * * *", "testQuery0", "select * from foo", 1).build(),
-                        insertInto(SqlQuery.TABLE)
-                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
-                                .values(2, "* * * * *", "testQuery1", "select * from foo", 1).build(),
                         insertInto(SqlQueryExecution.TABLE)
                                 .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
-                                .values(1, 1475159940797l, "executionId", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
-                                .values(2, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-                                .values(3, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-                                .values(4, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-                                .values(5, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
+                                .values(1, 1475159940797l, "thik-3456-lkdsjkfkl-lskjdfkl", 1475158740747l, jsonResult, SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
                                 .build()
                 )
         );
         dbSetup.launch();
-
 
         LoginPage loginPage = createPage(LoginPage.class);
         loginPage.withDefaultUrl(getServerAddress());
@@ -80,42 +89,30 @@ public class ListSqlQueryExecutionFilterCollapseTest extends RepoDashFluentLeniu
         loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
         loginPage.waitForSuccessMessage(userTableUtil.firstRow());
 
-        page = createPage(ListSqlQueryExecutionPage.class);
+        page = createPage(SqlQueryExecutionSummaryPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 
         if (!page.isRendered()) {
-            fail("Could not render list SQL queries execution page");
+            fail("Could not render SQL query execution summary page");
         }
     }
 
     @Test
-    public void testDefaultFilterState() {
-        assertThat(page.isFilterCollapsed(), is(true));
-    }
+    public void test() {
+        assertThat(page.getExecutionSummaryHeaders(), hasSize(COLUMN_COUNT));
 
-    @Test
-    public void testUseFilterAndPaginateFilterOpen() {
-        page.clickFilter();
-        page.fillResultCount(1);
-        page.clickNext();
-        assertThat(page.isFilterCollapsed(), is(false));
-    }
+        List<String> headers = page.getExecutionSummaryHeaders();
 
-    @Test
-    public void testUseFilterAndCloseAndPaginate() {
-        page.clickFilter();
-        page.fillResultCount(1);
-        page.clickFilter();
-        page.clickNext();
-        assertThat(page.isFilterCollapsed(), is(false));
-    }
+        assertThat(headers.get(0), is(LABEL_M));
+        assertThat(headers.get(1), is(DATE_M));
 
-    @Test
-    public void testPaginateWithoutUsingFilter() {
-        page.clickNext();
-        assertThat(page.isFilterCollapsed(), is(true));
-        page.clickPrevious();
-        assertThat(page.isFilterCollapsed(), is(true));
+        List<String> summary = page.getExecutionSummary().get(0);
+
+        assertThat(summary.get(0), is("testQuery0"));
+        assertThat(summary.get(1), is("Thu Sep 29 2016 20:09"));
+        assertThat(summary.get(2), is(REPORT_M));
+
+        assertThat(page.getReportLinks().get(0), containsString("/#sql-query/1/execution/thik-3456-lkdsjkfkl-lskjdfkl"));
     }
 }

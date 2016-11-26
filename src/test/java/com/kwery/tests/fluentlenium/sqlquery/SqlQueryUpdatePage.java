@@ -14,7 +14,7 @@ import static org.openqa.selenium.By.id;
 import static com.kwery.tests.util.Messages.QUERY_RUN_ADDITION_FAILURE_M;
 import static com.kwery.tests.util.Messages.QUERY_RUN_UPDATE_SUCCESS_M;
 
-public class UpdateSqlQueryPage extends FluentPage implements RepoDashPage {
+public class SqlQueryUpdatePage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "queryRunForm")
     protected FluentWebElement form;

@@ -20,7 +20,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
-public class AddSqlQueryPage extends FluentPage implements RepoDashPage {
+public class SqlQueryAddPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "queryRunForm")
     protected FluentWebElement form;

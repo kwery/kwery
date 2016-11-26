@@ -7,7 +7,7 @@ import static com.kwery.tests.util.Messages.QUERY_VALIDATION_M;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
-public class AddSqlQueryValidationTest extends SqlQueryTest {
+public class SqlQueryAddValidationUiTest extends SqlQueryAbstractTest {
     @Test
     public void test() {
         page.submitForm();

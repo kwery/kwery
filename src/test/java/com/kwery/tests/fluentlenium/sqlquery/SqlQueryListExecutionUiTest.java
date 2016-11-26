@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
-import static com.kwery.tests.fluentlenium.sqlquery.ListSqlQueryExecutionPage.RESULT_TABLE_COLUMN_COUNT;
+import static com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutionListPage.RESULT_TABLE_COLUMN_COUNT;
 import static junit.framework.TestCase.fail;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
@@ -45,8 +45,8 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
-    protected ListSqlQueryExecutionPage page;
+public class SqlQueryListExecutionUiTest extends RepoDashFluentLeniumTest {
+    protected SqlQueryExecutionListPage page;
 
     @Before
     public void setUpListSqlQueryExecutionTest() {
@@ -92,7 +92,7 @@ public class ListSqlQueryExecutionTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
         loginPage.waitForSuccessMessage(userTableUtil.firstRow());
 
-        page = createPage(ListSqlQueryExecutionPage.class);
+        page = createPage(SqlQueryExecutionListPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 

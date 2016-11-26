@@ -16,7 +16,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
-public class ListSqlQueryExecutionPage extends FluentPage implements RepoDashPage {
+public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPage {
     public static final int RESULT_TABLE_COLUMN_COUNT = 3;
 
     @Override

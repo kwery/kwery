@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static com.kwery.tests.util.TestUtil.queryRunDto;
 
-public class AddSqlQueryWithoutDependsOnDuplicateLabelTest extends AddSqlQueryWithoutDependsOnSuccessTest {
+public class SqlQueryAddWithoutDependsOnDuplicateLabelUiTest extends SqlQueryAddWithoutDependsOnSuccessUiTest {
     @Test
     public void test() {
         super.test();

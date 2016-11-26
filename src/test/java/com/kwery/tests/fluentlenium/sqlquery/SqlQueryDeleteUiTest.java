@@ -22,14 +22,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
-import static com.kwery.tests.util.Messages.DELETE_M;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class DeleteSqlQueryPageTest extends RepoDashFluentLeniumTest {
-    protected ListSqlQueriesPage page;
+public class SqlQueryDeleteUiTest extends RepoDashFluentLeniumTest {
+    protected SqlQueryListPage page;
     protected MySqlDocker mySqlDocker;
     protected List<SqlQuery> queries;
 
@@ -75,7 +74,7 @@ public class DeleteSqlQueryPageTest extends RepoDashFluentLeniumTest {
 
         TimeUnit.SECONDS.sleep(70);
 
-        page = createPage(ListSqlQueriesPage.class);
+        page = createPage(SqlQueryListPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 

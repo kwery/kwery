@@ -34,10 +34,10 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class UpdateSqlQueryPageTest extends RepoDashFluentLeniumTest {
+public class SqlQueryUpdateUiTest extends RepoDashFluentLeniumTest {
     protected MySqlDocker mySqlDocker;
     protected Datasource datasource;
-    protected UpdateSqlQueryPage page;
+    protected SqlQueryUpdatePage page;
 
     @Before
     public void setUpUpdateSqlQueryPageTest() {
@@ -79,7 +79,7 @@ public class UpdateSqlQueryPageTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(user.getUsername(), user.getPassword());
         loginPage.waitForSuccessMessage(user.getUsername());
 
-        page = createPage(UpdateSqlQueryPage.class);
+        page = createPage(SqlQueryUpdatePage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 

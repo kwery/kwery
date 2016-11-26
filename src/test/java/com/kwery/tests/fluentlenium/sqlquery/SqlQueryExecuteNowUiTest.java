@@ -39,9 +39,9 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ExecuteNowSqlQueryPageTest extends RepoDashFluentLeniumTest {
+public class SqlQueryExecuteNowUiTest extends RepoDashFluentLeniumTest {
     protected MySqlDocker mySqlDocker;
-    protected ListSqlQueriesPage page;
+    protected SqlQueryListPage page;
     protected UserTableUtil userTableUtil;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
@@ -98,7 +98,7 @@ public class ExecuteNowSqlQueryPageTest extends RepoDashFluentLeniumTest {
         loginPage.waitForSuccessMessage(user.getUsername());
 
 
-        page = createPage(ListSqlQueriesPage.class);
+        page = createPage(SqlQueryListPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 

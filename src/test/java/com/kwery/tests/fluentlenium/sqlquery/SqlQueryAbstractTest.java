@@ -1,6 +1,5 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
-import com.kwery.dao.DatasourceDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
@@ -25,8 +24,8 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.junit.Assert.fail;
 
-public class SqlQueryTest extends RepoDashFluentLeniumTest {
-    protected AddSqlQueryPage page;
+public abstract class SqlQueryAbstractTest extends RepoDashFluentLeniumTest {
+    protected SqlQueryAddPage page;
     protected MySqlDocker mySqlDocker;
     protected int datasourceId = 1;
 
@@ -61,7 +60,7 @@ public class SqlQueryTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(user.getUsername(), user.getPassword());
         loginPage.waitForSuccessMessage(user.getUsername());
 
-        page = createPage(AddSqlQueryPage.class);
+        page = createPage(SqlQueryAddPage.class);
         page.withDefaultUrl(getServerAddress()).goTo(page);
         if (!page.isRendered()) {
             fail("Add query run page is not rendered");

@@ -1,8 +1,5 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
@@ -15,7 +12,7 @@ import com.kwery.models.SqlQueryExecution;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.UUID;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
@@ -36,27 +33,17 @@ import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_START;
 import static com.kwery.models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
 import static com.kwery.models.SqlQueryExecution.COLUMN_RESULT;
 import static com.kwery.models.SqlQueryExecution.COLUMN_STATUS;
+import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class SqlQueryExecutionResultTest extends RepoDashFluentLeniumTest {
-    protected SqlQueryExecutionResultPage page;
-    protected String jsonResult;
+public class SqlQueryExecutionListPaginationUiTest extends RepoDashFluentLeniumTest {
+    protected SqlQueryExecutionListPage page;
 
     @Before
-    public void setUpSqlQueryExecutionResultTest() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        jsonResult = objectMapper.writeValueAsString(
-                ImmutableList.of(
-                        ImmutableList.of("username", "password"),
-                        ImmutableList.of("raju", "cool"),
-                        ImmutableList.of("kaju", "dude")
-                )
-        );
-
+    public void setUpListSqlQueryExecutionTest() {
         UserTableUtil userTableUtil = new UserTableUtil();
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
@@ -68,13 +55,18 @@ public class SqlQueryExecutionResultTest extends RepoDashFluentLeniumTest {
                         insertInto(SqlQuery.TABLE)
                                 .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
                                 .values(1, "* * * * *", "testQuery0", "select * from foo", 1).build(),
+                        insertInto(SqlQuery.TABLE)
+                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
+                                .values(2, "* * * * *", "testQuery1", "select * from foo", 1).build(),
                         insertInto(SqlQueryExecution.TABLE)
                                 .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
-                                .values(1, 1475159940797l, "thik-3456-lkdsjkfkl-lskjdfkl", 1475158740747l, jsonResult, SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
+                                .values(1, 1475159940797l, "executionId", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
+                                .values(2, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
                                 .build()
                 )
         );
         dbSetup.launch();
+
 
         LoginPage loginPage = createPage(LoginPage.class);
         loginPage.withDefaultUrl(getServerAddress());
@@ -85,7 +77,7 @@ public class SqlQueryExecutionResultTest extends RepoDashFluentLeniumTest {
         loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
         loginPage.waitForSuccessMessage(userTableUtil.firstRow());
 
-        page = createPage(SqlQueryExecutionResultPage.class);
+        page = createPage(SqlQueryExecutionListPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 
@@ -96,22 +88,42 @@ public class SqlQueryExecutionResultTest extends RepoDashFluentLeniumTest {
 
     @Test
     public void test() {
-        page.waitForResultHeader(2);
-        assertThat(page.resultHeader(), hasSize(2));
+        page.clickFilter();
 
-        List<String> resultHeaders = page.resultHeader();
+        page.fillResultCount(1);
+        page.filter();
 
-        assertThat(resultHeaders.get(0), is("username"));
-        assertThat(resultHeaders.get(1), is("password"));
+        page.waitForFilterResult(1);
 
-        List<String> firstRow = page.resultContent().get(0);
+        assertThat(page.isPreviousEnabled(), is(false));
 
-        assertThat(firstRow.get(0), is("raju"));
-        assertThat(firstRow.get(1), is("cool"));
+        page.clickNext();
 
-        List<String> secondRow = page.resultContent().get(1);
+        page.waitForStatus(FAILURE);
 
-        assertThat(secondRow.get(0), is("kaju"));
-        assertThat(secondRow.get(1), is("dude"));
+        assertThat(page.isNextEnabled(), is(false));
+        assertThat(page.isPreviousEnabled(), is(true));
+    }
+
+    @Test
+    public void testResetOnResultCountChange() {
+        page.clickFilter();
+
+        page.fillResultCount(1);
+        page.filter();
+
+        page.waitForFilterResult(1);
+
+        assertThat(page.isPreviousEnabled(), is(false));
+
+        page.clickNext();
+
+        page.waitForStatus(FAILURE);
+
+        page.fillResultCount(1);
+        page.filter();
+
+        page.waitForStatus(SUCCESS);
+        //Page got reset
     }
 }
