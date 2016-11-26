@@ -10,7 +10,7 @@ import org.openqa.selenium.support.FindBy;
 import static java.text.MessageFormat.format;
 import static com.kwery.tests.util.Messages.ONBOARDING_ROOT_USER_CREATED_M;
 
-public class OnboardingAdminUserAddedPage extends FluentPage implements RepoDashPage {
+public class OnboardingUserAddedPage extends FluentPage implements RepoDashPage {
     @AjaxElement(timeOutInSeconds = 30)
     @FindBy(className = "f-admin-user-added")
     protected FluentWebElement jumbotron;

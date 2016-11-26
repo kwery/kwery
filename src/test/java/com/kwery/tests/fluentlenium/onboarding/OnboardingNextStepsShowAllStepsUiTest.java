@@ -21,7 +21,7 @@ import static com.kwery.tests.util.Messages.NEXT_STEP_ADD_DATASOURCE_M;
 import static com.kwery.tests.util.Messages.NEXT_STEP_ADD_SQL_QUERY_M;
 import static com.kwery.tests.util.Messages.NEXT_STEP_HEADER_M;
 
-public class OnboardingNextStepsShowAllPageTest extends RepoDashFluentLeniumTest {
+public class OnboardingNextStepsShowAllStepsUiTest extends RepoDashFluentLeniumTest {
     protected OnboardingNextStepsPage page;
 
     @Before

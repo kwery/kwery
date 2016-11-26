@@ -38,7 +38,7 @@ public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTe
         pageClasses = new HashMap<>();
 
         //TODO - Uncomment this once the page rendering issue without sleep is resolved
-/*        pageClasses.put(OnboardingAdminUserAddedPage.class, false);*/
+/*        pageClasses.put(OnboardingUserAddedPage.class, false);*/
         pageClasses.put(OnboardingNextStepsPage.class, true);
 
         pageClasses.put(UserLoginPage.class, false);

@@ -19,7 +19,7 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class OnboardingNextStepsShowAddSqlQueryPageTest extends RepoDashFluentLeniumTest {
+public class OnboardingNextStepsShowAddSqlQueryStepUiTest extends RepoDashFluentLeniumTest {
     protected OnboardingNextStepsPage page;
     protected MySqlDocker mySqlDocker;
 

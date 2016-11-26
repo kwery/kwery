@@ -36,7 +36,7 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static junit.framework.TestCase.fail;
 
-public class OnboardingShowHomeScreenPageTest extends RepoDashFluentLeniumTest {
+public class OnboardingShowHomeScreenUiTest extends RepoDashFluentLeniumTest {
     @Before
     public void setUpOnboardingShowExecutingSqlQueriesPageTest() throws InterruptedException {
         UserTableUtil userTableUtil = new UserTableUtil();
