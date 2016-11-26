@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.LoginPage;
+import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.models.Datasource;
@@ -76,7 +76,7 @@ public class SqlQueryExecutionResultUiTest extends RepoDashFluentLeniumTest {
         );
         dbSetup.launch();
 
-        LoginPage loginPage = createPage(LoginPage.class);
+        UserLoginPage loginPage = createPage(UserLoginPage.class);
         loginPage.withDefaultUrl(getServerAddress());
         goTo(loginPage);
         if (!loginPage.isRendered()) {

@@ -7,7 +7,7 @@ import com.kwery.models.SqlQuery;
 import com.kwery.models.User;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.LoginPage;
+import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.tests.util.MySqlDocker;
 import com.kwery.tests.util.TestUtil;
@@ -61,7 +61,7 @@ public class SqlQueryDeleteUiTest extends RepoDashFluentLeniumTest {
         getInjector().getInstance(SchedulerService.class).schedule(sqlQuery1);
         queries.add(sqlQuery1);
 
-        LoginPage loginPage = createPage(LoginPage.class);
+        UserLoginPage loginPage = createPage(UserLoginPage.class);
         loginPage.withDefaultUrl(getServerAddress());
         goTo(loginPage);
         if (!loginPage.isRendered()) {

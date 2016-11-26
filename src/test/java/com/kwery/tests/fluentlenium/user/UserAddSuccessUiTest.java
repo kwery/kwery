@@ -1,9 +1,9 @@
-package com.kwery.tests.fluentlenium.user.admin;
+package com.kwery.tests.fluentlenium.user;
 
 import com.kwery.models.User;
 import org.junit.Test;
 
-public class AddAdminUserSuccessTest extends AddAdminUserTest {
+public class UserAddSuccessUiTest extends UserAddUiTest {
     @Test
     public void testSuccess() throws InterruptedException {
         User newUser = new User();

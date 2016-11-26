@@ -4,7 +4,7 @@ import com.kwery.dao.UserDao;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LoginSuccessTest extends LoginTest {
+public class UserLoginSuccessUiTest extends UserLoginAbstractTest {
     @Before
     public void saveUser() {
         getInjector().getInstance(UserDao.class).save(user);

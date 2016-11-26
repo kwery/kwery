@@ -19,7 +19,7 @@ import static org.openqa.selenium.By.tagName;
 import static com.kwery.tests.util.Messages.USER_DELETE_SUCCESS_M;
 import static com.kwery.tests.util.Messages.USER_DELETE_YOURSELF_M;
 
-public class ListUsersPage extends FluentPage implements RepoDashPage {
+public class UserListPage extends FluentPage implements RepoDashPage {
     public static final int COLUMNS = 3;
 
     @Override
@@ -61,7 +61,7 @@ public class ListUsersPage extends FluentPage implements RepoDashPage {
     public void delete(int row) {
         FluentList<FluentWebElement> fluentWebElements = find("#usersListTableBody tr");
         FluentWebElement tr = fluentWebElements.get(row);
-        tr.find(className("delete")).click();
+        tr.find(className("f-delete")).click();
     }
 
     public void waitForDeleteSuccessMessage(String username) {

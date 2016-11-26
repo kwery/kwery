@@ -9,7 +9,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.id;
 import static com.kwery.tests.util.Messages.USER_UPDATE_SUCCESS_M;
 
-public class UpdateUserPage extends FluentPage implements RepoDashPage {
+public class UserUpdatePage extends FluentPage implements RepoDashPage {
     @Override
     public boolean isRendered() {
         return find(id("createAdminUserForm")).first().isDisplayed();

@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.user.admin;
+package com.kwery.tests.fluentlenium.user;
 
 import org.junit.Test;
 import com.kwery.tests.util.Messages;
@@ -6,7 +6,7 @@ import com.kwery.tests.util.Messages;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class AddAdminUserValidationTest extends AddAdminUserTest {
+public class UserAddValidationUiTest extends UserAddUiTest {
     @Test
     public void test() {
         page.submitForm();

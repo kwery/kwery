@@ -2,7 +2,7 @@ package com.kwery.tests.fluentlenium.datasource;
 
 import com.kwery.dao.UserDao;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.LoginPage;
+import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import com.kwery.models.Datasource;
 import com.kwery.models.User;
 import org.junit.Before;
@@ -22,7 +22,7 @@ public abstract class DatasourceAbstractTest extends RepoDashFluentLeniumTest {
         User user = user();
         getInjector().getInstance(UserDao.class).save(user);
 
-        LoginPage loginPage = createPage(LoginPage.class);
+        UserLoginPage loginPage = createPage(UserLoginPage.class);
         loginPage.withDefaultUrl(getServerAddress());
         goTo(loginPage);
         if (!loginPage.isRendered()) {

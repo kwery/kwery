@@ -11,10 +11,10 @@ import com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutingListPage;
 import com.kwery.tests.fluentlenium.sqlquery.SqlQueryListPage;
 import com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutionListPage;
 import com.kwery.tests.fluentlenium.sqlquery.SqlQueryUpdatePage;
-import com.kwery.tests.fluentlenium.user.ListUsersPage;
-import com.kwery.tests.fluentlenium.user.UpdateUserPage;
-import com.kwery.tests.fluentlenium.user.admin.AddAdminUserPage;
-import com.kwery.tests.fluentlenium.user.login.LoginPage;
+import com.kwery.tests.fluentlenium.user.UserListPage;
+import com.kwery.tests.fluentlenium.user.UserUpdatePage;
+import com.kwery.tests.fluentlenium.user.UserAddPage;
+import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import org.fluentlenium.core.FluentPage;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,11 +41,11 @@ public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTe
 /*        pageClasses.put(OnboardingAdminUserAddedPage.class, false);*/
         pageClasses.put(OnboardingNextStepsPage.class, true);
 
-        pageClasses.put(LoginPage.class, false);
+        pageClasses.put(UserLoginPage.class, false);
 
-        pageClasses.put(AddAdminUserPage.class, true);
-        pageClasses.put(UpdateUserPage.class, true);
-        pageClasses.put(ListUsersPage.class, true);
+        pageClasses.put(UserAddPage.class, true);
+        pageClasses.put(UserUpdatePage.class, true);
+        pageClasses.put(UserListPage.class, true);
 
         pageClasses.put(DatasourceAddPage.class, true);
         pageClasses.put(UpdateDatasourcePage.class, true);

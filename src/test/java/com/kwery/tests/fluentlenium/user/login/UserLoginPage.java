@@ -13,7 +13,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static com.kwery.tests.util.Messages.LOGIN_FAILURE_M;
 import static com.kwery.tests.util.Messages.LOGIN_SUCCESS_M;
 
-public class LoginPage extends FluentPage implements RepoDashPage {
+public class UserLoginPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "loginForm")
     protected FluentWebElement loginForm;

@@ -1,8 +1,8 @@
-package com.kwery.tests.fluentlenium.user.admin;
+package com.kwery.tests.fluentlenium.user;
 
 import org.junit.Test;
 
-public class AddAdminUserFailureTest extends AddAdminUserTest {
+public class UserAddFailureUiTest extends UserAddUiTest {
     @Test
     public void test() {
         page.submitForm(user.getUsername(), user.getPassword());

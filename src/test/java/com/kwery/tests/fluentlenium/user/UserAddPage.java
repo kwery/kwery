@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.user.admin;
+package com.kwery.tests.fluentlenium.user;
 
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.models.User;
@@ -14,7 +14,7 @@ import static com.kwery.tests.util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
 import static com.kwery.tests.util.Messages.ADMIN_USER_ADDITION_NEXT_STEP_M;
 import static com.kwery.tests.util.Messages.ADMIN_USER_ADDITION_SUCCESS_M;
 
-public class AddAdminUserPage extends FluentPage implements RepoDashPage {
+public class UserAddPage extends FluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "createAdminUserForm")
     protected FluentWebElement createAdminUserForm;

@@ -8,7 +8,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class DeleteUserPageTest extends ListUserPageTest {
+public class UserDeleteUiTest extends UserListUiTest {
    @Test
    public void test() {
        page.delete(1);
