@@ -89,8 +89,6 @@ public class DeleteSqlQueryPageTest extends RepoDashFluentLeniumTest {
         page.waitForRows(2);
         page.delete(0);
 
-        assertThat(page.deleteLabel(0), is(DELETE_M));
-
         page.waitForDeleteSuccessMessage(queries.get(0).getLabel());
         List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(1));

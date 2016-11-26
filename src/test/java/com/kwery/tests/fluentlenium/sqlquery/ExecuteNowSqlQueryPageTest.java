@@ -32,7 +32,6 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_QUERY;
-import static com.kwery.tests.util.Messages.EXECUTE_NOW_M;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.TestCase.fail;
@@ -125,7 +124,6 @@ public class ExecuteNowSqlQueryPageTest extends RepoDashFluentLeniumTest {
 
             if (label.equals(row.get(0))) {
                 page.executeNow(i);
-                assertThat(page.executeNowLabel(i), is(EXECUTE_NOW_M));
                 break;
             }
         }

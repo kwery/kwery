@@ -63,13 +63,13 @@ public class ListSqlQueriesPage extends FluentPage implements RepoDashPage {
     public void delete(int row) {
         FluentList<FluentWebElement> fluentWebElements = find("#sqlQueriesListTableBody tr");
         FluentWebElement tr = fluentWebElements.get(row);
-        tr.find(className("delete")).click();
+        tr.find(className("f-delete")).click();
     }
 
     public String deleteLabel(int row) {
         FluentList<FluentWebElement> fluentWebElements = find("#sqlQueriesListTableBody tr");
         FluentWebElement tr = fluentWebElements.get(row);
-        return tr.find(className("delete")).getText();
+        return tr.find(className("f-delete")).getText();
     }
 
     public void executeNow(int row) {
