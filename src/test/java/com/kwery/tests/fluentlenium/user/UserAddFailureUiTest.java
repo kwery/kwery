@@ -5,7 +5,7 @@ import org.junit.Test;
 public class UserAddFailureUiTest extends UserAddUiTest {
     @Test
     public void test() {
-        page.submitForm(user.getUsername(), user.getPassword());
-        page.waitForFailureMessage(user);
+        page.submitForm(loggedInUser.getUsername(), loggedInUser.getPassword());
+        page.waitForFailureMessage(loggedInUser);
     }
 }

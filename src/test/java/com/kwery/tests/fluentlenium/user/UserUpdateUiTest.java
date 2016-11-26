@@ -1,50 +1,30 @@
 package com.kwery.tests.fluentlenium.user;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.models.User;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.NinjaServerRule;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class UserUpdateUiTest extends RepoDashFluentLeniumTest {
-    protected UserTableUtil userTableUtil;
-    protected User user;
+public class UserUpdateUiTest extends ChromeFluentTest {
+    protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+    protected LoginRule loginRule = new LoginRule(ninjaServerRule, this);
+
+    @Rule
+    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(loginRule);
+
     protected UserUpdatePage page;
 
     @Before
     public void setUpUpdateUserPageTest() {
-        userTableUtil = new UserTableUtil(1);
-
-        new DbSetup(
-            new DataSourceDestination(getDatasource()),
-                sequenceOf(
-                    userTableUtil.insertOperation()
-                )
-        ).launch();
-
-        UserLoginPage loginPage = createPage(UserLoginPage.class);
-        loginPage.withDefaultUrl(getServerAddress());
-        goTo(loginPage);
-
-        user = userTableUtil.row(0);
-
-        loginPage.submitForm(user.getUsername(), user.getPassword());
-        loginPage.waitForSuccessMessage(user);
-
-        if (!loginPage.isRendered()) {
-            failed("Could not render login page");
-        }
-
         page = createPage(UserUpdatePage.class);
-        page.withDefaultUrl(getServerAddress());
+        page.withDefaultUrl(ninjaServerRule.getServerUrl());
         goTo(page);
 
         if (!page.isRendered()) {
@@ -54,6 +34,7 @@ public class UserUpdateUiTest extends RepoDashFluentLeniumTest {
 
     @Test
     public void test() {
+        User user = loginRule.getLoggedInUser();
         page.waitForUsername(user.getUsername());
         assertThat(page.isUsernameDisabled(), is(true));
         page.updateForm("foo");

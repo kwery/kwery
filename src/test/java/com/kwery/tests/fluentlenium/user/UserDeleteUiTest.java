@@ -12,10 +12,10 @@ public class UserDeleteUiTest extends UserListUiTest {
    @Test
    public void test() {
        page.delete(1);
-       page.waitForDeleteSuccessMessage(userTableUtil.row(1).getUsername());
+       page.waitForDeleteSuccessMessage(user1.getUsername());
        List<List<String>> rows = page.rows();
        assertThat(rows, hasSize(1));
-       assertThat(rows.get(0).get(0), is(userTableUtil.row(0).getUsername()));
+       assertThat(rows.get(0).get(0), is(loginRule.getLoggedInUser().getUsername()));
    }
 
    @Test
@@ -24,7 +24,7 @@ public class UserDeleteUiTest extends UserListUiTest {
        page.waitForDeleteYourselfMessage();
        List<List<String>> rows = page.rows();
        assertThat(rows, hasSize(2));
-       assertThat(rows.get(0).get(0), is(userTableUtil.row(0).getUsername()));
-       assertThat(rows.get(1).get(0), is(userTableUtil.row(1).getUsername()));
+       assertThat(rows.get(0).get(0), is(loginRule.getLoggedInUser().getUsername()));
+       assertThat(rows.get(1).get(0), is(user1.getUsername()));
    }
 }

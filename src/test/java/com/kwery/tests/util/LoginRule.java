@@ -14,6 +14,8 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static junit.framework.TestCase.fail;
 
 public class LoginRule implements TestRule {
+    protected User loggedInUser;
+
     protected NinjaServerRule ninjaServerRule;
     protected FluentTest fluentTest;
 
@@ -44,13 +46,17 @@ public class LoginRule implements TestRule {
                     fail("Login page is not rendered");
                 }
 
-                User user = userTableUtil.firstRow();
+                loggedInUser = userTableUtil.firstRow();
 
-                loginPage.submitForm(user.getUsername(), user.getPassword());
-                loginPage.waitForSuccessMessage(user);
+                loginPage.submitForm(loggedInUser.getUsername(), loggedInUser.getPassword());
+                loginPage.waitForSuccessMessage(loggedInUser);
 
                 base.evaluate();
             }
         };
+    }
+
+    public User getLoggedInUser() {
+        return loggedInUser;
     }
 }
