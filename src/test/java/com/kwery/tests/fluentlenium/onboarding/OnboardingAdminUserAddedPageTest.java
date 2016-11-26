@@ -14,11 +14,11 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class OnboardingAdminUserAddedPageTest extends RepoDashFluentLeniumTest {
-    protected OnboardingAdminUserAddedPage page;
+    protected OnboardingUserAddedPage page;
 
     @Before
     public void setUpOnboardingAdminUserAddedPageTest() throws InterruptedException {
-        page = createPage(OnboardingAdminUserAddedPage.class);
+        page = createPage(OnboardingUserAddedPage.class);
         page.withDefaultUrl(getServerAddress());
         goTo(page);
 

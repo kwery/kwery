@@ -16,3 +16,9 @@ corresponding controller method as addUser, http path as add-user etc.
 14. Database foreign keys should be suffixed with _fk.
 15. Classname should not be verbs.
 16. Method name should be verbs.
+
+Fluentlenium test conventions:
+1. Organize tests in packages with names of the packages based on components for example datasource, sql-query etc.
+2. All base packages should start with the name Abstract.
+3. Page classes should begin with the component name and end in page for example DatasourceAddPage.
+4. Test names should begin with the feature being tested and suffixed with UiTest for example DatasourceAddUiTest. They should not have page in them.

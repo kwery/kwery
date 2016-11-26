@@ -12,7 +12,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.tests.util.Messages.DATASOURCE_UPDATE_SUCCESS_M;
 
-public class UpdateDatasourcePage extends AddDatasourcePage {
+public class UpdateDatasourcePage extends DatasourceAddPage {
     public static final int FIELDS = 5;
 
     @Override

@@ -2,19 +2,19 @@ package com.kwery.tests.fluentlenium.security;
 
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import com.kwery.tests.fluentlenium.datasource.AddDatasourcePage;
-import com.kwery.tests.fluentlenium.datasource.ListDatasourcesPage;
+import com.kwery.tests.fluentlenium.datasource.DatasourceAddPage;
+import com.kwery.tests.fluentlenium.datasource.DatasourceListPage;
 import com.kwery.tests.fluentlenium.datasource.UpdateDatasourcePage;
 import com.kwery.tests.fluentlenium.onboarding.OnboardingNextStepsPage;
-import com.kwery.tests.fluentlenium.sqlquery.AddSqlQueryPage;
-import com.kwery.tests.fluentlenium.sqlquery.ListExecutingSqlQueriesPage;
-import com.kwery.tests.fluentlenium.sqlquery.ListSqlQueriesPage;
-import com.kwery.tests.fluentlenium.sqlquery.ListSqlQueryExecutionPage;
-import com.kwery.tests.fluentlenium.sqlquery.UpdateSqlQueryPage;
-import com.kwery.tests.fluentlenium.user.ListUsersPage;
-import com.kwery.tests.fluentlenium.user.UpdateUserPage;
-import com.kwery.tests.fluentlenium.user.admin.AddAdminUserPage;
-import com.kwery.tests.fluentlenium.user.login.LoginPage;
+import com.kwery.tests.fluentlenium.sqlquery.SqlQueryAddPage;
+import com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutingListPage;
+import com.kwery.tests.fluentlenium.sqlquery.SqlQueryListPage;
+import com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutionListPage;
+import com.kwery.tests.fluentlenium.sqlquery.SqlQueryUpdatePage;
+import com.kwery.tests.fluentlenium.user.UserListPage;
+import com.kwery.tests.fluentlenium.user.UserUpdatePage;
+import com.kwery.tests.fluentlenium.user.UserAddPage;
+import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import org.fluentlenium.core.FluentPage;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,25 +38,25 @@ public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTe
         pageClasses = new HashMap<>();
 
         //TODO - Uncomment this once the page rendering issue without sleep is resolved
-/*        pageClasses.put(OnboardingAdminUserAddedPage.class, false);*/
+/*        pageClasses.put(OnboardingUserAddedPage.class, false);*/
         pageClasses.put(OnboardingNextStepsPage.class, true);
 
-        pageClasses.put(LoginPage.class, false);
+        pageClasses.put(UserLoginPage.class, false);
 
-        pageClasses.put(AddAdminUserPage.class, true);
-        pageClasses.put(UpdateUserPage.class, true);
-        pageClasses.put(ListUsersPage.class, true);
+        pageClasses.put(UserAddPage.class, true);
+        pageClasses.put(UserUpdatePage.class, true);
+        pageClasses.put(UserListPage.class, true);
 
-        pageClasses.put(AddDatasourcePage.class, true);
+        pageClasses.put(DatasourceAddPage.class, true);
         pageClasses.put(UpdateDatasourcePage.class, true);
-        pageClasses.put(ListDatasourcesPage.class, true);
+        pageClasses.put(DatasourceListPage.class, true);
 
-        pageClasses.put(AddSqlQueryPage.class, true);
-        pageClasses.put(ListSqlQueriesPage.class, true);
-        pageClasses.put(UpdateSqlQueryPage.class, true);
-        pageClasses.put(ListSqlQueryExecutionPage.class, true);
+        pageClasses.put(SqlQueryAddPage.class, true);
+        pageClasses.put(SqlQueryListPage.class, true);
+        pageClasses.put(SqlQueryUpdatePage.class, true);
+        pageClasses.put(SqlQueryExecutionListPage.class, true);
 
-        pageClasses.put(ListExecutingSqlQueriesPage.class, true);
+        pageClasses.put(SqlQueryExecutingListPage.class, true);
     }
 
     @Test

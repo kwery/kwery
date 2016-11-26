@@ -8,6 +8,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("action-result", {
         require: "components/action-result"
     });
+    ko.components.register("panel-add-link", {
+        require: "components/panel-add-link"
+    });
     ko.components.register("kill-sql-query", {
         require: "components/kill-sql-query"
     });
@@ -47,8 +50,8 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("user-update", {
         require: "components/user/update"
     });
-    ko.components.register("mail-configuration-add", {
-        require: "components/mail-configuration/add"
+    ko.components.register("email-configuration", {
+        require: "components/email/configuration"
     });
 
     ko.applyBindings({ route: router.currentRoute });
