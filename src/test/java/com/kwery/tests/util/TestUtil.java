@@ -51,15 +51,6 @@ public class TestUtil {
         return sqlQuery;
     }
 
-    public static SqlQuery listMySqlUserQuery(Datasource datasource) {
-        SqlQuery sqlQuery = new SqlQuery();
-        sqlQuery.setDatasource(datasource);
-        sqlQuery.setCronExpression("* * * * *");
-        sqlQuery.setLabel("test");
-        sqlQuery.setQuery("select * from mysql.user");
-        return sqlQuery;
-    }
-
     public static SqlQueryDto queryRunDto() {
         SqlQueryDto dto = new SqlQueryDto();
         dto.setQuery("select * from foo");
