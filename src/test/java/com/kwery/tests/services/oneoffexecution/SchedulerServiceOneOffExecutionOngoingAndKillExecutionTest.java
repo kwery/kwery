@@ -7,6 +7,7 @@ import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.mock.PostofficeMockImpl;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,12 +34,10 @@ public class SchedulerServiceOneOffExecutionOngoingAndKillExecutionTest extends 
 
         SqlQuery sqlQuery = sqlQueryDao.getById(sleepQueryId);
         schedulerService.schedule(sqlQuery);
-        SECONDS.sleep(30);
 
-        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
-        filter.setSqlQueryId(sleepQueryId);
+        Awaitility.waitAtMost(30, SECONDS).until(() -> !getSqlQueryExecutions().isEmpty());
 
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecution> executions = getSqlQueryExecutions();
 
         assertThat(executions, hasSize(1));
 
@@ -58,9 +57,9 @@ public class SchedulerServiceOneOffExecutionOngoingAndKillExecutionTest extends 
 
         SECONDS.sleep(30);
 
-        assertThat(oneOffSqlQueryTaskSchedulerReaper.getSqlQueryTaskSchedulerExecutorPairs(), iterableWithSize(1));
+        Awaitility.waitAtMost(30, SECONDS).until(() -> oneOffSqlQueryTaskSchedulerReaper.getSqlQueryTaskSchedulerExecutorPairs().size() == 1);
 
-        filter = new SqlQueryExecutionSearchFilter();
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(sleepQueryId);
 
         executions = sqlQueryExecutionDao.filter(filter);
@@ -76,7 +75,7 @@ public class SchedulerServiceOneOffExecutionOngoingAndKillExecutionTest extends 
         assertThat(sqlQueryExecution.getStatus(), is(KILLED));
 
         //Let reaper reap
-        SECONDS.sleep(60);
+        Awaitility.waitAtMost(120, SECONDS).until(() -> oneOffSqlQueryTaskSchedulerReaper.getSqlQueryTaskSchedulerExecutorPairs().isEmpty());
 
         assertThat(sqlQueryTaskSchedulerHolder.all(), emptyIterable());
         assertThat(oneOffSqlQueryTaskSchedulerReaper.getSqlQueryTaskSchedulerExecutorPairs(), emptyIterable());
@@ -84,5 +83,11 @@ public class SchedulerServiceOneOffExecutionOngoingAndKillExecutionTest extends 
 
         Mail mail = ((PostofficeMockImpl)getInstance(Postoffice.class)).getLastSentMail();
         assertThat("Report email is not sent in case query is killed", mail, nullValue());
+    }
+
+    private List<SqlQueryExecution> getSqlQueryExecutions() {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(sleepQueryId);
+        return sqlQueryExecutionDao.filter(filter);
     }
 }

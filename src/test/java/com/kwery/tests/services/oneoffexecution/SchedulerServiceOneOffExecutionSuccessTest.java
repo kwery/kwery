@@ -1,5 +1,6 @@
 package com.kwery.tests.services.oneoffexecution;
 
+import com.google.common.collect.ImmutableList;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.JsonToHtmlTable;
@@ -7,6 +8,7 @@ import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.mock.PostofficeMockImpl;
+import org.awaitility.Awaitility;
 import org.dbunit.DatabaseUnitException;
 import org.junit.Test;
 
@@ -36,12 +38,10 @@ public class SchedulerServiceOneOffExecutionSuccessTest extends SchedulerService
 
         SqlQuery sqlQuery = sqlQueryDao.getById(successQueryId);
         schedulerService.schedule(sqlQuery);
-        SECONDS.sleep(30);
 
-        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
-        filter.setSqlQueryId(successQueryId);
+        Awaitility.waitAtMost(30, SECONDS).until(() -> !getSqlQueryExecutions().isEmpty());
 
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecution> executions = getSqlQueryExecutions();
 
         assertThat(executions, hasSize(1));
 
@@ -63,5 +63,12 @@ public class SchedulerServiceOneOffExecutionSuccessTest extends SchedulerService
         assertThat(mail.getTos(), containsInAnyOrder(recipientEmail));
         assertThat(mail.getBodyHtml(), is(new JsonToHtmlTable().convert(sqlQueryExecution.getResult())));
         assertThat(mail.getSubject(), endsWith(sqlQuery.getLabel()));
+    }
+
+    private List<SqlQueryExecution> getSqlQueryExecutions() {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(successQueryId);
+        filter.setStatuses(ImmutableList.of(SUCCESS));
+        return sqlQueryExecutionDao.filter(filter);
     }
 }
