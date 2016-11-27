@@ -1,46 +1,26 @@
 package com.kwery.tests.util;
 
-import com.google.common.collect.ImmutableMap;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.models.SqlQueryExecution.Status;
 import com.kwery.models.User;
-import org.openqa.selenium.Cookie;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 
 public class TestUtil {
     public static final int TIMEOUT_SECONDS = 30;
-    protected static Logger logger = LoggerFactory.getLogger(TestUtil.class);
 
     //Corresponds to the starting id set in *sql file
     public static final int DB_START_ID = 100;
-
-    public static final String USER_NAME_COOKIE = "3067e0b13d45acae3719c25f6bccfac007bfa8cf-___TS=1471772214856&username=fo";
 
     public static User user() {
         User user = new User();
         user.setUsername("purvi");
         user.setPassword("password");
         return user;
-    }
-
-    public static Map<String, String> userParams() {
-        return ImmutableMap.of(
-                "username", "foo",
-                "password", "password"
-        );
     }
 
     public static Datasource datasource() {
@@ -100,29 +80,5 @@ public class TestUtil {
         e.setStatus(status);
         e.setExecutionId("ksjdfjld");
         return e;
-    }
-
-    public static Cookie sessionCookie(String value) {
-        return new Cookie("NINJA_SESSION", value);
-    }
-
-    public static Cookie usernameCookie() {
-        return sessionCookie(USER_NAME_COOKIE);
-    }
-
-    public static boolean waitForMysql(String host, int port) {
-        long start = System.currentTimeMillis();
-        do {
-            try (Connection connection = DriverManager.getConnection(String.format("jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger", host, port), "root", "root")) {
-                return true;
-            } catch (SQLException e) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(10);
-                } catch (InterruptedException e1) {
-                }
-            }
-        } while (TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - start) < 2);
-
-        return false;
     }
 }

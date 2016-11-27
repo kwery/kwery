@@ -9,17 +9,15 @@ import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SchedulerService;
+import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashDaoTestBase;
-import com.kwery.tests.util.TestUtil;
-import com.xebialabs.overcast.host.CloudHost;
-import com.xebialabs.overcast.host.CloudHostFactory;
 import ninja.Bootstrap;
 import ninja.utils.NinjaMode;
 import ninja.utils.NinjaModeHelper;
 import ninja.utils.NinjaPropertiesImpl;
 import org.awaitility.Awaitility;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -28,14 +26,15 @@ import java.util.concurrent.TimeUnit;
 
 import static com.kwery.models.SqlQueryExecution.Status.KILLED;
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.assertThat;
 
 public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDashDaoTestBase {
-    protected CloudHost cloudHost;
+    @Rule
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
     protected Datasource datasource;
     protected SqlQuery sqlQuery;
     protected SchedulerService schedulerService;
@@ -46,22 +45,7 @@ public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDas
 
     @Before
     public void setUpSchedulerInteractionOnApplicationStartupAndStopTest() {
-        cloudHost = CloudHostFactory.getCloudHost("mysql");
-        cloudHost.setup();
-        String mysqlHost = cloudHost.getHostName();
-        int port = cloudHost.getPort(3306);
-
-        if (!TestUtil.waitForMysql(mysqlHost, port)) {
-            fail("MySQL docker service is not up");
-        }
-
-        datasource = new Datasource();
-        datasource.setUrl(mysqlHost);
-        datasource.setPort(port);
-        datasource.setLabel("test");
-        datasource.setUsername("root");
-        datasource.setPassword("root");
-
+        datasource = mysqlDockerRule.getMySqlDocker().datasource();
         getInstance(DatasourceDao.class).save(datasource);
 
         sqlQuery = new SqlQuery();
@@ -114,10 +98,5 @@ public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDas
             assertThat(execution.getExecutionEnd(), greaterThan(execution.getExecutionStart()));
             assertThat(execution.getResult(), nullValue());
         }
-    }
-
-    @After
-    public void tearDownSchedulerInteractionOnApplicationStartupAndStopTest() {
-        cloudHost.teardown();
     }
 }
