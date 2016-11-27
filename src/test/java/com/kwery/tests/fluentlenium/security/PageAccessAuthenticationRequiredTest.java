@@ -1,79 +1,39 @@
 package com.kwery.tests.fluentlenium.security;
 
+import com.google.common.reflect.ClassPath;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import com.kwery.tests.fluentlenium.datasource.DatasourceAddPage;
-import com.kwery.tests.fluentlenium.datasource.DatasourceListPage;
-import com.kwery.tests.fluentlenium.datasource.UpdateDatasourcePage;
-import com.kwery.tests.fluentlenium.onboarding.OnboardingNextStepsPage;
-import com.kwery.tests.fluentlenium.sqlquery.SqlQueryAddPage;
-import com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutingListPage;
-import com.kwery.tests.fluentlenium.sqlquery.SqlQueryListPage;
-import com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutionListPage;
-import com.kwery.tests.fluentlenium.sqlquery.SqlQueryUpdatePage;
-import com.kwery.tests.fluentlenium.user.UserListPage;
-import com.kwery.tests.fluentlenium.user.UserUpdatePage;
-import com.kwery.tests.fluentlenium.user.UserAddPage;
-import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import org.fluentlenium.core.FluentPage;
-import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTest {
-    protected static Logger logger = LoggerFactory.getLogger(PageAccessAuthenticationRequiredTest.class);
-
-    protected Map<Class<? extends FluentPage>, Boolean> pageClasses;
-
-    @Before
-    public void setUpPageAccessAuthenticationRequiredTest() {
-        pageClasses = new HashMap<>();
-
-        //TODO - Uncomment this once the page rendering issue without sleep is resolved
-/*        pageClasses.put(OnboardingUserAddedPage.class, false);*/
-        pageClasses.put(OnboardingNextStepsPage.class, true);
-
-        pageClasses.put(UserLoginPage.class, false);
-
-        pageClasses.put(UserAddPage.class, true);
-        pageClasses.put(UserUpdatePage.class, true);
-        pageClasses.put(UserListPage.class, true);
-
-        pageClasses.put(DatasourceAddPage.class, true);
-        pageClasses.put(UpdateDatasourcePage.class, true);
-        pageClasses.put(DatasourceListPage.class, true);
-
-        pageClasses.put(SqlQueryAddPage.class, true);
-        pageClasses.put(SqlQueryListPage.class, true);
-        pageClasses.put(SqlQueryUpdatePage.class, true);
-        pageClasses.put(SqlQueryExecutionListPage.class, true);
-
-        pageClasses.put(SqlQueryExecutingListPage.class, true);
-    }
-
     @Test
-    public void test() {
-        for (Map.Entry<Class<? extends FluentPage>, Boolean> entry : pageClasses.entrySet()) {
-            FluentPage page = createPage(entry.getKey());
-
-            logger.trace(">>>>>>>>>>>>>>>>>>>>>>>>Testing page - " + page.getClass());
-
-            page.withDefaultUrl(getServerAddress());
-            goTo(page);
-
-            if (entry.getValue()) {
-                await().atMost(TIMEOUT_SECONDS, SECONDS).until($("#loginForm")).isDisplayed();
-            } else {
-                assertThat(((RepoDashPage)page).isRendered(), is(true));
+    public void test() throws IOException {
+        Set<ClassPath.ClassInfo> classInfos = ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClassesRecursive("com.kwery.tests.fluentlenium");
+        for (ClassPath.ClassInfo classInfo : classInfos) {
+            Class clazz = classInfo.load();
+            if (FluentPage.class.isAssignableFrom(clazz)) {
+                FluentPage page = createPage(clazz);
+                page.withDefaultUrl(getServerAddress()).goTo(page);
+                if (isUnauthenticated(clazz)) {
+                    assertThat(((RepoDashPage)page).isRendered(), is(true));
+                } else {
+                    await().atMost(TIMEOUT_SECONDS, SECONDS).until($("#loginForm")).isDisplayed();
+                }
             }
         }
+    }
+
+    private boolean isUnauthenticated(Class clazz) {
+        Annotation annotation = clazz.getAnnotation(Unauthenticated.class);
+        return annotation != null && annotation instanceof Unauthenticated;
     }
 }
