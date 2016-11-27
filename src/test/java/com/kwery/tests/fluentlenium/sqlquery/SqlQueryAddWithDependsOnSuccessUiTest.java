@@ -16,7 +16,7 @@ import static com.kwery.tests.util.TestUtil.queryRunDto;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static junit.framework.TestCase.fail;
 
-public class SqlQueryAddWithDependsOnSuccessUiTest extends SqlQueryAbstractTest {
+public class SqlQueryAddWithDependsOnSuccessUiTest extends SqlQueryAddAbstractUiTest {
     @Before
     public void setUpAddSqlQueryWithDependsOnSuccessTest() {
         new DbSetup(
