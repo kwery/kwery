@@ -1,10 +1,12 @@
 package com.kwery.tests.fluentlenium.security;
 
 import com.google.common.reflect.ClassPath;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.NinjaServerRule;
 import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.FluentPage;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,7 +17,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTest {
+public class PageAccessAuthenticationRequiredTest extends ChromeFluentTest {
+    @Rule
+    public NinjaServerRule ninjaServerRule = new NinjaServerRule();
+
     @Test
     public void test() throws IOException {
         Set<ClassPath.ClassInfo> classInfos = ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClassesRecursive("com.kwery.tests.fluentlenium");
@@ -23,7 +28,7 @@ public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTe
             Class clazz = classInfo.load();
             if (FluentPage.class.isAssignableFrom(clazz)) {
                 FluentPage page = createPage(clazz);
-                page.withDefaultUrl(getServerAddress()).goTo(page);
+                page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
                 if (isUnauthenticated(clazz)) {
                     assertThat(((RepoDashPage)page).isRendered(), is(true));
                 } else {
