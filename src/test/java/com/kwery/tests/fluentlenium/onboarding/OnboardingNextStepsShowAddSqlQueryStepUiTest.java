@@ -1,61 +1,52 @@
 package com.kwery.tests.fluentlenium.onboarding;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.kwery.dao.DatasourceDao;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
+import com.kwery.models.Datasource;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.NinjaServerRule;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import com.kwery.tests.util.MySqlDocker;
+import org.junit.rules.RuleChain;
 
-import javax.sql.DataSource;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static com.kwery.models.Datasource.COLUMN_ID;
+import static com.kwery.models.Datasource.COLUMN_LABEL;
+import static com.kwery.models.Datasource.COLUMN_PASSWORD;
+import static com.kwery.models.Datasource.COLUMN_PORT;
+import static com.kwery.models.Datasource.COLUMN_TYPE;
+import static com.kwery.models.Datasource.COLUMN_URL;
+import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class OnboardingNextStepsShowAddSqlQueryStepUiTest extends RepoDashFluentLeniumTest {
+public class OnboardingNextStepsShowAddSqlQueryStepUiTest extends ChromeFluentTest {
+    protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+
+    @Rule
+    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+
     protected OnboardingNextStepsPage page;
-    protected MySqlDocker mySqlDocker;
 
     @Before
-    public void setUpOnboardingNextStepsShowAddSqlQueryPageTest() throws InterruptedException {
-        UserTableUtil userTableUtil = new UserTableUtil();
-        DataSource datasource = DbUtil.getDatasource();
-
-        DbSetup dbSetup = new DbSetup(new DataSourceDestination(datasource),
-                Operations.sequenceOf(
-                        userTableUtil.insertOperation()
+    public void setUpOnboardingNextStepsShowAddSqlQueryStepUiTest() {
+        new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
+                sequenceOf(
+                        insertInto(Datasource.TABLE)
+                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
+                                .values(1, "testDatasource0", "password0", 3306, MYSQL.name(), "foo.com", "user0")
+                                .build()
                 )
-        );
-
-        dbSetup.launch();
-
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
-        getInjector().getInstance(DatasourceDao.class).save(mySqlDocker.datasource());
-
-        UserLoginPage loginPage = createPage(UserLoginPage.class);
-        loginPage.withDefaultUrl(getServerAddress());
-        goTo(loginPage);
-        if (!loginPage.isRendered()) {
-            fail("Could not render login page");
-        }
-        loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
-        loginPage.waitForSuccessMessage(userTableUtil.firstRow());
+        ).launch();
 
         page = createPage(OnboardingNextStepsPage.class);
-        page.withDefaultUrl(getServerAddress());
-        goTo(page);
-
-        //TODO - This is a hack, figure out why the page is rendering on it's own
-        SECONDS.sleep(10);
-
+        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
         if (!page.isRendered()) {
             fail("Could not render next steps page");
         }

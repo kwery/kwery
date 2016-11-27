@@ -3,14 +3,16 @@ package com.kwery.tests.fluentlenium.sqlquery;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.NinjaServerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 
 import java.util.UUID;
 
@@ -39,16 +41,18 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryExecutionFilterCollapseUiTest extends RepoDashFluentLeniumTest {
+public class SqlQueryExecutionFilterCollapseUiTest extends ChromeFluentTest {
+    protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+
+    @Rule
+    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+
     protected SqlQueryExecutionListPage page;
 
     @Before
     public void setUpListSqlQueryExecutionTest() {
-        UserTableUtil userTableUtil = new UserTableUtil();
-
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 sequenceOf(
-                        userTableUtil.insertOperation(),
                         insertInto(Datasource.TABLE)
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
@@ -70,19 +74,8 @@ public class SqlQueryExecutionFilterCollapseUiTest extends RepoDashFluentLeniumT
         );
         dbSetup.launch();
 
-
-        UserLoginPage loginPage = createPage(UserLoginPage.class);
-        loginPage.withDefaultUrl(getServerAddress());
-        goTo(loginPage);
-        if (!loginPage.isRendered()) {
-            fail("Could not render login page");
-        }
-        loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
-        loginPage.waitForSuccessMessage(userTableUtil.firstRow());
-
         page = createPage(SqlQueryExecutionListPage.class);
-        page.withDefaultUrl(getServerAddress());
-        goTo(page);
+        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render list SQL queries execution page");

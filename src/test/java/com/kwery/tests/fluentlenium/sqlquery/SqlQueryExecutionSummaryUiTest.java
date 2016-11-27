@@ -4,15 +4,17 @@ import com.google.common.collect.ImmutableList;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.NinjaServerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,7 +49,12 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryExecutionSummaryUiTest extends RepoDashFluentLeniumTest {
+public class SqlQueryExecutionSummaryUiTest extends ChromeFluentTest {
+    protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+
+    @Rule
+    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+
     protected SqlQueryExecutionSummaryPage page;
 
     @Before
@@ -61,11 +68,8 @@ public class SqlQueryExecutionSummaryUiTest extends RepoDashFluentLeniumTest {
                 )
         );
 
-        UserTableUtil userTableUtil = new UserTableUtil();
-
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 sequenceOf(
-                        userTableUtil.insertOperation(),
                         insertInto(Datasource.TABLE)
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
@@ -80,17 +84,8 @@ public class SqlQueryExecutionSummaryUiTest extends RepoDashFluentLeniumTest {
         );
         dbSetup.launch();
 
-        UserLoginPage loginPage = createPage(UserLoginPage.class);
-        loginPage.withDefaultUrl(getServerAddress());
-        goTo(loginPage);
-        if (!loginPage.isRendered()) {
-            fail("Could not render login page");
-        }
-        loginPage.submitForm(userTableUtil.firstRow().getUsername(), userTableUtil.firstRow().getPassword());
-        loginPage.waitForSuccessMessage(userTableUtil.firstRow());
-
         page = createPage(SqlQueryExecutionSummaryPage.class);
-        page.withDefaultUrl(getServerAddress());
+        page.withDefaultUrl(ninjaServerRule.getServerUrl());
         goTo(page);
 
         if (!page.isRendered()) {

@@ -1,82 +1,70 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
-import com.kwery.dao.DatasourceDao;
-import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
-import com.kwery.models.User;
-import com.kwery.services.scheduler.SchedulerService;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
-import com.kwery.tests.util.MySqlDocker;
-import com.kwery.tests.util.TestUtil;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.NinjaServerRule;
 import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.models.Datasource.COLUMN_ID;
+import static com.kwery.models.Datasource.COLUMN_LABEL;
+import static com.kwery.models.Datasource.COLUMN_PASSWORD;
+import static com.kwery.models.Datasource.COLUMN_PORT;
+import static com.kwery.models.Datasource.COLUMN_TYPE;
+import static com.kwery.models.Datasource.COLUMN_URL;
+import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
+import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
+import static com.kwery.models.SqlQuery.COLUMN_QUERY;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryDeleteUiTest extends RepoDashFluentLeniumTest {
+public class SqlQueryDeleteUiTest extends ChromeFluentTest {
+    protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+
+    @Rule
+    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+
     protected SqlQueryListPage page;
-    protected MySqlDocker mySqlDocker;
     protected List<SqlQuery> queries;
+
+    protected String label0 = "testQuery0";
+    protected String label1 = "testQuery1";
 
     @Before
     public void setUpDeleteSqlQueryPageTest() throws InterruptedException {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
-
-        UserTableUtil userTableUtil = new UserTableUtil();
-        DbSetup dbSetup = new DbSetup(new DataSourceDestination(getDatasource()),
-                Operations.sequenceOf(
-                        userTableUtil.insertOperation()
+        DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
+                sequenceOf(
+                        insertInto(Datasource.TABLE)
+                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
+                                .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
+                        insertInto(SqlQuery.TABLE)
+                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
+                                .values(1, "* * * * *", label0, "select * from foo", 1).build(),
+                        insertInto(SqlQuery.TABLE)
+                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
+                                .values(2, "* * * * *", label1, "select * from foo", 1)
+                                .build()
                 )
         );
         dbSetup.launch();
 
-        Datasource datasource = mySqlDocker.datasource();
-        getInjector().getInstance(DatasourceDao.class).save(datasource);
-
-        queries = new ArrayList<>(2);
-
-        SqlQuery sqlQuery0 = TestUtil.listMySqlUserQuery(datasource);
-        getInjector().getInstance(SqlQueryDao.class).save(sqlQuery0);
-        getInjector().getInstance(SchedulerService.class).schedule(sqlQuery0);
-        queries.add(sqlQuery0);
-
-        SqlQuery sqlQuery1 = TestUtil.listMySqlUserQuery(datasource);
-        sqlQuery1.setLabel(sqlQuery0.getLabel() + "0");
-        getInjector().getInstance(SqlQueryDao.class).save(sqlQuery1);
-        getInjector().getInstance(SchedulerService.class).schedule(sqlQuery1);
-        queries.add(sqlQuery1);
-
-        UserLoginPage loginPage = createPage(UserLoginPage.class);
-        loginPage.withDefaultUrl(getServerAddress());
-        goTo(loginPage);
-        if (!loginPage.isRendered()) {
-            fail("Could not render login page");
-        }
-
-        User user = userTableUtil.firstRow();
-        loginPage.submitForm(user.getUsername(), user.getPassword());
-        loginPage.waitForSuccessMessage(user.getUsername());
-
-        TimeUnit.SECONDS.sleep(70);
-
         page = createPage(SqlQueryListPage.class);
-        page.withDefaultUrl(getServerAddress());
-        goTo(page);
+        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render list SQL queries execution page");
@@ -88,9 +76,9 @@ public class SqlQueryDeleteUiTest extends RepoDashFluentLeniumTest {
         page.waitForRows(2);
         page.delete(0);
 
-        page.waitForDeleteSuccessMessage(queries.get(0).getLabel());
+        page.waitForDeleteSuccessMessage(label0);
         List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(1));
-        assertThat(rows.get(0).get(0), is(queries.get(1).getLabel()));
+        assertThat(rows.get(0).get(0), is(label1));
     }
 }

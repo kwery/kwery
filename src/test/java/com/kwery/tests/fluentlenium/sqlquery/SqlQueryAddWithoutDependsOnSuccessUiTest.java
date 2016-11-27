@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static com.kwery.tests.util.TestUtil.queryRunDto;
 
-public class SqlQueryAddWithoutDependsOnSuccessUiTest extends SqlQueryAbstractTest {
+public class SqlQueryAddWithoutDependsOnSuccessUiTest extends SqlQueryAddAbstractUiTest {
     @Test
     public void test() {
         SqlQueryDto dto = queryRunDto();

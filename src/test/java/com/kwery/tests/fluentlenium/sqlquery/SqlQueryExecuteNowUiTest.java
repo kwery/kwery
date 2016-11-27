@@ -5,18 +5,20 @@ import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
-import com.kwery.models.User;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
-import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
-import com.kwery.tests.util.MySqlDocker;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.NinjaServerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.awaitility.Awaitility;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 
 import java.util.List;
 import java.util.Map;
@@ -35,14 +37,19 @@ import static com.kwery.models.SqlQuery.COLUMN_QUERY;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.TestCase.fail;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class SqlQueryExecuteNowUiTest extends RepoDashFluentLeniumTest {
-    protected MySqlDocker mySqlDocker;
+public class SqlQueryExecuteNowUiTest extends ChromeFluentTest {
+    protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+
+    @Rule
+    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+
+    @Rule
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
     protected SqlQueryListPage page;
-    protected UserTableUtil userTableUtil;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
     protected int userQueryId = 1;
@@ -63,16 +70,11 @@ public class SqlQueryExecuteNowUiTest extends RepoDashFluentLeniumTest {
 
     @Before
     public void setUpExecuteNowSqlQueryPageTest() {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
+        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
-        Datasource datasource = mySqlDocker.datasource();
-
-        UserTableUtil userTableUtil = new UserTableUtil();
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
                 Operations.sequenceOf(
-                        userTableUtil.insertOperation(),
                         insertInto(Datasource.TABLE)
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource0", datasource.getPassword(), datasource.getPort(), MYSQL.name(), datasource.getUrl(), datasource.getUsername())
@@ -85,28 +87,14 @@ public class SqlQueryExecuteNowUiTest extends RepoDashFluentLeniumTest {
                 )
         ).launch();
 
-        UserLoginPage loginPage = createPage(UserLoginPage.class);
-        loginPage.withDefaultUrl(getServerAddress());
-        goTo(loginPage);
-        if (!loginPage.isRendered()) {
-            fail("Could not render login page");
-        }
-
-        userTableUtil = new UserTableUtil();
-        User user = userTableUtil.firstRow();
-        loginPage.submitForm(user.getUsername(), user.getPassword());
-        loginPage.waitForSuccessMessage(user.getUsername());
-
-
         page = createPage(SqlQueryListPage.class);
-        page.withDefaultUrl(getServerAddress());
-        goTo(page);
+        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render list SQL queries execution page");
         }
 
-        sqlQueryExecutionDao = getInjector().getInstance(SqlQueryExecutionDao.class);
+        sqlQueryExecutionDao = ninjaServerRule.getInjector().getInstance(SqlQueryExecutionDao.class);
     }
 
     @Test
@@ -130,21 +118,17 @@ public class SqlQueryExecuteNowUiTest extends RepoDashFluentLeniumTest {
 
         page.waitForExecuteNowSuccessMessage(label);
 
-        SECONDS.sleep(30);
+        Awaitility.waitAtMost(30, SECONDS).until(() -> !getExecutions(label).isEmpty());
 
-        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
-        filter.setSqlQueryId(labelQueryIdMap.get(label));
-
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
-
-        assertThat(executions, hasSize(1));
-
-        SqlQueryExecution sqlQueryExecution = executions.get(0);
+        SqlQueryExecution sqlQueryExecution = getExecutions(label).get(0);
 
         assertThat(sqlQueryExecution.getResult(), is(labelResultMap.get(label)));
     }
 
-    public void tearDown() {
-        mySqlDocker.tearDown();
+    private List<SqlQueryExecution> getExecutions(String label) {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(labelQueryIdMap.get(label));
+        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
+        return executions;
     }
 }

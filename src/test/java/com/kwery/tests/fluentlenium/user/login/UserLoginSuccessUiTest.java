@@ -1,18 +1,19 @@
 package com.kwery.tests.fluentlenium.user.login;
 
 import com.kwery.dao.UserDao;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.NinjaServerRule;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 
-public class UserLoginSuccessUiTest extends UserLoginAbstractTest {
-    @Before
-    public void saveUser() {
-        getInjector().getInstance(UserDao.class).save(user);
-    }
+public class UserLoginSuccessUiTest extends ChromeFluentTest {
+    public NinjaServerRule ninjaServerRule = new NinjaServerRule();
+    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Test
     public void test() {
-        page.submitForm(user.getUsername(), user.getPassword());
-        page.waitForSuccessMessage(user);
+        //Login rule covers the test case
     }
 }
