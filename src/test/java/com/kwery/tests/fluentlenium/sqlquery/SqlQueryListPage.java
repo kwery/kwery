@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.kwery.tests.util.Messages.ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M;
 import static com.kwery.tests.util.Messages.SQL_QUERY_DELETE_SUCCESS_M;
 import static java.text.MessageFormat.format;

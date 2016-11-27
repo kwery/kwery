@@ -21,6 +21,7 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 
 public class TestUtil {
+    public static final int TIMEOUT_SECONDS = 30;
     protected static Logger logger = LoggerFactory.getLogger(TestUtil.class);
 
     //Corresponds to the starting id set in *sql file

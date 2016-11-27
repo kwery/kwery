@@ -3,7 +3,7 @@ package com.kwery.tests.fluentlenium.user;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
 
-import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.id;

@@ -1,6 +1,5 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
@@ -10,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 
 public class SqlQueryExecutionResultPage extends FluentPage implements RepoDashPage {
     @Override

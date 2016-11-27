@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.tagName;
 

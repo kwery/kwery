@@ -1,6 +1,6 @@
 package com.kwery.tests.fluentlenium.datasource;
 
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
 
@@ -25,7 +25,7 @@ public class UpdateDatasourcePage extends DatasourceAddPage {
     }
 
     public void waitForSuccessMessage(String label) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(MessageFormat.format(DATASOURCE_UPDATE_SUCCESS_M, MYSQL, label));
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(MessageFormat.format(DATASOURCE_UPDATE_SUCCESS_M, MYSQL, label));
     }
 
     public List<String> formFields() {

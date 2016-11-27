@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.datasource;
 
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
@@ -55,7 +55,7 @@ public class DatasourceAddPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage(String label) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(format(DATASOURCE_ADDITION_SUCCESS_M, MYSQL, label));
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(format(DATASOURCE_ADDITION_SUCCESS_M, MYSQL, label));
     }
 
     public void waitForFailureMessage(String label) {

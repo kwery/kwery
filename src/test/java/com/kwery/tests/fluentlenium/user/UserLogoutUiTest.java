@@ -8,7 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static org.openqa.selenium.By.className;
 
 public class UserLogoutUiTest extends ChromeFluentTest {

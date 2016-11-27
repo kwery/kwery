@@ -1,8 +1,8 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
 import com.kwery.models.SqlQueryExecution.Status;
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
@@ -21,7 +21,7 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
 
     @Override
     public boolean isRendered() {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until("#executionListTableBody").isDisplayed();
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until("#executionListTableBody").isDisplayed();
         return $("#executionListTableBody").first().isDisplayed();
     }
 

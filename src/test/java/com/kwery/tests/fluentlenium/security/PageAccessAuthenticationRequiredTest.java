@@ -3,6 +3,7 @@ package com.kwery.tests.fluentlenium.security;
 import com.google.common.reflect.ClassPath;
 import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.FluentPage;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class PageAccessAuthenticationRequiredTest extends RepoDashFluentLeniumTe
                 if (isUnauthenticated(clazz)) {
                     assertThat(((RepoDashPage)page).isRendered(), is(true));
                 } else {
-                    await().atMost(TIMEOUT_SECONDS, SECONDS).until($("#loginForm")).isDisplayed();
+                    await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until($("#loginForm")).isDisplayed();
                 }
             }
         }

@@ -2,7 +2,6 @@ package com.kwery.tests.fluentlenium.onboarding;
 
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -27,14 +26,7 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_QUERY;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_END;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_ID;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_START;
-import static com.kwery.models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
-import static com.kwery.models.SqlQueryExecution.COLUMN_RESULT;
-import static com.kwery.models.SqlQueryExecution.COLUMN_STATUS;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
-import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 

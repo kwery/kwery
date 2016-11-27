@@ -1,8 +1,8 @@
 package com.kwery.tests.fluentlenium.user.login;
 
-import com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.models.User;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
@@ -34,14 +34,14 @@ public class UserLoginPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage(User user) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(LOGIN_SUCCESS_M, user.getUsername()));
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(LOGIN_SUCCESS_M, user.getUsername()));
     }
 
     public void waitForSuccessMessage(String username) {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(LOGIN_SUCCESS_M, username));
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(LOGIN_SUCCESS_M, username));
     }
 
     public void waitForFailureMessage() {
-        await().atMost(RepoDashFluentLeniumTest.TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").hasText(LOGIN_FAILURE_M);
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").hasText(LOGIN_FAILURE_M);
     }
 }

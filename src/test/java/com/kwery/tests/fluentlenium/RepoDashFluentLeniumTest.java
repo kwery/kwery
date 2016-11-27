@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 //Contains code for NinjaFluentLeniumTest with HTMLUnitDriver taken out
 public class RepoDashFluentLeniumTest extends FluentTest {
-    public static final int TIMEOUT_SECONDS = 30;
     public NinjaTestServer ninjaTestServer;
 
     public WebDriver getDefaultDriver() {
