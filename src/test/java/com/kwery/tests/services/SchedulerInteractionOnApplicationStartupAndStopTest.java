@@ -1,37 +1,37 @@
 package com.kwery.tests.services;
 
 import com.google.common.base.Optional;
-import com.xebialabs.overcast.host.CloudHost;
-import com.xebialabs.overcast.host.CloudHostFactory;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
-import ninja.Bootstrap;
-import ninja.utils.NinjaMode;
-import ninja.utils.NinjaModeHelper;
-import ninja.utils.NinjaPropertiesImpl;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.kwery.tests.util.TestUtil;
+import com.xebialabs.overcast.host.CloudHost;
+import com.xebialabs.overcast.host.CloudHostFactory;
+import ninja.Bootstrap;
+import ninja.utils.NinjaMode;
+import ninja.utils.NinjaModeHelper;
+import ninja.utils.NinjaPropertiesImpl;
+import org.awaitility.Awaitility;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.TestCase.fail;
 import static com.kwery.models.SqlQueryExecution.Status.KILLED;
 import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDashDaoTestBase {
@@ -88,11 +88,10 @@ public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDas
         schedulerService = bootstrap.getInjector().getInstance(SchedulerService.class);
         sqlQueryExecutionDao = bootstrap.getInjector().getInstance(SqlQueryExecutionDao.class);
 
-        TimeUnit.MINUTES.sleep(3);
+        Awaitility.waitAtMost(3, TimeUnit.MINUTES).until(() -> schedulerService.ongoingQueryTasks(sqlQuery.getId()).size() >= 2);
 
         List<OngoingSqlQueryTask> ongoing = schedulerService.ongoingQueryTasks(sqlQuery.getId());
         int ongoingTasksSize = ongoing.size();
-        assertThat(ongoingTasksSize, greaterThanOrEqualTo(2));
 
         List<String> ongoingExecutionIds = new LinkedList<>();
 
