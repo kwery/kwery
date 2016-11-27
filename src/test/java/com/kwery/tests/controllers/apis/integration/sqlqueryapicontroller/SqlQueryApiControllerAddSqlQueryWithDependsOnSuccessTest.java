@@ -9,12 +9,12 @@ import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.MySqlDocker;
+import com.kwery.tests.util.MysqlDockerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -45,7 +45,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryApiControllerAddSqlQueryWithDependsOnSuccessTest extends AbstractPostLoginApiTest {
-    protected MySqlDocker mySqlDocker;
+    @Rule
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
@@ -58,10 +59,7 @@ public class SqlQueryApiControllerAddSqlQueryWithDependsOnSuccessTest extends Ab
 
     @Before
     public void setUpSqlQueryApiControllerAddSqlQueryWithDependsOnSuccessTest() {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
-
-        datasource = mySqlDocker.datasource();
+        datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -132,10 +130,5 @@ public class SqlQueryApiControllerAddSqlQueryWithDependsOnSuccessTest extends Ab
         assertThat(execution.getExecutionEnd(), greaterThan(execution.getExecutionStart()));
         assertThat(execution.getExecutionId(), notNullValue());
         assertThat(execution.getResult(), notNullValue());
-    }
-
-    @After
-    public void tearDownSqlQueryApiControllerAddSqlQueryWithDependsOnSuccessTest() {
-        mySqlDocker.tearDown();
     }
 }

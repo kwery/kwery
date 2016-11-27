@@ -6,13 +6,13 @@ import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.MySqlDocker;
+import com.kwery.tests.util.MysqlDockerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import ninja.Router;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -38,15 +38,14 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryApiControllerOneOffExecutionTest extends AbstractPostLoginApiTest {
-    protected MySqlDocker mySqlDocker;
+    @Rule
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
     protected String label = "selectQuery";
 
     @Before
     public void setUpSqlQueryApiControllerOneOffExecutionTest() {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
-
-        Datasource datasource = mySqlDocker.datasource();
+        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -77,11 +76,5 @@ public class SqlQueryApiControllerOneOffExecutionTest extends AbstractPostLoginA
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
         assertThat(response, hasJsonPath("$.messages[0]", is(format(ONE_OFF_EXECUTION_SUCCESS_MESSAGE_M, label))));
-    }
-
-
-    @After
-    public void tearDownSqlQueryApiControllerOneOffExecutionTest() {
-        mySqlDocker.tearDown();
     }
 }

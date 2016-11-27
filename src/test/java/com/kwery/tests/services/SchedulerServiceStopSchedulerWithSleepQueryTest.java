@@ -8,12 +8,11 @@ import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.MySqlDocker;
+import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,17 +35,15 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class SchedulerServiceStopSchedulerWithSleepQueryTest extends RepoDashTestBase {
-    protected MySqlDocker mySqlDocker;
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
     protected SchedulerService schedulerService;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
     protected SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
 
     @Before
     public void setUpSchedulerServiceStopSchedulerWithRegularQueryTest() {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
-
-        Datasource datasource = mySqlDocker.datasource();
+        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -83,10 +80,5 @@ public class SchedulerServiceStopSchedulerWithSleepQueryTest extends RepoDashTes
 
         assertThat(sqlQueryTaskSchedulerHolder.get(1), empty());
         assertThat("No new query was executed after stopping the scheduler", countBeforeSleep, is(countAfterSleep));
-    }
-
-    @After
-    public void tearDownSchedulerServiceStopSchedulerWithRegularQueryTest() {
-        mySqlDocker.tearDown();
     }
 }
