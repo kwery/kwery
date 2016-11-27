@@ -28,7 +28,6 @@ public class TestUtil {
     public static final int DB_START_ID = 100;
 
     public static final String USER_NAME_COOKIE = "3067e0b13d45acae3719c25f6bccfac007bfa8cf-___TS=1471772214856&username=fo";
-    public static final String COOKIE_STRING = String.format("NINJA_SESSION=%s", USER_NAME_COOKIE);
 
     public static User user() {
         User user = new User();
