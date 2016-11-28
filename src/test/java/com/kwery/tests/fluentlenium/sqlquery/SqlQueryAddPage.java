@@ -9,9 +9,8 @@ import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.support.FindBy;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static com.kwery.tests.fluentlenium.RepoDashFluentLeniumTest.TIMEOUT_SECONDS;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.kwery.tests.util.Messages.QUERY_RUN_ADDITION_FAILURE_M;
 import static com.kwery.tests.util.Messages.QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS_M;
 import static com.kwery.tests.util.Messages.QUERY_RUN_WITH_CRON_ADDITION_SUCCESS_M;

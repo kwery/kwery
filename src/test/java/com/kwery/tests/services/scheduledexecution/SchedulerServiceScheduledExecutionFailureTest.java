@@ -1,11 +1,13 @@
 package com.kwery.tests.services.scheduledexecution;
 
+import com.google.common.collect.ImmutableList;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.mock.PostofficeMockImpl;
+import org.awaitility.Awaitility;
 import org.codehaus.jackson.JsonProcessingException;
 import org.junit.Test;
 
@@ -14,7 +16,6 @@ import java.util.List;
 import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -27,15 +28,10 @@ public class SchedulerServiceScheduledExecutionFailureTest extends SchedulerServ
         SqlQuery sqlQuery = sqlQueryDao.getById(failQueryId);
 
         schedulerService.schedule(sqlQuery);
-        MINUTES.sleep(3);
 
-        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
-        filter.setSqlQueryId(failQueryId);
+        Awaitility.waitAtMost(3, MINUTES).until(() -> getSqlQueryExecutions().size() >= 2);
 
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
-        assertThat(executions.size(), greaterThanOrEqualTo(2));
-
-        for (SqlQueryExecution execution : executions) {
+        for (SqlQueryExecution execution : getSqlQueryExecutions()) {
             assertThat(execution.getId(), greaterThan(0));
             assertThat(execution.getSqlQuery().getId(), is(sqlQuery.getId()));
             assertThat(execution.getStatus(), is(FAILURE));
@@ -47,5 +43,12 @@ public class SchedulerServiceScheduledExecutionFailureTest extends SchedulerServ
 
         Mail mail = ((PostofficeMockImpl)getInstance(Postoffice.class)).getLastSentMail();
         assertThat(mail, nullValue());
+    }
+
+    private List<SqlQueryExecution> getSqlQueryExecutions() {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(failQueryId);
+        filter.setStatuses(ImmutableList.of(FAILURE));
+        return sqlQueryExecutionDao.filter(filter);
     }
 }

@@ -4,20 +4,22 @@ import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.MySqlDocker;
+import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import org.junit.After;
+import org.awaitility.Awaitility;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
@@ -31,22 +33,22 @@ import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
 import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
 import static com.kwery.models.SqlQuery.COLUMN_QUERY;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class SchedulerServiceStopSchedulerWithRegularQueryTest extends RepoDashTestBase {
-    protected MySqlDocker mySqlDocker;
+    @Rule
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
     protected SchedulerService schedulerService;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
     protected SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
 
     @Before
     public void setUpSchedulerServiceStopSchedulerWithRegularQueryTest() {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
-
-        Datasource datasource = mySqlDocker.datasource();
+        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -72,22 +74,24 @@ public class SchedulerServiceStopSchedulerWithRegularQueryTest extends RepoDashT
 
     @Test
     public void test() throws InterruptedException {
-        TimeUnit.SECONDS.sleep(70);
+        Awaitility.waitAtMost(70, SECONDS).until(() -> !sqlQueryExecutions().isEmpty());
+
         schedulerService.stopScheduler(1);
 
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(1);
 
         long countBeforeSleep = sqlQueryExecutionDao.count(filter);
-        TimeUnit.SECONDS.sleep(70);
+        SECONDS.sleep(70);
         long countAfterSleep = sqlQueryExecutionDao.count(filter);
 
         assertThat(sqlQueryTaskSchedulerHolder.get(1), empty());
         assertThat("No new query was executed after stopping the scheduler", countBeforeSleep, is(countAfterSleep));
     }
 
-    @After
-    public void tearDownSchedulerServiceStopSchedulerWithRegularQueryTest() {
-        mySqlDocker.tearDown();
+    private List<SqlQueryExecution> sqlQueryExecutions() {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(1);
+        return sqlQueryExecutionDao.filter(filter);
     }
 }

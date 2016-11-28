@@ -9,6 +9,7 @@ import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.mock.PostofficeMockImpl;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 
 import java.util.List;
@@ -18,7 +19,6 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 public class SchedulerServiceScheduledExecutionSuccessTest extends SchedulerServiceScheduledExecutionBaseTest {
@@ -29,13 +29,8 @@ public class SchedulerServiceScheduledExecutionSuccessTest extends SchedulerServ
         SqlQuery sqlQuery = sqlQueryDao.getById(successQueryId);
 
         schedulerService.schedule(sqlQuery);
-        MINUTES.sleep(3);
 
-        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
-        filter.setSqlQueryId(successQueryId);
-
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
-        assertThat(executions.size(), greaterThanOrEqualTo(2));
+        Awaitility.waitAtMost(3, MINUTES).until(() -> successfulExecutions().size() >= 2);
 
         String expectedResult = new ObjectMapper().writeValueAsString(
                 ImmutableList.of(
@@ -44,7 +39,7 @@ public class SchedulerServiceScheduledExecutionSuccessTest extends SchedulerServ
                 )
         );
 
-        for (SqlQueryExecution execution : executions) {
+        for (SqlQueryExecution execution : successfulExecutions()) {
             assertThat(execution.getId(), greaterThan(0));
             assertThat(execution.getSqlQuery().getId(), is(sqlQuery.getId()));
             assertThat(execution.getStatus(), is(SUCCESS));
@@ -57,5 +52,12 @@ public class SchedulerServiceScheduledExecutionSuccessTest extends SchedulerServ
 
         Mail mail = ((PostofficeMockImpl)getInstance(Postoffice.class)).getLastSentMail();
         assertThat(mail, notNullValue());
+    }
+
+    public List<SqlQueryExecution> successfulExecutions() {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(successQueryId);
+        filter.setStatuses(ImmutableList.of(SUCCESS));
+        return sqlQueryExecutionDao.filter(filter);
     }
 }

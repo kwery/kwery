@@ -1,5 +1,6 @@
 package com.kwery.tests.services.oneoffexecution;
 
+import com.google.common.collect.ImmutableList;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.JsonToHtmlTable;
@@ -7,6 +8,7 @@ import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.mock.PostofficeMockImpl;
+import org.awaitility.Awaitility;
 import org.dbunit.DatabaseUnitException;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,12 +47,9 @@ public class SchedulerServiceOneOffExecutionWithDependentsSuccessTest extends Sc
         SqlQuery sqlQuery = sqlQueryDao.getById(successQueryId);
         schedulerService.schedule(sqlQuery);
 
-        SECONDS.sleep(60);
+        Awaitility.waitAtMost(60, SECONDS).until(() -> !getSqlQueryExecutions(successQueryId).isEmpty());
 
-        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
-        filter.setSqlQueryId(successQueryId);
-
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecution> executions = getSqlQueryExecutions(successQueryId);
 
         assertThat(executions, hasSize(1));
 
@@ -67,13 +66,9 @@ public class SchedulerServiceOneOffExecutionWithDependentsSuccessTest extends Sc
                 oneOffSqlQueryTaskSchedulerReaper.getSqlQueryTaskSchedulerExecutorPairs(), iterableWithSize(2));
         assertThat(schedulerService.ongoingQueryTasks(successQueryId), emptyIterable());
 
-        SqlQueryExecutionSearchFilter dependentQueryFilter = new SqlQueryExecutionSearchFilter();
-        dependentQueryFilter.setSqlQueryId(dependentSelectQueryId);
+        Awaitility.waitAtMost(60, SECONDS).until(() -> !getSqlQueryExecutions(dependentSelectQueryId).isEmpty());
 
-        List<SqlQueryExecution> dependentQueryExecutions = sqlQueryExecutionDao.filter(dependentQueryFilter);
-        assertThat(dependentQueryExecutions, hasSize(1));
-
-        SqlQueryExecution execution = dependentQueryExecutions.get(0);
+        SqlQueryExecution execution = getSqlQueryExecutions(dependentSelectQueryId).get(0);
 
         assertThat(execution.getStatus(), is(SUCCESS));
         assertThat(execution.getExecutionStart(), greaterThan(start));
@@ -87,5 +82,12 @@ public class SchedulerServiceOneOffExecutionWithDependentsSuccessTest extends Sc
         assertThat(mail.getTos(), containsInAnyOrder(recipientEmail));
         assertThat(mail.getBodyHtml(), is(new JsonToHtmlTable().convert(execution.getResult())));
         assertThat(mail.getSubject(), endsWith(sqlQueryDao.getById(dependentSelectQueryId).getLabel()));
+    }
+
+    private List<SqlQueryExecution> getSqlQueryExecutions(int sqlQueryId) {
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setSqlQueryId(sqlQueryId);
+        filter.setStatuses(ImmutableList.of(SUCCESS));
+        return sqlQueryExecutionDao.filter(filter);
     }
 }

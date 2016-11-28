@@ -9,6 +9,7 @@ import com.kwery.services.scheduler.SqlQueryTaskScheduler;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.mock.PostofficeMockImpl;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -33,7 +34,8 @@ public class SchedulerServiceScheduledExecutionOngoingAndKilledTest extends Sche
         SqlQuery sqlQuery = sqlQueryDao.getById(sleepQueryId);
 
         schedulerService.schedule(sqlQuery);
-        MINUTES.sleep(3);
+
+        Awaitility.waitAtMost(2, MINUTES).until(() -> schedulerService.ongoingQueryTasks(sleepQueryId).size() >= 2);
 
         List<OngoingSqlQueryTask> ongoing = schedulerService.ongoingQueryTasks(sleepQueryId);
         int ongoingTasksSize = ongoing.size();

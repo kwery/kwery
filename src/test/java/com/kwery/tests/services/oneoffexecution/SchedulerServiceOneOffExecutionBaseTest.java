@@ -8,13 +8,13 @@ import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.MySqlDocker;
+import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
@@ -30,7 +30,9 @@ import static com.kwery.models.SqlQuery.COLUMN_QUERY;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 
 public class SchedulerServiceOneOffExecutionBaseTest extends RepoDashTestBase {
-    protected MySqlDocker mySqlDocker;
+    @Rule
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
     protected SchedulerService schedulerService;
     protected SqlQueryDao sqlQueryDao;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
@@ -45,10 +47,7 @@ public class SchedulerServiceOneOffExecutionBaseTest extends RepoDashTestBase {
 
     @Before
     public void setUpSchedulerServiceOneOffExecutionBaseTest() {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
-
-        Datasource datasource = mySqlDocker.datasource();
+        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -78,10 +77,5 @@ public class SchedulerServiceOneOffExecutionBaseTest extends RepoDashTestBase {
 
         sqlQueryTaskSchedulerHolder = getInstance(SqlQueryTaskSchedulerHolder.class);
         oneOffSqlQueryTaskSchedulerReaper = getInstance(OneOffSqlQueryTaskSchedulerReaper.class);
-    }
-
-    @After
-    public void tearDownSchedulerServiceTestDirectExecution() {
-        mySqlDocker.tearDown();
     }
 }

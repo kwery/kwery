@@ -2,23 +2,22 @@ package com.kwery.tests.controllers.apis.integration.datasourceapicontroller;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.kwery.controllers.apis.DatasourceApiController;
+import com.kwery.models.Datasource;
+import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.tests.util.MysqlDockerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.kwery.controllers.apis.DatasourceApiController;
-import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.models.Datasource;
 import ninja.Router;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import com.kwery.tests.util.MySqlDocker;
 
 import java.text.MessageFormat;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.COLUMN_LABEL;
 import static com.kwery.models.Datasource.COLUMN_PASSWORD;
@@ -27,21 +26,21 @@ import static com.kwery.models.Datasource.COLUMN_TYPE;
 import static com.kwery.models.Datasource.COLUMN_URL;
 import static com.kwery.models.Datasource.COLUMN_USERNAME;
 import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.tests.util.Messages.DATASOURCE_UPDATE_SUCCESS_M;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static com.kwery.tests.util.Messages.DATASOURCE_UPDATE_SUCCESS_M;
 
 //TODO - Validation test cases for update
 public class DatasourceApiControllerUpdateDatasourceSuccessTest extends AbstractPostLoginApiTest {
+    @Rule
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
     protected Datasource datasource;
-    MySqlDocker mySqlDocker;
 
     @Before
     public void setUpDatasourceApiControllerUpdateDatasourceSuccessTest() {
-        mySqlDocker = new MySqlDocker();
-        mySqlDocker.start();
-
-        datasource = mySqlDocker.datasource();
+        datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -68,14 +67,7 @@ public class DatasourceApiControllerUpdateDatasourceSuccessTest extends Abstract
         );
 
         Object object = Configuration.defaultConfiguration().jsonProvider().parse(response);
-
         assertThat(JsonPath.read(response, "$.messages.length()"), is(1));
-
         assertThat(object, hasJsonPath("$.messages[0]", is(MessageFormat.format(DATASOURCE_UPDATE_SUCCESS_M, MYSQL.name(), datasource.getLabel()))));
-    }
-
-    @After
-    public void tearDownDatasourceApiControllerUpdateDatasourceSuccessTest() {
-        mySqlDocker.tearDown();
     }
 }
