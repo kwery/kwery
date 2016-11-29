@@ -44,6 +44,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "valid
             contentType: "application/json",
             success: function(conf) {
                 if (conf != null) {
+                    self.emailConfigurationId(conf.id);
                     self.from(conf.from);
                     self.bcc(conf.bcc);
                     self.replyTo(conf.replyTo);
@@ -58,6 +59,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "valid
                 // handle the invalid form...
             } else {
                 var conf = {
+                    id: self.emailConfigurationId(),
                     from: self.from(),
                     bcc: self.bcc(),
                     replyTo: self.replyTo()

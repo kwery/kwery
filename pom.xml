@@ -404,5 +404,11 @@
             <version>1.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>uk.co.jemos.podam</groupId>
+            <artifactId>podam</artifactId>
+            <version>7.0.2.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

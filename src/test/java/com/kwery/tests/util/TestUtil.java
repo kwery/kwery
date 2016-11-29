@@ -2,13 +2,32 @@ package com.kwery.tests.util;
 
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
+import com.kwery.models.EmailConfiguration;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.models.SqlQueryExecution.Status;
 import com.kwery.models.User;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import uk.co.jemos.podam.api.PodamFactory;
+import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
+import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
+import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
+import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
+import static com.kwery.models.SmtpConfiguration.COLUMN_HOST;
+import static com.kwery.models.SmtpConfiguration.COLUMN_PASSWORD;
+import static com.kwery.models.SmtpConfiguration.COLUMN_PORT;
+import static com.kwery.models.SmtpConfiguration.COLUMN_SSL;
+import static com.kwery.models.SmtpConfiguration.COLUMN_USERNAME;
+import static com.kwery.models.SmtpConfiguration.TABLE_SMTP_CONFIGURATION;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 
 public class TestUtil {
     public static final int TIMEOUT_SECONDS = 30;
@@ -71,5 +90,81 @@ public class TestUtil {
         e.setStatus(status);
         e.setExecutionId("ksjdfjld");
         return e;
+    }
+
+    public static SmtpConfiguration smtpConfigurationWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        SmtpConfiguration config = podamFactory.manufacturePojo(SmtpConfiguration.class);
+        config.setId(null);
+        return config;
+    }
+
+    public static SmtpConfiguration smtpConfiguration() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        SmtpConfiguration config = podamFactory.manufacturePojo(SmtpConfiguration.class);
+        config.setId(1);
+        return config;
+    }
+
+    public static EmailConfiguration emailConfigurationWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        EmailConfiguration emailConfiguration = podamFactory.manufacturePojo(EmailConfiguration.class);
+        emailConfiguration.setId(null);
+        return emailConfiguration;
+    }
+
+    public static EmailConfiguration emailConfiguration() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        EmailConfiguration emailConfiguration = podamFactory.manufacturePojo(EmailConfiguration.class);
+        emailConfiguration.setId(1);
+        return emailConfiguration;
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 10; ++i) {
+            System.out.println(smtpConfigurationWithoutId());
+        }
+    }
+
+    public static EmailConfiguration emailConfigurationDbSetUp() {
+        EmailConfiguration emailConfiguration = emailConfiguration();
+
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(TABLE_EMAIL_CONFIGURATION)
+                                .row()
+                                .column(EmailConfiguration.COLUMN_ID, emailConfiguration.getId())
+                                .column(COLUMN_FROM_EMAIL, emailConfiguration.getFrom())
+                                .column(COLUMN_BCC, emailConfiguration.getBcc())
+                                .column(COLUMN_REPLY_TO, emailConfiguration.getReplyTo())
+                                .end()
+                                .build()
+                )
+        ).launch();
+
+        return emailConfiguration;
+    }
+
+    public static SmtpConfiguration smtpConfigurationDbSetUp() {
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(TABLE_SMTP_CONFIGURATION)
+                                .row()
+                                .column(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
+                                .column(COLUMN_HOST, smtpConfiguration.getHost())
+                                .column(COLUMN_PORT, smtpConfiguration.getPort())
+                                .column(COLUMN_SSL, smtpConfiguration.isSsl())
+                                .column(COLUMN_USERNAME, smtpConfiguration.getUsername())
+                                .column(COLUMN_PASSWORD, smtpConfiguration.getPassword())
+                                .end()
+                                .build()
+                )
+        ).launch();
+
+        return smtpConfiguration;
     }
 }
