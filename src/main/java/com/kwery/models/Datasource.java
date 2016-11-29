@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -25,33 +26,34 @@ public class Datasource {
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_ID = "id";
 
-    @Column(name = COLUMN_ID)
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
+    @Column(name = COLUMN_ID)
     private Integer id;
 
-    @Column(name = COLUMN_URL)
-    @Size(min = 1, message = "url.validation")
     @NotNull(message = "url.validation")
+    @Size(min = 1, max = 255, message = "url.validation")
+    @Column(name = COLUMN_URL)
     private String url;
 
     @Column(name = COLUMN_PORT)
     @Min(value = 1, message = "port.validation")
+    @Max(value = 65565, message = "port.validation")
     @NotNull(message = "port.validation")
     private Integer port;
 
-    @Column(name = COLUMN_USERNAME)
-    @Size(min = 1, message = "username.validation")
     @NotNull(message = "username.validation")
+    @Size(min = 1, max = 255, message = "username.validation")
+    @Column(name = COLUMN_USERNAME)
     private String username;
 
-    //TODO - Should be excluded from toString or from JSON serialization
+    @Size(max = 255)
     @Column(name = COLUMN_PASSWORD)
     private String password;
 
-    @Column(name = COLUMN_LABEL, unique = true)
-    @Size(min = 1, message = "label.validation")
     @NotNull(message = "label.validation")
+    @Size(min = 1, max = 255, message = "label.validation")
+    @Column(name = COLUMN_LABEL, unique = true)
     private String label;
 
     @Enumerated(STRING)

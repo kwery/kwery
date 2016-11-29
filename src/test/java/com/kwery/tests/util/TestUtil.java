@@ -1,29 +1,15 @@
 package com.kwery.tests.util;
 
 import com.kwery.dtos.SqlQueryDto;
-import com.kwery.models.Datasource;
-import com.kwery.models.EmailConfiguration;
-import com.kwery.models.SmtpConfiguration;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecution.Status;
-import com.kwery.models.User;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
-import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
-import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
-import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
-import static com.kwery.models.SmtpConfiguration.COLUMN_HOST;
-import static com.kwery.models.SmtpConfiguration.COLUMN_PASSWORD;
-import static com.kwery.models.SmtpConfiguration.COLUMN_PORT;
-import static com.kwery.models.SmtpConfiguration.COLUMN_SSL;
-import static com.kwery.models.SmtpConfiguration.COLUMN_USERNAME;
-import static com.kwery.models.SmtpConfiguration.TABLE_SMTP_CONFIGURATION;
+import static com.kwery.models.EmailConfiguration.*;
+import static com.kwery.models.SmtpConfiguration.*;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -43,14 +29,9 @@ public class TestUtil {
     }
 
     public static Datasource datasource() {
-        Datasource datasource = new Datasource();
-        datasource.setUrl("0.0.0.0");
-        datasource.setPort(3306);
-        datasource.setUsername("root");
-        datasource.setPassword("root");
-        datasource.setLabel("label");
-        datasource.setType(MYSQL);
-        return datasource;
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        return podamFactory.manufacturePojo(Datasource.class);
     }
 
     public static SqlQuery queryRun() {
@@ -120,10 +101,37 @@ public class TestUtil {
         return emailConfiguration;
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; ++i) {
-            System.out.println(smtpConfigurationWithoutId());
-        }
+    public static JobModel jobModelWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        JobModel jobModel = podamFactory.manufacturePojo(JobModel.class);
+        jobModel.setId(null);
+        return jobModel;
+    }
+
+    public static Datasource datasourceWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        Datasource datasource = podamFactory.manufacturePojo(Datasource.class);
+        datasource.setId(null);
+        return datasource;
+    }
+
+    public static SqlQueryModel sqlQueryModelWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
+        sqlQueryModel.setId(null);
+        return sqlQueryModel;
+    }
+
+    public static SqlQueryModel sqlQueryModel() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        return podamFactory.manufacturePojo(SqlQueryModel.class);
+    }
+
+    public static JobModel jobModel() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        return podamFactory.manufacturePojo(JobModel.class);
     }
 
     public static EmailConfiguration emailConfigurationDbSetUp() {
@@ -167,4 +175,11 @@ public class TestUtil {
 
         return smtpConfiguration;
     }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 10; ++i) {
+            System.out.println(datasourceWithoutId());
+        }
+    }
+
 }
