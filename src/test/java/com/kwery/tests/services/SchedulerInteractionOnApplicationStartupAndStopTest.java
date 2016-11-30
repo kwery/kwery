@@ -5,8 +5,8 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.tests.util.MysqlDockerRule;
@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.kwery.models.SqlQueryExecution.Status.KILLED;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecutionModel.Status.KILLED;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
@@ -80,7 +80,7 @@ public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDas
         List<String> ongoingExecutionIds = new LinkedList<>();
 
         for (OngoingSqlQueryTask ongoingSqlQueryTask : ongoing) {
-            SqlQueryExecution execution = sqlQueryExecutionDao.getByExecutionId(ongoingSqlQueryTask.getExecutionId());
+            SqlQueryExecutionModel execution = sqlQueryExecutionDao.getByExecutionId(ongoingSqlQueryTask.getExecutionId());
             assertThat(execution.getId(), greaterThan(0));
             assertThat(execution.getSqlQuery().getId(), is(sqlQuery.getId()));
             assertThat(execution.getStatus(), is(ONGOING));
@@ -93,7 +93,7 @@ public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDas
         bootstrap.shutdown();
 
         for (String ongoingExecutionId : ongoingExecutionIds) {
-            SqlQueryExecution execution = getInstance(SqlQueryExecutionDao.class).getByExecutionId(ongoingExecutionId);
+            SqlQueryExecutionModel execution = getInstance(SqlQueryExecutionDao.class).getByExecutionId(ongoingExecutionId);
             assertThat(execution.getStatus(), is(KILLED));
             assertThat(execution.getExecutionEnd(), greaterThan(execution.getExecutionStart()));
             assertThat(execution.getResult(), nullValue());

@@ -1,8 +1,8 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
@@ -21,28 +21,14 @@ import javax.sql.DataSource;
 import java.util.List;
 
 import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
-import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_END;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_ID;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_START;
-import static com.kwery.models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
-import static com.kwery.models.SqlQueryExecution.COLUMN_RESULT;
-import static com.kwery.models.SqlQueryExecution.COLUMN_STATUS;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
-import static com.kwery.tests.util.Messages.DATASOURCE_M;
-import static com.kwery.tests.util.Messages.KILL_QUERY_M;
-import static com.kwery.tests.util.Messages.QUERY_M;
-import static com.kwery.tests.util.Messages.START_M;
+import static com.kwery.models.SqlQueryExecutionModel.*;
+import static com.kwery.models.SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
+import static com.kwery.models.SqlQueryModel.*;
+import static com.kwery.tests.util.Messages.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -69,8 +55,8 @@ public class SqlQueryListExecutingSqlQueryUiTest extends ChromeFluentTest {
                         insertInto(SqlQueryModel.SQL_QUERY_TABLE)
                                 .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
                                 .values(1, "* * * * *", "testQuery", "select * from foo", 1).build(),
-                        insertInto(SqlQueryExecution.TABLE)
-                                .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
+                        insertInto(SqlQueryExecutionModel.TABLE)
+                                .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
                                 .values(1, null, "sjfljkl", 1475215495171l, "status", SUCCESS, 1)
                                 .values(2, null, "sjfljkl", 1475215495171l, null, ONGOING, 1)
                                 .values(3, null, "sdjfklj", 1475215333445l, null, ONGOING, 1).build()

@@ -4,8 +4,8 @@ import com.google.inject.Provider;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.KweryMailImpl;
 import com.kwery.services.mail.MailService;
@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static com.kwery.tests.util.TestUtil.queryRun;
 import static org.hamcrest.CoreMatchers.is;
@@ -33,11 +33,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SqlQueryTaskSchedulerTest {
@@ -48,7 +44,7 @@ public class SqlQueryTaskSchedulerTest {
     @Mock
     private SqlQueryTaskFactory sqlQueryTaskFactory;
     @Mock
-    private Provider<SqlQueryExecution> provider;
+    private Provider<SqlQueryExecutionModel> provider;
     @Mock
     private SqlQueryTaskExecutorListener sqlQueryTaskExecutorListener;
     @Mock
@@ -68,7 +64,7 @@ public class SqlQueryTaskSchedulerTest {
 
     private SqlQueryModel sqlQuery;
     private Datasource datasource;
-    private SqlQueryExecution sqlQueryExecution;
+    private SqlQueryExecutionModel sqlQueryExecution;
     private String taskExecutorGuid = "foo";
     private long executorStartTime = 1l;
 
@@ -79,7 +75,7 @@ public class SqlQueryTaskSchedulerTest {
 
         datasource = datasource();
         sqlQuery.setDatasource(datasource);
-        sqlQueryExecution = new SqlQueryExecution();
+        sqlQueryExecution = new SqlQueryExecutionModel();
 
         doNothing().when(scheduler).addSchedulerListener(any());
         when(scheduler.schedule(anyString(), any(Task.class))).thenReturn("");

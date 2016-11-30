@@ -1,8 +1,8 @@
 package com.kwery.tests.services.scheduledexecution;
 
 import com.google.common.collect.ImmutableList;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
+import static com.kwery.models.SqlQueryExecutionModel.Status.FAILURE;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.nullValue;
@@ -31,7 +31,7 @@ public class SchedulerServiceScheduledExecutionFailureTest extends SchedulerServ
 
         Awaitility.waitAtMost(3, MINUTES).until(() -> getSqlQueryExecutions().size() >= 2);
 
-        for (SqlQueryExecution execution : getSqlQueryExecutions()) {
+        for (SqlQueryExecutionModel execution : getSqlQueryExecutions()) {
             assertThat(execution.getId(), greaterThan(0));
             assertThat(execution.getSqlQuery().getId(), is(sqlQuery.getId()));
             assertThat(execution.getStatus(), is(FAILURE));
@@ -45,7 +45,7 @@ public class SchedulerServiceScheduledExecutionFailureTest extends SchedulerServ
         assertThat(mail, nullValue());
     }
 
-    private List<SqlQueryExecution> getSqlQueryExecutions() {
+    private List<SqlQueryExecutionModel> getSqlQueryExecutions() {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(failQueryId);
         filter.setStatuses(ImmutableList.of(FAILURE));

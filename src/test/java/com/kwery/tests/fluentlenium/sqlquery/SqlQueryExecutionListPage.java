@@ -1,6 +1,6 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
-import com.kwery.models.SqlQueryExecution.Status;
+import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.FluentPage;

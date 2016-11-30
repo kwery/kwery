@@ -3,7 +3,7 @@ package com.kwery.tests.dao.sqlqueryexecutiondao;
 import com.google.common.collect.ImmutableList;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
@@ -20,8 +20,8 @@ import java.util.UUID;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryExecution.*;
-import static com.kwery.models.SqlQueryExecution.Status.*;
+import static com.kwery.models.SqlQueryExecutionModel.*;
+import static com.kwery.models.SqlQueryExecutionModel.Status.*;
 import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
 import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -46,8 +46,8 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
                                 .columns(SqlQueryModel.ID_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
                                 .values(1, "testQuery0", "select * from foo", 1)
                                 .values(2, "testQuery1", "select * from foo", 1).build(),
-                        insertInto(SqlQueryExecution.TABLE)
-                                .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
+                        insertInto(SqlQueryExecutionModel.TABLE)
+                                .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
 
                                 .values(1, 1475159940797l, "executionId", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
                                 .values(2, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, "result", SUCCESS, 2) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
@@ -98,7 +98,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setExecutionId("executionId");
 
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
         assertThat(sqlQueryExecutions, hasSize(1));
 
         Datasource datasource = new Datasource();
@@ -116,7 +116,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         sqlQuery.setId(1);
         sqlQuery.setLabel("testQuery0");
 
-        SqlQueryExecution execution = new SqlQueryExecution();
+        SqlQueryExecutionModel execution = new SqlQueryExecutionModel();
         execution.setSqlQuery(sqlQuery);
         execution.setId(1);
         execution.setExecutionId("executionId");
@@ -125,7 +125,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         execution.setExecutionEnd(1475159940797l);
         execution.setResult("result");
 
-        SqlQueryExecution fromDb = sqlQueryExecutions.get(0);
+        SqlQueryExecutionModel fromDb = sqlQueryExecutions.get(0);
 
         assertThat(fromDb, theSameAs(execution));
 
@@ -137,7 +137,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(1);
 
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
         assertThat(sqlQueryExecutions, hasSize(16));
 
         assertThat(sqlQueryExecutionDao.count(filter), is(16l));
@@ -150,7 +150,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         filter.setResultCount(2);
         filter.setPageNumber(0);
 
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
 
         assertThat(sqlQueryExecutions, hasSize(2));
         assertThat(sqlQueryExecutions.get(0).getId(), is(1));
@@ -171,11 +171,11 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
     public void testFilterByStatus() {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(SUCCESS));
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
         assertThat(sqlQueryExecutions, hasSize(8));
 
         List<Integer> ids = new ArrayList<>(sqlQueryExecutions.size());
-        for (SqlQueryExecution sqlQueryExecution : sqlQueryExecutions) {
+        for (SqlQueryExecutionModel sqlQueryExecution : sqlQueryExecutions) {
             ids.add(sqlQueryExecution.getId());
         }
 
@@ -195,11 +195,11 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         filter.setPageNumber(0);
         filter.setResultCount(1);
 
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
         assertThat(sqlQueryExecutions, hasSize(1));
 
         List<Integer> ids = new ArrayList<>(sqlQueryExecutions.size());
-        for (SqlQueryExecution sqlQueryExecution : sqlQueryExecutions) {
+        for (SqlQueryExecutionModel sqlQueryExecution : sqlQueryExecutions) {
             ids.add(sqlQueryExecution.getId());
         }
 
@@ -213,7 +213,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         assertThat(sqlQueryExecutions, hasSize(1));
 
         ids = new ArrayList<>(sqlQueryExecutions.size());
-        for (SqlQueryExecution sqlQueryExecution : sqlQueryExecutions) {
+        for (SqlQueryExecutionModel sqlQueryExecution : sqlQueryExecutions) {
             ids.add(sqlQueryExecution.getId());
         }
 
@@ -228,11 +228,11 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
     public void testFilterByStatuses() {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(SUCCESS, FAILURE, KILLED, ONGOING));
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
         assertThat(sqlQueryExecutions, hasSize(32));
 
         List<Integer> ids = new ArrayList<>(sqlQueryExecutions.size());
-        for (SqlQueryExecution sqlQueryExecution : sqlQueryExecutions) {
+        for (SqlQueryExecutionModel sqlQueryExecution : sqlQueryExecutions) {
             ids.add(sqlQueryExecution.getId());
         }
 
@@ -250,7 +250,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setExecutionStartStart(1475158740746l);
         filter.setExecutionEndEnd(1475419925131l);
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
         assertThat(sqlQueryExecutions, hasSize(24)); //Ongoing ones are discarded
 
         List<Integer> expectedIds = ImmutableList.of(
@@ -258,7 +258,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         );
 
         List<Integer> ids = new ArrayList<>(sqlQueryExecutions.size());
-        for (SqlQueryExecution sqlQueryExecution : sqlQueryExecutions) {
+        for (SqlQueryExecutionModel sqlQueryExecution : sqlQueryExecutions) {
             ids.add(sqlQueryExecution.getId());
         }
 
@@ -275,13 +275,13 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         filter.setPageNumber(0);
         filter.setResultCount(1);
 
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
         assertThat(sqlQueryExecutions, hasSize(1)); //Ongoing ones are discarded
 
         List<Integer> expectedIds = ImmutableList.of(1);
 
         List<Integer> ids = new ArrayList<>(sqlQueryExecutions.size());
-        for (SqlQueryExecution sqlQueryExecution : sqlQueryExecutions) {
+        for (SqlQueryExecutionModel sqlQueryExecution : sqlQueryExecutions) {
             ids.add(sqlQueryExecution.getId());
         }
 

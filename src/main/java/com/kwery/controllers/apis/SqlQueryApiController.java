@@ -16,8 +16,8 @@ import com.kwery.dtos.SqlQueryExecutionListDto;
 import com.kwery.dtos.SqlQueryExecutionListFilterDto;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
@@ -44,14 +44,8 @@ import java.util.List;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.kwery.controllers.ControllerUtil.fieldMessages;
-import static com.kwery.controllers.MessageKeys.DATASOURCE_VALIDATION;
-import static com.kwery.controllers.MessageKeys.ONE_OFF_EXECUTION_SUCCESS_MESSAGE;
-import static com.kwery.controllers.MessageKeys.QUERY_RUN_ADDITION_FAILURE;
-import static com.kwery.controllers.MessageKeys.QUERY_RUN_UPDATE_SUCCESS;
-import static com.kwery.controllers.MessageKeys.QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS;
-import static com.kwery.controllers.MessageKeys.QUERY_RUN_WITH_CRON_ADDITION_SUCCESS;
-import static com.kwery.controllers.MessageKeys.SQL_QUERY_DELETE_SUCCESS;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.controllers.MessageKeys.*;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
 import static ninja.Results.json;
@@ -197,12 +191,12 @@ public class SqlQueryApiController {
         if (logger.isTraceEnabled()) logger.trace(">");
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(ONGOING));
-        List<SqlQueryExecution> models = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> models = sqlQueryExecutionDao.filter(filter);
         Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
 
         List<SqlQueryExecutionDto> dtos = new ArrayList<>(models.size());
 
-        for (SqlQueryExecution model : models) {
+        for (SqlQueryExecutionModel model : models) {
             dtos.add(from(model));
         }
 
@@ -256,21 +250,21 @@ public class SqlQueryApiController {
         }
 
         if (filterDto.getStatuses() != null && filterDto.getStatuses().size() > 0) {
-            List<SqlQueryExecution.Status> fromRequest = new ArrayList<>(filterDto.getStatuses().size());
+            List<SqlQueryExecutionModel.Status> fromRequest = new ArrayList<>(filterDto.getStatuses().size());
             for (String status : filterDto.getStatuses()) {
-                fromRequest.add(SqlQueryExecution.Status.valueOf(status));
+                fromRequest.add(SqlQueryExecutionModel.Status.valueOf(status));
             }
 
             dbFilter.setStatuses(fromRequest);
         }
 
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(dbFilter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(dbFilter);
 
         Collections.sort(sqlQueryExecutions, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
 
         List<SqlQueryExecutionDto> sqlQueryExecutionDtos = new ArrayList<>(sqlQueryExecutions.size());
 
-        for (SqlQueryExecution sqlQueryExecution : sqlQueryExecutions) {
+        for (SqlQueryExecutionModel sqlQueryExecution : sqlQueryExecutions) {
             sqlQueryExecutionDtos.add(from(sqlQueryExecution));
         }
 
@@ -296,12 +290,12 @@ public class SqlQueryApiController {
 
         List<List<?>> jsonResult = null;
 
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(filter);
 
         if (sqlQueryExecutions.size() == 0) {
             jsonResult = new LinkedList<>(new LinkedList<>());
         } else {
-            SqlQueryExecution sqlQueryExecution = sqlQueryExecutions.get(0);
+            SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutions.get(0);
 
             //TODO - Generic type
             ObjectMapper objectMapper = new ObjectMapper();
@@ -356,7 +350,7 @@ public class SqlQueryApiController {
             sqlQueryIds.add(sqlQuery.getId());
         }
 
-        List<SqlQueryExecution> sqlQueryExecutions = sqlQueryExecutionDao.lastSuccessfulExecution(sqlQueryIds);
+        List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.lastSuccessfulExecution(sqlQueryIds);
 
         List<SqlQueryExecutionDto> dtos = from(sqlQueryExecutions);
 
@@ -385,7 +379,7 @@ public class SqlQueryApiController {
         return json().render(new ActionResult(ActionResult.Status.success, message));
     }
 
-    public SqlQueryExecutionDto from(SqlQueryExecution model) {
+    public SqlQueryExecutionDto from(SqlQueryExecutionModel model) {
         SqlQueryExecutionDto dto = new SqlQueryExecutionDto();
         dto.setSqlQueryLabel(model.getSqlQuery().getLabel());
         dto.setDatasourceLabel(model.getSqlQuery().getDatasource().getLabel());
@@ -404,10 +398,10 @@ public class SqlQueryApiController {
         return dto;
     }
 
-    public List<SqlQueryExecutionDto> from(List<SqlQueryExecution> models) {
+    public List<SqlQueryExecutionDto> from(List<SqlQueryExecutionModel> models) {
         List<SqlQueryExecutionDto> dtos = new ArrayList<>(models.size());
 
-        for (SqlQueryExecution model : models) {
+        for (SqlQueryExecutionModel model : models) {
             dtos.add(from(model));
         }
 

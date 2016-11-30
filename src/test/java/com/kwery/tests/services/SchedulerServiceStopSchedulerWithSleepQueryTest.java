@@ -3,8 +3,8 @@ package com.kwery.tests.services;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
@@ -21,17 +21,9 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
-import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
+import static com.kwery.models.SqlQueryModel.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -88,7 +80,7 @@ public class SchedulerServiceStopSchedulerWithSleepQueryTest extends RepoDashTes
         assertThat("No new query was executed after stopping the scheduler", countBeforeSleep, is(countAfterSleep));
     }
 
-    private List<SqlQueryExecution> sqlQueryExecutions() {
+    private List<SqlQueryExecutionModel> sqlQueryExecutions() {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(1);
         return sqlQueryExecutionDao.filter(filter);

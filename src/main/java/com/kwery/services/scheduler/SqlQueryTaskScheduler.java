@@ -7,8 +7,8 @@ import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.MailService;
 import it.sauronsoftware.cron4j.Scheduler;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 
 //TODO - Needs overhaul
 public class SqlQueryTaskScheduler implements SchedulerListener {
@@ -35,7 +35,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
     private final SqlQueryExecutionDao sqlQueryExecutionDao;
     private final SqlQueryTaskExecutorListener sqlQueryTaskExecutorListener;
     private final SqlQueryTaskFactory sqlQueryTaskFactory;
-    private final Provider<SqlQueryExecution> queryRunExecutionProvider;
+    private final Provider<SqlQueryExecutionModel> queryRunExecutionProvider;
     private final SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
     private final OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper;
     private final SchedulerService schedulerService;
@@ -48,7 +48,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
     public SqlQueryTaskScheduler(Scheduler scheduler,
                                  SqlQueryExecutionDao sqlQueryExecutionDao,
                                  SqlQueryTaskFactory sqlQueryTaskFactory,
-                                 Provider<SqlQueryExecution> queryRunExecutionProvider,
+                                 Provider<SqlQueryExecutionModel> queryRunExecutionProvider,
                                  SqlQueryTaskExecutorListener sqlQueryTaskExecutorListener,
                                  SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder,
                                  OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper,
@@ -58,7 +58,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
                                  MailService mailService,
                                  Provider<KweryMail> kweryMailProvider,
                                  @Assisted List<TaskExecutor> ongoingExecutions,
-                                 @Assisted SqlQuery sqlQuery) {
+                                 @Assisted SqlQueryModel sqlQuery) {
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.sqlQueryTaskExecutorListener = sqlQueryTaskExecutorListener;
         this.sqlQueryTaskFactory = sqlQueryTaskFactory;
@@ -86,10 +86,10 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
 
     @Override
     public void taskLaunching(TaskExecutor executor) {
-        SqlQuery sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
+        SqlQueryModel sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
         logger.info("Launching query {} with label {} running on datasource {}", sqlQuery.getQuery(), sqlQuery.getLabel(), sqlQuery.getDatasource().getLabel());
 
-        SqlQueryExecution e = queryRunExecutionProvider.get();
+        SqlQueryExecutionModel e = queryRunExecutionProvider.get();
         e.setExecutionId(executor.getGuid());
         e.setExecutionStart(executor.getStartTime());
         e.setSqlQuery(sqlQuery);
@@ -107,7 +107,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
 
     @Override
     public void taskSucceeded(TaskExecutor executor) {
-        SqlQuery sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
+        SqlQueryModel sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
         logger.info("Query {} with label {} running on datasource {} succeeded", sqlQuery.getQuery(), sqlQuery.getLabel(), sqlQuery.getDatasource().getLabel());
         ongoingExecutions.remove(executor);
         if (isOneOffExecution(sqlQuery)) {
@@ -115,13 +115,13 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         }
 
         //A dependent query might have been added after the QueryTask was created
-        for (SqlQuery query : sqlQueryDao.getById(sqlQuery.getId()).getDependentQueries()) {
+        for (SqlQueryModel query : sqlQueryDao.getById(sqlQuery.getId()).getDependentQueries()) {
             logger.info("Scheduling dependent query {}", query.getLabel());
             schedulerService.schedule(query);
         }
 
         if (!sqlQuery.getRecipientEmails().isEmpty()) {
-            SqlQueryExecution execution = sqlQueryExecutionDao.getByExecutionId(executor.getGuid());
+            SqlQueryExecutionModel execution = sqlQueryExecutionDao.getByExecutionId(executor.getGuid());
             String subject = new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(System.currentTimeMillis())) + " - " + sqlQuery.getLabel();
             try {
                 String htmlBody = jsonToHtmlTableProvider.get().convert(execution.getResult());
@@ -144,7 +144,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
 
     @Override
     public void taskFailed(TaskExecutor executor, Throwable exception) {
-        SqlQuery sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
+        SqlQueryModel sqlQuery = ((SqlQueryTask) executor.getTask()).getSqlQuery();
         logger.info("Query {} with label {} running on datasource {} failed due to", sqlQuery.getQuery(), sqlQuery.getLabel(), sqlQuery.getDatasource().getLabel(), exception);
         ongoingExecutions.remove(executor);
         if (isOneOffExecution(sqlQuery)) {
@@ -185,12 +185,12 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         }
     }
 
-    private void cleanUp(SqlQuery sqlQuery) {
+    private void cleanUp(SqlQueryModel sqlQuery) {
         logger.info("Cleaning up post one off execution");
         sqlQueryTaskSchedulerHolder.remove(sqlQuery.getId(), this);
     }
 
-    private boolean isOneOffExecution(SqlQuery sqlQuery) {
+    private boolean isOneOffExecution(SqlQueryModel sqlQuery) {
         return "".equals(Strings.nullToEmpty(sqlQuery.getCronExpression()));
     }
 
@@ -217,7 +217,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
         datasource.setType(Datasource.Type.MYSQL);
         datasource.setLabel("test");
 
-        SqlQuery queryRun = new SqlQuery();
+        SqlQueryModel queryRun = new SqlQueryModel();
         queryRun.setCronExpression("* * * * *");
         queryRun.setDatasource(datasource);
         queryRun.setLabel("test");

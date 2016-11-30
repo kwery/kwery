@@ -4,13 +4,13 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
+import static com.kwery.models.SqlQueryExecutionModel.Status.FAILURE;
 import static com.kwery.tests.util.TestUtil.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
     protected SqlQueryModel sqlQuery;
-    protected SqlQueryExecution sqlQueryExecution;
+    protected SqlQueryExecutionModel sqlQueryExecution;
 
     @Before
     public void setUpQueryRunExecutionDaoTest() {
@@ -49,7 +49,7 @@ public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
     public void testUpdate() {
         sqlQueryExecutionDao.save(sqlQueryExecution);
 
-        SqlQueryExecution updated = sqlQueryExecutionDao.getByExecutionId(sqlQueryExecution.getExecutionId());
+        SqlQueryExecutionModel updated = sqlQueryExecutionDao.getByExecutionId(sqlQueryExecution.getExecutionId());
         updated.setExecutionEnd(100l);
         updated.setStatus(FAILURE);
 
@@ -57,7 +57,7 @@ public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
 
         assertThat(updated.getId(), is(sqlQueryExecution.getId()));
 
-        SqlQueryExecution fromDb = sqlQueryExecutionDao.getById(updated.getId());
+        SqlQueryExecutionModel fromDb = sqlQueryExecutionDao.getById(updated.getId());
 
         assertThat(fromDb.getExecutionStart(), is(sqlQueryExecution.getExecutionStart()));
         assertThat(fromDb.getExecutionEnd(), is(100l));

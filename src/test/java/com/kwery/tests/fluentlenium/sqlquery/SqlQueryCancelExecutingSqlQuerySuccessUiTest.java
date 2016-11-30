@@ -20,7 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 import static com.kwery.tests.util.Messages.KILLED_M;
 import static com.kwery.tests.util.Messages.KILL_M;
 import static com.kwery.tests.util.TestUtil.sleepSqlQuery;

@@ -1,13 +1,14 @@
 package com.kwery.tests.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kwery.dao.SqlQueryExecutionDao;
+import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.RepoDashUtil;
-import com.kwery.dao.SqlQueryExecutionDao;
+import com.kwery.services.scheduler.*;
 import it.sauronsoftware.cron4j.TaskExecutionContext;
 import it.sauronsoftware.cron4j.TaskExecutor;
-import com.kwery.models.Datasource;
-import com.kwery.models.SqlQueryExecution;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,11 +16,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import com.kwery.services.scheduler.PreparedStatementExecutor;
-import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
-import com.kwery.services.scheduler.ResultSetProcessor;
-import com.kwery.services.scheduler.ResultSetProcessorFactory;
-import com.kwery.services.scheduler.SqlQueryTask;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,9 +28,7 @@ import java.util.concurrent.TimeUnit;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SqlQueryTaskTestCancel {
@@ -67,7 +61,7 @@ public class SqlQueryTaskTestCancel {
 
     private String executionResult = "{}";
 
-    private SqlQueryExecution sqlQueryExecution = new SqlQueryExecution();
+    private SqlQueryExecutionModel sqlQueryExecution = new SqlQueryExecutionModel();
 
     private volatile boolean cancelled = false;
 

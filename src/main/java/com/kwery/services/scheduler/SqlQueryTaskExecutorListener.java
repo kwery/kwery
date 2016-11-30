@@ -3,15 +3,13 @@ package com.kwery.services.scheduler;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kwery.dao.SqlQueryExecutionDao;
+import com.kwery.models.SqlQueryExecutionModel;
 import it.sauronsoftware.cron4j.TaskExecutor;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
-import com.kwery.models.SqlQueryExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
-import static com.kwery.models.SqlQueryExecution.Status.KILLED;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.models.SqlQueryExecutionModel.Status.*;
 
 @Singleton
 public class SqlQueryTaskExecutorListener implements TaskExecutorListener {
@@ -43,7 +41,7 @@ public class SqlQueryTaskExecutorListener implements TaskExecutorListener {
     public void executionTerminated(TaskExecutor executor, Throwable exception) {
         logger.info("{} execution terminated", executor.getGuid());
 
-        SqlQueryExecution sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(executor.getGuid());
+        SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(executor.getGuid());
 
         if (executor.isStopped()) {
             sqlQueryExecution.setStatus(KILLED);

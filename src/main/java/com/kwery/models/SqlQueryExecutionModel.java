@@ -2,21 +2,13 @@ package com.kwery.models;
 
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import static javax.persistence.EnumType.STRING;
 
 @Entity
-@Table(name = SqlQueryExecution.TABLE)
-public class SqlQueryExecution {
+@Table(name = SqlQueryExecutionModel.TABLE)
+public class SqlQueryExecutionModel {
     public static final String TABLE = "sql_query_execution";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_EXECUTION_ID = "execution_id";

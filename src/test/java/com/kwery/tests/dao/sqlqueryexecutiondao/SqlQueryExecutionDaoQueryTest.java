@@ -4,12 +4,12 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
-import org.junit.Before;
-import org.junit.Test;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.kwery.tests.util.TestUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 public class SqlQueryExecutionDaoQueryTest extends RepoDashDaoTestBase {
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
     protected SqlQueryModel sqlQuery;
-    protected SqlQueryExecution sqlQueryExecution;
+    protected SqlQueryExecutionModel sqlQueryExecution;
 
     @Before
     public void setUpQueryRunExecutionDaoQueryTest() {
@@ -40,14 +40,14 @@ public class SqlQueryExecutionDaoQueryTest extends RepoDashDaoTestBase {
 
     @Test
     public void testGetByExecutionId() {
-        SqlQueryExecution fromDb = sqlQueryExecutionDao.getByExecutionId(sqlQueryExecution.getExecutionId());
+        SqlQueryExecutionModel fromDb = sqlQueryExecutionDao.getByExecutionId(sqlQueryExecution.getExecutionId());
         assertThat(fromDb, notNullValue());
         assertThat(fromDb.getId(), is(sqlQueryExecution.getId()));
     }
 
     @Test
     public void testGetById() {
-        SqlQueryExecution fromDb = sqlQueryExecutionDao.getById(sqlQueryExecution.getId());
+        SqlQueryExecutionModel fromDb = sqlQueryExecutionDao.getById(sqlQueryExecution.getId());
         assertThat(fromDb, notNullValue());
     }
 

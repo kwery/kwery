@@ -3,8 +3,8 @@ package com.kwery.tests.fluentlenium.sqlquery;
 import com.google.common.collect.ImmutableMap;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
@@ -23,17 +23,9 @@ import org.junit.rules.RuleChain;
 import java.util.List;
 import java.util.Map;
 
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
-import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
+import static com.kwery.models.SqlQueryModel.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.TestCase.fail;
@@ -120,15 +112,15 @@ public class SqlQueryExecuteNowUiTest extends ChromeFluentTest {
 
         Awaitility.waitAtMost(30, SECONDS).until(() -> !getExecutions(label).isEmpty());
 
-        SqlQueryExecution sqlQueryExecution = getExecutions(label).get(0);
+        SqlQueryExecutionModel sqlQueryExecution = getExecutions(label).get(0);
 
         assertThat(sqlQueryExecution.getResult(), is(labelResultMap.get(label)));
     }
 
-    private List<SqlQueryExecution> getExecutions(String label) {
+    private List<SqlQueryExecutionModel> getExecutions(String label) {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(labelQueryIdMap.get(label));
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> executions = sqlQueryExecutionDao.filter(filter);
         return executions;
     }
 }

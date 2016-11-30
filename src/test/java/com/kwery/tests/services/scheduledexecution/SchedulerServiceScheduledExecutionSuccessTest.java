@@ -3,8 +3,8 @@ package com.kwery.tests.services.scheduledexecution;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -39,7 +39,7 @@ public class SchedulerServiceScheduledExecutionSuccessTest extends SchedulerServ
                 )
         );
 
-        for (SqlQueryExecution execution : successfulExecutions()) {
+        for (SqlQueryExecutionModel execution : successfulExecutions()) {
             assertThat(execution.getId(), greaterThan(0));
             assertThat(execution.getSqlQuery().getId(), is(sqlQuery.getId()));
             assertThat(execution.getStatus(), is(SUCCESS));
@@ -54,7 +54,7 @@ public class SchedulerServiceScheduledExecutionSuccessTest extends SchedulerServ
         assertThat(mail, notNullValue());
     }
 
-    public List<SqlQueryExecution> successfulExecutions() {
+    public List<SqlQueryExecutionModel> successfulExecutions() {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(successQueryId);
         filter.setStatuses(ImmutableList.of(SUCCESS));

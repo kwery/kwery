@@ -1,18 +1,16 @@
 package com.kwery.tests.services;
 
 import com.kwery.dao.SqlQueryExecutionDao;
+import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.services.scheduler.SqlQueryTaskExecutorListener;
 import it.sauronsoftware.cron4j.TaskExecutor;
-import com.kwery.models.SqlQueryExecution;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import com.kwery.services.scheduler.SqlQueryTaskExecutorListener;
 
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
-import static com.kwery.models.SqlQueryExecution.Status.KILLED;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.models.SqlQueryExecutionModel.Status.*;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -25,7 +23,7 @@ public class SqlQueryTaskExecutorListenerTest {
     private SqlQueryExecutionDao sqlQueryExecutionDao;
     @Mock
     private TaskExecutor taskExecutor;
-    private SqlQueryExecution sqlQueryExecution = new SqlQueryExecution();
+    private SqlQueryExecutionModel sqlQueryExecution = new SqlQueryExecutionModel();
     private String taskExecutionId = "foo";
 
     @Before

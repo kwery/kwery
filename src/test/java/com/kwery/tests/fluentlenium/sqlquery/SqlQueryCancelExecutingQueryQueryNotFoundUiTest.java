@@ -5,16 +5,12 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.tests.util.ChromeFluentTest;
-import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.Messages;
-import com.kwery.tests.util.MysqlDockerRule;
-import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.*;
 import org.awaitility.Awaitility;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.junit.Before;
@@ -25,7 +21,7 @@ import org.junit.rules.RuleChain;
 import java.util.Collections;
 import java.util.List;
 
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 import static com.kwery.tests.util.Messages.KILL_QUERY_NOT_FOUND_M;
 import static com.kwery.tests.util.TestUtil.sleepSqlQuery;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -69,14 +65,14 @@ public class SqlQueryCancelExecutingQueryQueryNotFoundUiTest extends ChromeFluen
             fail("Sql Query executing queries page not rendered");
         }
 
-        List<SqlQueryExecution> models = getSqlQueryExecutions(sqlQueryExecutionDao);
+        List<SqlQueryExecutionModel> models = getSqlQueryExecutions(sqlQueryExecutionDao);
 
         Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
 
         schedulerService.stopExecution(sqlQuery.getId(), models.get(0).getExecutionId());
     }
 
-    private List<SqlQueryExecution> getSqlQueryExecutions(SqlQueryExecutionDao sqlQueryExecutionDao) {
+    private List<SqlQueryExecutionModel> getSqlQueryExecutions(SqlQueryExecutionDao sqlQueryExecutionDao) {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(ONGOING));
         return sqlQueryExecutionDao.filter(filter);

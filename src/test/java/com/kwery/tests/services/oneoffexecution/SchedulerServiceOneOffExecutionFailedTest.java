@@ -1,8 +1,8 @@
 package com.kwery.tests.services.oneoffexecution;
 
 import com.google.common.collect.ImmutableList;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
+import static com.kwery.models.SqlQueryExecutionModel.Status.FAILURE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.iterableWithSize;
@@ -36,13 +36,13 @@ public class SchedulerServiceOneOffExecutionFailedTest extends SchedulerServiceO
 
         Awaitility.waitAtMost(30, SECONDS).until(() -> !oneOffSqlQueryTaskSchedulerReaper.getSqlQueryTaskSchedulerExecutorPairs().isEmpty());
 
-        List<SqlQueryExecution> executions = getSqlQueryExecutions();
+        List<SqlQueryExecutionModel> executions = getSqlQueryExecutions();
 
         Awaitility.waitAtMost(30, SECONDS).until(() -> !executions.isEmpty());
 
         assertThat(executions, hasSize(1));
 
-        SqlQueryExecution sqlQueryExecution = executions.get(0);
+        SqlQueryExecutionModel sqlQueryExecution = executions.get(0);
 
         assertThat(sqlQueryExecution.getExecutionStart(), greaterThan(start));
         assertThat(sqlQueryExecution.getExecutionEnd(), greaterThan(start));
@@ -60,7 +60,7 @@ public class SchedulerServiceOneOffExecutionFailedTest extends SchedulerServiceO
         assertThat("Report email is not sent in case query execution failed", mail, nullValue());
     }
 
-    private List<SqlQueryExecution> getSqlQueryExecutions() {
+    private List<SqlQueryExecutionModel> getSqlQueryExecutions() {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(failQueryId);
         filter.setStatuses(ImmutableList.of(FAILURE));

@@ -1,7 +1,7 @@
 package com.kwery.tests.services.oneoffexecution;
 
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
@@ -15,12 +15,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static com.kwery.models.SqlQueryExecution.Status.KILLED;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecutionModel.Status.KILLED;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.iterableWithSize;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -37,11 +35,11 @@ public class SchedulerServiceOneOffExecutionOngoingAndKillExecutionTest extends 
 
         Awaitility.waitAtMost(30, SECONDS).until(() -> !getSqlQueryExecutions().isEmpty());
 
-        List<SqlQueryExecution> executions = getSqlQueryExecutions();
+        List<SqlQueryExecutionModel> executions = getSqlQueryExecutions();
 
         assertThat(executions, hasSize(1));
 
-        SqlQueryExecution sqlQueryExecution = executions.get(0);
+        SqlQueryExecutionModel sqlQueryExecution = executions.get(0);
 
         assertThat(sqlQueryExecution.getExecutionStart(), greaterThan(start));
         assertThat(sqlQueryExecution.getExecutionEnd(), nullValue());
@@ -85,7 +83,7 @@ public class SchedulerServiceOneOffExecutionOngoingAndKillExecutionTest extends 
         assertThat("Report email is not sent in case query is killed", mail, nullValue());
     }
 
-    private List<SqlQueryExecution> getSqlQueryExecutions() {
+    private List<SqlQueryExecutionModel> getSqlQueryExecutions() {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(sleepQueryId);
         return sqlQueryExecutionDao.filter(filter);

@@ -6,7 +6,7 @@ import com.google.inject.Singleton;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import ninja.lifecycle.Dispose;
 import ninja.lifecycle.Start;
 import org.slf4j.Logger;
@@ -28,12 +28,12 @@ public class SchedulerService {
     protected QueryTaskSchedulerFactory queryTaskSchedulerFactory;
 
     @Inject
-    protected Provider<SqlQuery> queryRunProvider;
+    protected Provider<SqlQueryModel> queryRunProvider;
 
     @Inject
     protected SqlQueryTaskSchedulerHolder sqlQueryTaskSchedulerHolder;
 
-    public void schedule(SqlQuery sqlQuery) {
+    public void schedule(SqlQueryModel sqlQuery) {
         SqlQueryTaskScheduler sqlQueryTaskScheduler = queryTaskSchedulerFactory.create(new CopyOnWriteArrayList<>(), sqlQuery);
         sqlQueryTaskSchedulerHolder.add(sqlQuery.getId(), sqlQueryTaskScheduler);
     }
@@ -77,8 +77,8 @@ public class SchedulerService {
         }
     }
 
-    public SqlQuery toModel(SqlQueryDto dto, Datasource datasource) {
-        SqlQuery q = queryRunProvider.get();
+    public SqlQueryModel toModel(SqlQueryDto dto, Datasource datasource) {
+        SqlQueryModel q = queryRunProvider.get();
         q.setQuery(dto.getQuery());
         q.setCronExpression(dto.getCronExpression());
         q.setLabel(dto.getLabel());
@@ -88,7 +88,7 @@ public class SchedulerService {
 
     @Start
     public void scheduleAllQueries() {
-        List<SqlQuery> allWithSchedule = sqlQueryDao.getAllWithSchedule();
+        List<SqlQueryModel> allWithSchedule = sqlQueryDao.getAllWithSchedule();
         logger.info("Scheduling {} queries with schedule", allWithSchedule.size());
         allWithSchedule.forEach(this::schedule);
     }
@@ -110,7 +110,7 @@ public class SchedulerService {
         this.sqlQueryDao = sqlQueryDao;
     }
 
-    public void setQueryRunProvider(Provider<SqlQuery> queryRunProvider) {
+    public void setQueryRunProvider(Provider<SqlQueryModel> queryRunProvider) {
         this.queryRunProvider = queryRunProvider;
     }
 

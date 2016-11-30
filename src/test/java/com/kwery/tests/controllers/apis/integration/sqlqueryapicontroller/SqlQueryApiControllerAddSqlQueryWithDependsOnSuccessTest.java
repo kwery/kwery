@@ -3,8 +3,8 @@ package com.kwery.tests.controllers.apis.integration.sqlqueryapicontroller;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
@@ -22,17 +22,9 @@ import java.util.List;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.kwery.conf.Routes.ADD_SQL_QUERY_API;
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
-import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
-import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.models.Datasource.*;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
+import static com.kwery.models.SqlQueryModel.*;
 import static com.kwery.tests.util.Messages.QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS_M;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -106,14 +98,14 @@ public class SqlQueryApiControllerAddSqlQueryWithDependsOnSuccessTest extends Ab
 
         await().atMost(150, SECONDS).until(() ->
                 sqlQueryExecutionDao.filter(filter).size() > 0
-                        && sqlQueryExecutionDao.filter(filter).get(0).getStatus() == SqlQueryExecution.Status.SUCCESS
+                        && sqlQueryExecutionDao.filter(filter).get(0).getStatus() == SqlQueryExecutionModel.Status.SUCCESS
                         && sqlQueryExecutionDao.filter(dependentQueryFilter).size() > 0
-                        && sqlQueryExecutionDao.filter(dependentQueryFilter).get(0).getStatus() == SqlQueryExecution.Status.SUCCESS
+                        && sqlQueryExecutionDao.filter(dependentQueryFilter).get(0).getStatus() == SqlQueryExecutionModel.Status.SUCCESS
         );
 
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> executions = sqlQueryExecutionDao.filter(filter);
 
-        SqlQueryExecution sqlQueryExecution = executions.get(0);
+        SqlQueryExecutionModel sqlQueryExecution = executions.get(0);
 
         assertThat(sqlQueryExecution.getExecutionStart(), greaterThan(start));
         assertThat(sqlQueryExecution.getExecutionEnd(), greaterThan(start));
@@ -121,9 +113,9 @@ public class SqlQueryApiControllerAddSqlQueryWithDependsOnSuccessTest extends Ab
         assertThat(nullToEmpty(sqlQueryExecution.getResult()), not(equalTo("")));
         assertThat(sqlQueryExecution.getStatus(), is(SUCCESS));
 
-        List<SqlQueryExecution> dependentQueryExecutions = sqlQueryExecutionDao.filter(dependentQueryFilter);
+        List<SqlQueryExecutionModel> dependentQueryExecutions = sqlQueryExecutionDao.filter(dependentQueryFilter);
 
-        SqlQueryExecution execution = dependentQueryExecutions.get(0);
+        SqlQueryExecutionModel execution = dependentQueryExecutions.get(0);
 
         assertThat(execution.getStatus(), is(SUCCESS));
         assertThat(execution.getExecutionStart(), greaterThan(start));

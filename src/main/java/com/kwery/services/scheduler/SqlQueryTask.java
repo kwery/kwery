@@ -5,8 +5,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.services.RepoDashUtil;
 import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutionContext;
@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
 public class SqlQueryTask extends Task {
     private static Logger logger = LoggerFactory.getLogger(SqlQueryTask.class);
 
-    private SqlQuery sqlQuery;
+    private SqlQueryModel sqlQuery;
 
     private final SqlQueryExecutionDao sqlQueryExecutionDao;
     private final RepoDashUtil repoDashUtil;
@@ -31,7 +31,7 @@ public class SqlQueryTask extends Task {
     private final PreparedStatementExecutorFactory preparedStatementExecutorFactory;
 
     @Inject
-    public SqlQueryTask(SqlQueryExecutionDao sqlQueryExecutionDao, RepoDashUtil repoDashUtil, PreparedStatementExecutorFactory preparedStatementExecutorFactory, ResultSetProcessorFactory resultSetProcessorFactory, @Assisted SqlQuery sqlQuery) {
+    public SqlQueryTask(SqlQueryExecutionDao sqlQueryExecutionDao, RepoDashUtil repoDashUtil, PreparedStatementExecutorFactory preparedStatementExecutorFactory, ResultSetProcessorFactory resultSetProcessorFactory, @Assisted SqlQueryModel sqlQuery) {
         this.sqlQuery = sqlQuery;
         this.repoDashUtil = repoDashUtil;
         this.preparedStatementExecutorFactory = preparedStatementExecutorFactory;
@@ -50,7 +50,7 @@ public class SqlQueryTask extends Task {
 
             try (ResultSet rs = queryFuture.get()) {
                 String result = resultSetProcessorFactory.create(rs).process();
-                SqlQueryExecution sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
+                SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
                 sqlQueryExecution.setResult(result);
                 sqlQueryExecutionDao.update(sqlQueryExecution);
             } catch (JsonProcessingException e) {
@@ -64,7 +64,6 @@ public class SqlQueryTask extends Task {
                 logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", sqlQuery.getQuery(), datasource.getLabel(), e);
                 throw new RuntimeException(e);
             }
-
         } catch (SQLException e) {
             logger.error("Exception while running query {} on datasource {}", sqlQuery.getQuery(), datasource.getLabel(), e);
             throw new RuntimeException(e);
@@ -78,7 +77,7 @@ public class SqlQueryTask extends Task {
         return true;
     }
 
-    public SqlQuery getSqlQuery() {
+    public SqlQueryModel getSqlQuery() {
         return sqlQuery;
     }
 }

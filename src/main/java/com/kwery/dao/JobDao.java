@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobModel;
+import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 
@@ -25,5 +26,10 @@ public class JobDao {
             e.persist(m);
             return m;
         }
+    }
+
+    @UnitOfWork
+    public JobModel getJobById(int jobId) {
+        return null;
     }
 }

@@ -3,7 +3,7 @@ package com.kwery.tests.services.scheduledexecution;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static com.kwery.tests.services.scheduledexecution.DependentSqlQueriesSetUp.dependentSelectQueryId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -37,7 +37,7 @@ public class SchedulerServiceScheduledExecutionWithDependentsSuccessTest extends
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(dependentSelectQueryId);
 
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.filter(filter);
+        List<SqlQueryExecutionModel> executions = sqlQueryExecutionDao.filter(filter);
         assertThat(executions.size(), greaterThanOrEqualTo(2));
 
         String expectedResult = new ObjectMapper().writeValueAsString(
@@ -47,7 +47,7 @@ public class SchedulerServiceScheduledExecutionWithDependentsSuccessTest extends
                 )
         );
 
-        for (SqlQueryExecution execution : executions) {
+        for (SqlQueryExecutionModel execution : executions) {
             assertThat(execution.getId(), greaterThan(0));
             assertThat(execution.getSqlQuery().getId(), is(dependentSelectQueryId));
             assertThat(execution.getStatus(), is(SUCCESS));

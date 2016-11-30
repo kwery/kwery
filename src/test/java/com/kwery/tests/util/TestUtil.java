@@ -2,7 +2,7 @@ package com.kwery.tests.util;
 
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
-import com.kwery.models.SqlQueryExecution.Status;
+import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -10,7 +10,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.SmtpConfiguration.*;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
@@ -59,12 +59,12 @@ public class TestUtil {
         return dto;
     }
 
-    public static SqlQueryExecution queryRunExecution() {
+    public static SqlQueryExecutionModel queryRunExecution() {
         return queryRunExecution(SUCCESS);
     }
 
-    public static SqlQueryExecution queryRunExecution(Status status) {
-        SqlQueryExecution e = new SqlQueryExecution();
+    public static SqlQueryExecutionModel queryRunExecution(Status status) {
+        SqlQueryExecutionModel e = new SqlQueryExecutionModel();
         e.setExecutionStart(1l);
         e.setExecutionEnd(2l);
         e.setResult("result");

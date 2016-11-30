@@ -4,15 +4,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.kwery.controllers.apis.SqlQueryApiController;
+import com.kwery.dtos.SqlQueryExecutionListFilterDto;
+import com.kwery.models.Datasource;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
+import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import com.kwery.controllers.apis.SqlQueryApiController;
-import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.dtos.SqlQueryExecutionListFilterDto;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.models.Datasource;
-import com.kwery.models.SqlQueryExecution;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,29 +22,15 @@ import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.kwery.models.Datasource.COLUMN_ID;
+import static com.kwery.models.Datasource.*;
+import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.models.SqlQueryExecutionModel.*;
+import static com.kwery.models.SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK;
+import static com.kwery.models.SqlQueryExecutionModel.Status.*;
+import static com.kwery.models.SqlQueryModel.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
-import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_END;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_ID;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_START;
-import static com.kwery.models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
-import static com.kwery.models.SqlQueryExecution.COLUMN_RESULT;
-import static com.kwery.models.SqlQueryExecution.COLUMN_STATUS;
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
-import static com.kwery.models.SqlQueryExecution.Status.KILLED;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
@@ -63,8 +49,8 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
                         insertInto(SqlQueryModel.SQL_QUERY_TABLE)
                                 .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
                                 .values(2, "* * * * *", "testQuery1", "select * from foo", 1).build(),
-                        insertInto(SqlQueryExecution.TABLE)
-                                .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
+                        insertInto(SqlQueryExecutionModel.TABLE)
+                                .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
                                 .values(1, 1475159940797l, "executionId", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
                                 .values(2, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, "result", SUCCESS, 2) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
 /*                                .values(3, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, null, FAILURE, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016

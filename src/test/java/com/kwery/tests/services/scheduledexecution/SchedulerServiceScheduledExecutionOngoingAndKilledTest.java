@@ -1,8 +1,8 @@
 package com.kwery.tests.services.scheduledexecution;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryTaskScheduler;
@@ -15,12 +15,10 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.kwery.models.SqlQueryExecution.Status.KILLED;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
+import static com.kwery.models.SqlQueryExecutionModel.Status.KILLED;
+import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
@@ -44,7 +42,7 @@ public class SchedulerServiceScheduledExecutionOngoingAndKilledTest extends Sche
         List<String> ongoingExecutionIds = new LinkedList<>();
 
         for (OngoingSqlQueryTask ongoingSqlQueryTask : ongoing) {
-            SqlQueryExecution execution = sqlQueryExecutionDao.getByExecutionId(ongoingSqlQueryTask.getExecutionId());
+            SqlQueryExecutionModel execution = sqlQueryExecutionDao.getByExecutionId(ongoingSqlQueryTask.getExecutionId());
             assertThat(execution.getId(), greaterThan(0));
             assertThat(execution.getSqlQuery().getId(), is(sqlQuery.getId()));
             assertThat(execution.getStatus(), is(ONGOING));
@@ -66,7 +64,7 @@ public class SchedulerServiceScheduledExecutionOngoingAndKilledTest extends Sche
         }
 
         for (String ongoingExecutionId : ongoingExecutionIds) {
-            SqlQueryExecution execution = sqlQueryExecutionDao.getByExecutionId(ongoingExecutionId);
+            SqlQueryExecutionModel execution = sqlQueryExecutionDao.getByExecutionId(ongoingExecutionId);
             assertThat(execution.getStatus(), is(KILLED));
             assertThat(execution.getExecutionEnd(), greaterThan(execution.getExecutionStart()));
             assertThat(execution.getResult(), nullValue());

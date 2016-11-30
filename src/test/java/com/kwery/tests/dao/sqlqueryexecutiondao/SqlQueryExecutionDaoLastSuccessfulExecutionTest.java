@@ -3,7 +3,7 @@ package com.kwery.tests.dao.sqlqueryexecutiondao;
 import com.google.common.collect.ImmutableList;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
@@ -19,8 +19,8 @@ import java.util.UUID;
 import static com.kwery.models.Datasource.COLUMN_ID;
 import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryExecution.*;
-import static com.kwery.models.SqlQueryExecution.Status.*;
+import static com.kwery.models.SqlQueryExecutionModel.*;
+import static com.kwery.models.SqlQueryExecutionModel.Status.*;
 import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
 import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -44,8 +44,8 @@ public class SqlQueryExecutionDaoLastSuccessfulExecutionTest extends RepoDashDao
                                 .values(1, "testQuery0", "select * from foo", 1)
                                 .values(2, "testQuery1", "select * from foo", 1)
                                 .values(3, "testQuery2", "select * from foo", 1).build(),
-                        insertInto(SqlQueryExecution.TABLE)
-                                .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
+                        insertInto(SqlQueryExecutionModel.TABLE)
+                                .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
                                 .values(1, 1475159940797l, "executionId", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
                                 .values(2, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, "result", SUCCESS, 2) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
                                 .values(3, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, null, FAILURE, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
@@ -64,11 +64,11 @@ public class SqlQueryExecutionDaoLastSuccessfulExecutionTest extends RepoDashDao
 
     @Test
     public void test() {
-        List<SqlQueryExecution> executions = sqlQueryExecutionDao.lastSuccessfulExecution(ImmutableList.of(1, 2));
+        List<SqlQueryExecutionModel> executions = sqlQueryExecutionDao.lastSuccessfulExecution(ImmutableList.of(1, 2));
         assertThat(executions, hasSize(2));
 
         List<Integer> queryIds = new ArrayList<>(2);
-        for (SqlQueryExecution execution : executions) {
+        for (SqlQueryExecutionModel execution : executions) {
             queryIds.add(execution.getId());
         }
 

@@ -5,7 +5,6 @@ import com.google.inject.assistedinject.Assisted;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -18,12 +17,9 @@ public class PreparedStatementExecutor {
     }
 
     public Future<ResultSet> execute() {
-        return Executors.newFixedThreadPool(1).submit(new Callable<ResultSet>() {
-            @Override
-            public ResultSet call() throws Exception {
-                preparedStatement.executeQuery();
-                return preparedStatement.getResultSet();
-            }
+        return Executors.newFixedThreadPool(1).submit(() -> {
+            preparedStatement.executeQuery();
+            return preparedStatement.getResultSet();
         });
     }
 }
