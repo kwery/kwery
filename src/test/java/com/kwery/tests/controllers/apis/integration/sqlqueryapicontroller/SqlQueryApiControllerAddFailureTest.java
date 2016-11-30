@@ -6,7 +6,7 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import org.junit.Before;
 import org.junit.Test;
 import com.kwery.tests.util.Messages;
@@ -31,7 +31,7 @@ public class SqlQueryApiControllerAddFailureTest extends AbstractPostLoginApiTes
         dto = queryRunDto();
         dto.setDatasourceId(addedDatasource.getId());
 
-        SqlQuery sqlQuery = new SqlQuery();
+        SqlQueryModel sqlQuery = new SqlQueryModel();
         sqlQuery.setCronExpression(dto.getCronExpression());
         sqlQuery.setQuery(dto.getQuery());
         sqlQuery.setLabel(dto.getLabel());

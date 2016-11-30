@@ -3,43 +3,71 @@ package com.kwery.tests.dao.sqlquerydao;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
-import org.hibernate.exception.ConstraintViolationException;
+import com.kwery.models.SqlQueryModel;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.Operations;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
-import com.kwery.tests.util.TestUtil;
 
-import javax.persistence.PersistenceException;
-
+import static com.kwery.models.Datasource.*;
+import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
+import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.junit.Assert.fail;
-import static com.kwery.tests.util.TestUtil.datasource;
-import static com.kwery.tests.util.TestUtil.queryRun;
 
 public class SqlQueryDaoUniqueLabelTest extends RepoDashDaoTestBase {
     protected SqlQueryDao dao;
-    protected SqlQuery persistedModel;
     protected Datasource datasource;
 
     @Before
     public void setUpQueryRunDaoUniqueLabelTest() {
+        datasource = new Datasource();
+        datasource.setId(1);
+        datasource.setLabel("testDatasource");
+        datasource.setPassword("password");
+        datasource.setUsername("username");
+        datasource.setPort(3306);
+        datasource.setUrl("foo.com");
+        datasource.setType(MYSQL);
+
+        SqlQueryModel selectSqlQuery = new SqlQueryModel();
+        selectSqlQuery.setId(1);
+        selectSqlQuery.setQuery("select * from mysql.db");
+        selectSqlQuery.setDatasource(datasource);
+        selectSqlQuery.setLabel("selectQuery");
+
+        new DbSetup(
+                new DataSourceDestination(DbUtil.getDatasource()),
+                Operations.sequenceOf(
+                        insertInto(Datasource.TABLE)
+                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
+                                .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(),
+                                        datasource.getType(), datasource.getUrl(), datasource.getUsername())
+                                .build(),
+                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
+                                .columns(SqlQueryModel.ID_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
+                                .values(selectSqlQuery.getId(), selectSqlQuery.getLabel(), selectSqlQuery.getQuery(),
+                                        selectSqlQuery.getDatasource().getId())
+                                .build()
+                )
+        ).launch();
+
         dao = getInstance(SqlQueryDao.class);
-        persistedModel = queryRun();
-        datasource = datasource();
-        getInstance(DatasourceDao.class).save(datasource);
-        persistedModel.setDatasource(datasource);
-        dao.save(persistedModel);
     }
 
     @Test
     public void test() {
-        SqlQuery duplicate = TestUtil.queryRun();
-        duplicate.setDatasource(datasource);
+        SqlQueryModel duplicate = new SqlQueryModel();
+        duplicate.setDatasource(getInstance(DatasourceDao.class).getById(datasource.getId()));
 
         try {
             dao.save(duplicate);
-        } catch (PersistenceException e) {
-            if (!(e.getCause() instanceof ConstraintViolationException)) {
+        } catch (Exception e) {
+            if (!(e instanceof javax.validation.ConstraintViolationException)) {
                 fail();
             }
         }

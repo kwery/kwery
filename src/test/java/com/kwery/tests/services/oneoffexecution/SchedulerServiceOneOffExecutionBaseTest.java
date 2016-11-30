@@ -3,7 +3,7 @@ package com.kwery.tests.services.oneoffexecution;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
@@ -24,9 +24,9 @@ import static com.kwery.models.Datasource.COLUMN_TYPE;
 import static com.kwery.models.Datasource.COLUMN_URL;
 import static com.kwery.models.Datasource.COLUMN_USERNAME;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
-import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
-import static com.kwery.models.SqlQuery.COLUMN_QUERY;
+import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
+import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
+import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 
 public class SchedulerServiceOneOffExecutionBaseTest extends RepoDashTestBase {
@@ -56,14 +56,14 @@ public class SchedulerServiceOneOffExecutionBaseTest extends RepoDashTestBase {
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource0", datasource.getPassword(), datasource.getPort(), MYSQL.name(), datasource.getUrl(), datasource.getUsername())
                                 .build(),
-                        insertInto(SqlQuery.TABLE)
-                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
+                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
+                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
                                 .values(successQueryId, "", "selectQuery", "select User from mysql.user where User = 'root'", 1)
                                 .values(sleepQueryId, "", "sleepQuery", "select sleep(100000)", 1)
                                 .values(failQueryId, "", "failQuery", "select * from foo", 1)
                                 .build(),
-                        insertInto(SqlQuery.TABLE_QUERY_RUN_EMAIL_RECIPIENT)
-                                .columns(SqlQuery.COLUMN_QUERY_RUN_ID_FK, SqlQuery.COLUMN_EMAIL)
+                        insertInto(SqlQueryModel.TABLE_QUERY_RUN_EMAIL_RECIPIENT)
+                                .columns(SqlQueryModel.COLUMN_QUERY_RUN_ID_FK, SqlQueryModel.COLUMN_EMAIL)
                                 .values(successQueryId, recipientEmail)
                                 .values(sleepQueryId, recipientEmail)
                                 .values(failQueryId, recipientEmail)

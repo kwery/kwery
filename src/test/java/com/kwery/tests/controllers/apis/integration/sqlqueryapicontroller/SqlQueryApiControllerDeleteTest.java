@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kwery.controllers.apis.SqlQueryApiController;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryTaskSchedulerHolder;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
@@ -27,10 +27,10 @@ import static com.kwery.models.Datasource.COLUMN_TYPE;
 import static com.kwery.models.Datasource.COLUMN_URL;
 import static com.kwery.models.Datasource.COLUMN_USERNAME;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
-import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
-import static com.kwery.models.SqlQuery.COLUMN_QUERY;
-import static com.kwery.models.SqlQuery.TABLE;
+import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
+import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
+import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
+import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.util.Messages.SQL_QUERY_DELETE_SUCCESS_M;
 import static com.kwery.views.ActionResult.Status.success;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -53,8 +53,8 @@ public class SqlQueryApiControllerDeleteTest extends AbstractPostLoginApiTest {
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource0", "password", 3306, MYSQL.name(), "foo.com", "foo")
                                 .build(),
-                        insertInto(TABLE)
-                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
+                        insertInto(SQL_QUERY_TABLE)
+                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
                                 .values(1, "* * * * *", "testQuery0", "select * from foo", 1)
                                 .build()
                 )

@@ -4,7 +4,7 @@ import com.kwery.controllers.apis.SqlQueryApiController;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -67,7 +67,7 @@ public class SqlQueryApiControllerToSqlQueryModelTest extends RepoDashDaoTestBas
         int id = 1;
         dto.setId(id);
 
-        SqlQuery model = new SqlQuery();
+        SqlQueryModel model = new SqlQueryModel();
         model.setCronExpression(cronExpression);
         model.setLabel(label);
         model.setQuery(query);
@@ -96,7 +96,7 @@ public class SqlQueryApiControllerToSqlQueryModelTest extends RepoDashDaoTestBas
         int id = 1;
         dto.setId(id);
 
-        SqlQuery model = new SqlQuery();
+        SqlQueryModel model = new SqlQueryModel();
         model.setCronExpression(cronExpression);
         model.setLabel(label);
         model.setQuery(query);

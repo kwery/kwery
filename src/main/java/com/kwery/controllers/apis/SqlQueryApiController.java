@@ -16,7 +16,7 @@ import com.kwery.dtos.SqlQueryExecutionListDto;
 import com.kwery.dtos.SqlQueryExecutionListFilterDto;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
@@ -116,7 +116,7 @@ public class SqlQueryApiController {
         } else {
             List<String> errorMessages = new LinkedList<>();
 
-            SqlQuery fromDb = sqlQueryDao.getByLabel(sqlQueryDto.getLabel());
+            SqlQueryModel fromDb = sqlQueryDao.getByLabel(sqlQueryDto.getLabel());
 
             if (isUpdate) {
                 if (fromDb != null && !fromDb.getId().equals(sqlQueryDto.getId())) {
@@ -139,13 +139,13 @@ public class SqlQueryApiController {
             if (errorMessages.size() > 0) {
                 actionResult = new ActionResult(failure, errorMessages);
             } else {
-                SqlQuery model = toSqlQueryModel(sqlQueryDto);
+                SqlQueryModel model = toSqlQueryModel(sqlQueryDto);
 
                 if (isUpdate) {
                     //Stop existing schedules
                     logger.info("Stopping existing scheduler");
                     schedulerService.stopScheduler(sqlQueryDto.getId());
-                    sqlQueryDao.update(model);
+                    sqlQueryDao.save(model);
                     actionResult = new ActionResult(
                             success,
                             messages.get(QUERY_RUN_UPDATE_SUCCESS, context, Optional.of(json)).get()
@@ -155,9 +155,9 @@ public class SqlQueryApiController {
                     sqlQueryDao.save(model);
 
                     if (sqlQueryDto.getDependsOnSqlQueryId() != null && sqlQueryDto.getDependsOnSqlQueryId() > 0) {
-                        SqlQuery dependsOnSqlQuery = sqlQueryDao.getById(sqlQueryDto.getDependsOnSqlQueryId());
+                        SqlQueryModel dependsOnSqlQuery = sqlQueryDao.getById(sqlQueryDto.getDependsOnSqlQueryId());
                         dependsOnSqlQuery.getDependentQueries().add(model);
-                        sqlQueryDao.update(dependsOnSqlQuery);
+                        sqlQueryDao.save(dependsOnSqlQuery);
                     }
 
                     if (isOneOffSqlQuery(sqlQueryDto)) {
@@ -187,7 +187,7 @@ public class SqlQueryApiController {
     @FilterWith(DashRepoSecureFilter.class)
     public Result listSqlQueries() {
         if (logger.isTraceEnabled()) logger.trace(">");
-        List<SqlQuery> sqlQueries = sqlQueryDao.getAll();
+        List<SqlQueryModel> sqlQueries = sqlQueryDao.getAll();
         if (logger.isTraceEnabled()) logger.trace("<");
         return json().render(sqlQueries);
     }
@@ -274,7 +274,7 @@ public class SqlQueryApiController {
             sqlQueryExecutionDtos.add(from(sqlQueryExecution));
         }
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(sqlQueryId);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(sqlQueryId);
 
         SqlQueryExecutionListDto sqlQueryExecutionListDto = new SqlQueryExecutionListDto();
         sqlQueryExecutionListDto.setSqlQuery(sqlQuery.getQuery());
@@ -319,7 +319,7 @@ public class SqlQueryApiController {
     public Result sqlQuery(@PathParam("sqlQueryId") int id) {
         if (logger.isTraceEnabled()) logger.trace(">");
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(id);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(id);
 
         if (logger.isTraceEnabled()) logger.trace("<");
 
@@ -332,7 +332,7 @@ public class SqlQueryApiController {
 
         logger.info("Deleting SQL query - " + sqlQueryId);
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(sqlQueryId);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(sqlQueryId);
         //TODO - This should be part of service layer
         sqlQueryDao.delete(sqlQueryId);
         schedulerService.stopScheduler(sqlQueryId);
@@ -348,11 +348,11 @@ public class SqlQueryApiController {
     public Result latestSqlQueryExecutions() {
         if (logger.isTraceEnabled()) logger.trace(">");
 
-        List<SqlQuery> sqlQueries = sqlQueryDao.getAll();
+        List<SqlQueryModel> sqlQueries = sqlQueryDao.getAll();
 
         List<Integer> sqlQueryIds = new ArrayList<>(sqlQueries.size());
 
-        for (SqlQuery sqlQuery : sqlQueries) {
+        for (SqlQueryModel sqlQuery : sqlQueries) {
             sqlQueryIds.add(sqlQuery.getId());
         }
 
@@ -372,7 +372,7 @@ public class SqlQueryApiController {
 
         logger.info("One off execution of query - " + sqlQueryId);
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(sqlQueryId);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(sqlQueryId);
         sqlQuery.setCronExpression("");
 
         schedulerService.schedule(sqlQuery);
@@ -430,8 +430,8 @@ public class SqlQueryApiController {
         }
     }
 
-    public SqlQuery toSqlQueryModel(SqlQueryDto dto) {
-        SqlQuery model = new SqlQuery();
+    public SqlQueryModel toSqlQueryModel(SqlQueryDto dto) {
+        SqlQueryModel model = new SqlQueryModel();
 
         if (dto.getId() == 0) {
             model.setId(null);

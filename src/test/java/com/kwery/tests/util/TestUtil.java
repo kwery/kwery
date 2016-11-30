@@ -34,16 +34,16 @@ public class TestUtil {
         return podamFactory.manufacturePojo(Datasource.class);
     }
 
-    public static SqlQuery queryRun() {
-        SqlQuery q = new SqlQuery();
+    public static SqlQueryModel queryRun() {
+        SqlQueryModel q = new SqlQueryModel();
         q.setQuery("select * from foo");
         q.setLabel("test query run");
         q.setCronExpression("* * * * *");
         return q;
     }
 
-    public static SqlQuery sleepSqlQuery(Datasource datasource) {
-        SqlQuery sqlQuery = new SqlQuery();
+    public static SqlQueryModel sleepSqlQuery(Datasource datasource) {
+        SqlQueryModel sqlQuery = new SqlQueryModel();
         sqlQuery.setDatasource(datasource);
         sqlQuery.setCronExpression("* * * * *");
         sqlQuery.setLabel("test");

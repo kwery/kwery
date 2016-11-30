@@ -3,7 +3,7 @@ package com.kwery.tests.controllers.apis.integration.sqlqueryapicontroller;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
@@ -29,9 +29,9 @@ import static com.kwery.models.Datasource.COLUMN_PORT;
 import static com.kwery.models.Datasource.COLUMN_TYPE;
 import static com.kwery.models.Datasource.COLUMN_URL;
 import static com.kwery.models.Datasource.COLUMN_USERNAME;
-import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
-import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
-import static com.kwery.models.SqlQuery.COLUMN_QUERY;
+import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
+import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
+import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
 import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 import static com.kwery.tests.util.Messages.QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS_M;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -69,8 +69,8 @@ public class SqlQueryApiControllerAddSqlQueryWithDependsOnSuccessTest extends Ab
                                 .values(datasourceId, datasource.getLabel(), datasource.getPassword(), datasource.getPort(), datasource.getType().name(),
                                         datasource.getUrl(), datasource.getUsername())
                                 .build(),
-                        insertInto(SqlQuery.TABLE)
-                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
+                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
+                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
                                 .values(sqlQueryId, "* * * * *", "query", "select * from mysql.db", datasourceId)
                                 .build()
                 )

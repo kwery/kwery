@@ -4,7 +4,7 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 
 public class SqlQueryExecutionDaoQueryTest extends RepoDashDaoTestBase {
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
-    protected SqlQuery sqlQuery;
+    protected SqlQueryModel sqlQuery;
     protected SqlQueryExecution sqlQueryExecution;
 
     @Before

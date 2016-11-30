@@ -3,7 +3,7 @@ package com.kwery.tests.controllers.apis.integration.sqlqueryapicontroller;
 import com.kwery.controllers.apis.SqlQueryApiController;
 import com.kwery.dtos.SqlQueryExecutionDto;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class SqlQueryApiControllerExecutionModelToDtoTest {
         Datasource datasource = new Datasource();
         datasource.setLabel("testLabel");
 
-        SqlQuery sqlQuery = new SqlQuery();
+        SqlQueryModel sqlQuery = new SqlQueryModel();
         sqlQuery.setId(1);
         sqlQuery.setLabel("testSqlQuery");
         sqlQuery.setDatasource(datasource);

@@ -1,7 +1,7 @@
 package com.kwery.tests.services.scheduledexecution;
 
 import com.google.common.collect.ImmutableList;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
@@ -25,7 +25,7 @@ public class SchedulerServiceScheduledExecutionFailureTest extends SchedulerServ
     public void test() throws InterruptedException, JsonProcessingException {
         long now = System.currentTimeMillis();
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(failQueryId);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(failQueryId);
 
         schedulerService.schedule(sqlQuery);
 

@@ -1,6 +1,6 @@
 package com.kwery.tests.services.oneoffexecution;
 
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
@@ -32,7 +32,7 @@ public class SchedulerServiceOneOffExecutionOngoingAndKillExecutionTest extends 
     public void test() throws InterruptedException, SQLException, IOException, SqlQueryExecutionNotFoundException {
         long start = System.currentTimeMillis();
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(sleepQueryId);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(sleepQueryId);
         schedulerService.schedule(sqlQuery);
 
         Awaitility.waitAtMost(30, SECONDS).until(() -> !getSqlQueryExecutions().isEmpty());

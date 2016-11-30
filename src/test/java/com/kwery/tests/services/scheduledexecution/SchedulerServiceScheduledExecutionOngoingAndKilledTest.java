@@ -1,7 +1,7 @@
 package com.kwery.tests.services.scheduledexecution;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
@@ -31,7 +31,7 @@ public class SchedulerServiceScheduledExecutionOngoingAndKilledTest extends Sche
     public void test() throws InterruptedException, JsonProcessingException, SqlQueryExecutionNotFoundException {
         long now = System.currentTimeMillis();
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(sleepQueryId);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(sleepQueryId);
 
         schedulerService.schedule(sqlQuery);
 

@@ -17,14 +17,14 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @Table(name = SqlQueryExecution.TABLE)
 public class SqlQueryExecution {
-    public static final String TABLE = "query_run_execution";
+    public static final String TABLE = "sql_query_execution";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_EXECUTION_ID = "execution_id";
     public static final String COLUMN_EXECUTION_START = "execution_start";
     public static final String COLUMN_EXECUTION_END = "execution_end";
     public static final String COLUMN_STATUS = "status";
     public static final String COLUMN_RESULT = "result";
-    public static final String COLUMN_QUERY_RUN_ID_FK = "query_run_id_fk";
+    public static final String COLUMN_QUERY_RUN_ID_FK = "sql_query_id_fk";
 
     @Column(name = COLUMN_ID)
     @Id
@@ -50,7 +50,7 @@ public class SqlQueryExecution {
 
     @JoinColumn(name = COLUMN_QUERY_RUN_ID_FK)
     @ManyToOne
-    private SqlQuery sqlQuery;
+    private SqlQueryModel sqlQuery;
 
     public Integer getId() {
         return id;
@@ -100,11 +100,11 @@ public class SqlQueryExecution {
         this.result = result;
     }
 
-    public SqlQuery getSqlQuery() {
+    public SqlQueryModel getSqlQuery() {
         return sqlQuery;
     }
 
-    public void setSqlQuery(SqlQuery sqlQuery) {
+    public void setSqlQuery(SqlQueryModel sqlQuery) {
         this.sqlQuery = sqlQuery;
     }
 

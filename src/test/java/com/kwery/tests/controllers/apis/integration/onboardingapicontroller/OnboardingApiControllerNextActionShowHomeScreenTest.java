@@ -12,12 +12,12 @@ import org.junit.Test;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.dtos.OnboardingNextActionDto.Action.SHOW_HOME_SCREEN;
-import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
-import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
-import static com.kwery.models.SqlQuery.COLUMN_ID;
-import static com.kwery.models.SqlQuery.COLUMN_LABEL;
-import static com.kwery.models.SqlQuery.COLUMN_QUERY;
-import static com.kwery.models.SqlQuery.TABLE;
+import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
+import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
+import static com.kwery.models.SqlQueryModel.ID_COLUMN;
+import static com.kwery.models.SqlQueryModel.LABEL_COLUMN;
+import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
+import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -26,8 +26,8 @@ public class OnboardingApiControllerNextActionShowHomeScreenTest extends Onboard
     public void setUpOnboardingApiControllerNextActionShowExecutionQueriesTest () {
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.insertInto(TABLE)
-                        .columns(COLUMN_ID, COLUMN_DATASOURCE_ID_FK, COLUMN_QUERY, COLUMN_CRON_EXPRESSION, COLUMN_LABEL)
+                Operations.insertInto(SQL_QUERY_TABLE)
+                        .columns(ID_COLUMN, DATASOURCE_ID_FK_COLUMN, QUERY_COLUMN, CRON_EXPRESSION_COLUMN, LABEL_COLUMN)
                         .values("1", "1", "select * from foo", "*", "label")
                         .build()
         ).launch();

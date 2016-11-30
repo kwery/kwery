@@ -4,7 +4,7 @@ import com.google.inject.Provider;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.KweryMailImpl;
@@ -66,7 +66,7 @@ public class SqlQueryTaskSchedulerTest {
     @Mock
     private MailService mailService;
 
-    private SqlQuery sqlQuery;
+    private SqlQueryModel sqlQuery;
     private Datasource datasource;
     private SqlQueryExecution sqlQueryExecution;
     private String taskExecutorGuid = "foo";

@@ -5,7 +5,7 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SchedulerService;
@@ -36,7 +36,7 @@ public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDas
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
     protected Datasource datasource;
-    protected SqlQuery sqlQuery;
+    protected SqlQueryModel sqlQuery;
     protected SchedulerService schedulerService;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
     protected Bootstrap bootstrap;
@@ -48,7 +48,7 @@ public class SchedulerInteractionOnApplicationStartupAndStopTest extends RepoDas
         datasource = mysqlDockerRule.getMySqlDocker().datasource();
         getInstance(DatasourceDao.class).save(datasource);
 
-        sqlQuery = new SqlQuery();
+        sqlQuery = new SqlQueryModel();
         sqlQuery.setDatasource(datasource);
         sqlQuery.setCronExpression("* * * * *");
         sqlQuery.setLabel("test");

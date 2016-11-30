@@ -6,7 +6,7 @@ import com.kwery.dao.SqlQueryExecutionDao;
 import it.sauronsoftware.cron4j.TaskExecutionContext;
 import it.sauronsoftware.cron4j.TaskExecutor;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class SqlQueryTaskTestSuccess {
     @Mock
     private RepoDashUtil repoDashUtil;
     @Mock
-    private SqlQuery sqlQuery;
+    private SqlQueryModel sqlQuery;
     @Mock
     private Datasource datasource;
     @Mock

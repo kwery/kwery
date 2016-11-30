@@ -21,9 +21,9 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.kwery.custom.TemplateEngineJsFreemarker;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
 import it.sauronsoftware.cron4j.Scheduler;
-import com.kwery.models.SqlQuery;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.MysqlSqlQueryRunner;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
@@ -59,7 +59,7 @@ public class Module extends AbstractModule {
     }
 
     @Provides
-    protected SqlQuery provideQueryRun() {
-        return new SqlQuery();
+    protected SqlQueryModel provideQueryRun() {
+        return new SqlQueryModel();
     }
 }

@@ -5,7 +5,7 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
@@ -44,7 +44,7 @@ public class SqlQueryCancelExecutingQueryQueryNotFoundUiTest extends ChromeFluen
 
     protected SchedulerService schedulerService;
     protected SqlQueryExecutingListPage page;
-    protected SqlQuery sqlQuery;
+    protected SqlQueryModel sqlQuery;
 
     @Before
     public void setUpListExecutingSqlQueriesCancelSuccessTest () throws InterruptedException, SqlQueryExecutionNotFoundException {

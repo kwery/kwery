@@ -7,7 +7,7 @@ import com.kwery.controllers.apis.SqlQueryApiController;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.services.scheduler.OngoingSqlQueryTask;
 import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
@@ -37,7 +37,7 @@ public class SqlQueryApiControllerKillQuerySuccessTest extends AbstractPostLogin
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
     protected SchedulerService schedulerService;
-    protected SqlQuery sqlQuery;
+    protected SqlQueryModel sqlQuery;
 
     @Before
     public void setUpDownSqlQueryKillQueryTest() {

@@ -1,7 +1,7 @@
 package com.kwery.tests.services.oneoffexecution;
 
 import com.google.common.collect.ImmutableList;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
@@ -30,7 +30,7 @@ public class SchedulerServiceOneOffExecutionFailedTest extends SchedulerServiceO
     public void test() throws InterruptedException, SQLException, IOException {
         long start = System.currentTimeMillis();
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(failQueryId);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(failQueryId);
         schedulerService.schedule(sqlQuery);
         SECONDS.sleep(30);
 

@@ -3,7 +3,7 @@ package com.kwery.tests.dao.sqlquerydao;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -60,7 +60,7 @@ public class SqlQueryDaoPersistTest extends RepoDashDaoTestBase {
 
     @Test
     public void testPersist() throws DatabaseUnitException, SQLException, IOException {
-        SqlQuery q = queryRun();
+        SqlQueryModel q = queryRun();
         q.setDatasource(datasource);
         ImmutableSet<String> emails = ImmutableSet.of("foo@getkwery.com", "bar@getkwery.com");
         q.setRecipientEmails(emails);
@@ -69,37 +69,25 @@ public class SqlQueryDaoPersistTest extends RepoDashDaoTestBase {
 
 
         DataSetBuilder sqlQueryBuilder = new DataSetBuilder();
-        sqlQueryBuilder.newRow(SqlQuery.TABLE)
-                .with(SqlQuery.COLUMN_ID, q.getId())
-                .with(SqlQuery.COLUMN_CRON_EXPRESSION, q.getCronExpression())
-                .with(SqlQuery.COLUMN_LABEL, q.getLabel())
-                .with(SqlQuery.COLUMN_QUERY, q.getQuery())
-                .with(SqlQuery.COLUMN_DATASOURCE_ID_FK, q.getDatasource().getId())
+        sqlQueryBuilder.newRow(SqlQueryModel.SQL_QUERY_TABLE)
+                .with(SqlQueryModel.ID_COLUMN, q.getId())
+                .with(SqlQueryModel.LABEL_COLUMN, q.getLabel())
+                .with(SqlQueryModel.QUERY_COLUMN, q.getQuery())
+                .with(SqlQueryModel.DATASOURCE_ID_FK_COLUMN, q.getDatasource().getId())
                 .add();
 
-        assertDbState(SqlQuery.TABLE, sqlQueryBuilder.build());
-
-        DataSetBuilder emailBuilder = new DataSetBuilder();
-
-        for (String email : emails) {
-            emailBuilder.newRow(SqlQuery.TABLE_QUERY_RUN_EMAIL_RECIPIENT)
-                    .with(SqlQuery.COLUMN_QUERY_RUN_ID_FK, q.getId())
-                    .with(SqlQuery.COLUMN_EMAIL, email)
-                    .add();
-        }
-
-        assertDbState(SqlQuery.TABLE_QUERY_RUN_EMAIL_RECIPIENT, emailBuilder.build());
+        assertDbState(SqlQueryModel.SQL_QUERY_TABLE, sqlQueryBuilder.build());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void testNullValuesValidation() {
-        SqlQuery q = new SqlQuery();
+        SqlQueryModel q = new SqlQueryModel();
         sqlQueryDao.save(q);
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void testEmptyValuesValidation() {
-        SqlQuery q = new SqlQuery();
+        SqlQueryModel q = new SqlQueryModel();
         q.setCronExpression("");
         q.setQuery("");
         q.setLabel("");

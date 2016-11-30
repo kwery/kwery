@@ -1,7 +1,7 @@
 package com.kwery.tests.services.oneoffexecution;
 
 import com.google.common.collect.ImmutableList;
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
 import com.kwery.services.scheduler.JsonToHtmlTable;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
@@ -44,7 +44,7 @@ public class SchedulerServiceOneOffExecutionWithDependentsSuccessTest extends Sc
     public void test() throws InterruptedException, IOException, DatabaseUnitException, SQLException {
         long start = System.currentTimeMillis();
 
-        SqlQuery sqlQuery = sqlQueryDao.getById(successQueryId);
+        SqlQueryModel sqlQuery = sqlQueryDao.getById(successQueryId);
         schedulerService.schedule(sqlQuery);
 
         Awaitility.waitAtMost(60, SECONDS).until(() -> !getSqlQueryExecutions(successQueryId).isEmpty());
