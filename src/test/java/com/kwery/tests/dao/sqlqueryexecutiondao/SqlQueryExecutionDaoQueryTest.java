@@ -23,7 +23,7 @@ public class SqlQueryExecutionDaoQueryTest extends RepoDashDaoTestBase {
 
     @Before
     public void setUpQueryRunExecutionDaoQueryTest() {
-        Datasource datasource = TestUtil.datasource();
+        Datasource datasource = TestUtil.datasourceWithoutId();
         getInstance(DatasourceDao.class).save(datasource);
 
         sqlQuery = TestUtil.queryRun();

@@ -3,8 +3,8 @@ package com.kwery.tests.dao.sqlqueryexecutiondao;
 import com.google.common.collect.ImmutableList;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQueryModel;
 import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
@@ -14,31 +14,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
 import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
+import static com.kwery.models.SqlQueryExecution.*;
+import static com.kwery.models.SqlQueryExecution.Status.*;
 import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
 import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_END;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_ID;
-import static com.kwery.models.SqlQueryExecution.COLUMN_EXECUTION_START;
-import static com.kwery.models.SqlQueryExecution.COLUMN_QUERY_RUN_ID_FK;
-import static com.kwery.models.SqlQueryExecution.COLUMN_RESULT;
-import static com.kwery.models.SqlQueryExecution.COLUMN_STATUS;
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
-import static com.kwery.models.SqlQueryExecution.Status.KILLED;
-import static com.kwery.models.SqlQueryExecution.Status.ONGOING;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 import static org.exparity.hamcrest.BeanMatchers.theSameAs;
@@ -58,11 +43,9 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
                         insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(1, "* * * * *", "testQuery0", "select * from foo", 1).build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(2, "* * * * *", "testQuery1", "select * from foo", 1).build(),
+                                .columns(SqlQueryModel.ID_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
+                                .values(1, "testQuery0", "select * from foo", 1)
+                                .values(2, "testQuery1", "select * from foo", 1).build(),
                         insertInto(SqlQueryExecution.TABLE)
                                 .columns(SqlQueryExecution.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
 
@@ -132,8 +115,6 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         sqlQuery.setQuery("select * from foo");
         sqlQuery.setId(1);
         sqlQuery.setLabel("testQuery0");
-        sqlQuery.setCronExpression("* * * * *");
-        sqlQuery.setDependentQueries(new LinkedList<>());
 
         SqlQueryExecution execution = new SqlQueryExecution();
         execution.setSqlQuery(sqlQuery);

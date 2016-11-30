@@ -11,13 +11,11 @@ import org.junit.Test;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 
 import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
+import static com.kwery.tests.util.TestUtil.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static com.kwery.tests.util.TestUtil.datasource;
-import static com.kwery.tests.util.TestUtil.queryRun;
-import static com.kwery.tests.util.TestUtil.queryRunExecution;
 
 public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
@@ -26,7 +24,7 @@ public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
 
     @Before
     public void setUpQueryRunExecutionDaoTest() {
-        Datasource datasource = datasource();
+        Datasource datasource = datasourceWithoutId();
         getInstance(DatasourceDao.class).save(datasource);
 
         sqlQuery = queryRun();

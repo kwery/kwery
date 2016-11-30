@@ -1,4 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-    <query_run_execution id="2" execution_start="1475158740747" execution_end="1475159940797" execution_id="executionId" result="result" status="SUCCESS" query_run_id_fk="2"/>
+    <sql_query_execution id="2" execution_start="1475158740747" execution_end="1475159940797" execution_id="executionId" result="result" status="SUCCESS" sql_query_id_fk="2"/>
 </dataset>
