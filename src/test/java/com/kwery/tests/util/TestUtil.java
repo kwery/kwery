@@ -34,6 +34,19 @@ public class TestUtil {
         return podamFactory.manufacturePojo(Datasource.class);
     }
 
+    public static JobExecutionModel jobExecutionModel() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        return podamFactory.manufacturePojo(JobExecutionModel.class);
+    }
+
+    public static JobExecutionModel jobExecutionModelWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        JobExecutionModel jobExecutionModel = podamFactory.manufacturePojo(JobExecutionModel.class);
+        jobExecutionModel.setId(null);
+        return jobExecutionModel;
+    }
+
     public static SqlQueryModel queryRun() {
         SqlQueryModel q = new SqlQueryModel();
         q.setQuery("select * from foo");
@@ -178,7 +191,7 @@ public class TestUtil {
 
     public static void main(String[] args) {
         for (int i = 0; i < 10; ++i) {
-            System.out.println(datasourceWithoutId());
+            System.out.println(jobExecutionModel());
         }
     }
 

@@ -2,6 +2,7 @@ package com.kwery.tests.fluentlenium.utils;
 
 import com.google.common.io.Resources;
 import com.kwery.models.Datasource;
+import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.mchange.v2.c3p0.C3P0Registry;
@@ -167,7 +168,18 @@ public class DbUtil {
         ).launch();
     }
 
-    public static void jobSqlQueryDbSetUp(JobModel jobModel) {
+    public static IDataSet jobExecutionTable(JobExecutionModel jobExecutionModel) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
 
+        builder.newRow(JobExecutionModel.TABLE)
+                .with(JobExecutionModel.COLUMN_ID, jobExecutionModel.getId())
+                .with(JobExecutionModel.COLUMN_EXECUTION_ID, jobExecutionModel.getExecutionId())
+                .with(JobExecutionModel.COLUMN_EXECUTION_START, jobExecutionModel.getExecutionStart())
+                .with(JobExecutionModel.COLUMN_EXECUTION_END, jobExecutionModel.getExecutionEnd())
+                .with(JobExecutionModel.COLUMN_STATUS, jobExecutionModel.getStatus())
+                .with(JobExecutionModel.JOB_ID_FK_COLUMN, jobExecutionModel.getJobModel().getId())
+                .add();
+
+        return builder.build();
     }
 }
