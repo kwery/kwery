@@ -42,6 +42,9 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryModel e = sqlQueryModel();
+            e.setDependentQueries(null);
+            e.setRecipientEmails(null);
+            e.setCronExpression(null);
             e.setDatasource(datasource);
             jobModel.getSqlQueries().add(e);
         }

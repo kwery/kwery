@@ -30,6 +30,7 @@ public class JobDao {
 
     @UnitOfWork
     public JobModel getJobById(int jobId) {
-        return null;
+        EntityManager e = entityManagerProvider.get();
+        return e.find(JobModel.class, jobId);
     }
 }
