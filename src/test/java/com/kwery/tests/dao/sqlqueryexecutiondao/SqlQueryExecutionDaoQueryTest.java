@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryExecutionDaoQueryTest extends RepoDashDaoTestBase {
@@ -49,11 +48,5 @@ public class SqlQueryExecutionDaoQueryTest extends RepoDashDaoTestBase {
     public void testGetById() {
         SqlQueryExecutionModel fromDb = sqlQueryExecutionDao.getById(sqlQueryExecution.getId());
         assertThat(fromDb, notNullValue());
-    }
-
-    @Test
-    public void testByQueryRunId() {
-        assertThat(sqlQueryExecutionDao.getById(sqlQueryExecution.getSqlQuery().getId()), notNullValue());
-        assertThat(sqlQueryExecutionDao.getById(sqlQueryExecution.getSqlQuery().getId() + 100), nullValue());
     }
 }
