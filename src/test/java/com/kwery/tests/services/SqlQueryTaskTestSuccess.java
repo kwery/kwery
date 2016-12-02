@@ -87,7 +87,7 @@ public class SqlQueryTaskTestSuccess {
         when(taskExecutor.getGuid()).thenReturn("foo");
         when(sqlQueryExecutionDao.getByExecutionId("foo")).thenReturn(sqlQueryExecution);
 
-        doNothing().when(sqlQueryExecutionDao).update(any());
+        doNothing().when(sqlQueryExecutionDao).save(any());
     }
 
     @Test

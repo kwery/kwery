@@ -1,7 +1,7 @@
 package com.kwery.models;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -22,7 +22,7 @@ public class JobExecutionModel {
     private Integer id;
 
     @Column(name = COLUMN_EXECUTION_ID)
-    @Max(value = 255)
+    @Size(min = 1, max = 255)
     private String executionId;
 
     @Column(name = COLUMN_EXECUTION_START)

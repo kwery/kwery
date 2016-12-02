@@ -26,14 +26,13 @@ public class SqlQueryExecutionDao {
     @Transactional
     public void save(SqlQueryExecutionModel e) {
         EntityManager m = entityManagerProvider.get();
-        m.persist(e);
-        m.flush();
-    }
 
-    @Transactional
-    public void update(SqlQueryExecutionModel e) {
-        EntityManager m = entityManagerProvider.get();
-        m.merge(e);
+        if (e.getId() != null && e.getId() > 0) {
+           m.merge(e);
+        } else {
+            m.persist(e);
+        }
+
         m.flush();
     }
 
@@ -51,6 +50,10 @@ public class SqlQueryExecutionDao {
 
         if (executions.size() == 0) {
             return null;
+        }
+
+        if (executions.size() > 1) {
+            throw new AssertionError("More than one SqlQueryExecutionModel found with execution id - " + executionId);
         }
 
         return executions.get(0);

@@ -23,6 +23,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.kwery.custom.TemplateEngineJsFreemarker;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
+import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.scheduler.*;
 import it.sauronsoftware.cron4j.Scheduler;
 
@@ -34,11 +35,12 @@ public class Module extends AbstractModule {
         bind(SchedulerService.class);
         bind(OneOffSqlQueryTaskSchedulerReaper.class);
 
-
         install(new FactoryModuleBuilder().build(SqlQueryTaskFactory.class));
         install(new FactoryModuleBuilder().build(QueryTaskSchedulerFactory.class));
         install(new FactoryModuleBuilder().build(ResultSetProcessorFactory.class));
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
+        install(new FactoryModuleBuilder().build(JobTaskFactory.class));
+        install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
     }
 
     @Provides

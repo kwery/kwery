@@ -53,7 +53,7 @@ public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
         updated.setExecutionEnd(100l);
         updated.setStatus(FAILURE);
 
-        sqlQueryExecutionDao.update(updated);
+        sqlQueryExecutionDao.save(updated);
 
         assertThat(updated.getId(), is(sqlQueryExecution.getId()));
 

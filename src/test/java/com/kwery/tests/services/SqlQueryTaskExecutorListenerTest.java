@@ -30,7 +30,7 @@ public class SqlQueryTaskExecutorListenerTest {
     public void setUpQueryTaskExecutorListenerTest() {
         when(taskExecutor.getGuid()).thenReturn(taskExecutionId);
         when(sqlQueryExecutionDao.getByExecutionId(taskExecutionId)).thenReturn(sqlQueryExecution);
-        doNothing().when(sqlQueryExecutionDao).update(sqlQueryExecution);
+        doNothing().when(sqlQueryExecutionDao).save(sqlQueryExecution);
     }
 
     @Test

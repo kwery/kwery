@@ -58,7 +58,7 @@ public class SqlQueryTaskExecutorListener implements TaskExecutorListener {
 
         sqlQueryExecution.setExecutionEnd(System.currentTimeMillis());
 
-        sqlQueryExecutionDao.update(sqlQueryExecution);
+        sqlQueryExecutionDao.save(sqlQueryExecution);
     }
 
     @Override
