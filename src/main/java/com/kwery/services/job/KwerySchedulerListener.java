@@ -46,7 +46,11 @@ public class KwerySchedulerListener implements SchedulerListener {
             SqlQueryTask sqlQueryTask = (SqlQueryTask) task;
             SqlQueryModel sqlQueryModel = sqlQueryDao.getById(sqlQueryTask.getSqlQueryModelId());
             logger.info("Sql query with id {} and label {} execution launched", sqlQueryModel.getId(), sqlQueryModel.getLabel());
-            saveSqlQueryExecutionStart(sqlQueryModel, executor);
+
+            JobExecutionSearchFilter jobExecutionSearchFilter = new JobExecutionSearchFilter();
+            jobExecutionSearchFilter.setExecutionId(sqlQueryTask.getJobExecutionId());
+            JobExecutionModel jobExecutionModel = jobExecutionDao.filter(jobExecutionSearchFilter).get(0);
+            saveSqlQueryExecutionStart(sqlQueryModel, jobExecutionModel, executor);
         } else if (task instanceof JobTask) {
             JobTask jobTask = (JobTask) task;
             JobModel jobModel = jobDao.getJobById(jobTask.getJobId());
@@ -98,12 +102,13 @@ public class KwerySchedulerListener implements SchedulerListener {
         jobExecutionDao.save(e);
     }
 
-    protected void saveSqlQueryExecutionStart(SqlQueryModel sqlQueryModel, TaskExecutor taskExecutor) {
+    protected void saveSqlQueryExecutionStart(SqlQueryModel sqlQueryModel, JobExecutionModel jobExecutionModel, TaskExecutor taskExecutor) {
         SqlQueryExecutionModel e = new SqlQueryExecutionModel();
         e.setExecutionId(taskExecutor.getGuid());
         e.setExecutionStart(taskExecutor.getStartTime());
         e.setSqlQuery(sqlQueryDao.getById(sqlQueryModel.getId()));
         e.setStatus(ONGOING);
+        e.setJobExecutionModel(jobExecutionModel);
         sqlQueryExecutionDao.save(e);
     }
 }

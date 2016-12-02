@@ -35,6 +35,7 @@ public class SqlQueryTask extends Task {
     private final ResultSetProcessorFactory resultSetProcessorFactory;
     private final PreparedStatementExecutorFactory preparedStatementExecutorFactory;
     private final CountDownLatch latch;
+    private final String jobExecutionId;
 
     @Inject
     public SqlQueryTask(SqlQueryDao sqlQueryDao,
@@ -43,6 +44,7 @@ public class SqlQueryTask extends Task {
                         PreparedStatementExecutorFactory preparedStatementExecutorFactory,
                         ResultSetProcessorFactory resultSetProcessorFactory,
                         @Assisted int sqlQueryModelId,
+                        @Assisted String jobExecutionId,
                         @Assisted CountDownLatch latch
     ) {
         this.sqlQueryDao = sqlQueryDao;
@@ -52,6 +54,7 @@ public class SqlQueryTask extends Task {
         this.resultSetProcessorFactory = resultSetProcessorFactory;
         this.sqlQueryModelId = sqlQueryModelId;
         this.latch = latch;
+        this.jobExecutionId = jobExecutionId;
     }
 
     @Override
@@ -98,5 +101,9 @@ public class SqlQueryTask extends Task {
 
     public int getSqlQueryModelId() {
         return sqlQueryModelId;
+    }
+
+    public String getJobExecutionId() {
+        return jobExecutionId;
     }
 }

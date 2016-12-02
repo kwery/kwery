@@ -5,10 +5,13 @@ import com.kwery.models.SqlQueryExecutionModel;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.waitAtMost;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
@@ -41,6 +44,15 @@ public class JobServiceScheduleJobSqlQueryKilledJobCompletesTest extends JobServ
         waitAtMost(1, MINUTES).until(() ->
                 getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED).size() >= 2 && getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() >= 2
         );
+
+        List<SqlQueryExecutionModel> killedSqlQueries = getSqlQueryExecutionModels(SqlQueryExecutionModel.Status.KILLED);
+
+        Set<String> killedSqlQueryJobExecutionIds = killedSqlQueries.stream().map(killedSqlQuery -> killedSqlQuery.getJobExecutionModel().getExecutionId())
+                .collect(Collectors.toSet());
+        Set<String> successJobExecutionIds = getJobExecutionModels(JobExecutionModel.Status.SUCCESS).stream().map(JobExecutionModel::getExecutionId)
+                .collect(Collectors.toSet());
+        assertThat("Killing SQL queries successfully brings the job to completion", killedSqlQueryJobExecutionIds,
+                containsInAnyOrder(successJobExecutionIds.toArray(new String[successJobExecutionIds.size()])));
 
         assertJobExecutionModels(JobExecutionModel.Status.SUCCESS, 2);
         assertSqlQueryExecutionModels(sqlQueryId0, SqlQueryExecutionModel.Status.KILLED, 2);

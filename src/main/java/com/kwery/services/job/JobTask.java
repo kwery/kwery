@@ -37,7 +37,7 @@ public class JobTask extends Task {
         List<TaskExecutor> executors = new ArrayList<>(queryCount);
 
         for (SqlQueryModel sqlQueryModel : job.getSqlQueries()) {
-            SqlQueryTask task = sqlQueryTaskFactory.create(sqlQueryModel.getId(), countDownLatch);
+            SqlQueryTask task = sqlQueryTaskFactory.create(sqlQueryModel.getId(), context.getTaskExecutor().getGuid(), countDownLatch);
             TaskExecutor executor = kweryScheduler.launch(task);
             executors.add(executor);
         }
