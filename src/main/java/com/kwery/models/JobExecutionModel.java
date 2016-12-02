@@ -2,6 +2,7 @@ package com.kwery.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -38,6 +39,9 @@ public class JobExecutionModel {
     @JoinColumn(name = JOB_ID_FK_COLUMN)
     @ManyToOne
     private JobModel jobModel;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "jobExecutionModel")
+    public Set<SqlQueryExecutionModel> sqlQueryExecutionModels;
 
     public Integer getId() {
         return id;
@@ -87,6 +91,14 @@ public class JobExecutionModel {
         this.jobModel = jobModel;
     }
 
+    public Set<SqlQueryExecutionModel> getSqlQueryExecutionModels() {
+        return sqlQueryExecutionModels;
+    }
+
+    public void setSqlQueryExecutionModels(Set<SqlQueryExecutionModel> sqlQueryExecutionModels) {
+        this.sqlQueryExecutionModels = sqlQueryExecutionModels;
+    }
+
     public enum Status {
         ONGOING, SUCCESS, FAILURE, KILLED
     }
@@ -100,6 +112,7 @@ public class JobExecutionModel {
                 ", executionEnd=" + executionEnd +
                 ", status=" + status +
                 ", jobModel=" + jobModel +
+                ", sqlQueryExecutionModels=" + sqlQueryExecutionModels +
                 '}';
     }
 }

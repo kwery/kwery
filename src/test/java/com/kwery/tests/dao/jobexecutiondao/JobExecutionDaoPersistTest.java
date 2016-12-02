@@ -3,7 +3,6 @@ package com.kwery.tests.dao.jobexecutiondao;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
@@ -16,7 +15,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import static com.kwery.models.JobModel.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobExecutionModelWithoutId;
 import static com.kwery.tests.util.TestUtil.jobModel;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -55,6 +54,6 @@ public class JobExecutionDaoPersistTest extends RepoDashDaoTestBase {
 
         expected.setId(jobExecutionModel.getId());
 
-        DbUtil.assertDbState(JobExecutionModel.TABLE, DbUtil.jobExecutionTable(expected));
+        assertDbState(JobExecutionModel.TABLE, jobExecutionTable(expected));
     }
 }

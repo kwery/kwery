@@ -57,6 +57,7 @@ create table sql_query_execution (
   result long varchar,
   status varchar(255),
   sql_query_id_fk integer,
+  job_execution_id_fk integer,
   primary key (id)
 );
 
@@ -123,5 +124,6 @@ alter table sql_query add constraint uc_sql_query_label unique (label);
 alter table sql_query add constraint fk_sql_query_datasource_fk_id foreign key (datasource_id_fk) references datasource;
 
 alter table sql_query_execution add constraint fk_sql_query_execution_sql_query_id_fk foreign key (sql_query_id_fk) references sql_query;
+alter table sql_query_execution add constraint fk_sql_query_execution_job_execution_id_fk foreign key (job_execution_id_fk) references job_execution;
 
 alter table job_execution add constraint fk_job_execution_job_id_fk foreign key (job_id_fk) references job;

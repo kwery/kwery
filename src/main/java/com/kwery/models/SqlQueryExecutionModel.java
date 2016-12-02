@@ -17,6 +17,7 @@ public class SqlQueryExecutionModel {
     public static final String COLUMN_STATUS = "status";
     public static final String COLUMN_RESULT = "result";
     public static final String COLUMN_QUERY_RUN_ID_FK = "sql_query_id_fk";
+    public static final String COLUMN_JOB_EXECUTION_ID_FK = "job_execution_id_fk";
 
     @Column(name = COLUMN_ID)
     @Id
@@ -43,6 +44,10 @@ public class SqlQueryExecutionModel {
     @JoinColumn(name = COLUMN_QUERY_RUN_ID_FK)
     @ManyToOne
     private SqlQueryModel sqlQuery;
+
+    @ManyToOne
+    @JoinColumn(name = SqlQueryExecutionModel.COLUMN_JOB_EXECUTION_ID_FK)
+    private JobExecutionModel jobExecutionModel;
 
     public Integer getId() {
         return id;
@@ -100,7 +105,15 @@ public class SqlQueryExecutionModel {
         this.sqlQuery = sqlQuery;
     }
 
-    public static enum Status {
+    public JobExecutionModel getJobExecutionModel() {
+        return jobExecutionModel;
+    }
+
+    public void setJobExecutionModel(JobExecutionModel jobExecutionModel) {
+        this.jobExecutionModel = jobExecutionModel;
+    }
+
+    public enum Status {
         ONGOING, SUCCESS, FAILURE, KILLED
     }
 }

@@ -147,6 +147,19 @@ public class TestUtil {
         return podamFactory.manufacturePojo(JobModel.class);
     }
 
+    public static SqlQueryExecutionModel sqlQueryExecutionModelWithoutId() {
+        SqlQueryExecutionModel model = new PodamFactoryImpl().manufacturePojo(SqlQueryExecutionModel.class);
+        model.setId(null);
+        return model;
+    }
+
+    public static SqlQueryExecutionModel sqlQueryExecutionModel() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        SqlQueryExecutionModel model = podamFactory.manufacturePojo(SqlQueryExecutionModel.class);
+        return model;
+    }
+
     public static EmailConfiguration emailConfigurationDbSetUp() {
         EmailConfiguration emailConfiguration = emailConfiguration();
 
