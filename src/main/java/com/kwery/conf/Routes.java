@@ -1,11 +1,7 @@
 package com.kwery.conf;
 
 import com.kwery.controllers.IndexController;
-import com.kwery.controllers.apis.DatasourceApiController;
-import com.kwery.controllers.apis.MailApiController;
-import com.kwery.controllers.apis.OnboardingApiController;
-import com.kwery.controllers.apis.SqlQueryApiController;
-import com.kwery.controllers.apis.UserApiController;
+import com.kwery.controllers.apis.*;
 import ninja.AssetsController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
@@ -43,6 +39,8 @@ public class Routes implements ApplicationRoutes {
     public static final String MAIL_SAVE_EMAIL_CONFIGURATION_API = "/api/mail/save-email-configuration";
     public static final String MAIL_GET_EMAIL_CONFIGURATION_API = "/api/mail/email-configuration";
     public static final String MAIL_CONFIGURATION_TEST_API = "/api/mail/{toEmail}/email-configuration-test";
+
+    public static final String JOB_SAVE_API = "/api/job/save";
 
     @Override
     public void init(Router router) {
@@ -83,6 +81,8 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(MAIL_GET_EMAIL_CONFIGURATION_API).with(MailApiController.class, "getEmailConfiguration");
         router.POST().route(MAIL_SAVE_EMAIL_CONFIGURATION_API).with(MailApiController.class, "saveEmailConfiguration");
         router.POST().route(MAIL_CONFIGURATION_TEST_API).with(MailApiController.class, "testEmailConfiguration");
+
+        router.POST().route(JOB_SAVE_API).with(JobApiController.class, "saveJob");
         //Api - End
 
         //Static asset

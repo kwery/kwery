@@ -1,5 +1,7 @@
 package com.kwery.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -15,14 +17,17 @@ public class SqlQueryDto {
     @Size(min = 1, message = "label.validation")
     private String label;
 
+    @JsonIgnore
     private String cronExpression;
 
     @Min(value = 1, message= "datasource.validation")
     @NotNull(message = "datasource.validation")
-    private Integer datasourceId;
+    private int datasourceId;
 
+    @JsonIgnore
     private Integer dependsOnSqlQueryId;
 
+    @JsonIgnore
     private String recipientEmailsCsv;
 
     public int getId() {
@@ -57,11 +62,11 @@ public class SqlQueryDto {
         this.cronExpression = cronExpression;
     }
 
-    public Integer getDatasourceId() {
+    public int getDatasourceId() {
         return datasourceId;
     }
 
-    public void setDatasourceId(Integer datasourceId) {
+    public void setDatasourceId(int datasourceId) {
         this.datasourceId = datasourceId;
     }
 

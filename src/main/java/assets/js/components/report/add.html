@@ -1,0 +1,63 @@
+<div class="container">
+    <action-result params="status: status,
+                messages: messages">
+    </action-result>
+
+    <form id="jobForm">
+        <h1>Report</h1>
+        <div class="form-group">
+            <label class="control-label" for="reportTitle">Title</label>
+            <input data-bind="value: title" type="text" class="form-control" name="reportTitle" id="reportTitle" required>
+            <div class="help-block with-errors"></div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="label">Label</label>
+            <input data-bind="value: jobLabel" type="text" class="form-control" name="label" id="label" required>
+            <div class="help-block with-errors"></div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="label">Cron Expression</label>
+            <input data-bind="value: cronExpression" type="text" class="form-control" name="cronExpression" id="cronExpression" required>
+            <div class="help-block with-errors"></div>
+        </div>
+
+        <hr class="double">
+
+        <h3>SQL Query</h3>
+
+        <!-- ko foreach: {data: queries, afterRender: refreshValidation} -->
+
+            <div class="form-group">
+                <label data-bind="text: ko.i18n('query')" for="query"></label>
+                <textarea data-bind="value: query" minlength="1" class="form-control" id="query" name="query" required></textarea>
+                <div class="help-block with-errors"></div>
+            </div>
+            <div class="form-group">
+                <label data-bind="text: ko.i18n('datasource')" for="datasourceId"></label>
+                <select id="datasourceId" name="datasourceId" class="form-control" data-bind="options: $parent.datasources,
+                                                                    optionsText: 'label',
+                                                                    value: datasource">
+                </select>
+                <div class="help-block with-errors"></div>
+            </div>
+            <div class="form-group">
+                <label data-bind="text: ko.i18n('label')" for="queryLabel"></label>
+                <input data-bind="value: queryLabel" minlength="1" type="text"  class="form-control" id="queryLabel" name="label" required>
+                <div class="help-block with-errors"></div>
+            </div>
+
+            <div>
+                <a data-bind="click: $parent.removeQuery, visible: $parent.queries().length > 1">Remove Query</a>
+            </div>
+
+            <hr class="dotted">
+
+        <!-- /ko -->
+
+        <div>
+            <a data-bind="click: addSqlQuery">Add Another SQL Query</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="create">Save</button>
+    </form>
+</div>

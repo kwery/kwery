@@ -1,5 +1,6 @@
 package com.kwery.tests.util;
 
+import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecutionModel.Status;
@@ -158,6 +159,32 @@ public class TestUtil {
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
         SqlQueryExecutionModel model = podamFactory.manufacturePojo(SqlQueryExecutionModel.class);
         return model;
+    }
+
+    public static JobDto jobDtoWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
+        jobDto.setId(0);
+        return jobDto;
+    }
+
+    public static JobDto jobDto() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        return podamFactory.manufacturePojo(JobDto.class);
+    }
+
+    public static SqlQueryDto sqlQueryDtoWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        SqlQueryDto sqlQueryDto = podamFactory.manufacturePojo(SqlQueryDto.class);
+        sqlQueryDto.setId(0);
+        return sqlQueryDto;
+    }
+
+    public static SqlQueryDto sqlQueryDto() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        return podamFactory.manufacturePojo(SqlQueryDto.class);
     }
 
     public static EmailConfiguration emailConfigurationDbSetUp() {

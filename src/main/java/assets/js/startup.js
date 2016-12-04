@@ -53,6 +53,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("email-configuration", {
         require: "components/email/configuration"
     });
+    ko.components.register("report-add", {
+        require: "components/report/add"
+    });
 
     ko.applyBindings({ route: router.currentRoute });
 
