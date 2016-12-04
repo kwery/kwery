@@ -64,8 +64,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     sqlQueries: queries
                 };
 
-                debugger;
-
                 $.ajax({
                     url: "/api/job/save",
                     data: ko.toJSON(job),
@@ -73,7 +71,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     contentType: "application/json",
                     success: function(result) {
                         self.status(result.status);
-                        self.messages(["Job saved successfully"]);
+                        self.messages([ko.i18n('report.save.success.message')]);
                     }
                 });
             }
