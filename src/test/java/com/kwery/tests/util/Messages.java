@@ -79,4 +79,6 @@ public class Messages {
     public static final String EMAIL_TEST_FAILURE_M = "Oops, got an error while trying to send mail, please check logs";
     public static final String EMAIL_TEST_SUBJECT_M = "Test mail from Kwery";
     public static final String EMAIL_TEST_BODY_M = "Congratulations, Kwery has been successfully configured to send mails.";
+
+    public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report saved successfully";
 }

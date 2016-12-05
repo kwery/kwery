@@ -8,7 +8,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.datasources = ko.observableArray([]);
 
         self.title = ko.observable();
-        self.jobLabel = ko.observable();
+        self.reportLabel = ko.observable();
         self.cronExpression = ko.observable();
 
         var Datasource = function(id, label) {
@@ -43,7 +43,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
             self.queries.remove(query);
         };
 
-        $("#jobForm").validator({disable: false}).on("submit", function (e) {
+        $("#reportForm").validator({disable: false}).on("submit", function (e) {
             if (e.isDefaultPrevented()) {
                 // handle the invalid form...
             } else {
@@ -57,16 +57,16 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     });
                 });
 
-                var job = {
+                var report = {
                     cronExpression: self.cronExpression(),
-                    label: self.jobLabel(),
+                    label: self.reportLabel(),
                     title: self.title(),
                     sqlQueries: queries
                 };
 
                 $.ajax({
                     url: "/api/job/save",
-                    data: ko.toJSON(job),
+                    data: ko.toJSON(report),
                     type: "POST",
                     contentType: "application/json",
                     success: function(result) {
@@ -80,7 +80,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         });
 
         self.refreshValidation = function() {
-            $("#jobForm").validator("update");
+            $("#reportForm").validator("update");
         };
 
         return self;

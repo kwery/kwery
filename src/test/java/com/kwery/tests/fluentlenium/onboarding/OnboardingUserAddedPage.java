@@ -8,10 +8,9 @@ import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.concurrent.TimeUnit;
-
 import static com.kwery.tests.util.Messages.ONBOARDING_ROOT_USER_CREATED_M;
 import static java.text.MessageFormat.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Unauthenticated
 public class OnboardingUserAddedPage extends FluentPage implements RepoDashPage {
@@ -26,7 +25,7 @@ public class OnboardingUserAddedPage extends FluentPage implements RepoDashPage 
 
     @Override
     public boolean isRendered() {
-        await().atMost(30, TimeUnit.SECONDS).until(jumbotron).isDisplayed();
+        await().atMost(30, SECONDS).until(jumbotron).isDisplayed();
         return true;
     }
 
