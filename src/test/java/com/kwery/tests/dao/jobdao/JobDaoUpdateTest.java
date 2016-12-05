@@ -35,7 +35,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
     @Before
     public void setUpJobDaoUpdateTest() {
-        jobModel = jobModel();
+        jobModel = jobModelWithoutDependents();
         jobModel.setSqlQueries(new HashSet<>());
 
         datasource = datasource();
@@ -99,7 +99,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
-        JobModel modifiedJobModel = jobModelWithoutId();
+        JobModel modifiedJobModel = jobModelWithoutIdWithoutDependents();
         modifiedJobModel.setSqlQueries(new HashSet<>());
         modifiedJobModel.getSqlQueries().addAll(jobModel.getSqlQueries());
 

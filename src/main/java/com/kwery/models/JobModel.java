@@ -17,6 +17,11 @@ public class JobModel {
     public static final String SQL_QUERY_ID_FK_COLUMN = "sql_query_id_fk";
     public static final String JOB_ID_FK_COLUMN = "job_id_fk";
 
+    public static final String JOB_DEPENDENT_TABLE_ID_COLUMN = "id";
+    public static final String JOB_DEPENDENT_TABLE = "job_dependent";
+    public static final String JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
+    public static final String JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN = "dependent_job_id_fk";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = ID_COLUMN)
@@ -38,6 +43,14 @@ public class JobModel {
             inverseJoinColumns = @JoinColumn(name = SQL_QUERY_ID_FK_COLUMN, referencedColumnName = SqlQueryModel.ID_COLUMN)
     )
     public Set<SqlQueryModel> sqlQueries;
+
+    @ManyToMany(fetch = FetchType.EAGER,  cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinTable(
+            name = JOB_DEPENDENT_TABLE,
+            joinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
+    )
+    public Set<JobModel> dependentJobs;
 
     public Integer getId() {
         return id;
@@ -71,6 +84,14 @@ public class JobModel {
         this.sqlQueries = sqlQueries;
     }
 
+    public Set<JobModel> getDependentJobs() {
+        return dependentJobs;
+    }
+
+    public void setDependentJobs(Set<JobModel> dependentJobs) {
+        this.dependentJobs = dependentJobs;
+    }
+
     @Override
     public String toString() {
         return "JobModel{" +
@@ -78,6 +99,7 @@ public class JobModel {
                 ", cronExpression='" + cronExpression + '\'' +
                 ", label='" + label + '\'' +
                 ", sqlQueries=" + sqlQueries +
+                ", dependentJobs=" + dependentJobs +
                 '}';
     }
 }

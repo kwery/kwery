@@ -9,6 +9,8 @@ import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
+import java.util.HashSet;
+
 import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.SmtpConfiguration.*;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
@@ -115,13 +117,6 @@ public class TestUtil {
         return emailConfiguration;
     }
 
-    public static JobModel jobModelWithoutId() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        JobModel jobModel = podamFactory.manufacturePojo(JobModel.class);
-        jobModel.setId(null);
-        return jobModel;
-    }
-
     public static Datasource datasourceWithoutId() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         Datasource datasource = podamFactory.manufacturePojo(Datasource.class);
@@ -142,10 +137,20 @@ public class TestUtil {
         return podamFactory.manufacturePojo(SqlQueryModel.class);
     }
 
-    public static JobModel jobModel() {
+    public static JobModel jobModelWithoutDependents() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        return podamFactory.manufacturePojo(JobModel.class);
+        JobModel jobModel = podamFactory.manufacturePojo(JobModel.class);
+        jobModel.setDependentJobs(new HashSet<>());
+        return jobModel;
+    }
+
+    public static JobModel jobModelWithoutIdWithoutDependents() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        JobModel jobModel = podamFactory.manufacturePojo(JobModel.class);
+        jobModel.setId(null);
+        jobModel.setDependentJobs(new HashSet<>());
+        return jobModel;
     }
 
     public static SqlQueryExecutionModel sqlQueryExecutionModelWithoutId() {

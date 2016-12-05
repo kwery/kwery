@@ -35,7 +35,7 @@ public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
         sqlQuery = sqlQueryModel();
         sqlQuery.setDatasource(datasource);
 
-        jobModel = jobModel();
+        jobModel = jobModelWithoutDependents();
         jobExecutionModel = jobExecutionModel();
         jobExecutionModel.setJobModel(jobModel);
 

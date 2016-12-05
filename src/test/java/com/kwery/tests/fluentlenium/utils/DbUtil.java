@@ -9,10 +9,7 @@ import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.SortedTable;
+import org.dbunit.dataset.*;
 import org.dbunit.dataset.builder.DataSetBuilder;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
@@ -20,6 +17,7 @@ import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static com.kwery.models.Datasource.*;
@@ -65,7 +63,32 @@ public class DbUtil {
                 expectedTable = DefaultColumnFilter.excludedColumnsTable(expectedTable, columnsToIgnore);
             }
 
-            assertEquals(new SortedTable(expectedTable), new SortedTable(actualTable));
+            boolean sortById = false;
+            for (Column column : expectedDataSet.getTableMetaData(tableName).getColumns()) {
+                if ("id".equals(column.getColumnName())) {
+                    sortById = true;
+                    break;
+                }
+            }
+
+            if (sortById) {
+                SortedTable expectedTable1 = new SortedTable(expectedTable, new String[]{"id"});
+                expectedTable1.setUseComparable(true);
+
+                SortedTable actualTable1 = new SortedTable(actualTable, new String[]{"id"});
+                actualTable1.setUseComparable(true);
+
+                assertEquals(expectedTable1, actualTable1);
+            } else {
+                SortedTable expectedTable1 = new SortedTable(expectedTable);
+                expectedTable1.setUseComparable(true);
+
+                SortedTable actualTable1 = new SortedTable(actualTable);
+                actualTable1.setUseComparable(true);
+
+                assertEquals(expectedTable1, actualTable1);
+            }
+
         } finally {
             if (connection != null) {
                 connection.close();
@@ -81,6 +104,33 @@ public class DbUtil {
                 .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
                 .with(JobModel.ID_COLUMN, m.getId())
                 .add();
+
+        return builder.build();
+    }
+
+    public static IDataSet jobTable(List<JobModel> ms) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+
+        for (JobModel m : ms) {
+            builder.newRow(JobModel.JOB_TABLE)
+                    .with(JobModel.LABEL_COLUMN, m.getLabel())
+                    .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
+                    .with(JobModel.ID_COLUMN, m.getId())
+                    .add();
+        }
+
+        return builder.build();
+    }
+
+    public static IDataSet jobDependentTable(JobModel jobModel) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+
+        for (JobModel m : jobModel.getDependentJobs()) {
+            builder.newRow(JobModel.JOB_DEPENDENT_TABLE)
+                    .with(JobModel.JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
+                    .with(JobModel.JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, m.getId())
+                    .add();
+        }
 
         return builder.build();
     }

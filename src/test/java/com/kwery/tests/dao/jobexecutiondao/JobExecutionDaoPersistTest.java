@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobExecutionModelWithoutId;
-import static com.kwery.tests.util.TestUtil.jobModel;
+import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 
 public class JobExecutionDaoPersistTest extends RepoDashDaoTestBase {
@@ -26,7 +26,7 @@ public class JobExecutionDaoPersistTest extends RepoDashDaoTestBase {
 
     @Before
     public void setUpQueryRunExecutionDaoTest() {
-        jobModel = jobModel();
+        jobModel = jobModelWithoutDependents();
 
         new DbSetup(
                 new DataSourceDestination(getDatasource()),

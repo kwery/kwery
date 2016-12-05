@@ -28,8 +28,8 @@ public class JobExecutionDaoDeleteByJobIdTest extends RepoDashDaoTestBase {
 
     @Before
     public void setUpSqlQueryExecutionDaoDeleteBySqlQueryIdTest() {
-        jobModel0 = TestUtil.jobModel();
-        jobModel1 = TestUtil.jobModel();
+        jobModel0 = TestUtil.jobModelWithoutDependents();
+        jobModel1 = TestUtil.jobModelWithoutDependents();
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 sequenceOf(
