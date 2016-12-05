@@ -27,14 +27,21 @@ public class KwerySchedulerListener implements SchedulerListener {
     protected final SqlQueryDao sqlQueryDao;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
     protected final KweryExecutorListener kweryExecutorListener;
+    protected final KweryScheduler kweryScheduler;
+    protected final JobTaskFactory jobTaskFactory;
 
     @Inject
-    public KwerySchedulerListener(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao, KweryExecutorListener kweryExecutorListener) {
+    public KwerySchedulerListener(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
+                                  SqlQueryExecutionDao sqlQueryExecutionDao, KweryExecutorListener kweryExecutorListener, KweryScheduler kweryScheduler,
+                                  JobTaskFactory jobTaskFactory
+    ) {
         this.jobDao = jobDao;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
         this.kweryExecutorListener = kweryExecutorListener;
+        this.kweryScheduler = kweryScheduler;
+        this.jobTaskFactory = jobTaskFactory;
     }
 
     @Override
@@ -72,9 +79,28 @@ public class KwerySchedulerListener implements SchedulerListener {
             JobTask jobTask = (JobTask) task;
             JobModel jobModel = jobDao.getJobById(jobTask.getJobId());
             logger.info("Job with id {} and label {} execution completed", jobModel.getId(), jobModel.getLabel());
+
+            if (!jobModel.getDependentJobs().isEmpty()) {
+                JobExecutionModel jobExecutionModel = jobExecutionDao.getByExecutionId(executor.getGuid());
+
+                if (hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
+                    for (JobModel dependentJob : jobModel.getDependentJobs()) {
+                        kweryScheduler.launch(jobTaskFactory.create(dependentJob.getId()));
+                    }
+                }
+            }
+
         } else {
             throw new AssertionError("Unknown task type being executed");
         }
+    }
+
+    private boolean hasSqlQueriesExecutedSuccessfully(JobExecutionModel jobExecutionModel) {
+        boolean success = true;
+        for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModel.getSqlQueryExecutionModels()) {
+            success = success && (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.SUCCESS);
+        }
+        return success;
     }
 
     @Override

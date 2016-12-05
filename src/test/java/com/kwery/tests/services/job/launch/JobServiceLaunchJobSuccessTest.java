@@ -9,8 +9,6 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.awaitility.Awaitility.waitAtMost;
 
 public class JobServiceLaunchJobSuccessTest extends JobServiceJobSetUpAbstractTest {
-    protected String query = "select User from mysql.user where User = 'root'";
-
     @Test
     public void test() throws InterruptedException {
         jobService.launch(jobModel.getId());

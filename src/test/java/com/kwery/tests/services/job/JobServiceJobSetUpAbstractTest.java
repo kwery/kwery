@@ -36,6 +36,8 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     protected JobService jobService;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
+    protected Datasource datasource;
+
     protected int sqlQueryId0 = 1;
     protected int sqlQueryId1 = 2;
 
@@ -47,7 +49,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         jobModel.setLabel("test");
         jobModel.setSqlQueries(new HashSet<>());
 
-        Datasource datasource = new Datasource();
+        datasource = new Datasource();
         datasource.setId(1);
         datasource.setLabel("mysql");
         datasource.setPassword("root");
@@ -115,7 +117,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
     }
 
-    protected void assertJobExecutionModel(JobExecutionModel.Status status) {
+    protected void assertJobExecutionModel(JobExecutionModel.Status status, int jobId) {
         List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(status);
         assertThat(jobExecutionModels, hasSize(1));
         JobExecutionModel jobExecution = jobExecutionModels.get(0);
@@ -123,7 +125,11 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         assertThat(jobExecution.getExecutionId(), not(nullValue()));
         assertThat(jobExecution.getExecutionStart(), lessThan(jobExecution.getExecutionEnd()));
         assertThat(jobExecution.getStatus(), is(status));
-        assertThat(jobExecution.getJobModel().getId(), is(jobModel.getId()));
+        assertThat(jobExecution.getJobModel().getId(), is(jobId));
+    }
+
+    protected void assertJobExecutionModel(JobExecutionModel.Status status) {
+        assertJobExecutionModel(status, jobModel.getId());
     }
 
     protected void assertJobExecutionModels(JobExecutionModel.Status status, int size) {
