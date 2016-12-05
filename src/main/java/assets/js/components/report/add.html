@@ -12,17 +12,17 @@
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.title')" class="control-label" for="reportTitle"></label>
                     <input data-bind="value: title" type="text" class="form-control f-report-title" name="reportTitle" id="reportTitle" required>
-                    <div class="help-block with-errors"></div>
+                    <div class="help-block with-errors reportTitle-form-validation-message-f"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.label')" class="control-label" for="label"></label>
                     <input data-bind="value: reportLabel" type="text" class="form-control f-report-label" name="label" id="label" required>
-                    <div class="help-block with-errors"></div>
+                    <div class="help-block with-errors label-form-validation-message-f"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.cron.expression')" class="control-label" for="label"></label>
                     <input data-bind="value: cronExpression" type="text" class="form-control f-report-cron-expression" name="cronExpression" id="cronExpression" required>
-                    <div class="help-block with-errors"></div>
+                    <div class="help-block with-errors cronExpression-form-validation-message-f"></div>
                 </div>
 
                 <!-- ko foreach: {data: queries, afterRender: refreshValidation} -->
@@ -35,20 +35,20 @@
                             <div class="form-group">
                                 <label data-bind="text: ko.i18n('report.save.save.sql.query.query')" for="query"></label>
                                 <textarea data-bind="value: query" minlength="1" class="form-control f-query" id="query" name="query" required></textarea>
-                                <div class="help-block with-errors"></div>
+                                <div class="help-block with-errors query-form-validation-message-f"></div>
                             </div>
                             <div class="form-group">
                                 <label data-bind="text: ko.i18n('report.save.save.sql.query.datasource')" for="datasourceId"></label>
                                 <select id="datasourceId" name="datasourceId" class="form-control f-datasource" data-bind="options: $parent.datasources,
                                                                         optionsText: 'label',
-                                                                        value: datasource">
+                                                                        value: datasource" required>
                                 </select>
-                                <div class="help-block with-errors"></div>
+                                <div class="help-block with-errors datasourceId-form-validation-message-f"></div>
                             </div>
                             <div class="form-group">
                                 <label data-bind="text: ko.i18n('report.save.save.sql.query.label')" for="queryLabel"></label>
-                                <input data-bind="value: queryLabel" minlength="1" type="text"  class="form-control f-sql-query-label" id="queryLabel" name="label" required>
-                                <div class="help-block with-errors"></div>
+                                <input data-bind="value: queryLabel" minlength="1" type="text"  class="form-control f-sql-query-label" id="queryLabel" name="queryLabel" required>
+                                <div class="help-block with-errors queryLabel-form-validation-message-f"></div>
                             </div>
 
                             <div>

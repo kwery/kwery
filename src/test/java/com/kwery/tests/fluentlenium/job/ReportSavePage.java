@@ -10,17 +10,21 @@ import java.util.Map;
 
 import static com.kwery.tests.util.Messages.REPORT_SAVE_SUCCESS_MESSAGE_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
+import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 
 public class ReportSavePage extends FluentPage implements RepoDashPage {
+    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
+    public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
+
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until("#saveReport").isDisplayed();
         return true;
     }
 
-    public void submitSaveReportForm(JobDto jobDto, Map<Integer, String> datasourceIdToLabelMap) {
+    public void fillAndSubmitReportSaveForm(JobDto jobDto, Map<Integer, String> datasourceIdToLabelMap) {
         fill(".f-report-title").with(jobDto.getTitle());
         fill(".f-report-label").with(jobDto.getLabel());
         fill(".f-report-cron-expression").with(jobDto.getCronExpression());
@@ -36,6 +40,10 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
             fillSelect(".f-datasource").withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
         }
 
+        submitReportSaveForm();
+    }
+
+    public void submitReportSaveForm() {
         click(".f-report-submit");
     }
 
@@ -72,5 +80,25 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
     @Override
     public String getUrl() {
         return "/#report/add";
+    }
+
+    public String validationMessage(ReportFormField field) {
+        return $(className(format("%s-form-validation-message-f", field.name()))).getText();
+    }
+
+    public String validationMessage(SqlQueryFormField field, int index) {
+        return $(format(".f-sql-query%d .%s-form-validation-message-f", index, field.name())).getText();
+    }
+
+    public void waitForReportFormValidationMessage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".reportTitle-form-validation-message-f").hasText(INPUT_VALIDATION_ERROR_MESSAGE);
+    }
+
+    public enum ReportFormField {
+        reportTitle, label, cronExpression
+    }
+
+    public enum SqlQueryFormField {
+        query, datasourceId, queryLabel
     }
 }
