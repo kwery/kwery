@@ -4,6 +4,7 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.domain.FluentWebElement;
 
 import java.util.Map;
 
@@ -26,8 +27,7 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
 
         for (int i = 0; i < jobDto.getSqlQueries().size(); ++i) {
             if (i >= 1) {
-                $(className("f-add-sql-query")).click();
-                await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-sql-query" + i).isDisplayed();
+                clickOnAddSqlQuery(i);
             }
 
             SqlQueryDto dto = jobDto.getSqlQueries().get(i);
@@ -39,8 +39,34 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         click(".f-report-submit");
     }
 
+    public void clickOnAddSqlQuery(int i) {
+        $(className("f-add-sql-query")).click();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-sql-query" + i).isDisplayed();
+    }
+
+    public void clickOnRemoveSqlQuery(int i) {
+        $(".f-sql-query" + i + " .f-remove-sql-query").click();
+        //TODO - find why this is not working
+        //await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-sql-query" + i).isNotDisplayed();
+        try {
+            SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+        }
+    }
+
     public void waitForReportSaveSuccessMessage() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(REPORT_SAVE_SUCCESS_MESSAGE_M);
+    }
+
+    public int removeSqlQueryActionDisplayedCount() {
+        int count = 0;
+        for (FluentWebElement fluentWebElement : $(className("f-remove-sql-query"))) {
+            if (fluentWebElement.isDisplayed()) {
+                count = count + 1;
+            }
+        }
+
+        return count;
     }
 
     @Override
