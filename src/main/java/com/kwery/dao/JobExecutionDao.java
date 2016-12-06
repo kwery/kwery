@@ -6,7 +6,6 @@ import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
-import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -38,13 +37,13 @@ public class JobExecutionDao {
         return e;
     }
 
-    @UnitOfWork
+    @Transactional
     public JobExecutionModel getById(Integer id) {
         return entityManagerProvider.get().find(JobExecutionModel.class, id);
     }
 
     @SuppressWarnings("unchecked")
-    @UnitOfWork
+    @Transactional
     public JobExecutionModel getByExecutionId(String executionId) {
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
         filter.setExecutionId(executionId);
@@ -57,7 +56,7 @@ public class JobExecutionDao {
         return executions.get(0);
     }
 
-    @UnitOfWork
+    @Transactional
     public List<JobExecutionModel> filter(JobExecutionSearchFilter filter) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder c = m.getCriteriaBuilder();
@@ -104,7 +103,7 @@ public class JobExecutionDao {
         return tq.getResultList();
     }
 
-    @UnitOfWork
+    @Transactional
     public long count(JobExecutionSearchFilter filter) {
         EntityManager m = entityManagerProvider.get();
 
@@ -159,7 +158,7 @@ public class JobExecutionDao {
         ).executeUpdate();
     }
 
-    @UnitOfWork
+    @Transactional
     public List<JobExecutionModel> lastSuccessfulExecution(List<Integer> jobIds) {
         //TODO - Simplify
         EntityManager m = entityManagerProvider.get();

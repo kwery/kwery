@@ -4,6 +4,7 @@ public class JobExecutionDto {
     private String start;
     protected String end;
     protected String status;
+    protected String executionId;
 
     public String getStart() {
         return start;
@@ -27,5 +28,13 @@ public class JobExecutionDto {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getExecutionId() {
+        return executionId;
+    }
+
+    public void setExecutionId(String executionId) {
+        this.executionId = executionId;
     }
 }

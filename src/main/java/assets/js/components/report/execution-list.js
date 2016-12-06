@@ -8,6 +8,9 @@ define(["knockout", "jquery", "text!components/report/execution-list.html"], fun
             type: "GET",
             contentType: "application/json",
             success: function(result) {
+                ko.utils.arrayForEach(result, function(executionResult){
+                    executionResult.executionResultLink = "/#report/" + params.jobId + "/execution/" + executionResult.executionId;
+                });
                 self.executions(result);
             }
         });

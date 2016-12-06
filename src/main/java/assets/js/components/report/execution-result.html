@@ -1,0 +1,33 @@
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 data-bind="text: title" class="panel-title"></h3>
+        </div>
+        <div class="panel-body">
+            <!-- ko foreach: sqlQueryExecutionResults -->
+            <div class="panel-heading">
+                <h3 data-bind="text: label" class="panel-title"></h3>
+            </div>
+            <div class="panel-body">
+                <table class="table" id="executionResultTable">
+                    <thead>
+                    <tr data-bind="foreach: header" id="resultHeader">
+                        <th data-bind="text: $data"></th>
+                    </tr>
+                    </thead>
+                    <tbody id="resultContent">
+                    <!-- ko foreach: content -->
+                    <tr>
+                        <!-- ko foreach: $data -->
+                        <td data-bind="text: $data"></td>
+                        <!-- /ko -->
+                    </tr>
+                    <!-- /ko -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- /ko -->
+
+        </div>
+    </div>
+</div>

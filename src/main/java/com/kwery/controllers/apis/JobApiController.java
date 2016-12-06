@@ -1,29 +1,30 @@
 package com.kwery.controllers.apis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.JobDao;
 import com.kwery.dao.JobExecutionDao;
-import com.kwery.dtos.JobDto;
-import com.kwery.dtos.JobExecutionDto;
-import com.kwery.dtos.SqlQueryDto;
+import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.views.ActionResult;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.Results;
 import ninja.params.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.kwery.views.ActionResult.Status.success;
@@ -64,7 +65,7 @@ public class JobApiController {
         if (logger.isTraceEnabled()) logger.trace("<");
         List<JobModel> jobs = jobDao.getAllJobs();
         if (logger.isTraceEnabled()) logger.trace(">");
-        return Results.json().render(jobs);
+        return json().render(jobs);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -81,7 +82,32 @@ public class JobApiController {
         }
 
         if (logger.isTraceEnabled()) logger.trace(">");
-        return Results.json().render(dtos);
+        return json().render(dtos);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result jobExecutionResult(@PathParam("jobExecutionId") String jobExecutionId) throws IOException {
+        if (logger.isTraceEnabled()) logger.trace("<");
+
+        JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
+        filter.setExecutionId(jobExecutionId);
+
+        List<JobExecutionModel> jobExecutionModels = jobExecutionDao.filter(filter);
+
+        List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
+        if (!jobExecutionModels.isEmpty()) {
+            for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModels.get(0).getSqlQueryExecutionModels()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                List<List<?>> jsonResult = objectMapper.readValue(
+                        sqlQueryExecutionModel.getResult(),
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
+                );
+                sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getLabel(), jsonResult));
+            }
+        }
+
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(new JobExecutionResultDto(jobExecutionModels.get(0).getJobModel().getLabel(), sqlQueryExecutionResultDtos));
     }
 
     @VisibleForTesting
@@ -123,6 +149,7 @@ public class JobApiController {
         jobExecutionDto.setStart(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(model.getExecutionStart()));
         jobExecutionDto.setEnd(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(model.getExecutionEnd()));
         jobExecutionDto.setStatus(model.getStatus().name());
+        jobExecutionDto.setExecutionId(model.getExecutionId());
         return jobExecutionDto;
     }
 }

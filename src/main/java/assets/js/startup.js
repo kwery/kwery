@@ -62,6 +62,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("report-execution-list", {
         require: "components/report/execution-list"
     });
+    ko.components.register("report-execution-result", {
+        require: "components/report/execution-result"
+    });
 
     ko.applyBindings({ route: router.currentRoute });
 
