@@ -42,6 +42,7 @@ public class Routes implements ApplicationRoutes {
 
     public static final String JOB_SAVE_API = "/api/job/save";
     public static final String JOB_LIST_API = "/api/job/list";
+    public static final String JOB_EXECUTION_API = "/api/job/{jobId}/execution";
 
     @Override
     public void init(Router router) {
@@ -85,6 +86,7 @@ public class Routes implements ApplicationRoutes {
 
         router.POST().route(JOB_SAVE_API).with(JobApiController.class, "saveJob");
         router.GET().route(JOB_LIST_API).with(JobApiController.class, "listAllJobs");
+        router.GET().route(JOB_EXECUTION_API).with(JobApiController.class, "listJobExecutions");
         //Api - End
 
         //Static asset

@@ -42,7 +42,7 @@ public class JobApiControllerSqlQueryDtoToSqlQueryModelTest extends RepoDashDaoT
 
         datasourceDao = getInstance(DatasourceDao.class);
 
-        jobApiController = new JobApiController(datasourceDao, getInstance(JobDao.class), null);
+        jobApiController = new JobApiController(datasourceDao, getInstance(JobDao.class), null, null);
     }
 
     @Test
