@@ -27,20 +27,17 @@ public class SchedulerListenerImpl implements SchedulerListener {
     protected final SqlQueryDao sqlQueryDao;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
     protected final KweryExecutorListener kweryExecutorListener;
-    protected final KweryScheduler kweryScheduler;
     protected final JobTaskFactory jobTaskFactory;
 
     @Inject
     public SchedulerListenerImpl(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
-                                 SqlQueryExecutionDao sqlQueryExecutionDao, KweryExecutorListener kweryExecutorListener, KweryScheduler kweryScheduler,
-                                 JobTaskFactory jobTaskFactory
+                                 SqlQueryExecutionDao sqlQueryExecutionDao, KweryExecutorListener kweryExecutorListener, JobTaskFactory jobTaskFactory
     ) {
         this.jobDao = jobDao;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
         this.kweryExecutorListener = kweryExecutorListener;
-        this.kweryScheduler = kweryScheduler;
         this.jobTaskFactory = jobTaskFactory;
     }
 
