@@ -25,9 +25,11 @@ import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
+import com.kwery.services.job.TaskExecutorListenerImpl;
 import com.kwery.services.scheduler.*;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
+import it.sauronsoftware.cron4j.TaskExecutorListener;
 
 @Singleton
 public class Module extends AbstractModule {
@@ -37,6 +39,7 @@ public class Module extends AbstractModule {
         bind(SchedulerService.class);
         bind(OneOffSqlQueryTaskSchedulerReaper.class);
         bind(SchedulerListener.class).to(SchedulerListenerImpl.class);
+        bind(TaskExecutorListener.class).to(TaskExecutorListenerImpl.class);
 
         install(new FactoryModuleBuilder().build(SqlQueryTaskFactory.class));
         install(new FactoryModuleBuilder().build(QueryTaskSchedulerFactory.class));

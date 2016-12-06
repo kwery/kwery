@@ -13,6 +13,7 @@ import com.kwery.models.SqlQueryModel;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutor;
+import it.sauronsoftware.cron4j.TaskExecutorListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,24 +27,24 @@ public class SchedulerListenerImpl implements SchedulerListener {
     protected final JobExecutionDao jobExecutionDao;
     protected final SqlQueryDao sqlQueryDao;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
-    protected final KweryExecutorListener kweryExecutorListener;
+    protected final TaskExecutorListener taskExecutorListener;
     protected final JobTaskFactory jobTaskFactory;
 
     @Inject
     public SchedulerListenerImpl(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
-                                 SqlQueryExecutionDao sqlQueryExecutionDao, KweryExecutorListener kweryExecutorListener, JobTaskFactory jobTaskFactory
+                                 SqlQueryExecutionDao sqlQueryExecutionDao, TaskExecutorListener taskExecutorListener, JobTaskFactory jobTaskFactory
     ) {
         this.jobDao = jobDao;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
-        this.kweryExecutorListener = kweryExecutorListener;
+        this.taskExecutorListener = taskExecutorListener;
         this.jobTaskFactory = jobTaskFactory;
     }
 
     @Override
     public void taskLaunching(TaskExecutor executor) {
-        executor.addTaskExecutorListener(kweryExecutorListener);
+        executor.addTaskExecutorListener(taskExecutorListener);
 
         Task  task = executor.getTask();
         if (task instanceof SqlQueryTask) {

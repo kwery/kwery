@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import static com.kwery.models.JobExecutionModel.Status.*;
 
 @Singleton
-public class KweryExecutorListener implements TaskExecutorListener {
+public class TaskExecutorListenerImpl implements TaskExecutorListener {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     protected final JobDao jobDao;
@@ -28,8 +28,8 @@ public class KweryExecutorListener implements TaskExecutorListener {
     protected final JobService jobService;
 
     @Inject
-    public KweryExecutorListener(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
-                                 SqlQueryExecutionDao sqlQueryExecutionDao, JobService jobService) {
+    public TaskExecutorListenerImpl(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
+                                    SqlQueryExecutionDao sqlQueryExecutionDao, JobService jobService) {
         this.jobDao = jobDao;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
