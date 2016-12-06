@@ -38,6 +38,7 @@
                 {url: "user/update/{userId}", auth: true, component: "user-update"},
                 {url: "email/configuration", auth: true, component: "email-configuration"},
                 {url: "report/add", auth: true, component: "report-add"},
+                {url: "report/list", auth: true, component: "report-list"}
             ];
 
             var componentMapping = {
