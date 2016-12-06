@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.kwery.models.Datasource.*;
+import static com.kwery.models.JobModel.JOB_TABLE;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.dbunit.Assertion.assertEquals;
 
@@ -99,7 +100,7 @@ public class DbUtil {
     public static IDataSet jobTable(JobModel m) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
 
-        builder.newRow(JobModel.JOB_TABLE)
+        builder.newRow(JOB_TABLE)
                 .with(JobModel.LABEL_COLUMN, m.getLabel())
                 .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
                 .with(JobModel.ID_COLUMN, m.getId())
@@ -112,7 +113,7 @@ public class DbUtil {
         DataSetBuilder builder = new DataSetBuilder();
 
         for (JobModel m : ms) {
-            builder.newRow(JobModel.JOB_TABLE)
+            builder.newRow(JOB_TABLE)
                     .with(JobModel.LABEL_COLUMN, m.getLabel())
                     .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
                     .with(JobModel.ID_COLUMN, m.getId())
@@ -191,7 +192,7 @@ public class DbUtil {
     public static void jobDbSetUp(JobModel jobModel) {
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.insertInto(JobModel.JOB_TABLE)
+                Operations.insertInto(JOB_TABLE)
                         .row()
                         .column(JobModel.ID_COLUMN, jobModel.getId())
                         .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
@@ -213,6 +214,25 @@ public class DbUtil {
                 .end()
                 .build()
         ).launch();
+    }
+
+    public static void jobModelDbSetUp(JobModel jobModel) {
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                Operations.insertInto(JOB_TABLE)
+                        .row()
+                        .column(JobModel.ID_COLUMN, jobModel.getId())
+                        .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
+                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
+                        .end()
+                        .build()
+        ).launch();
+    }
+
+    public static void jobModelDbSetUp(List<JobModel> jobModels) {
+        for (JobModel jobModel : jobModels) {
+            jobModelDbSetUp(jobModel);
+        }
     }
 
     public static IDataSet jobExecutionTable(JobExecutionModel jobExecutionModel) throws DataSetException {

@@ -7,6 +7,11 @@ import com.kwery.models.JobModel;
 import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.List;
 
 public class JobDao {
     protected Provider<EntityManager> entityManagerProvider;
@@ -32,5 +37,15 @@ public class JobDao {
     public JobModel getJobById(int jobId) {
         EntityManager e = entityManagerProvider.get();
         return e.find(JobModel.class, jobId);
+    }
+
+    public List<JobModel> getAllJobs() {
+        EntityManager e = entityManagerProvider.get();
+        CriteriaBuilder cb = e.getCriteriaBuilder();
+        CriteriaQuery<JobModel> cq = cb.createQuery(JobModel.class);
+        Root<JobModel> rootEntry = cq.from(JobModel.class);
+        CriteriaQuery<JobModel> all = cq.select(rootEntry);
+        TypedQuery<JobModel> allQuery = e.createQuery(all);
+        return allQuery.getResultList();
     }
 }
