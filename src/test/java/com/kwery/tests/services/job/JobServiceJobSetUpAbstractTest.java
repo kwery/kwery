@@ -6,6 +6,7 @@ import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.*;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
+import com.kwery.services.job.JobServiceImpl;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -113,12 +114,12 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         }
 
         jobExecutionDao = getInstance(JobExecutionDao.class);
-        jobService = getInstance(JobService.class);
+        jobService = getInstance(JobServiceImpl.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
     }
 
     protected void assertJobExecutionModel(JobExecutionModel.Status status, int jobId) {
-        List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(status);
+        List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(jobId, status);
         assertThat(jobExecutionModels, hasSize(1));
         JobExecutionModel jobExecution = jobExecutionModels.get(0);
         assertThat(jobExecution.getId(), greaterThan(0));
@@ -133,7 +134,11 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     }
 
     protected void assertJobExecutionModels(JobExecutionModel.Status status, int size) {
-        List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(status);
+        assertJobExecutionModels(status, size, jobModel.getId());
+    }
+
+    protected void assertJobExecutionModels(JobExecutionModel.Status status, int size, int jobId) {
+        List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(jobId, status);
         assertThat(jobExecutionModels, hasSize(greaterThanOrEqualTo(size)));
 
         for (JobExecutionModel jobExecution : jobExecutionModels) {
@@ -141,11 +146,10 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
             assertThat(jobExecution.getExecutionId(), not(nullValue()));
             assertThat(jobExecution.getExecutionStart(), lessThan(jobExecution.getExecutionEnd()));
             assertThat(jobExecution.getStatus(), is(status));
-            assertThat(jobExecution.getJobModel().getId(), is(jobModel.getId()));
+            assertThat(jobExecution.getJobModel().getId(), is(jobId));
         }
 
     }
-
 
     protected void assertSqlQueryExecutionModel(int sqlQueryId, SqlQueryExecutionModel.Status status) {
         List<SqlQueryExecutionModel> sqlQueryExecutionModels = getSqlQueryExecutionModels(sqlQueryId, status);
@@ -186,11 +190,16 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
 
     protected List<JobExecutionModel> getJobExecutionModels(JobExecutionModel.Status status) {
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
-        filter.setJobId(jobModel.getId());
         filter.setStatuses(ImmutableList.of(status));
         return jobExecutionDao.filter(filter);
     }
 
+    protected List<JobExecutionModel> getJobExecutionModels(int jobId, JobExecutionModel.Status status) {
+        JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
+        filter.setStatuses(ImmutableList.of(status));
+        filter.setJobId(jobId);
+        return jobExecutionDao.filter(filter);
+    }
     protected List<SqlQueryExecutionModel> getSqlQueryExecutionModels(int sqlQueryId, SqlQueryExecutionModel.Status status) {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(sqlQueryId);

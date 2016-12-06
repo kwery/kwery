@@ -3,6 +3,7 @@ package com.kwery.services.job;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.kwery.dao.JobDao;
+import com.kwery.dao.JobExecutionDao;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import it.sauronsoftware.cron4j.Task;
@@ -18,13 +19,18 @@ public class JobTask extends Task {
     protected final JobDao jobDao;
     protected final int jobId;
     protected final SqlQueryTaskFactory sqlQueryTaskFactory;
+    protected final JobExecutionDao jobExecutionDao;
+    protected final JobService jobService;
 
     @Inject
-    public JobTask(KweryScheduler kweryScheduler, JobDao jobDao, SqlQueryTaskFactory sqlQueryTaskFactory, @Assisted int jobId) {
+    public JobTask(KweryScheduler kweryScheduler, JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryTaskFactory sqlQueryTaskFactory,
+                   JobService jobService, @Assisted int jobId) {
         this.kweryScheduler = kweryScheduler;
         this.jobDao = jobDao;
         this.sqlQueryTaskFactory = sqlQueryTaskFactory;
         this.jobId = jobId;
+        this.jobExecutionDao = jobExecutionDao;
+        this.jobService = jobService;
     }
 
     @Override

@@ -13,7 +13,7 @@ public class JobServiceLaunchJobWithDependentsSuccessTest extends JobServiceJobS
     public void test() {
         jobService.launch(jobModel.getId());
 
-        waitAtMost(1, MINUTES).until(() -> getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() == 2);
+        waitAtMost(2, MINUTES).until(() -> getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() == 2);
 
         assertJobExecutionModel(JobExecutionModel.Status.SUCCESS, dependentJobModel.getId());
 

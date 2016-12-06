@@ -3,10 +3,10 @@ package com.kwery.tests.services.job;
 import com.google.common.collect.ImmutableList;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
+import com.kwery.services.job.JobServiceImpl;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
@@ -14,7 +14,6 @@ import org.junit.Before;
 
 import java.util.HashSet;
 
-import static com.kwery.models.Datasource.*;
 import static com.kwery.models.JobModel.ID_COLUMN;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.models.SqlQueryModel.*;
@@ -48,16 +47,6 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
 
             dependentJobModel.getSqlQueries().add(sqlQueryModel);
         }
-
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                Operations.sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(), datasource.getType(), datasource.getUrl(), datasource.getUsername())
-                                .build()
-                )
-        ).launch();
 
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
@@ -104,7 +93,7 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
         ).launch();
 
         jobExecutionDao = getInstance(JobExecutionDao.class);
-        jobService = getInstance(JobService.class);
+        jobService = getInstance(JobServiceImpl.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
     }
 }
