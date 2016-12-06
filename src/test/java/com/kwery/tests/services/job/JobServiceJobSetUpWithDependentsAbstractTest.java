@@ -6,7 +6,6 @@ import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
-import com.kwery.services.job.JobServiceImpl;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
@@ -93,7 +92,7 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
         ).launch();
 
         jobExecutionDao = getInstance(JobExecutionDao.class);
-        jobService = getInstance(JobServiceImpl.class);
+        jobService = getInstance(JobService.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
     }
 }

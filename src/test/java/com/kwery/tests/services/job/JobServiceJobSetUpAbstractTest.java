@@ -6,7 +6,6 @@ import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.*;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
-import com.kwery.services.job.JobServiceImpl;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -114,7 +113,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         }
 
         jobExecutionDao = getInstance(JobExecutionDao.class);
-        jobService = getInstance(JobServiceImpl.class);
+        jobService = getInstance(JobService.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
     }
 
