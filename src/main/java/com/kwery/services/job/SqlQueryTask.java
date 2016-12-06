@@ -89,9 +89,11 @@ public class SqlQueryTask extends Task {
         } catch (SQLException e) {
             logger.error("Exception while running query {} on datasource {}", sqlQuery.getQuery(), datasource.getLabel(), e);
             throw new RuntimeException(e);
-        } finally {
-            latch.countDown();
         }
+    }
+
+    public void countdown() {
+        this.latch.countDown();
     }
 
     @Override

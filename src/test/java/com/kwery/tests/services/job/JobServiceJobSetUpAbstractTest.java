@@ -36,6 +36,8 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     protected JobService jobService;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
+    protected Datasource datasource;
+
     protected int sqlQueryId0 = 1;
     protected int sqlQueryId1 = 2;
 
@@ -47,7 +49,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         jobModel.setLabel("test");
         jobModel.setSqlQueries(new HashSet<>());
 
-        Datasource datasource = new Datasource();
+        datasource = new Datasource();
         datasource.setId(1);
         datasource.setLabel("mysql");
         datasource.setPassword("root");
@@ -115,19 +117,27 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
     }
 
-    protected void assertJobExecutionModel(JobExecutionModel.Status status) {
-        List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(status);
+    protected void assertJobExecutionModel(JobExecutionModel.Status status, int jobId) {
+        List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(jobId, status);
         assertThat(jobExecutionModels, hasSize(1));
         JobExecutionModel jobExecution = jobExecutionModels.get(0);
         assertThat(jobExecution.getId(), greaterThan(0));
         assertThat(jobExecution.getExecutionId(), not(nullValue()));
         assertThat(jobExecution.getExecutionStart(), lessThan(jobExecution.getExecutionEnd()));
         assertThat(jobExecution.getStatus(), is(status));
-        assertThat(jobExecution.getJobModel().getId(), is(jobModel.getId()));
+        assertThat(jobExecution.getJobModel().getId(), is(jobId));
+    }
+
+    protected void assertJobExecutionModel(JobExecutionModel.Status status) {
+        assertJobExecutionModel(status, jobModel.getId());
     }
 
     protected void assertJobExecutionModels(JobExecutionModel.Status status, int size) {
-        List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(status);
+        assertJobExecutionModels(status, size, jobModel.getId());
+    }
+
+    protected void assertJobExecutionModels(JobExecutionModel.Status status, int size, int jobId) {
+        List<JobExecutionModel> jobExecutionModels = getJobExecutionModels(jobId, status);
         assertThat(jobExecutionModels, hasSize(greaterThanOrEqualTo(size)));
 
         for (JobExecutionModel jobExecution : jobExecutionModels) {
@@ -135,11 +145,10 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
             assertThat(jobExecution.getExecutionId(), not(nullValue()));
             assertThat(jobExecution.getExecutionStart(), lessThan(jobExecution.getExecutionEnd()));
             assertThat(jobExecution.getStatus(), is(status));
-            assertThat(jobExecution.getJobModel().getId(), is(jobModel.getId()));
+            assertThat(jobExecution.getJobModel().getId(), is(jobId));
         }
 
     }
-
 
     protected void assertSqlQueryExecutionModel(int sqlQueryId, SqlQueryExecutionModel.Status status) {
         List<SqlQueryExecutionModel> sqlQueryExecutionModels = getSqlQueryExecutionModels(sqlQueryId, status);
@@ -180,11 +189,16 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
 
     protected List<JobExecutionModel> getJobExecutionModels(JobExecutionModel.Status status) {
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
-        filter.setJobId(jobModel.getId());
         filter.setStatuses(ImmutableList.of(status));
         return jobExecutionDao.filter(filter);
     }
 
+    protected List<JobExecutionModel> getJobExecutionModels(int jobId, JobExecutionModel.Status status) {
+        JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
+        filter.setStatuses(ImmutableList.of(status));
+        filter.setJobId(jobId);
+        return jobExecutionDao.filter(filter);
+    }
     protected List<SqlQueryExecutionModel> getSqlQueryExecutionModels(int sqlQueryId, SqlQueryExecutionModel.Status status) {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(sqlQueryId);
