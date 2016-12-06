@@ -1,5 +1,7 @@
 package com.kwery.tests.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
@@ -240,4 +242,11 @@ public class TestUtil {
         }
     }
 
+    public static String toJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+        }
+        return "";
+    }
 }

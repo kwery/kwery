@@ -13,12 +13,19 @@ import com.kwery.services.job.JobService;
 import com.kwery.views.ActionResult;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.Results;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import static com.kwery.views.ActionResult.Status.success;
 import static java.util.stream.Collectors.toSet;
 import static ninja.Results.json;
 
 public class JobApiController {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     protected final DatasourceDao datasourceDao;
     protected final JobDao jobDao;
     protected final JobService jobService;
@@ -32,9 +39,21 @@ public class JobApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result saveJob(JobDto jobDto) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+
         JobModel jobModel = jobDao.save(jobDtoToJobModel(jobDto));
         jobService.schedule(jobModel.getId());
+
+        if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(new ActionResult(success, ""));
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result listAllJobs() {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        List<JobModel> jobs = jobDao.getAllJobs();
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return Results.json().render(jobs);
     }
 
     @VisibleForTesting

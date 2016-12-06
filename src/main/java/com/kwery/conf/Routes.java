@@ -41,6 +41,7 @@ public class Routes implements ApplicationRoutes {
     public static final String MAIL_CONFIGURATION_TEST_API = "/api/mail/{toEmail}/email-configuration-test";
 
     public static final String JOB_SAVE_API = "/api/job/save";
+    public static final String JOB_LIST_API = "/api/job/list";
 
     @Override
     public void init(Router router) {
@@ -83,6 +84,7 @@ public class Routes implements ApplicationRoutes {
         router.POST().route(MAIL_CONFIGURATION_TEST_API).with(MailApiController.class, "testEmailConfiguration");
 
         router.POST().route(JOB_SAVE_API).with(JobApiController.class, "saveJob");
+        router.GET().route(JOB_LIST_API).with(JobApiController.class, "listAllJobs");
         //Api - End
 
         //Static asset
