@@ -2,8 +2,10 @@ package com.kwery.controllers.apis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
+import com.kwery.controllers.MessageKeys;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.JobDao;
 import com.kwery.dao.JobExecutionDao;
@@ -16,8 +18,10 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.views.ActionResult;
+import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
+import ninja.i18n.Messages;
 import ninja.params.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +45,15 @@ public class JobApiController {
     protected final JobDao jobDao;
     protected final JobService jobService;
     protected final JobExecutionDao jobExecutionDao;
+    protected final Messages messages;
 
     @Inject
-    public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao) {
+    public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao, Messages messages) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
         this.jobService = jobService;
         this.jobExecutionDao = jobExecutionDao;
+        this.messages = messages;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -87,7 +93,7 @@ public class JobApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result jobExecutionResult(@PathParam("jobExecutionId") String jobExecutionId) throws IOException {
+    public Result jobExecutionResult(@PathParam("jobExecutionId") String jobExecutionId, Context context) throws IOException {
         if (logger.isTraceEnabled()) logger.trace("<");
 
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
@@ -95,9 +101,11 @@ public class JobApiController {
 
         List<JobExecutionModel> jobExecutionModels = jobExecutionDao.filter(filter);
 
+        Result json = json();
         if (jobExecutionModels.isEmpty() || jobExecutionModels.get(0).getSqlQueryExecutionModels().isEmpty()) {
             if (logger.isTraceEnabled()) logger.trace(">");
-            return json().render(new ActionResult(ActionResult.Status.failure, "Report not found"));
+            String message = messages.get(MessageKeys.JOBAPICONTROLLER_REPORT_NOT_FOUND, context, Optional.of(json)).get();
+            return json.render(new ActionResult(ActionResult.Status.failure, message));
         } else {
             List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
             if (!jobExecutionModels.isEmpty()) {
@@ -112,12 +120,13 @@ public class JobApiController {
                         );
                     }
 
-                    sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getLabel(), jsonResult));
+                    sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getLabel(),
+                            sqlQueryExecutionModel.getStatus(), jsonResult));
                 }
             }
 
             if (logger.isTraceEnabled()) logger.trace(">");
-            return json().render(new JobExecutionResultDto(jobExecutionModels.get(0).getJobModel().getLabel(), sqlQueryExecutionResultDtos));
+            return json.render(new JobExecutionResultDto(jobExecutionModels.get(0).getJobModel().getLabel(), sqlQueryExecutionResultDtos));
         }
     }
 

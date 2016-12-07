@@ -10,10 +10,11 @@ define(["knockout", "jquery", "text!components/report/execution-result.html"], f
 
         self.showReport = ko.observable(false);
 
-        var SqlQueryExecutionResult = function(label, header, content) {
+        var SqlQueryExecutionResult = function(label, status, header, content) {
             this.label = label;
             this.header = header;
             this.content = content;
+            this.status = status;
         };
 
         self.header = ko.observableArray([]);
@@ -35,7 +36,7 @@ define(["knockout", "jquery", "text!components/report/execution-result.html"], f
                     ko.utils.arrayForEach(result.sqlQueryExecutionResultDtos, function(executionResult){
                         var header = executionResult.jsonResult[0];
                         var content = executionResult.jsonResult.slice(1, executionResult.jsonResult.length);
-                        self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, header, content));
+                        self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content));
                     });
                 }
             }

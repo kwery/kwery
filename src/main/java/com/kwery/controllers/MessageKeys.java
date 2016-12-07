@@ -65,4 +65,6 @@ public class MessageKeys {
     public static final String EMAIL_TEST_BODY = "email.test.body";
     public static final String EMAIL_TEST_FAILURE = "email.test.failure";
     public static final String EMAIL_TEST_SUCCESS = "email.test.success";
+
+    public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND = "jobapicontroller.report.not.found";
 }

@@ -23,7 +23,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
         jobExecutionModel.setExecutionId(executionId);
         jobExecutionModel.setStatus(SUCCESS);
 
-        JobExecutionDto dto = new JobApiController(null, null, null, null)
+        JobExecutionDto dto = new JobApiController(null, null, null, null, null)
                 .jobExecutionModelToJobExecutionDto(jobExecutionModel);
 
         assertThat(dto.getStatus(), is(SUCCESS.name()));
