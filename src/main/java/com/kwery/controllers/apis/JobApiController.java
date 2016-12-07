@@ -5,10 +5,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
-import com.kwery.controllers.MessageKeys;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.JobDao;
 import com.kwery.dao.JobExecutionDao;
+import com.kwery.dao.SqlQueryDao;
 import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.JobExecutionModel;
@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.kwery.controllers.MessageKeys.*;
+import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
 import static java.util.stream.Collectors.toSet;
 import static ninja.Results.json;
@@ -45,27 +47,54 @@ public class JobApiController {
     protected final JobDao jobDao;
     protected final JobService jobService;
     protected final JobExecutionDao jobExecutionDao;
+    protected final SqlQueryDao sqlQueryDao;
     protected final Messages messages;
 
     @Inject
-    public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao, Messages messages) {
+    public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao,
+                            SqlQueryDao sqlQueryDao, Messages messages) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
         this.jobService = jobService;
         this.jobExecutionDao = jobExecutionDao;
+        this.sqlQueryDao = sqlQueryDao;
         this.messages = messages;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result saveJob(JobDto jobDto) {
+    public Result saveJob(JobDto jobDto, Context context) {
+        Result json = json();
+
         if (logger.isTraceEnabled()) logger.trace("<");
 
-        JobModel jobModel = jobDao.save(jobDtoToJobModel(jobDto));
-        jobService.schedule(jobModel.getId());
+        List<String> errorMessages = new LinkedList<>();
+
+        if (jobDao.getJobByLabel(jobDto.getLabel()) == null) {
+            String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
+            errorMessages.add(message);
+        }
+
+        for (SqlQueryDto sqlQueryDto : jobDto.getSqlQueries()) {
+            if (sqlQueryDao.getByLabel(sqlQueryDto.getLabel()) != null) {
+                String message = messages.get(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS, context, Optional.of(json), sqlQueryDto.getLabel()).get();
+                errorMessages.add(message);
+            }
+        }
+
+        ActionResult actionResult = null;
+
+        if (errorMessages.isEmpty()) {
+            JobModel jobModel = jobDao.save(jobDtoToJobModel(jobDto));
+            jobService.schedule(jobModel.getId());
+            actionResult = new ActionResult(success, "");
+        } else {
+            actionResult = new ActionResult(failure, errorMessages);
+        }
 
         if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(new ActionResult(success, ""));
+        return json.render(actionResult);
     }
+
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result listAllJobs() {
@@ -104,8 +133,8 @@ public class JobApiController {
         Result json = json();
         if (jobExecutionModels.isEmpty() || jobExecutionModels.get(0).getSqlQueryExecutionModels().isEmpty()) {
             if (logger.isTraceEnabled()) logger.trace(">");
-            String message = messages.get(MessageKeys.JOBAPICONTROLLER_REPORT_NOT_FOUND, context, Optional.of(json)).get();
-            return json.render(new ActionResult(ActionResult.Status.failure, message));
+            String message = messages.get(JOBAPICONTROLLER_REPORT_NOT_FOUND, context, Optional.of(json)).get();
+            return json.render(new ActionResult(failure, message));
         } else {
             List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
             if (!jobExecutionModels.isEmpty()) {

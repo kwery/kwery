@@ -71,7 +71,11 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     contentType: "application/json",
                     success: function(result) {
                         self.status(result.status);
-                        self.messages([ko.i18n('report.save.success.message')]);
+                        if (result.status === 'failure') {
+                            self.messages(result.messages);
+                        } else {
+                            self.messages([ko.i18n('report.save.success.message')]);
+                        }
                     }
                 });
             }
