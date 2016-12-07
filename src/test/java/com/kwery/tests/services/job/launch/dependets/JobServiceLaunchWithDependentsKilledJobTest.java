@@ -24,7 +24,7 @@ public class JobServiceLaunchWithDependentsKilledJobTest extends JobServiceJobSe
 
         waitAtMost(1, MINUTES).until(() -> !getJobExecutionModels(JobExecutionModel.Status.KILLED).isEmpty());
 
-        assertThat(getJobExecutionModels(dependentJobModel.getId(), JobExecutionModel.Status.SUCCESS), hasSize(0));
+        assertThat(getJobExecutionModels(dependentJobModel.getId()), hasSize(0));
     }
 
     @Override

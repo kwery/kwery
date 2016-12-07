@@ -42,19 +42,19 @@ public class JobServiceScheduleJobSqlQueryKilledJobCompletesTest extends JobServ
         }
 
         waitAtMost(1, MINUTES).until(() ->
-                getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED).size() >= 2 && getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() >= 2
+                getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED).size() >= 2 && getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() >= 2
         );
 
         List<SqlQueryExecutionModel> killedSqlQueries = getSqlQueryExecutionModels(SqlQueryExecutionModel.Status.KILLED);
 
         Set<String> killedSqlQueryJobExecutionIds = killedSqlQueries.stream().map(killedSqlQuery -> killedSqlQuery.getJobExecutionModel().getExecutionId())
                 .collect(Collectors.toSet());
-        Set<String> successJobExecutionIds = getJobExecutionModels(JobExecutionModel.Status.SUCCESS).stream().map(JobExecutionModel::getExecutionId)
+        Set<String> successJobExecutionIds = getJobExecutionModels(JobExecutionModel.Status.FAILURE).stream().map(JobExecutionModel::getExecutionId)
                 .collect(Collectors.toSet());
         assertThat("Killing SQL queries successfully brings the job to completion", killedSqlQueryJobExecutionIds,
                 containsInAnyOrder(successJobExecutionIds.toArray(new String[successJobExecutionIds.size()])));
 
-        assertJobExecutionModels(JobExecutionModel.Status.SUCCESS, 2);
+        assertJobExecutionModels(JobExecutionModel.Status.FAILURE, 2);
         assertSqlQueryExecutionModels(sqlQueryId0, SqlQueryExecutionModel.Status.KILLED, 2);
         assertSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED, 2);
     }

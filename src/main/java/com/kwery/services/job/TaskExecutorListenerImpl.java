@@ -67,7 +67,11 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
                 if (exception != null) {
                    jobExecutionModel.setStatus(FAILURE);
                 } else {
-                    jobExecutionModel.setStatus(SUCCESS);
+                    if (areThereKilledOrFailedSqlQueries(jobExecutionModel)) {
+                        jobExecutionModel.setStatus(FAILURE);
+                    } else {
+                        jobExecutionModel.setStatus(SUCCESS);
+                    }
                 }
             }
 
@@ -134,6 +138,17 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
             success = success && (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.SUCCESS);
         }
         return success;
+    }
+
+    private boolean areThereKilledOrFailedSqlQueries(JobExecutionModel jobExecutionModel) {
+        for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModel.getSqlQueryExecutionModels()) {
+            if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.FAILURE
+                    || sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.KILLED) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

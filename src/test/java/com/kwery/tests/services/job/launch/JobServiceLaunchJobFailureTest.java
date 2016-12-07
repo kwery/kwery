@@ -13,9 +13,9 @@ public class JobServiceLaunchJobFailureTest extends JobServiceJobSetUpAbstractTe
     public void test() throws InterruptedException {
         jobService.launch(jobModel.getId());
 
-        waitAtMost(1, MINUTES).until(() -> !getJobExecutionModels(JobExecutionModel.Status.SUCCESS).isEmpty());
+        waitAtMost(1, MINUTES).until(() -> !getJobExecutionModels(jobModel.getId(), JobExecutionModel.Status.FAILURE).isEmpty());
 
-        assertJobExecutionModel(JobExecutionModel.Status.SUCCESS);
+        assertJobExecutionModel(JobExecutionModel.Status.FAILURE, jobModel.getId());
 
         assertSqlQueryExecutionModel(sqlQueryId0, SqlQueryExecutionModel.Status.FAILURE);
         assertSqlQueryExecutionModel(sqlQueryId1, SqlQueryExecutionModel.Status.FAILURE);

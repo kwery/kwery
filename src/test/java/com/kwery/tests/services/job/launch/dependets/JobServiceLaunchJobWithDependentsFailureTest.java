@@ -13,8 +13,8 @@ public class JobServiceLaunchJobWithDependentsFailureTest extends JobServiceJobS
     @Test
     public void test() {
         jobService.launch(jobModel.getId());
-        waitAtMost(1, MINUTES).until(() -> getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() == 1);
-        assertThat(getJobExecutionModels(dependentJobModel.getId(), JobExecutionModel.Status.SUCCESS), hasSize(0));
+        waitAtMost(1, MINUTES).until(() -> getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() == 1);
+        assertThat(getJobExecutionModels(dependentJobModel.getId()), hasSize(0));
     }
 
     @Override

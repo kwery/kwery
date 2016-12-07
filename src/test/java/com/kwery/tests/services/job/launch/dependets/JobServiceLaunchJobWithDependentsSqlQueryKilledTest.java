@@ -25,9 +25,9 @@ public class JobServiceLaunchJobWithDependentsSqlQueryKilledTest extends JobServ
 
         jobService.stopExecution(getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.ONGOING).get(0).getExecutionId());
         waitAtMost(1, MINUTES).until(() ->
-                getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.ONGOING).isEmpty() && getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() == 1
+                getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.ONGOING).isEmpty() && getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() == 1
         );
 
-        assertThat(getJobExecutionModels(dependentJobModel.getId(), JobExecutionModel.Status.SUCCESS), hasSize(0));
+        assertThat(getJobExecutionModels(dependentJobModel.getId()), hasSize(0));
     }
 }

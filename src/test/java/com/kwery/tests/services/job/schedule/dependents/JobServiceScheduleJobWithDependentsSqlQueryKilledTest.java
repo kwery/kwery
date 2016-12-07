@@ -39,9 +39,9 @@ public class JobServiceScheduleJobWithDependentsSqlQueryKilledTest extends JobSe
         }
 
         waitAtMost(1, MINUTES).until(() ->
-                getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED).size() >= 2 && getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() >= 2
+                getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED).size() >= 2 && getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() >= 2
         );
 
-        assertThat(getJobExecutionModels(dependentJobModel.getId(), JobExecutionModel.Status.SUCCESS), hasSize(0));
+        assertThat(getJobExecutionModels(dependentJobModel.getId()), hasSize(0));
     }
 }

@@ -199,6 +199,13 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         filter.setJobId(jobId);
         return jobExecutionDao.filter(filter);
     }
+
+    protected List<JobExecutionModel> getJobExecutionModels(int jobId) {
+        JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
+        filter.setJobId(jobId);
+        return jobExecutionDao.filter(filter);
+    }
+
     protected List<SqlQueryExecutionModel> getSqlQueryExecutionModels(int sqlQueryId, SqlQueryExecutionModel.Status status) {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setSqlQueryId(sqlQueryId);

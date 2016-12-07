@@ -12,9 +12,9 @@ public class JobServiceScheduleJobFailureTest extends JobServiceJobSetUpAbstract
     @Test
     public void test() {
         jobService.schedule(jobModel.getId());
-        waitAtMost(130, SECONDS).until(() -> getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() >= 2);
+        waitAtMost(130, SECONDS).until(() -> getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() >= 2);
 
-        assertJobExecutionModels(JobExecutionModel.Status.SUCCESS, 2);
+        assertJobExecutionModels(JobExecutionModel.Status.FAILURE, 2);
 
         assertSqlQueryExecutionModels(sqlQueryId0, SqlQueryExecutionModel.Status.FAILURE, 2);
         assertSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.FAILURE, 2);

@@ -17,7 +17,7 @@ public class JobServiceLaunchJobSqlQueryKilledJobCompletesTest extends JobServic
         jobService.launch(jobModel.getId());
 
         waitAtMost(1, MINUTES).until(() ->
-                !getJobExecutionModels(JobExecutionModel.Status.ONGOING).isEmpty() && (getSqlQueryExecutionModels(SqlQueryExecutionModel.Status.ONGOING).size() == 2));
+                !getJobExecutionModels(jobModel.getId(), JobExecutionModel.Status.ONGOING).isEmpty() && (getSqlQueryExecutionModels(SqlQueryExecutionModel.Status.ONGOING).size() == 2));
 
         jobService.stopExecution(getSqlQueryExecutionModels(sqlQueryId0, SqlQueryExecutionModel.Status.ONGOING).get(0).getExecutionId());
         waitAtMost(1, MINUTES).until(() -> getSqlQueryExecutionModels(sqlQueryId0, SqlQueryExecutionModel.Status.ONGOING).isEmpty());
@@ -29,11 +29,11 @@ public class JobServiceLaunchJobSqlQueryKilledJobCompletesTest extends JobServic
 
         jobService.stopExecution(getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.ONGOING).get(0).getExecutionId());
         waitAtMost(1, MINUTES).until(() ->
-                getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.ONGOING).isEmpty() && getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() == 1
+                getSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.ONGOING).isEmpty() && getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() == 1
         );
 
 
-        assertJobExecutionModel(JobExecutionModel.Status.SUCCESS);
+        assertJobExecutionModel(JobExecutionModel.Status.FAILURE);
         assertSqlQueryExecutionModel(sqlQueryId0, SqlQueryExecutionModel.Status.KILLED);
         assertSqlQueryExecutionModel(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED);
     }

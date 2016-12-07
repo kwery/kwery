@@ -1,6 +1,7 @@
 package com.kwery.tests.services.job;
 
 import com.google.common.collect.ImmutableList;
+import com.kwery.dao.JobDao;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.JobModel;
@@ -24,6 +25,7 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
     protected JobExecutionDao jobExecutionDao;
     protected JobService jobService;
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
+    protected JobDao jobDao;
 
     protected int sqlQueryId2 = 3;
     protected int sqlQueryId3 = 4;
@@ -94,5 +96,6 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
         jobExecutionDao = getInstance(JobExecutionDao.class);
         jobService = getInstance(JobService.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
+        jobDao = getInstance(JobDao.class);
     }
 }
