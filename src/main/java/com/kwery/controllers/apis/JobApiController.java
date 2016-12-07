@@ -2,6 +2,7 @@ package com.kwery.controllers.apis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.JobDao;
@@ -94,20 +95,30 @@ public class JobApiController {
 
         List<JobExecutionModel> jobExecutionModels = jobExecutionDao.filter(filter);
 
-        List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
-        if (!jobExecutionModels.isEmpty()) {
-            for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModels.get(0).getSqlQueryExecutionModels()) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                List<List<?>> jsonResult = objectMapper.readValue(
-                        sqlQueryExecutionModel.getResult(),
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
-                );
-                sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getLabel(), jsonResult));
-            }
-        }
+        if (jobExecutionModels.isEmpty() || jobExecutionModels.get(0).getSqlQueryExecutionModels().isEmpty()) {
+            if (logger.isTraceEnabled()) logger.trace(">");
+            return json().render(new ActionResult(ActionResult.Status.failure, "Report not found"));
+        } else {
+            List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
+            if (!jobExecutionModels.isEmpty()) {
+                for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModels.get(0).getSqlQueryExecutionModels()) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String result = sqlQueryExecutionModel.getResult();
+                    List<List<?>> jsonResult = new LinkedList<>();
+                    if (!Strings.nullToEmpty(result).trim().equals("")) {
+                        jsonResult = objectMapper.readValue(
+                                result,
+                                objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
+                        );
+                    }
 
-        if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(new JobExecutionResultDto(jobExecutionModels.get(0).getJobModel().getLabel(), sqlQueryExecutionResultDtos));
+                    sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getLabel(), jsonResult));
+                }
+            }
+
+            if (logger.isTraceEnabled()) logger.trace(">");
+            return json().render(new JobExecutionResultDto(jobExecutionModels.get(0).getJobModel().getLabel(), sqlQueryExecutionResultDtos));
+        }
     }
 
     @VisibleForTesting
@@ -151,5 +162,15 @@ public class JobApiController {
         jobExecutionDto.setStatus(model.getStatus().name());
         jobExecutionDto.setExecutionId(model.getExecutionId());
         return jobExecutionDto;
+    }
+
+    public static void main(String[] args) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<List<?>> jsonResult = objectMapper.readValue(
+                "",
+                objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
+        );
+
+        System.out.println(jsonResult);
     }
 }

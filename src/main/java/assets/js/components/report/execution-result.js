@@ -2,8 +2,13 @@ define(["knockout", "jquery", "text!components/report/execution-result.html"], f
     function viewModel(params) {
         var self = this;
 
+        self.status = ko.observable("");
+        self.messages = ko.observableArray([]);
+
         self.title = ko.observable();
         self.sqlQueryExecutionResults = ko.observableArray();
+
+        self.showReport = ko.observable(false);
 
         var SqlQueryExecutionResult = function(label, header, content) {
             this.label = label;
@@ -19,13 +24,20 @@ define(["knockout", "jquery", "text!components/report/execution-result.html"], f
             type: "get",
             contentType: "application/json",
             success: function (result) {
-                self.title(result.title);
+                if (result.status !== undefined) {
+                    self.status(result.status);
+                    self.messages(result.messages);
+                } else {
+                    self.showReport(true);
 
-                ko.utils.arrayForEach(result.sqlQueryExecutionResultDtos, function(executionResult){
-                    var header = executionResult.jsonResult[0];
-                    var content = executionResult.jsonResult.slice(1, executionResult.jsonResult.length);
-                    self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, header, content));
-                });
+                    self.title(result.title);
+
+                    ko.utils.arrayForEach(result.sqlQueryExecutionResultDtos, function(executionResult){
+                        var header = executionResult.jsonResult[0];
+                        var content = executionResult.jsonResult.slice(1, executionResult.jsonResult.length);
+                        self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, header, content));
+                    });
+                }
             }
         });
 
