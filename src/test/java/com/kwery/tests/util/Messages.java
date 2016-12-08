@@ -84,4 +84,5 @@ public class Messages {
 
     public static final String JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M = "A report already exsits with label {0}, please choose a different label";
     public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exsits with label {0}, please choose a different label";
+    public static final String REPORT_DUPLICATE_SQL_QUERY_LABEL_ERROR = "You have already used this label, please choose a different label";
 }

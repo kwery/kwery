@@ -16,10 +16,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
 
         self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
-        var Query = function(query, queryLabel, datasource) {
+        var Query = function(query, queryLabel, datasourceId) {
             this.query = query;
             this.queryLabel = queryLabel;
-            this.datasource = datasource;
+            this.datasourceId = datasourceId;
         };
 
         $.ajax({
@@ -56,7 +56,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     });
 
                     if (sameValue > 1) {
-                        return ko.i18n('report.duplicate.label.error');
+                        return ko.i18n('report.duplicate.sql.query.label.error');
                     }
                 }
             }
@@ -70,7 +70,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     queries.push({
                         query: query.query,
                         label: query.queryLabel,
-                        datasourceId: query.datasource.id
+                        datasourceId: query.datasourceId
                     });
                 });
 

@@ -6,7 +6,9 @@ import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.kwery.tests.util.Messages.REPORT_SAVE_SUCCESS_MESSAGE_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
@@ -37,7 +39,7 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
             SqlQueryDto dto = jobDto.getSqlQueries().get(i);
             fill(".f-sql-query" + i + " .f-query").with(dto.getQuery());
             fill(".f-sql-query" + i + " .f-sql-query-label").with(dto.getLabel());
-            fillSelect(".f-datasource").withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
+            fillSelect(".f-sql-query" + i + " .f-datasource").withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
         }
 
         submitReportSaveForm();
@@ -100,5 +102,13 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
 
     public enum SqlQueryFormField {
         query, datasourceId, queryLabel
+    }
+
+    public void waitForErrorMessages() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").isDisplayed();
+    }
+
+    public List<String> getErrorMessages() {
+        return $(".f-failure-message p").stream().map(FluentWebElement::getText).collect(Collectors.toList());
     }
 }

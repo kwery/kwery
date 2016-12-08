@@ -7,9 +7,12 @@ import com.kwery.models.Datasource;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.Messages;
 import com.kwery.tests.util.NinjaServerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,7 +29,7 @@ import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static junit.framework.TestCase.fail;
 import static org.junit.rules.RuleChain.outerRule;
 
-public class ReportSaveSuccessUiTest extends ChromeFluentTest {
+public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -67,6 +70,7 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
             SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
             sqlQueryDto.setQuery("select * from mysql.user");
             sqlQueryDto.setDatasourceId(datasource.getId());
+            sqlQueryDto.setLabel("testLabel");
 
             jobDto.getSqlQueries().add(sqlQueryDto);
         }
@@ -79,6 +83,7 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
         );
 
         page.fillAndSubmitReportSaveForm(jobDto, datasourceIdToLabelMap);
-        page.waitForReportSaveSuccessMessage();
+
+        Assert.assertThat(page.validationMessage(ReportSavePage.SqlQueryFormField.queryLabel, 1), Is.is(Messages.REPORT_DUPLICATE_SQL_QUERY_LABEL_ERROR));
     }
 }

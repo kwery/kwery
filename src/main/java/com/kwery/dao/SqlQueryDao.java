@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.SqlQueryModel;
-import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -33,7 +32,7 @@ public class SqlQueryDao {
         m.flush();
     }
 
-    @UnitOfWork
+    @Transactional
     public SqlQueryModel getByLabel(String label) {
         EntityManager m = entityManagerProvider.get();
 
@@ -57,13 +56,13 @@ public class SqlQueryDao {
         }
     }
 
-    @UnitOfWork
+    @Transactional
     public List<SqlQueryModel> getAll() {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT q FROM SqlQueryModel q", SqlQueryModel.class).getResultList();
     }
 
-    @UnitOfWork
+    @Transactional
     public List<SqlQueryModel> getAllWithSchedule() {
 /*        EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT q FROM SqlQueryModel q where q.cronExpression is not null and q.cronExpression <> ''", SqlQueryModel.class).getResultList();*/
@@ -71,7 +70,7 @@ public class SqlQueryDao {
     }
 
     @SuppressWarnings("unchecked")
-    @UnitOfWork
+    @Transactional
     public SqlQueryModel getById(Integer id) {
         EntityManager e = entityManagerProvider.get();
         List<SqlQueryModel> m = e.createQuery("SELECT q FROM SqlQueryModel q where q.id = :id").setParameter("id", id).getResultList();
@@ -81,7 +80,7 @@ public class SqlQueryDao {
         return m.get(0);
     }
 
-    @UnitOfWork
+    @Transactional
     public long countSqlQueriesWithDatasourceId(int datasourceId) {
         EntityManager m = entityManagerProvider.get();
 

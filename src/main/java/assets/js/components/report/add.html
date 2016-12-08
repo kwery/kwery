@@ -41,7 +41,8 @@
                                 <label data-bind="text: ko.i18n('report.save.save.sql.query.datasource')" for="datasourceId"></label>
                                 <select id="datasourceId" name="datasourceId" class="form-control f-datasource" data-bind="options: $parent.datasources,
                                                                         optionsText: 'label',
-                                                                        value: datasource" required>
+                                                                        optionsValue: 'id',
+                                                                        value: datasourceId" required>
                                 </select>
                                 <div class="help-block with-errors datasourceId-form-validation-message-f"></div>
                             </div>
