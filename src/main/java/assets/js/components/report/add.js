@@ -5,8 +5,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
-        self.datasources = ko.observableArray([]);
-
         self.title = ko.observable();
         self.reportLabel = ko.observable();
         self.cronExpression = ko.observable();
@@ -15,6 +13,8 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
             this.id = id;
             this.label = label;
         };
+
+        self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
         var Query = function(query, queryLabel, datasource) {
             this.query = query;
