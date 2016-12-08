@@ -81,4 +81,7 @@ public class Messages {
     public static final String EMAIL_TEST_BODY_M = "Congratulations, Kwery has been successfully configured to send mails.";
 
     public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report saved successfully";
+
+    public static final String JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M = "A report already exsits with label {0}, please choose a different label";
+    public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exsits with label {0}, please choose a different label";
 }

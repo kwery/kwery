@@ -69,7 +69,7 @@ public class JobApiController {
 
         List<String> errorMessages = new LinkedList<>();
 
-        if (jobDao.getJobByLabel(jobDto.getLabel()) == null) {
+        if (jobDao.getJobByLabel(jobDto.getLabel()) != null) {
             String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
             errorMessages.add(message);
         }
