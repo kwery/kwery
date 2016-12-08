@@ -95,6 +95,13 @@ public class JobApiController {
         return json.render(actionResult);
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result executeJob(@PathParam("jobId") int jobId) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        jobService.launch(jobId);
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(new ActionResult(success, ""));
+    }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result listAllJobs() {

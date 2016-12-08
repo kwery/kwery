@@ -24,6 +24,9 @@
                         <a data-bind="attr: {href: executionLink, title: ko.i18n('report.list.execution.tooltip')}">
                             <span class="glyphicon glyphicon-th-list"></span>
                         </a>
+                        <a data-bind="click: $parent.executeReport, attr: {title: ko.i18n('report.list.execute.now.tooltip')}">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                        </a>
                     </td>
                 </tr>
                 </tbody>
