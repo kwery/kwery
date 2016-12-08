@@ -13,12 +13,18 @@
                 <tr>
                     <th data-bind="text: ko.i18n('report.list.label')"></th>
                     <th data-bind="text: ko.i18n('report.list.cron.expression')"></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody data-bind="foreach: reports" id="reportsListTableBody">
                 <tr>
                     <td data-bind="text: label"></td>
                     <td data-bind="text: cronExpression"></td>
+                    <td>
+                        <a data-bind="attr: {href: executionLink, title: ko.i18n('report.list.execution.tooltip')}">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                        </a>
+                    </td>
                 </tr>
                 </tbody>
             </table>

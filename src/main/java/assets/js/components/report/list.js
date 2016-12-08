@@ -11,6 +11,9 @@ define(["knockout", "jquery", "text!components/report/list.html"], function (ko,
             type: "GET",
             contentType: "application/json",
             success: function (result) {
+                ko.utils.arrayForEach(result, function(report){
+                    report.executionLink = "/#report/" + report.id + "/execution-list"
+                });
                 self.reports(result);
             }
         });
