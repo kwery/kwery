@@ -43,7 +43,24 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
             self.queries.remove(query);
         };
 
-        $("#reportForm").validator({disable: false}).on("submit", function (e) {
+        $("#reportForm").validator({
+            disable: false,
+            custom: {
+                'labelvalidation': function ($el) {
+                    var sameValue = 0;
+
+                    $('.sql-query-label').each(function(){
+                        if ($(this).val() !== '' && $el.val() === $(this).val()) {
+                            sameValue = sameValue + 1;
+                        }
+                    });
+
+                    if (sameValue > 1) {
+                        return ko.i18n('report.duplicate.label.error');
+                    }
+                }
+            }
+        }).on("submit", function (e) {
             if (e.isDefaultPrevented()) {
                 // handle the invalid form...
             } else {
