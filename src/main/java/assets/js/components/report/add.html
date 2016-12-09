@@ -30,7 +30,7 @@
                     <label data-bind="text: ko.i18n('report.save.execute.after')"></label>
                     <a data-bind="click: enableParentReport, text: parentReportEnableText" class="pull-right f-enable-parent-report"></a>
                     <select class="form-control f-parent-report" name="parentReportId" data-bind="enable: parentReportEnabled, options: reports,
-                    optionsText: 'label', optionsValue: 'id', value: reportId" id="parentReport" data-parentreportvalidation="parentreportvalidation">
+                    optionsText: 'label', optionsValue: 'id', value: parentReportId" id="parentReport" data-parentreportvalidation="parentreportvalidation">
                     </select>
                     <div class="help-block with-errors parentReportId-form-validation-message-f"></div>
                 </div>

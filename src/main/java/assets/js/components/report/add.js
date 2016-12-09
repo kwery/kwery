@@ -8,7 +8,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.title = ko.observable();
         self.reportLabel = ko.observable();
         self.cronExpression = ko.observable();
-        self.reportId = ko.observable();
+        self.parentReportId = ko.observable();
 
         var Datasource = function(id, label) {
             this.id = id;
@@ -140,7 +140,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     cronExpression: self.cronExpression(),
                     label: self.reportLabel(),
                     title: self.title(),
-                    parentJobId: self.reportId(),
+                    parentJobId: self.parentReportId(),
                     sqlQueries: queries
                 };
 
