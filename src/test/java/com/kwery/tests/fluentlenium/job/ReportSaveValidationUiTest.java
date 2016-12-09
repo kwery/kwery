@@ -15,6 +15,7 @@ import static com.kwery.tests.fluentlenium.job.ReportSavePage.SELECT_VALIDATION_
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.openqa.selenium.By.name;
 
 public class ReportSaveValidationUiTest extends ChromeFluentTest {
     NinjaServerRule ninjaServerRule = new NinjaServerRule();
@@ -35,13 +36,53 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
     }
 
     @Test
-    public void test() {
+    public void testWithDisabledParentReport() {
         page.clickOnAddSqlQuery(0);
         page.submitReportSaveForm();
         page.waitForReportFormValidationMessage();
 
         for (ReportFormField field : ReportFormField.values()) {
-            assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
+            if (field == ReportFormField.parentReportId) {
+                assertThat($(name(field.name())).first().isEnabled(), is(false));
+            } else {
+                if (field == ReportFormField.parentReportId) {
+                    assertThat(page.validationMessage(field), is(SELECT_VALIDATION_ERROR_MESSAGE));
+                } else {
+                    assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
+                }
+            }
+        }
+
+        for (int i = 0; i < 2; ++i) {
+            for (SqlQueryFormField field : SqlQueryFormField.values()) {
+                if (field == SqlQueryFormField.datasourceId) {
+                    assertThat(page.validationMessage(field, i), is(SELECT_VALIDATION_ERROR_MESSAGE));
+                } else {
+                    assertThat(page.validationMessage(field, i), is(INPUT_VALIDATION_ERROR_MESSAGE));
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testWithDisabledCronExpression() {
+        page.clickEnableParentReport();
+        page.waitUntilParentReportIsEnabled();
+
+        page.clickOnAddSqlQuery(0);
+        page.submitReportSaveForm();
+        page.waitForReportFormValidationMessage();
+
+        for (ReportFormField field : ReportFormField.values()) {
+            if (field == ReportFormField.cronExpression) {
+                assertThat($(name(field.name())).first().isEnabled(), is(false));
+            } else {
+                if (field == ReportFormField.parentReportId) {
+                    assertThat(page.validationMessage(field), is(SELECT_VALIDATION_ERROR_MESSAGE));
+                } else {
+                    assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
+                }
+            }
         }
 
         for (int i = 0; i < 2; ++i) {

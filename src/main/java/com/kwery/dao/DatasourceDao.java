@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.Datasource;
-import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -31,7 +30,7 @@ public class DatasourceDao {
         m.flush();
     }
 
-    @UnitOfWork
+    @Transactional
     public Datasource getByLabel(String label) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder cb = m.getCriteriaBuilder();
@@ -50,7 +49,7 @@ public class DatasourceDao {
         }
     }
 
-    @UnitOfWork
+    @Transactional
     public Datasource getById(Integer id) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder cb = m.getCriteriaBuilder();
@@ -67,7 +66,7 @@ public class DatasourceDao {
     }
 
     @SuppressWarnings("unchecked")
-    @UnitOfWork
+    @Transactional
     public List<Datasource> getAll() {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT d FROM Datasource d").getResultList();

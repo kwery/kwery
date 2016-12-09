@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.User;
-import ninja.jpa.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,7 @@ public class UserDao {
         logger.trace("<");
     }
 
-    @UnitOfWork
+    @Transactional
     public User getByUsername(String username) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder cb = m.getCriteriaBuilder();
@@ -52,7 +51,7 @@ public class UserDao {
         }
     }
 
-    @UnitOfWork
+    @Transactional
     public User getUser(String username, String password) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder cb = m.getCriteriaBuilder();
@@ -78,7 +77,7 @@ public class UserDao {
     }
 
     @SuppressWarnings("unchecked")
-    @UnitOfWork
+    @Transactional
     public List<User> list() {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT u FROM User u").getResultList();
@@ -100,7 +99,7 @@ public class UserDao {
         m.flush();
     }
 
-    @UnitOfWork
+    @Transactional
     public User getById(int id) {
         EntityManager m = entityManagerProvider.get();
         return m.find(User.class, id);

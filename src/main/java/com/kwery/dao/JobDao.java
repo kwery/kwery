@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobModel;
-import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -33,7 +32,7 @@ public class JobDao {
         }
     }
 
-    @UnitOfWork
+    @Transactional
     public JobModel getJobById(int jobId) {
         EntityManager e = entityManagerProvider.get();
         return e.find(JobModel.class, jobId);
@@ -58,6 +57,7 @@ public class JobDao {
         }
     }
 
+    @Transactional
     public List<JobModel> getAllJobs() {
         EntityManager e = entityManagerProvider.get();
         CriteriaBuilder cb = e.getCriteriaBuilder();

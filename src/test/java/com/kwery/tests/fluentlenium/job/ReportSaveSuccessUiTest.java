@@ -78,7 +78,9 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
                 datasource.getId(), datasource.getLabel()
         );
 
-        page.fillAndSubmitReportSaveForm(jobDto, datasourceIdToLabelMap);
+        page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
+
+        page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
     }
 }

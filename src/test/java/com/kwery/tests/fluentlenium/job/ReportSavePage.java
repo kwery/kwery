@@ -20,16 +20,26 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
 
+    protected Map<Integer, String> datasourceIdToLabelMap;
+    protected Map<Integer, String> parentJobIdToLabelMap;
+
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until("#saveReport").isDisplayed();
         return true;
     }
 
-    public void fillAndSubmitReportSaveForm(JobDto jobDto, Map<Integer, String> datasourceIdToLabelMap) {
+    public void fillAndSubmitReportSaveForm(JobDto jobDto) {
         fill(".f-report-title").with(jobDto.getTitle());
         fill(".f-report-label").with(jobDto.getLabel());
-        fill(".f-report-cron-expression").with(jobDto.getCronExpression());
+
+        if ($(className("f-report-cron-expression")).first().isEnabled()) {
+            fill(".f-report-cron-expression").with(jobDto.getCronExpression());
+        }
+
+        if ($(className("f-parent-report")).first().isEnabled()) {
+            fillSelect(".f-parent-report").withText(parentJobIdToLabelMap.get(jobDto.getParentJobId()));
+        }
 
         for (int i = 0; i < jobDto.getSqlQueries().size(); ++i) {
             if (i >= 1) {
@@ -96,8 +106,20 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".reportTitle-form-validation-message-f").hasText(INPUT_VALIDATION_ERROR_MESSAGE);
     }
 
+    public void clickEnableParentReport() {
+        $(className("f-enable-parent-report")).first().click();
+    }
+
+    public boolean isParentReportEnabled() {
+       return $(className("f-parent-report")).first().isEnabled();
+    }
+
+    public void waitUntilParentReportIsEnabled() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-parent-report").isEnabled();
+    }
+
     public enum ReportFormField {
-        reportTitle, label, cronExpression
+        reportTitle, label, cronExpression, parentReportId
     }
 
     public enum SqlQueryFormField {
@@ -110,5 +132,21 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
 
     public List<String> getErrorMessages() {
         return $(".f-failure-message p").stream().map(FluentWebElement::getText).collect(Collectors.toList());
+    }
+
+    public Map<Integer, String> getDatasourceIdToLabelMap() {
+        return datasourceIdToLabelMap;
+    }
+
+    public void setDatasourceIdToLabelMap(Map<Integer, String> datasourceIdToLabelMap) {
+        this.datasourceIdToLabelMap = datasourceIdToLabelMap;
+    }
+
+    public Map<Integer, String> getParentJobIdToLabelMap() {
+        return parentJobIdToLabelMap;
+    }
+
+    public void setParentJobIdToLabelMap(Map<Integer, String> parentJobIdToLabelMap) {
+        this.parentJobIdToLabelMap = parentJobIdToLabelMap;
     }
 }

@@ -8,6 +8,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.title = ko.observable();
         self.reportLabel = ko.observable();
         self.cronExpression = ko.observable();
+        self.reportId = ko.observable();
 
         var Datasource = function(id, label) {
             this.id = id;
@@ -33,6 +34,57 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
             }
         });
 
+        var Report = function(id, label) {
+            this.id = id;
+            this.label = label;
+        };
+
+        self.reports = ko.observableArray([new Report("-1", ko.i18n("report.save.parent.report.id.select.default"))]);
+
+        $.ajax({
+            url: "/api/job/list",
+            type: "GET",
+            contentType: "application/json",
+            success: function(reports) {
+                ko.utils.arrayForEach(reports, function(report){
+                    self.reports.push(new Report(report.id, report.label));
+                });
+            }
+        });
+
+        self.cronExpressionEnabled = ko.observable(true);
+        self.parentReportEnabled = ko.observable(false);
+
+        self.cronExpressionEnableText = ko.computed(function(){
+            if (self.cronExpressionEnabled()) {
+                return ko.i18n("report.save.disable");
+            } else {
+                return ko.i18n("report.save.enable");
+            }
+        }, self);
+
+        self.parentReportEnableText = ko.computed(function(){
+            if (self.parentReportEnabled()) {
+                return ko.i18n("report.save.disable");
+            } else {
+                return ko.i18n("report.save.enable");
+            }
+        }, self);
+
+        self.enableParentReport = function(){
+            self.cronExpressionEnabled(!self.cronExpressionEnabled());
+            self.parentReportEnabled(!self.parentReportEnabled());
+            $("#reportForm").trigger('reset');
+            return false;
+        };
+
+        self.enableCronExpression = function() {
+            self.parentReportEnabled(!self.parentReportEnabled());
+            self.cronExpressionEnabled(!self.cronExpressionEnabled());
+            $("#reportForm").trigger('reset');
+            return false;
+        };
+
         self.queries = ko.observableArray([new Query()]);
 
         self.addSqlQuery = function() {
@@ -46,7 +98,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         $("#reportForm").validator({
             disable: false,
             custom: {
-                'labelvalidation': function ($el) {
+                "labelvalidation": function ($el) {
                     var sameValue = 0;
 
                     $('.sql-query-label').each(function(){
@@ -56,7 +108,17 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     });
 
                     if (sameValue > 1) {
-                        return ko.i18n('report.duplicate.sql.query.label.error');
+                        return ko.i18n('report.save.duplicate.sql.query.label.error');
+                    }
+                },
+                "cronexpressionvalidation": function($el) {
+                    if (!$el.prop('disabled') && "" === $.trim($el.val())) {
+                        return ko.i18n("report.save.cron.expression.required.error");
+                    }
+                },
+                "parentreportvalidation": function($el) {
+                    if (!$el.prop('disabled') && "-1" === $.trim($el.val())) {
+                        return ko.i18n("report.save.parent.report.id.required.error");
                     }
                 }
             }
@@ -78,6 +140,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     cronExpression: self.cronExpression(),
                     label: self.reportLabel(),
                     title: self.title(),
+                    parentJobId: self.reportId(),
                     sqlQueries: queries
                 };
 

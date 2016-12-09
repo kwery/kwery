@@ -12,7 +12,6 @@ import com.kwery.tests.util.NinjaServerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,6 +26,7 @@ import static com.kwery.tests.util.TestUtil.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
 
 public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFluentTest {
@@ -82,8 +82,10 @@ public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFlue
                 datasource.getId(), datasource.getLabel()
         );
 
-        page.fillAndSubmitReportSaveForm(jobDto, datasourceIdToLabelMap);
+        page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
-        Assert.assertThat(page.validationMessage(ReportSavePage.SqlQueryFormField.queryLabel, 1), Is.is(Messages.REPORT_DUPLICATE_SQL_QUERY_LABEL_ERROR));
+        page.fillAndSubmitReportSaveForm(jobDto);
+
+        assertThat(page.validationMessage(ReportSavePage.SqlQueryFormField.queryLabel, 1), Is.is(Messages.REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR));
     }
 }

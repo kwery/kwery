@@ -7,6 +7,7 @@ public class JobDto {
     protected String title;
     protected String cronExpression;
     protected String label;
+    protected int parentJobId;
     protected List<SqlQueryDto> sqlQueries;
 
     public int getId() {
@@ -39,6 +40,14 @@ public class JobDto {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public int getParentJobId() {
+        return parentJobId;
+    }
+
+    public void setParentJobId(int parentJobId) {
+        this.parentJobId = parentJobId;
     }
 
     public List<SqlQueryDto> getSqlQueries() {

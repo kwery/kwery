@@ -85,7 +85,15 @@ public class JobApiController {
 
         if (errorMessages.isEmpty()) {
             JobModel jobModel = jobDao.save(jobDtoToJobModel(jobDto));
-            jobService.schedule(jobModel.getId());
+
+            if (jobDto.getParentJobId() > 0) {
+                JobModel parentJob = jobDao.getJobById(jobDto.getParentJobId());
+                parentJob.getDependentJobs().add(jobModel);
+                jobDao.save(parentJob);
+            } else {
+                jobService.schedule(jobModel.getId());
+            }
+
             actionResult = new ActionResult(success, "");
         } else {
             actionResult = new ActionResult(failure, errorMessages);
@@ -177,7 +185,7 @@ public class JobApiController {
         }
 
         jobModel.setLabel(jobDto.getLabel());
-        jobModel.setCronExpression(jobDto.getCronExpression());
+        jobModel.setCronExpression(Strings.nullToEmpty(jobDto.getCronExpression()));
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toSet()));
         return jobModel;
     }

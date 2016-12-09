@@ -144,7 +144,9 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
                 datasource.getId(), datasource.getLabel()
         );
 
-        page.fillAndSubmitReportSaveForm(jobDto, datasourceIdToLabelMap);
+        page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
+
+        page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForErrorMessages();
 
         List<String> expectedErrorMessages = ImmutableList.of(format(JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel));
