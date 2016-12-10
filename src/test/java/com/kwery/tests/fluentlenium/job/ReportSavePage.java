@@ -106,7 +106,7 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".reportTitle-form-validation-message-f").hasText(INPUT_VALIDATION_ERROR_MESSAGE);
     }
 
-    public void clickEnableParentReport() {
+    public void toggleParentReport() {
         $(className("f-enable-parent-report")).first().click();
     }
 
@@ -116,6 +116,18 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
 
     public void waitUntilParentReportIsEnabled() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-parent-report").isEnabled();
+    }
+
+    public void toggleCronExpression() {
+        $(className("f-enable-cron-expression")).first().click();
+    }
+
+    public boolean isCronExpressionEnabled() {
+        return $(className("f-report-cron-expression")).first().isEnabled();
+    }
+
+    public void waitUntilCronExpressionIsEnabled() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-report-cron-expression").isEnabled();
     }
 
     public enum ReportFormField {

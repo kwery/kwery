@@ -39,7 +39,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
             this.label = label;
         };
 
-        self.reports = ko.observableArray([new Report("-1", ko.i18n("report.save.parent.report.id.select.default"))]);
+        self.reports = ko.observableArray([new Report("", ko.i18n("report.save.parent.report.id.select.default"))]);
 
         $.ajax({
             url: "/api/job/list",
@@ -74,14 +74,30 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.enableParentReport = function(){
             self.cronExpressionEnabled(!self.cronExpressionEnabled());
             self.parentReportEnabled(!self.parentReportEnabled());
-            $("#reportForm").trigger('reset');
+
+            $("#parentReport").attr("data-validate", self.parentReportEnabled());
+            $("#cronExpression").attr("data-validate", self.cronExpressionEnabled());
+            self.refreshValidation();
+
             return false;
         };
 
         self.enableCronExpression = function() {
             self.parentReportEnabled(!self.parentReportEnabled());
             self.cronExpressionEnabled(!self.cronExpressionEnabled());
-            $("#reportForm").trigger('reset');
+
+            $("#parentReport").attr("data-validate", self.parentReportEnabled());
+            $("#cronExpression").attr("data-validate", self.cronExpressionEnabled());
+            self.refreshValidation();
+
+            if (!self.cronExpressionEnabled()) {
+                $("#cronExpression").attr("data-validate", false);
+            } else {
+                $("#cronExpression").attr("data-validate", true);
+            }
+
+            //$("#reportForm").trigger('reset');
+            self.refreshValidation();
             return false;
         };
 
@@ -110,19 +126,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     if (sameValue > 1) {
                         return ko.i18n('report.save.duplicate.sql.query.label.error');
                     }
-                },
-                "cronexpressionvalidation": function($el) {
-                    if (!$el.prop('disabled') && "" === $.trim($el.val())) {
-                        return ko.i18n("report.save.cron.expression.required.error");
-                    }
-                },
-                "parentreportvalidation": function($el) {
-                    if (!$el.prop('disabled') && "-1" === $.trim($el.val())) {
-                        return ko.i18n("report.save.parent.report.id.required.error");
-                    }
                 }
             }
         }).on("submit", function (e) {
+            debugger;
             if (e.isDefaultPrevented()) {
                 // handle the invalid form...
             } else {

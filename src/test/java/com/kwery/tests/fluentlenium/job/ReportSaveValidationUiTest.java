@@ -66,7 +66,7 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
 
     @Test
     public void testWithDisabledCronExpression() {
-        page.clickEnableParentReport();
+        page.toggleParentReport();
         page.waitUntilParentReportIsEnabled();
 
         page.clickOnAddSqlQuery(0);

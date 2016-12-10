@@ -21,16 +21,16 @@
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.cron.expression')" class="control-label" for="cronExpression"></label>
-                    <a data-bind="click: enableCronExpression, text: cronExpressionEnableText" class="pull-right"></a>
+                    <a data-bind="click: enableCronExpression, text: cronExpressionEnableText" class="pull-right f-enable-cron-expression"></a>
                     <input data-bind="value: cronExpression, enable: cronExpressionEnabled" type="text" class="form-control f-report-cron-expression"
-                           name="cronExpression" id="cronExpression" data-cronexpressionvalidation="cronexpressionvalidation" required>
+                           name="cronExpression" id="cronExpression" required>
                     <div class="help-block with-errors cronExpression-form-validation-message-f"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.execute.after')"></label>
                     <a data-bind="click: enableParentReport, text: parentReportEnableText" class="pull-right f-enable-parent-report"></a>
                     <select class="form-control f-parent-report" name="parentReportId" data-bind="enable: parentReportEnabled, options: reports,
-                    optionsText: 'label', optionsValue: 'id', value: parentReportId" id="parentReport" data-parentreportvalidation="parentreportvalidation">
+                    optionsText: 'label', optionsValue: 'id', value: parentReportId" id="parentReport" data-validate="false" required>
                     </select>
                     <div class="help-block with-errors parentReportId-form-validation-message-f"></div>
                 </div>
