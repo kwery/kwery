@@ -60,17 +60,6 @@ public class DbTableAsserter {
                 ((SortedTable)expectedTable).setUseComparable(true);
             }
 
-/*            System.out.println("Expected==");
-            System.out.println("0 => " + ((SortedTable)expectedTable).getValue(0, "id"));
-            System.out.println("1 => " + ((SortedTable)expectedTable).getValue(1, "id"));
-
-            System.out.println("Actual==");
-            System.out.println("0 => " + ((SortedTable)actualTable).getValue(0, "id"));
-            System.out.println("1 => " + ((SortedTable)actualTable).getValue(1, "id"));*/
-
-            System.out.println("Expected => " + expectedTable);
-            System.out.println("Actual => " + actualTable);
-
             assertEquals(expectedTable, actualTable);
         } finally {
             if (connection != null) {

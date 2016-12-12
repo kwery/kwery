@@ -171,6 +171,7 @@ public class TestUtil {
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
         JobModel jobModel = podamFactory.manufacturePojo(JobModel.class);
         jobModel.setDependentJobs(new HashSet<>());
+        jobModel.setEmails(new HashSet<>());
         return jobModel;
     }
 
@@ -179,6 +180,7 @@ public class TestUtil {
         JobModel jobModel = podamFactory.manufacturePojo(JobModel.class);
         jobModel.setId(null);
         jobModel.setDependentJobs(new HashSet<>());
+        jobModel.setEmails(new HashSet<>());
         return jobModel;
     }
 

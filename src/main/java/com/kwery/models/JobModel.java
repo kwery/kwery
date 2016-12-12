@@ -23,6 +23,11 @@ public class JobModel {
     public static final String JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
     public static final String JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN = "dependent_job_id_fk";
 
+    public static final String JOB_EMAIL_TABLE = "job_email";
+    public static final String JOB_EMAIL_ID_COLUMN = "id";
+    public static final String JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
+    public static final String JOB_EMAIL_TABLE_EMAIL_COLUMN = "email";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = ID_COLUMN)
@@ -57,6 +62,14 @@ public class JobModel {
             inverseJoinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
     )
     public Set<JobModel> dependentJobs;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = JOB_EMAIL_TABLE,
+            joinColumns = @JoinColumn(name = JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN)
+    )
+    @Column(name = JOB_EMAIL_TABLE_EMAIL_COLUMN)
+    private Set<String> emails;
 
     public Integer getId() {
         return id;
@@ -106,14 +119,24 @@ public class JobModel {
         this.dependentJobs = dependentJobs;
     }
 
+    public Set<String> getEmails() {
+        return emails;
+    }
+
+    public void setEmails(Set<String> recipientEmails) {
+        this.emails = recipientEmails;
+    }
+
     @Override
     public String toString() {
         return "JobModel{" +
                 "id=" + id +
                 ", cronExpression='" + cronExpression + '\'' +
                 ", label='" + label + '\'' +
+                ", title='" + title + '\'' +
                 ", sqlQueries=" + sqlQueries +
                 ", dependentJobs=" + dependentJobs +
+                ", emails=" + emails +
                 '}';
     }
 }

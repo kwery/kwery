@@ -6,16 +6,15 @@ import uk.co.jemos.podam.typeManufacturers.IntTypeManufacturerImpl;
 
 import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.Random;
+
+import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
 
 public class CustomIdManufacturer extends IntTypeManufacturerImpl {
     @Override
     public Integer getType(DataProviderStrategy strategy, AttributeMetadata attributeMetadata, Map<String, Type> genericTypesArgumentsMap) {
         //TODO - User interface for entities
         if ("id".equals(attributeMetadata.getAttributeName())) {
-            int high = TestUtil.DB_START_ID;
-            int low = 1;
-            return new Random().nextInt((high + 1) - low) + low;
+            return dbId();
         }
 
         return super.getType(strategy, attributeMetadata, genericTypesArgumentsMap);

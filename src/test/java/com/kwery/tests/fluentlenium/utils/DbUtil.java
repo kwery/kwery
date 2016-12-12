@@ -3,6 +3,7 @@ package com.kwery.tests.fluentlenium.utils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
 import com.kwery.models.*;
+import com.kwery.tests.util.TestUtil;
 import com.mchange.v2.c3p0.C3P0Registry;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
@@ -19,11 +20,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import static com.kwery.models.Datasource.*;
-import static com.kwery.models.JobModel.JOB_TABLE;
+import static com.kwery.models.JobModel.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static java.util.Arrays.asList;
 import static org.dbunit.Assertion.assertEquals;
 
@@ -105,6 +108,20 @@ public class DbUtil {
         return jobTable(ImmutableList.of(m));
     }
 
+    public static IDataSet jobEmailTable(JobModel m) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JobModel.JOB_EMAIL_TABLE);
+
+        for (String s : m.getEmails()) {
+            builder.newRow(JobModel.JOB_EMAIL_TABLE)
+                    .with(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, m.getId())
+                    .with(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, s)
+                    .add();
+        }
+
+        return builder.build();
+    }
+
     public static IDataSet jobTable(List<JobModel> ms) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
 
@@ -157,9 +174,9 @@ public class DbUtil {
         DataSetBuilder builder = new DataSetBuilder();
 
         for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
-            builder.newRow(JobModel.JOB_SQL_QUERY_TABLE)
+            builder.newRow(JOB_SQL_QUERY_TABLE)
                     .with(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
-                    .with(JobModel.SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                    .with(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
                     .add();
         }
 
@@ -245,9 +262,63 @@ public class DbUtil {
         ).launch();
     }
 
+    public static void jobEmailDbSetUp(JobModel jobModel) {
+        for (String email : jobModel.getEmails()) {
+            new DbSetup(
+                    new DataSourceDestination(getDatasource()),
+                    Operations.insertInto(JobModel.JOB_EMAIL_TABLE)
+                            .row()
+                                .column(JobModel.JOB_EMAIL_ID_COLUMN, dbId())
+                                .column(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
+                                .column(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, email)
+                            .end()
+                            .build()
+            ).launch();
+        }
+    }
+
     public static void jobDbSetUp(List<JobModel> jobModels) {
         for (JobModel jobModel : jobModels) {
             jobDbSetUp(jobModel);
         }
+    }
+
+    public static void jobSqlQueryDbSetUp(JobModel jobModel) {
+        for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
+            new DbSetup(
+                    new DataSourceDestination(getDatasource()),
+                    Operations.sequenceOf(
+                            insertInto(JOB_SQL_QUERY_TABLE)
+                                    .row()
+                                    .column(JobModel.ID_COLUMN, dbId())
+                                    .column(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
+                                    .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                                    .end()
+                                    .build()
+                    )
+            ).launch();
+        }
+    }
+
+    public static void jobDependentDbSetUp(JobModel jobModel) {
+        for (JobModel dependentJobModel : jobModel.getDependentJobs()) {
+            new DbSetup(
+                    new DataSourceDestination(getDatasource()),
+                    sequenceOf(
+                            insertInto(JOB_DEPENDENT_TABLE)
+                                    .row()
+                                    .column(JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
+                                    .column(JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, dependentJobModel.getId())
+                                    .end()
+                                    .build()
+                    )
+            ).launch();
+        }
+    }
+
+    public static int dbId() {
+        int high = TestUtil.DB_START_ID;
+        int low = 1;
+        return new Random().nextInt((high + 1) - low) + low;
     }
 }

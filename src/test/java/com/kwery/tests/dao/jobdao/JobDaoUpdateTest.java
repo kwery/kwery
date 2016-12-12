@@ -156,11 +156,6 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                 .build();
         jobTableAsserter.assertTable();
 
-        for (SqlQueryModel sqlQueryModel : expectedJobModel.getSqlQueries()) {
-            System.out.println("Id => " + sqlQueryModel.getId());
-        }
-
-
         DbTableAsserter sqlQueryTableAsserter = new DbTableAsserterBuilder(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()))
                 .columnToCompare(SqlQueryModel.ID_COLUMN)
                 .build();
