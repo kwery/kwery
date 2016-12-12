@@ -6,9 +6,14 @@ import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutor;
+import ninja.lifecycle.Dispose;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class KweryScheduler {
+    protected Logger logger = LoggerFactory.getLogger(KweryScheduler.class);
+
     protected final Scheduler scheduler;
     protected final SchedulerListener schedulerListener;
 
@@ -31,5 +36,10 @@ public class KweryScheduler {
 
     public TaskExecutor[] getExecutingTasks() {
         return scheduler.getExecutingTasks();
+    }
+
+    @Dispose
+    public void shutdown() {
+        scheduler.stop();
     }
 }

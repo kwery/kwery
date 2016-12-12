@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.jobModelDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.toJson;
 import static org.junit.Assert.assertThat;
@@ -32,7 +32,7 @@ public class JobApiControllerGetAllJobsTest extends AbstractPostLoginApiTest {
             jobModels.add(jobModel);
         }
 
-        jobModelDbSetUp(jobModels);
+        jobDbSetUp(jobModels);
     }
 
     @Test

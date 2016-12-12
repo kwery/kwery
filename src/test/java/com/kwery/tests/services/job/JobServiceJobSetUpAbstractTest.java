@@ -23,6 +23,8 @@ import static com.kwery.models.JobModel.ID_COLUMN;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.models.SqlQueryModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
+import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
@@ -42,11 +44,9 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     protected int sqlQueryId1 = 2;
 
     @Before
-    public void setUp() {
-        jobModel = new JobModel();
-        jobModel.setId(1);
+    public void setUpJobServiceJobSetUpAbstractTest() {
+        jobModel = jobModelWithoutDependents();
         jobModel.setCronExpression("* * * * *");
-        jobModel.setLabel("test");
         jobModel.setSqlQueries(new HashSet<>());
 
         datasource = new Datasource();
@@ -78,16 +78,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
                 )
         ).launch();
 
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                insertInto(JOB_TABLE)
-                        .row()
-                        .column(ID_COLUMN, jobModel.getId())
-                        .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
-                        .end()
-                        .build()
-        ).launch();
+        jobDbSetUp(jobModel);
 
         for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
             new DbSetup(

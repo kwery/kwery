@@ -57,6 +57,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         JobDto jobDto = jobDtoWithoutId();
         jobDto.setCronExpression("* * * * *");
         jobDto.setSqlQueries(new ArrayList<>(1));
+        jobDto.setParentJobId(0);
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select * from mysql.user");

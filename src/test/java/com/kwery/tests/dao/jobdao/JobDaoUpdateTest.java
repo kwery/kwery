@@ -4,6 +4,8 @@ import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
@@ -59,16 +61,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                 )
         ).launch();
 
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                Operations.insertInto(JOB_TABLE)
-                        .row()
-                        .column(JobModel.ID_COLUMN, jobModel.getId())
-                        .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
-                        .end()
-                        .build()
-        ).launch();
+        jobDbSetUp(jobModel);
 
         int id = 0;
         for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
@@ -168,11 +161,27 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
-
         jobDao.save(jobModel);
 
-        assertDbState(JOB_TABLE, jobTable(expectedJobModel));
-        assertDbState(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()));
-        assertDbState(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel), ID_COLUMN);
+        DbTableAsserter jobTableAsserter = new DbTableAsserterBuilder(JOB_TABLE, jobTable(expectedJobModel))
+                .build();
+        jobTableAsserter.assertTable();
+
+        for (SqlQueryModel sqlQueryModel : expectedJobModel.getSqlQueries()) {
+            System.out.println("Id => " + sqlQueryModel.getId());
+        }
+
+
+        DbTableAsserter sqlQueryTableAsserter = new DbTableAsserterBuilder(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()))
+                .columnToCompare(SqlQueryModel.ID_COLUMN)
+                .build();
+        sqlQueryTableAsserter.assertTable();
+
+        DbTableAsserter jobSqlQueryTableAsserter = new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
+                .columnsToCompare(JobModel.JOB_ID_FK_COLUMN, JobModel.SQL_QUERY_ID_FK_COLUMN)
+                .columnToIgnore("id")
+                .build();
+        jobSqlQueryTableAsserter.assertTable();
+
     }
 }

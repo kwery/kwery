@@ -18,6 +18,8 @@ import static com.kwery.models.JobModel.ID_COLUMN;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.models.SqlQueryModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
+import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 
 public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobServiceJobSetUpAbstractTest {
@@ -32,12 +34,9 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
 
     @Before
     public void setUpJobServiceJobSetUpWithDependentsAbstractTest() {
-        dependentJobModel = new JobModel();
-        dependentJobModel.setId(2);
+        dependentJobModel = jobModelWithoutDependents();
         dependentJobModel.setCronExpression("");
-        dependentJobModel.setLabel("dependetJob");
         dependentJobModel.setSqlQueries(new HashSet<>());
-
 
         for (int sqlQueryId : ImmutableList.of(sqlQueryId2, sqlQueryId3)) {
             SqlQueryModel sqlQueryModel = new SqlQueryModel();
@@ -49,16 +48,7 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
             dependentJobModel.getSqlQueries().add(sqlQueryModel);
         }
 
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                insertInto(JOB_TABLE)
-                        .row()
-                        .column(ID_COLUMN, dependentJobModel.getId())
-                        .column(JobModel.CRON_EXPRESSION_COLUMN, dependentJobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, dependentJobModel.getLabel())
-                        .end()
-                        .build()
-        ).launch();
+        jobDbSetUp(dependentJobModel);
 
         for (SqlQueryModel sqlQueryModel : dependentJobModel.getSqlQueries()) {
             new DbSetup(

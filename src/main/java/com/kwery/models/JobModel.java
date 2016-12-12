@@ -12,6 +12,7 @@ public class JobModel {
     public static final String ID_COLUMN = "id";
     public static final String CRON_EXPRESSION_COLUMN = "cron_expression";
     public static final String LABEL_COLUMN = "label";
+    public static final String TITLE_COLUMN = "title";
 
     public static final String JOB_SQL_QUERY_TABLE = "job_sql_query";
     public static final String SQL_QUERY_ID_FK_COLUMN = "sql_query_id_fk";
@@ -35,6 +36,11 @@ public class JobModel {
     @Size(min = 1, max = 255)
     @Column(name = LABEL_COLUMN)
     public String label;
+
+    @NotNull
+    @Size(min = 1, max = 1024)
+    @Column(name = TITLE_COLUMN)
+    private String title;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinTable(
@@ -74,6 +80,14 @@ public class JobModel {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Set<SqlQueryModel> getSqlQueries() {

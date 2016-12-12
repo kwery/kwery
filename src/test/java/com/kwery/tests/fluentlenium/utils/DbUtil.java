@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.utils;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
 import com.kwery.models.*;
 import com.mchange.v2.c3p0.C3P0Registry;
@@ -23,6 +24,7 @@ import java.util.Set;
 import static com.kwery.models.Datasource.*;
 import static com.kwery.models.JobModel.JOB_TABLE;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static java.util.Arrays.asList;
 import static org.dbunit.Assertion.assertEquals;
 
 public class DbUtil {
@@ -65,31 +67,33 @@ public class DbUtil {
             }
 
             boolean sortById = false;
-            for (Column column : expectedDataSet.getTableMetaData(tableName).getColumns()) {
-                if ("id".equals(column.getColumnName())) {
-                    sortById = true;
-                    break;
+
+            if (columnsToIgnore == null || !asList(columnsToIgnore).contains("id")) {
+                for (Column column : expectedDataSet.getTableMetaData(tableName).getColumns()) {
+                    if ("id".equals(column.getColumnName())) {
+                        sortById = true;
+                        break;
+                    }
                 }
             }
 
             if (sortById) {
-                SortedTable expectedTable1 = new SortedTable(expectedTable, new String[]{"id"});
-                expectedTable1.setUseComparable(true);
-
                 SortedTable actualTable1 = new SortedTable(actualTable, new String[]{"id"});
                 actualTable1.setUseComparable(true);
+
+                SortedTable expectedTable1 = new SortedTable(new TableWrapper(expectedTable, actualTable1.getTableMetaData()), new String[]{"id"});
+                expectedTable1.setUseComparable(true);
 
                 assertEquals(expectedTable1, actualTable1);
             } else {
                 SortedTable expectedTable1 = new SortedTable(expectedTable);
                 expectedTable1.setUseComparable(true);
 
-                SortedTable actualTable1 = new SortedTable(actualTable);
+                SortedTable actualTable1 = new SortedTable(new TableWrapper(actualTable, actualTable.getTableMetaData()));
                 actualTable1.setUseComparable(true);
 
                 assertEquals(expectedTable1, actualTable1);
             }
-
         } finally {
             if (connection != null) {
                 connection.close();
@@ -98,15 +102,7 @@ public class DbUtil {
     }
 
     public static IDataSet jobTable(JobModel m) throws DataSetException {
-        DataSetBuilder builder = new DataSetBuilder();
-
-        builder.newRow(JOB_TABLE)
-                .with(JobModel.LABEL_COLUMN, m.getLabel())
-                .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
-                .with(JobModel.ID_COLUMN, m.getId())
-                .add();
-
-        return builder.build();
+        return jobTable(ImmutableList.of(m));
     }
 
     public static IDataSet jobTable(List<JobModel> ms) throws DataSetException {
@@ -116,6 +112,7 @@ public class DbUtil {
             builder.newRow(JOB_TABLE)
                     .with(JobModel.LABEL_COLUMN, m.getLabel())
                     .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
+                    .with(JobModel.TITLE_COLUMN, m.getTitle())
                     .with(JobModel.ID_COLUMN, m.getId())
                     .add();
         }
@@ -137,16 +134,7 @@ public class DbUtil {
     }
 
     public static IDataSet sqlQueryTable(SqlQueryModel m) throws DataSetException {
-        DataSetBuilder builder = new DataSetBuilder();
-
-        builder.newRow(SqlQueryModel.SQL_QUERY_TABLE)
-                .with(SqlQueryModel.ID_COLUMN, m.getId())
-                .with(SqlQueryModel.LABEL_COLUMN, m.getLabel())
-                .with(SqlQueryModel.QUERY_COLUMN, m.getQuery())
-                .with(SqlQueryModel.DATASOURCE_ID_FK_COLUMN, m.getDatasource().getId())
-                .add();
-
-        return builder.build();
+        return sqlQueryTable(ImmutableList.of(m));
     }
 
     public static IDataSet sqlQueryTable(Collection<SqlQueryModel> ms) throws DataSetException {
@@ -175,64 +163,6 @@ public class DbUtil {
         }
 
         return builder.build();
-    }
-
-    public static void datasourceDbSetup(Datasource datasource) {
-        DbSetup dbSetup = new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                insertInto(Datasource.TABLE)
-                        .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                        .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(), datasource.getType(), datasource.getUrl(), datasource.getUsername())
-                        .build()
-        );
-
-        dbSetup.launch();
-    }
-
-    public static void jobDbSetUp(JobModel jobModel) {
-        new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.insertInto(JOB_TABLE)
-                        .row()
-                        .column(JobModel.ID_COLUMN, jobModel.getId())
-                        .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
-                        .end()
-                        .build()
-        ).launch();
-    }
-
-    public static void sqlQueryDbSetUp(SqlQueryModel sqlQueryModel){
-        new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                .row()
-                        .column(SqlQueryModel.ID_COLUMN, sqlQueryModel.getId())
-                        .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
-                        .column(SqlQueryModel.QUERY_COLUMN, sqlQueryModel.getQuery())
-                        .column(SqlQueryModel.DATASOURCE_ID_FK_COLUMN, sqlQueryModel.getDatasource().getId())
-                .end()
-                .build()
-        ).launch();
-    }
-
-    public static void jobModelDbSetUp(JobModel jobModel) {
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                Operations.insertInto(JOB_TABLE)
-                        .row()
-                        .column(JobModel.ID_COLUMN, jobModel.getId())
-                        .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
-                        .end()
-                        .build()
-        ).launch();
-    }
-
-    public static void jobModelDbSetUp(List<JobModel> jobModels) {
-        for (JobModel jobModel : jobModels) {
-            jobModelDbSetUp(jobModel);
-        }
     }
 
     public static IDataSet jobExecutionTable(JobExecutionModel jobExecutionModel) throws DataSetException {
@@ -265,5 +195,51 @@ public class DbUtil {
                 .add();
 
         return builder.build();
+    }
+
+    public static void datasourceDbSetup(Datasource datasource) {
+        DbSetup dbSetup = new DbSetup(
+                new DataSourceDestination(DbUtil.getDatasource()),
+                insertInto(Datasource.TABLE)
+                        .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
+                        .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(), datasource.getType(), datasource.getUrl(), datasource.getUsername())
+                        .build()
+        );
+
+        dbSetup.launch();
+    }
+
+    public static void sqlQueryDbSetUp(SqlQueryModel sqlQueryModel){
+        new DbSetup(
+                new DataSourceDestination(DbUtil.getDatasource()),
+                Operations.insertInto(SqlQueryModel.SQL_QUERY_TABLE)
+                        .row()
+                        .column(SqlQueryModel.ID_COLUMN, sqlQueryModel.getId())
+                        .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
+                        .column(SqlQueryModel.QUERY_COLUMN, sqlQueryModel.getQuery())
+                        .column(SqlQueryModel.DATASOURCE_ID_FK_COLUMN, sqlQueryModel.getDatasource().getId())
+                        .end()
+                        .build()
+        ).launch();
+    }
+
+    public static void jobDbSetUp(JobModel jobModel) {
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                Operations.insertInto(JOB_TABLE)
+                        .row()
+                        .column(JobModel.ID_COLUMN, jobModel.getId())
+                        .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
+                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
+                        .column(JobModel.TITLE_COLUMN, jobModel.getTitle())
+                        .end()
+                        .build()
+        ).launch();
+    }
+
+    public static void jobDbSetUp(List<JobModel> jobModels) {
+        for (JobModel jobModel : jobModels) {
+            jobDbSetUp(jobModel);
+        }
     }
 }

@@ -24,9 +24,11 @@ import java.util.HashSet;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.Datasource.*;
-import static com.kwery.models.JobModel.*;
+import static com.kwery.models.JobModel.JOB_SQL_QUERY_TABLE;
+import static com.kwery.models.JobModel.SQL_QUERY_ID_FK_COLUMN;
 import static com.kwery.models.SqlQueryModel.ID_COLUMN;
 import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
 import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M;
 import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M;
 import static com.kwery.tests.util.TestUtil.*;
@@ -71,16 +73,7 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
                 )
         ).launch();
 
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                Operations.insertInto(JOB_TABLE)
-                        .row()
-                        .column(JobModel.ID_COLUMN, jobModel.getId())
-                        .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
-                        .end()
-                        .build()
-        ).launch();
+        jobDbSetUp(jobModel);
 
         new DbSetup(
                 new DataSourceDestination(getDatasource()),

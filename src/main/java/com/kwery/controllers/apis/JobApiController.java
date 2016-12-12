@@ -187,6 +187,7 @@ public class JobApiController {
         jobModel.setLabel(jobDto.getLabel());
         jobModel.setCronExpression(Strings.nullToEmpty(jobDto.getCronExpression()));
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toSet()));
+        jobModel.setTitle(jobDto.getTitle());
         return jobModel;
     }
 

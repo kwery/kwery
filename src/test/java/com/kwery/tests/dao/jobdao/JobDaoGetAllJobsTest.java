@@ -35,7 +35,7 @@ public class JobDaoGetAllJobsTest extends RepoDashDaoTestBase {
             idJobModelMap.put(jobModel.getId(), jobModel);
         }
 
-        DbUtil.jobModelDbSetUp(jobModels);
+        DbUtil.jobDbSetUp(jobModels);
 
         jobDao = getInstance(JobDao.class);
     }

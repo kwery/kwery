@@ -45,14 +45,10 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
 
     protected Datasource datasource;
 
-    protected int jobId = 1;
-
     @Before
     public void setUp() {
-        jobModel = new JobModel();
-        jobModel.setId(jobId);
+        jobModel = TestUtil.jobModelWithoutDependents();
         jobModel.setCronExpression("* * * * *");
-        jobModel.setLabel(UUID.randomUUID().toString());
         jobModel.setSqlQueries(new HashSet<>());
 
         datasource = new Datasource();
@@ -82,16 +78,7 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
                 )
         ).launch();
 
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                insertInto(JOB_TABLE)
-                        .row()
-                        .column(ID_COLUMN, jobModel.getId())
-                        .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
-                        .end()
-                        .build()
-        ).launch();
+        jobDbSetUp(jobModel);
 
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
@@ -120,7 +107,7 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         String url = getInjector().getInstance(Router.class).getReverseRoute(JobApiController.class, "saveJob");
 
         JobDto jobDto = jobDtoWithoutId();
-        jobDto.setParentJobId(jobId);
+        jobDto.setParentJobId(jobModel.getId());
         jobDto.setSqlQueries(new ArrayList<>(1));
         jobDto.setCronExpression(null);
 
@@ -135,11 +122,11 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
-
         JobModel savedJobModel = new JobModel();
         savedJobModel.setId(TestUtil.DB_START_ID);
         savedJobModel.setCronExpression("");
         savedJobModel.setLabel(jobDto.getLabel());
+        savedJobModel.setTitle(jobDto.getTitle());
 
         assertDbState(JobModel.JOB_TABLE, jobTable(ImmutableList.of(savedJobModel, jobModel)));
 

@@ -1,11 +1,11 @@
 package com.kwery.tests.dao.jobdao;
 
+import com.google.common.collect.ImmutableList;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.dozer.DozerBeanMapper;
 import org.junit.Before;
@@ -16,6 +16,8 @@ import java.util.HashSet;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 
 public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
     protected JobDao jobDao;
@@ -35,27 +37,12 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
         jobModel2 = jobModelWithoutDependents();
         jobModel2.setSqlQueries(new HashSet<>());
 
+        jobDbSetUp(ImmutableList.of(jobModel0, jobModel1, jobModel2));
+
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
-                Operations.sequenceOf(
-                        Operations.insertInto(JOB_TABLE)
-                                .row()
-                                    .column(JobModel.ID_COLUMN, jobModel0.getId())
-                                    .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel0.getCronExpression())
-                                    .column(JobModel.LABEL_COLUMN, jobModel0.getLabel())
-                                .end()
-                                .row()
-                                    .column(JobModel.ID_COLUMN, jobModel1.getId())
-                                    .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel1.getCronExpression())
-                                    .column(JobModel.LABEL_COLUMN, jobModel1.getLabel())
-                                .end()
-                                .row()
-                                    .column(JobModel.ID_COLUMN, jobModel2.getId())
-                                    .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel2.getCronExpression())
-                                    .column(JobModel.LABEL_COLUMN, jobModel2.getLabel())
-                                .end()
-                                .build(),
-                        Operations.insertInto(JOB_DEPENDENT_TABLE)
+                sequenceOf(
+                        insertInto(JOB_DEPENDENT_TABLE)
                                 .row()
                                     .column(JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel0.getId())
                                     .column(JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, jobModel1.getId())
@@ -64,6 +51,8 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
                 )
         ).launch();
 
+        jobModel0.setDependentJobs(new HashSet<>());
+        jobModel0.getDependentJobs().add(jobModel1);
 
         jobDao = getInstance(JobDao.class);
     }

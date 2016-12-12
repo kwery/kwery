@@ -18,6 +18,7 @@ import static com.kwery.models.SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK;
 import static com.kwery.models.SqlQueryExecutionModel.COLUMN_RESULT;
 import static com.kwery.models.SqlQueryModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
@@ -55,6 +56,8 @@ public class JobExecutionDaoQueryTest extends RepoDashDaoTestBase {
 
         jobExecutionModel.setSqlQueryExecutionModels(ImmutableSet.of(sqlQueryExecutionModel));
 
+        jobDbSetUp(jobModel);
+
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
                 sequenceOf(
@@ -67,10 +70,6 @@ public class JobExecutionDaoQueryTest extends RepoDashDaoTestBase {
                                 .columns(SqlQueryModel.ID_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
                                 .values(sqlQuery.getId(), sqlQuery.getLabel(), sqlQuery.getQuery(),
                                         sqlQuery.getDatasource().getId())
-                                .build(),
-                        insertInto(JobModel.JOB_TABLE)
-                                .columns(ID_COLUMN, JobModel.CRON_EXPRESSION_COLUMN ,JobModel.LABEL_COLUMN)
-                                .values(jobModel.getId(), jobModel.getCronExpression(), jobModel.getLabel())
                                 .build(),
                         insertInto(JOB_SQL_QUERY_TABLE)
                                 .row()

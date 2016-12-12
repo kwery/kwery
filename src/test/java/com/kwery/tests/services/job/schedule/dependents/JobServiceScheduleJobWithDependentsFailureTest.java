@@ -13,7 +13,7 @@ public class JobServiceScheduleJobWithDependentsFailureTest extends JobServiceJo
     @Test
     public void test() {
         jobService.schedule(jobModel.getId());
-        waitAtMost(130, SECONDS).until(() -> getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() >= 2);
+        waitAtMost(130, SECONDS).until(() -> getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() >= 2);
         assertThat(getJobExecutionModels(dependentJobModel.getId(), JobExecutionModel.Status.SUCCESS), hasSize(0));
     }
 

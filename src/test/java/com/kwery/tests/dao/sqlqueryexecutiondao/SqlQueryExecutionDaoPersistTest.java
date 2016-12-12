@@ -39,6 +39,8 @@ public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
         jobExecutionModel = jobExecutionModel();
         jobExecutionModel.setJobModel(jobModel);
 
+        jobDbSetUp(jobModel);
+
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
                 sequenceOf(
@@ -51,10 +53,6 @@ public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
                                 .columns(SqlQueryModel.ID_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
                                 .values(sqlQuery.getId(), sqlQuery.getLabel(), sqlQuery.getQuery(),
                                         sqlQuery.getDatasource().getId())
-                                .build(),
-                        insertInto(JobModel.JOB_TABLE)
-                                .columns(JobModel.ID_COLUMN, JobModel.CRON_EXPRESSION_COLUMN ,JobModel.LABEL_COLUMN)
-                                .values(jobModel.getId(), jobModel.getCronExpression(), jobModel.getLabel())
                                 .build(),
                         insertInto(JobExecutionModel.TABLE)
                                 .columns(JobExecutionModel.COLUMN_ID, COLUMN_EXECUTION_START, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_STATUS,

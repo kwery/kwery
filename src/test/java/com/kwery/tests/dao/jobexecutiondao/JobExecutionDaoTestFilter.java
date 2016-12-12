@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.kwery.models.JobExecutionModel.*;
-import static com.kwery.models.JobExecutionModel.JOB_ID_FK_COLUMN;
 import static com.kwery.models.JobExecutionModel.Status.*;
-import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
+import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
@@ -37,25 +37,16 @@ public class JobExecutionDaoTestFilter extends RepoDashDaoTestBase {
 
     @Before
     public void setUpJobExecutionDaoTestFilter() {
-        job0 = new JobModel();
-        job0.setId(1);
-        job0.setCronExpression("* * * * *");
-        job0.setLabel("test0");
+        job0 = jobModelWithoutDependents();
         job0.setSqlQueries(new HashSet<>());
 
-        job1 = new JobModel();
-        job1.setId(2);
-        job1.setCronExpression("* * * * *");
-        job1.setLabel("test1");
+        job1 = jobModelWithoutDependents();
         job1.setSqlQueries(new HashSet<>());
+
+        jobDbSetUp(ImmutableList.of(job0, job1));
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(getDatasource()),
                 sequenceOf(
-                        insertInto(JOB_TABLE)
-                                .columns(JobModel.ID_COLUMN, CRON_EXPRESSION_COLUMN , LABEL_COLUMN)
-                                .values(job0.getId(), job0.getCronExpression(), job0.getLabel())
-                                .values(job1.getId(), job1.getCronExpression(), job1.getLabel())
-                                .build(),
                         insertInto(JobExecutionModel.TABLE)
                                 .columns(JobExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_STATUS, JOB_ID_FK_COLUMN)
                                 .values(1, 1475159940797l, "executionId", 1475158740747l, SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
