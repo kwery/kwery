@@ -145,6 +145,7 @@ public class DbUtil {
                     .with(SqlQueryModel.ID_COLUMN, m.getId())
                     .with(SqlQueryModel.LABEL_COLUMN, m.getLabel())
                     .with(SqlQueryModel.QUERY_COLUMN, m.getQuery())
+                    .with(SqlQueryModel.TITLE_COLUMN, m.getTitle())
                     .with(SqlQueryModel.DATASOURCE_ID_FK_COLUMN, m.getDatasource().getId())
                     .add();
         }
@@ -209,6 +210,12 @@ public class DbUtil {
         dbSetup.launch();
     }
 
+    public static void sqlQueryDbSetUp(Collection<SqlQueryModel> ms) {
+        for (SqlQueryModel m : ms) {
+            sqlQueryDbSetUp(m);
+        }
+    }
+
     public static void sqlQueryDbSetUp(SqlQueryModel sqlQueryModel){
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -217,6 +224,7 @@ public class DbUtil {
                         .column(SqlQueryModel.ID_COLUMN, sqlQueryModel.getId())
                         .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
                         .column(SqlQueryModel.QUERY_COLUMN, sqlQueryModel.getQuery())
+                        .column(SqlQueryModel.TITLE_COLUMN, sqlQueryModel.getTitle())
                         .column(SqlQueryModel.DATASOURCE_ID_FK_COLUMN, sqlQueryModel.getDatasource().getId())
                         .end()
                         .build()

@@ -130,13 +130,40 @@ public class TestUtil {
         PodamFactory podamFactory = new PodamFactoryImpl();
         SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
         sqlQueryModel.setId(null);
+        sqlQuerySetNulls(sqlQueryModel);
+        return sqlQueryModel;
+    }
+
+    public static SqlQueryModel sqlQueryModelWithoutId(Datasource datasource) {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
+        sqlQueryModel.setId(null);
+        sqlQueryModel.setDatasource(datasource);
+        sqlQuerySetNulls(sqlQueryModel);
         return sqlQueryModel;
     }
 
     public static SqlQueryModel sqlQueryModel() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        return podamFactory.manufacturePojo(SqlQueryModel.class);
+        SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
+        sqlQuerySetNulls(sqlQueryModel);
+        return sqlQueryModel;
+    }
+
+    public static SqlQueryModel sqlQueryModel(Datasource datasource) {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
+        sqlQueryModel.setDatasource(datasource);
+        sqlQuerySetNulls(sqlQueryModel);
+        return sqlQueryModel;
+    }
+
+    private static void sqlQuerySetNulls(SqlQueryModel sqlQueryModel) {
+        sqlQueryModel.setCronExpression(null);
+        sqlQueryModel.setDependentQueries(null);
+        sqlQueryModel.setRecipientEmails(null);
     }
 
     public static JobModel jobModelWithoutDependents() {

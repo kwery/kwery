@@ -21,18 +21,14 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.JobModel.ID_COLUMN;
 import static com.kwery.models.JobModel.*;
-import static com.kwery.models.SqlQueryModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.TestUtil.jobDtoWithoutId;
-import static com.kwery.tests.util.TestUtil.sqlQueryDtoWithoutId;
+import static com.kwery.tests.util.TestUtil.*;
 import static com.kwery.views.ActionResult.Status.success;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.hamcrest.core.Is.is;
@@ -60,11 +56,7 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         datasource.setPort(3306);
         datasource.setType(MYSQL);
 
-        SqlQueryModel sqlQueryModel = new SqlQueryModel();
-        sqlQueryModel.setId(1);
-        sqlQueryModel.setLabel(UUID.randomUUID().toString());
-        sqlQueryModel.setQuery("select * from foo");
-        sqlQueryModel.setDatasource(datasource);
+        SqlQueryModel sqlQueryModel = sqlQueryModel(datasource);
 
         jobModel.getSqlQueries().add(sqlQueryModel);
 
@@ -79,18 +71,11 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         ).launch();
 
         jobDbSetUp(jobModel);
+        sqlQueryDbSetUp(sqlQueryModel);
 
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
                 Operations.sequenceOf(
-                        insertInto(SQL_QUERY_TABLE)
-                                .row()
-                                .column(ID_COLUMN, sqlQueryModel.getId())
-                                .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
-                                .column(QUERY_COLUMN, sqlQueryModel.getQuery())
-                                .column(DATASOURCE_ID_FK_COLUMN, sqlQueryModel.getDatasource().getId())
-                                .end()
-                                .build(),
                         insertInto(JOB_SQL_QUERY_TABLE)
                                 .row()
                                 .column(ID_COLUMN, sqlQueryModel.getId())

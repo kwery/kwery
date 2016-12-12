@@ -1,6 +1,5 @@
 package com.kwery.tests.services.job;
 
-import com.google.common.collect.ImmutableList;
 import com.kwery.dao.JobDao;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
@@ -14,12 +13,10 @@ import org.junit.Before;
 
 import java.util.HashSet;
 
-import static com.kwery.models.JobModel.ID_COLUMN;
 import static com.kwery.models.JobModel.*;
-import static com.kwery.models.SqlQueryModel.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
+import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 
 public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobServiceJobSetUpAbstractTest {
@@ -29,8 +26,8 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
     protected JobDao jobDao;
 
-    protected int sqlQueryId2 = 3;
-    protected int sqlQueryId3 = 4;
+    protected int sqlQueryId2;
+    protected int sqlQueryId3;
 
     @Before
     public void setUpJobServiceJobSetUpWithDependentsAbstractTest() {
@@ -38,30 +35,25 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
         dependentJobModel.setCronExpression("");
         dependentJobModel.setSqlQueries(new HashSet<>());
 
-        for (int sqlQueryId : ImmutableList.of(sqlQueryId2, sqlQueryId3)) {
-            SqlQueryModel sqlQueryModel = new SqlQueryModel();
-            sqlQueryModel.setId(sqlQueryId);
-            sqlQueryModel.setLabel("select" + sqlQueryId);
+        for (int i = 0; i < 2; ++i) {
+            SqlQueryModel sqlQueryModel = sqlQueryModel(datasource);
+            if (i == 0) {
+                sqlQueryId2 = sqlQueryModel.getId();
+            } else {
+                sqlQueryId3 = sqlQueryModel.getId();
+            }
             sqlQueryModel.setQuery(getQuery());
-            sqlQueryModel.setDatasource(datasource);
-
             dependentJobModel.getSqlQueries().add(sqlQueryModel);
         }
 
         jobDbSetUp(dependentJobModel);
 
+        sqlQueryDbSetUp(dependentJobModel.getSqlQueries());
+
         for (SqlQueryModel sqlQueryModel : dependentJobModel.getSqlQueries()) {
             new DbSetup(
                     new DataSourceDestination(getDatasource()),
                     Operations.sequenceOf(
-                            insertInto(SQL_QUERY_TABLE)
-                                    .row()
-                                    .column(ID_COLUMN, sqlQueryModel.getId())
-                                    .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
-                                    .column(QUERY_COLUMN, sqlQueryModel.getQuery())
-                                    .column(DATASOURCE_ID_FK_COLUMN, sqlQueryModel.getDatasource().getId())
-                                    .end()
-                                    .build(),
                             insertInto(JOB_SQL_QUERY_TABLE)
                                     .row()
                                     .column(ID_COLUMN, sqlQueryModel.getId())

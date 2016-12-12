@@ -15,19 +15,11 @@ import org.junit.rules.RuleChain;
 
 import javax.sql.DataSource;
 
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
-import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
-import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
+import static com.kwery.models.SqlQueryModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 
 public class OnboardingShowHomeScreenUiTest extends ChromeFluentTest {

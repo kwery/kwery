@@ -2,6 +2,7 @@ package com.kwery.tests.services.job.launch;
 
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpAbstractTest;
 import org.junit.Test;
 
@@ -23,8 +24,10 @@ public class JobServiceLaunchJobKilledTest extends JobServiceJobSetUpAbstractTes
         waitAtMost(1, MINUTES).until(() -> !getJobExecutionModels(JobExecutionModel.Status.KILLED).isEmpty());
 
         assertJobExecutionModel(JobExecutionModel.Status.KILLED);
-        assertSqlQueryExecutionModel(sqlQueryId0, SqlQueryExecutionModel.Status.KILLED);
-        assertSqlQueryExecutionModel(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED);
+
+        for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
+            assertSqlQueryExecutionModel(sqlQueryModel.getId(), SqlQueryExecutionModel.Status.KILLED);
+        }
     }
 
     @Override

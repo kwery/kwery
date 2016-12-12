@@ -19,12 +19,10 @@ import java.util.List;
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.JobModel.ID_COLUMN;
 import static com.kwery.models.JobModel.*;
-import static com.kwery.models.SqlQueryModel.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
+import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
@@ -40,8 +38,8 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
 
     protected Datasource datasource;
 
-    protected int sqlQueryId0 = 1;
-    protected int sqlQueryId1 = 2;
+    protected int sqlQueryId0;
+    protected int sqlQueryId1;
 
     @Before
     public void setUpJobServiceJobSetUpAbstractTest() {
@@ -58,13 +56,16 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         datasource.setPort(3306);
         datasource.setType(MYSQL);
 
-        for (int sqlQueryId : ImmutableList.of(sqlQueryId0, sqlQueryId1)) {
-            SqlQueryModel sqlQueryModel = new SqlQueryModel();
-            sqlQueryModel.setId(sqlQueryId);
-            sqlQueryModel.setLabel("select" + sqlQueryId);
-            sqlQueryModel.setQuery(getQuery());
-            sqlQueryModel.setDatasource(datasource);
+        for (int i = 0; i < 2; ++i) {
+            SqlQueryModel sqlQueryModel = sqlQueryModel(datasource);
 
+            if (i == 0) {
+                sqlQueryId0 = sqlQueryModel.getId();
+            } else {
+                sqlQueryId1 = sqlQueryModel.getId();
+            }
+
+            sqlQueryModel.setQuery(getQuery());
             jobModel.getSqlQueries().add(sqlQueryModel);
         }
 
@@ -80,18 +81,12 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
 
         jobDbSetUp(jobModel);
 
+        sqlQueryDbSetUp(jobModel.getSqlQueries());
+
         for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
             new DbSetup(
                     new DataSourceDestination(getDatasource()),
                     Operations.sequenceOf(
-                            insertInto(SQL_QUERY_TABLE)
-                                    .row()
-                                    .column(ID_COLUMN, sqlQueryModel.getId())
-                                    .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
-                                    .column(QUERY_COLUMN, sqlQueryModel.getQuery())
-                                    .column(DATASOURCE_ID_FK_COLUMN, sqlQueryModel.getDatasource().getId())
-                                    .end()
-                                    .build(),
                             insertInto(JOB_SQL_QUERY_TABLE)
                                     .row()
                                     .column(ID_COLUMN, sqlQueryModel.getId())

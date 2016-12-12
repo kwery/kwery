@@ -43,12 +43,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         datasource = datasource();
 
         for (int i = 0; i < 2; ++i) {
-            SqlQueryModel e = sqlQueryModel();
-            e.setDependentQueries(null);
-            e.setRecipientEmails(null);
-            e.setCronExpression(null);
-            e.setDatasource(datasource);
-            jobModel.getSqlQueries().add(e);
+            jobModel.getSqlQueries().add(sqlQueryModel(datasource));
         }
 
         new DbSetup(
@@ -63,19 +58,13 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         jobDbSetUp(jobModel);
 
+        sqlQueryDbSetUp(jobModel.getSqlQueries());
+
         int id = 0;
         for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
             new DbSetup(
                     new DataSourceDestination(getDatasource()),
                     Operations.sequenceOf(
-                            Operations.insertInto(SQL_QUERY_TABLE)
-                                    .row()
-                                    .column(ID_COLUMN, sqlQueryModel.getId())
-                                    .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
-                                    .column(SqlQueryModel.QUERY_COLUMN, sqlQueryModel.getQuery())
-                                    .column(SqlQueryModel.DATASOURCE_ID_FK_COLUMN, sqlQueryModel.getDatasource().getId())
-                                    .end()
-                                    .build(),
                             Operations.insertInto(JOB_SQL_QUERY_TABLE)
                                     .row()
                                     .column(JobModel.ID_COLUMN, ++id)

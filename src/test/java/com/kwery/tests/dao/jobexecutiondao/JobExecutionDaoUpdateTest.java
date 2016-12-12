@@ -16,15 +16,13 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-import static com.kwery.models.Datasource.*;
 import static com.kwery.models.JobExecutionModel.*;
 import static com.kwery.models.JobModel.JOB_SQL_QUERY_TABLE;
 import static com.kwery.models.JobModel.SQL_QUERY_ID_FK_COLUMN;
 import static com.kwery.models.SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK;
 import static com.kwery.models.SqlQueryExecutionModel.COLUMN_RESULT;
-import static com.kwery.models.SqlQueryModel.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
+import static com.kwery.models.SqlQueryModel.ID_COLUMN;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
@@ -44,11 +42,10 @@ public class JobExecutionDaoUpdateTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobExecutionDaoUpdateTest() {
         Datasource datasource = datasource();
-        sqlQuery = sqlQueryModel();
-        sqlQuery.setDatasource(datasource);
-        sqlQuery.setRecipientEmails(null);
-        sqlQuery.setDependentQueries(null);
-        sqlQuery.setCronExpression(null);
+        datasourceDbSetup(datasource);
+
+        sqlQuery = sqlQueryModel(datasource);
+        sqlQueryDbSetUp(sqlQuery);
 
         jobModel = jobModelWithoutDependents();
         jobModel.setSqlQueries(ImmutableSet.of(sqlQuery));
@@ -70,16 +67,6 @@ public class JobExecutionDaoUpdateTest extends RepoDashDaoTestBase {
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
                 sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(Datasource.COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(),
-                                        datasource.getType(), datasource.getUrl(), datasource.getUsername())
-                                .build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(ID_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(sqlQuery.getId(), sqlQuery.getLabel(), sqlQuery.getQuery(),
-                                        sqlQuery.getDatasource().getId())
-                                .build(),
                         insertInto(JOB_SQL_QUERY_TABLE)
                                 .row()
                                 .column(ID_COLUMN, sqlQuery.getId())

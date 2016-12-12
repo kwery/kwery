@@ -38,6 +38,11 @@ public class SqlQueryModel {
     @NotNull(message = "label.validation")
     private String label;
 
+    @Column(name = TITLE_COLUMN)
+    @NotNull
+    @Size(min = 1, max = 1024)
+    private String title;
+
     @Transient
     private String cronExpression;
 
@@ -95,6 +100,14 @@ public class SqlQueryModel {
 
     public void setCronExpression(String cronExpression) {
         this.cronExpression = cronExpression;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Datasource getDatasource() {

@@ -55,12 +55,10 @@ public class JobDaoSaveTest extends RepoDashTestBase {
 
         JobModel expectedJobModel = dozerBeanMapper.map(jobModel, JobModel.class);
 
-        SqlQueryModel sqlQueryModel0 = sqlQueryModelWithoutId();
-        sqlQueryModel0.setDatasource(datasource);
+        SqlQueryModel sqlQueryModel0 = sqlQueryModelWithoutId(datasource);
         SqlQueryModel expectedSqlQueryModel0 = dozerBeanMapper.map(sqlQueryModel0, SqlQueryModel.class);
 
-        SqlQueryModel sqlQueryModel1 = sqlQueryModelWithoutId();
-        sqlQueryModel1.setDatasource(datasource);
+        SqlQueryModel sqlQueryModel1 = sqlQueryModelWithoutId(datasource);
         SqlQueryModel expectedSqlQueryModel1 = dozerBeanMapper.map(sqlQueryModel1, SqlQueryModel.class);
 
         jobModel.setSqlQueries(ImmutableSet.of(sqlQueryModel0, sqlQueryModel1));
