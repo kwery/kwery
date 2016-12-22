@@ -10,9 +10,6 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.views.ActionResult;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import ninja.Router;
 import org.json.JSONException;
 import org.junit.Before;
@@ -23,17 +20,11 @@ import java.util.HashSet;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.models.Datasource.*;
-import static com.kwery.models.JobModel.JOB_SQL_QUERY_TABLE;
-import static com.kwery.models.JobModel.SQL_QUERY_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.ID_COLUMN;
-import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M;
 import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.kwery.views.ActionResult.Status.failure;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static java.text.MessageFormat.format;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -63,38 +54,10 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
         sqlQueryModel.setLabel(queryLabel);
         jobModel.getSqlQueries().add(sqlQueryModel);
 
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                Operations.sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(), datasource.getType(), datasource.getUrl(), datasource.getUsername())
-                                .build()
-                )
-        ).launch();
-
+        datasourceDbSetup(datasource);
         jobDbSetUp(jobModel);
-
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                Operations.sequenceOf(
-                        Operations.insertInto(SQL_QUERY_TABLE)
-                                .row()
-                                .column(ID_COLUMN, sqlQueryModel.getId())
-                                .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
-                                .column(SqlQueryModel.QUERY_COLUMN, sqlQueryModel.getQuery())
-                                .column(SqlQueryModel.DATASOURCE_ID_FK_COLUMN, sqlQueryModel.getDatasource().getId())
-                                .end()
-                                .build(),
-                        Operations.insertInto(JOB_SQL_QUERY_TABLE)
-                                .row()
-                                .column(JobModel.ID_COLUMN, 1)
-                                .column(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
-                                .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
-                                .end()
-                                .build()
-                )
-        ).launch();
+        sqlQueryDbSetUp(sqlQueryModel);
+        jobSqlQueryDbSetUp(jobModel);
 
         jobDao = getInjector().getInstance(JobDao.class);
     }

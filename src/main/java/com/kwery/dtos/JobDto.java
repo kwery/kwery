@@ -1,6 +1,7 @@
 package com.kwery.dtos;
 
 import java.util.List;
+import java.util.Set;
 
 public class JobDto {
     protected int id;
@@ -8,6 +9,7 @@ public class JobDto {
     protected String cronExpression;
     protected String label;
     protected int parentJobId;
+    protected Set<String> emails;
     protected List<SqlQueryDto> sqlQueries;
 
     public int getId() {
@@ -48,6 +50,14 @@ public class JobDto {
 
     public void setParentJobId(int parentJobId) {
         this.parentJobId = parentJobId;
+    }
+
+    public Set<String> getEmails() {
+        return emails;
+    }
+
+    public void setEmails(Set<String> emails) {
+        this.emails = emails;
     }
 
     public List<SqlQueryDto> getSqlQueries() {

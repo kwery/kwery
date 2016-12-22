@@ -1,22 +1,16 @@
 package com.kwery.tests.fluentlenium.job;
 
 import com.kwery.models.Datasource;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.models.Datasource.*;
-import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
 import static com.kwery.tests.util.TestUtil.datasource;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -33,16 +27,7 @@ public class ReportSaveToggleCronExpressionDependsOnReportUiTest extends ChromeF
     @Before
     public void setUpReportSaveSuccessUiTest() {
         Datasource datasource = datasource();
-
-        new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(), MYSQL.name(), datasource.getUrl(), datasource.getUsername())
-                                .build()
-                )
-        ).launch();
+        datasourceDbSetup(datasource);
 
         page = createPage(ReportSavePage.class);
         page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);

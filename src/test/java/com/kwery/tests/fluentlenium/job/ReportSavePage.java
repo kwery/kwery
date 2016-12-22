@@ -49,6 +49,7 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
             SqlQueryDto dto = jobDto.getSqlQueries().get(i);
             fill(".f-sql-query" + i + " .f-query").with(dto.getQuery());
             fill(".f-sql-query" + i + " .f-sql-query-label").with(dto.getLabel());
+            fill(".f-sql-query" + i + " .f-sql-query-title").with(dto.getTitle());
             fillSelect(".f-sql-query" + i + " .f-datasource").withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
         }
 
@@ -135,7 +136,7 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
     }
 
     public enum SqlQueryFormField {
-        query, datasourceId, queryLabel
+        query, datasourceId, queryTitle, queryLabel
     }
 
     public void waitForErrorMessages() {

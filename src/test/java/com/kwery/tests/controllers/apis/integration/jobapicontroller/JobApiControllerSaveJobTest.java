@@ -1,5 +1,6 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller;
 
+import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
@@ -58,6 +59,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         jobDto.setCronExpression("* * * * *");
         jobDto.setSqlQueries(new ArrayList<>(1));
         jobDto.setParentJobId(0);
+        jobDto.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select * from mysql.user");

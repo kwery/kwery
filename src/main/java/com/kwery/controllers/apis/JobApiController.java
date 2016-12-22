@@ -188,6 +188,7 @@ public class JobApiController {
         jobModel.setCronExpression(Strings.nullToEmpty(jobDto.getCronExpression()));
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toSet()));
         jobModel.setTitle(jobDto.getTitle());
+        jobModel.setEmails(jobDto.getEmails());
         return jobModel;
     }
 
@@ -204,6 +205,7 @@ public class JobApiController {
         model.setLabel(dto.getLabel());
         model.setQuery(dto.getQuery());
         model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
+        model.setTitle(dto.getTitle());
 
         return model;
     }

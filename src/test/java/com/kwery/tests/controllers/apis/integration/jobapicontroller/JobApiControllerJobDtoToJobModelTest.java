@@ -1,5 +1,6 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller;
 
+import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.JobDao;
@@ -17,6 +18,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
@@ -32,6 +34,8 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
     protected DatasourceDao datasourceDao;
 
     protected int datasourceId = 1;
+
+    protected final Set<String> emails = ImmutableSet.of("foo@bar.com", "goo@moo.com");
 
     @Before
     public void setUpJobApiControllerJobDtoToJobModelTest() {
@@ -53,6 +57,8 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
     @Test
     public void testWithoutId() {
         JobDto jobDto = jobDtoWithoutId();
+        jobDto.setEmails(emails);
+
         jobDto.setSqlQueries(new ArrayList<>(2));
 
         JobModel jobModel = new JobModel();
@@ -60,6 +66,8 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setId(null);
+        jobModel.setEmails(emails);
+
         jobModel.setSqlQueries(new HashSet<>(2));
 
         for (int i = 0; i < 2; ++i) {
@@ -71,6 +79,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
             model.setQuery(sqlQueryDto.getQuery());
             model.setLabel(sqlQueryDto.getLabel());
             model.setDatasource(datasourceDao.getById(datasourceId));
+            model.setTitle(sqlQueryDto.getTitle());
 
             jobModel.getSqlQueries().add(model);
         }
@@ -81,6 +90,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
     @Test
     public void testWithId() {
         JobDto jobDto = TestUtil.jobDto();
+        jobDto.setEmails(emails);
         jobDto.setSqlQueries(new ArrayList<>(2));
 
         JobModel jobModel = new JobModel();
@@ -90,6 +100,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setId(null);
         jobModel.setSqlQueries(new HashSet<>(2));
         jobModel.setId(jobDto.getId());
+        jobModel.setEmails(emails);
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDto();
@@ -101,6 +112,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
             model.setLabel(sqlQueryDto.getLabel());
             model.setDatasource(datasourceDao.getById(datasourceId));
             model.setId(sqlQueryDto.getId());
+            model.setTitle(sqlQueryDto.getTitle());
 
             jobModel.getSqlQueries().add(model);
         }

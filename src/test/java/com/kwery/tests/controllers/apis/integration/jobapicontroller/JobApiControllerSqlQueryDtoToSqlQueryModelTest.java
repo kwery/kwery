@@ -56,6 +56,7 @@ public class JobApiControllerSqlQueryDtoToSqlQueryModelTest extends RepoDashDaoT
         model.setId(dto.getId());
         Datasource datasource = datasourceDao.getById(datasourceId);
         model.setDatasource(datasource);
+        model.setTitle(dto.getTitle());
 
         assertThat(jobApiController.sqlQueryDtoToSqlQueryModel(dto), theSameBeanAs(model));
     }
@@ -77,6 +78,7 @@ public class JobApiControllerSqlQueryDtoToSqlQueryModelTest extends RepoDashDaoT
         model.setQuery(query);
         Datasource datasource = datasourceDao.getById(datasourceId);
         model.setDatasource(datasource);
+        model.setTitle(dto.getTitle());
 
         assertThat(jobApiController.sqlQueryDtoToSqlQueryModel(dto), theSameBeanAs(model));
     }

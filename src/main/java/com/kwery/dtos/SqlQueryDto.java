@@ -24,6 +24,10 @@ public class SqlQueryDto {
     @NotNull(message = "datasource.validation")
     private int datasourceId;
 
+    @NotNull
+    @Size(min = 1, max = 1024)
+    private String title;
+
     @JsonIgnore
     private Integer dependsOnSqlQueryId;
 
@@ -76,6 +80,14 @@ public class SqlQueryDto {
 
     public void setDependsOnSqlQueryId(Integer dependsOnSqlQueryId) {
         this.dependsOnSqlQueryId = dependsOnSqlQueryId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getRecipientEmailsCsv() {

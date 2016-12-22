@@ -6,6 +6,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.messages = ko.observableArray([]);
 
         self.title = ko.observable();
+
         self.reportLabel = ko.observable();
         self.cronExpression = ko.observable();
         self.parentReportId = ko.observable();
@@ -17,9 +18,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
 
         self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
-        var Query = function(query, queryLabel, datasourceId) {
+        var Query = function(query, queryTitle, queryLabel, datasourceId) {
             this.query = query;
             this.queryLabel = queryLabel;
+            this.queryTitle = queryTitle;
             this.datasourceId = datasourceId;
         };
 
@@ -139,6 +141,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     queries.push({
                         query: query.query,
                         label: query.queryLabel,
+                        title: query.queryTitle,
                         datasourceId: query.datasourceId
                     });
                 });
