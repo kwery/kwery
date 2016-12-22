@@ -11,6 +11,7 @@ import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.kwery.models.EmailConfiguration.*;
@@ -201,13 +202,18 @@ public class TestUtil {
         PodamFactory podamFactory = new PodamFactoryImpl();
         JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
         jobDto.setId(0);
+        jobDto.setEmails(new HashSet<>());
+        jobDto.setSqlQueries(new ArrayList<>());
         return jobDto;
     }
 
     public static JobDto jobDto() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        return podamFactory.manufacturePojo(JobDto.class);
+        JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
+        jobDto.setEmails(new HashSet<>());
+        jobDto.setSqlQueries(new ArrayList<>());
+        return jobDto;
     }
 
     public static SqlQueryDto sqlQueryDtoWithoutId() {

@@ -5,11 +5,12 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
-        self.title = ko.observable();
+        self.title = ko.observable("");
 
-        self.reportLabel = ko.observable();
-        self.cronExpression = ko.observable();
+        self.reportLabel = ko.observable("");
+        self.cronExpression = ko.observable("");
         self.parentReportId = ko.observable();
+        self.reportEmails = ko.observable("");
 
         var Datasource = function(id, label) {
             this.id = id;
@@ -131,7 +132,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                 }
             }
         }).on("submit", function (e) {
-            debugger;
             if (e.isDefaultPrevented()) {
                 // handle the invalid form...
             } else {
@@ -146,11 +146,16 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     });
                 });
 
+                var emails = $.grep($.map(self.reportEmails().split(","), $.trim), function(elem){
+                    return elem !== null || elem !== "";
+                });
+
                 var report = {
                     cronExpression: self.cronExpression(),
                     label: self.reportLabel(),
                     title: self.title(),
                     parentJobId: self.parentReportId(),
+                    emails: emails,
                     sqlQueries: queries
                 };
 

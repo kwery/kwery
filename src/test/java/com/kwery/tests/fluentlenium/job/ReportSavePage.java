@@ -33,6 +33,9 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         fill(".f-report-title").with(jobDto.getTitle());
         fill(".f-report-label").with(jobDto.getLabel());
 
+        //TODO - Tests with empty emails etc
+        fill(".f-report-emails").with(String.join(",", jobDto.getEmails()));
+
         if ($(className("f-report-cron-expression")).first().isEnabled()) {
             fill(".f-report-cron-expression").with(jobDto.getCronExpression());
         }

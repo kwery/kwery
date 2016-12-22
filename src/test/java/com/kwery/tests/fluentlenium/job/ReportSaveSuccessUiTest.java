@@ -1,6 +1,7 @@
 package com.kwery.tests.fluentlenium.job;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
@@ -47,6 +48,7 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
         jobDto = jobDtoWithoutId();
         jobDto.setCronExpression("* * * * *");
         jobDto.setSqlQueries(new ArrayList<>(1));
+        jobDto.setEmails(ImmutableSet.of("foo@bar.com", "moo@bar.com"));
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
