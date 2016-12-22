@@ -3,6 +3,8 @@ package com.kwery.tests.services.job.schedule.dependents;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpWithDependentsAbstractTest;
+import ninja.postoffice.Mail;
+import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobServiceScheduleJobWithDependentsJobKilledTest extends JobServiceJobSetUpWithDependentsAbstractTest {
@@ -30,6 +33,9 @@ public class JobServiceScheduleJobWithDependentsJobKilledTest extends JobService
         waitAtMost(1, MINUTES).until(() -> getJobExecutionModels(JobExecutionModel.Status.KILLED).size() >= 2);
 
         assertThat(getJobExecutionModels(dependentJobModel.getId(), JobExecutionModel.Status.SUCCESS), hasSize(0));
+
+        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
+        assertThat(mail, nullValue());
     }
 
 

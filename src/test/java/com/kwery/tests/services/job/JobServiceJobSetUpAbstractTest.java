@@ -1,11 +1,13 @@
 package com.kwery.tests.services.job;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.*;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
+import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -41,11 +43,14 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     protected int sqlQueryId0;
     protected int sqlQueryId1;
 
+    protected MailService mailService;
+
     @Before
     public void setUpJobServiceJobSetUpAbstractTest() {
         jobModel = jobModelWithoutDependents();
         jobModel.setCronExpression("* * * * *");
         jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));
 
         datasource = new Datasource();
         datasource.setId(1);
@@ -101,6 +106,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         jobExecutionDao = getInstance(JobExecutionDao.class);
         jobService = getInstance(JobService.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
+        mailService = getInstance(MailService.class);
     }
 
     protected void assertJobExecutionModel(JobExecutionModel.Status status, int jobId) {
