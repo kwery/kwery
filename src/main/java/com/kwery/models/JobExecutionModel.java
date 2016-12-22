@@ -41,6 +41,7 @@ public class JobExecutionModel {
     private JobModel jobModel;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "jobExecutionModel")
+    @OrderBy("id ASC")
     public Set<SqlQueryExecutionModel> sqlQueryExecutionModels;
 
     public Integer getId() {

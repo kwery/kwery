@@ -26,15 +26,17 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
     protected final SqlQueryDao sqlQueryDao;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
     protected final JobService jobService;
+    protected final ReportEmailSender reportEmailSender;
 
     @Inject
     public TaskExecutorListenerImpl(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
-                                    SqlQueryExecutionDao sqlQueryExecutionDao, JobService jobService) {
+                                    SqlQueryExecutionDao sqlQueryExecutionDao, JobService jobService, ReportEmailSender reportEmailSender) {
         this.jobDao = jobDao;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.jobService = jobService;
+        this.reportEmailSender = reportEmailSender;
     }
 
     @Override
@@ -82,6 +84,12 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
 
             //Should be called only in case of successful Job execution
             if (!executor.isStopped() && exception == null) {
+                //Send email
+                if (hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
+                    reportEmailSender.send(jobExecutionModel);
+                }
+
+                //Execute dependent jobs
                 JobModel job = jobDao.getJobById(jobTask.getJobId());
 
                 if (!job.getDependentJobs().isEmpty()) {
@@ -124,12 +132,10 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
 
     @Override
     public void statusMessageChanged(TaskExecutor executor, String statusMessage) {
-
     }
 
     @Override
     public void completenessValueChanged(TaskExecutor executor, double completenessValue) {
-
     }
 
     private boolean hasSqlQueriesExecutedSuccessfully(JobExecutionModel jobExecutionModel) {

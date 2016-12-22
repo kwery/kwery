@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.kwery.services.scheduler.JsonToHtmlTable;
+import com.kwery.services.scheduler.JsonToHtmlTableConvertor;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertThat;
 
-public class JsonToHtmlTableTest {
+public class JsonToHtmlTableConvertorTest {
     @Test
     public void test() throws IOException {
         List<List<String>> result = ImmutableList.of(
@@ -39,7 +39,7 @@ public class JsonToHtmlTableTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTable().convert(json), Is.is(expectedHtmlTable));
+        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class JsonToHtmlTableTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTable().convert(json), Is.is(expectedHtmlTable));
+        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
     }
 
     @Test
@@ -77,11 +77,11 @@ public class JsonToHtmlTableTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTable().convert(json), Is.is(expectedHtmlTable));
+        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
     }
 
     @Test(expected = JsonProcessingException.class)
     public void malformedJsonTest() throws IOException {
-        new JsonToHtmlTable().convert("sdjkfljsl");
+        new JsonToHtmlTableConvertor().convert("sdjkfljsl");
     }
 }

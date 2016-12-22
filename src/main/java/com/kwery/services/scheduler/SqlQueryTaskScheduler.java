@@ -40,7 +40,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
     private final OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper;
     private final SchedulerService schedulerService;
     private final SqlQueryDao sqlQueryDao;
-    private final Provider<JsonToHtmlTable> jsonToHtmlTableProvider;
+    private final Provider<JsonToHtmlTableConvertor> jsonToHtmlTableProvider;
     private final MailService mailService;
     private final Provider<KweryMail> kweryMailProvider;
 
@@ -54,7 +54,7 @@ public class SqlQueryTaskScheduler implements SchedulerListener {
                                  OneOffSqlQueryTaskSchedulerReaper oneOffSqlQueryTaskSchedulerReaper,
                                  SchedulerService schedulerService,
                                  SqlQueryDao sqlQueryDao,
-                                 Provider<JsonToHtmlTable> jsonToHtmlTableProvider,
+                                 Provider<JsonToHtmlTableConvertor> jsonToHtmlTableProvider,
                                  MailService mailService,
                                  Provider<KweryMail> kweryMailProvider,
                                  @Assisted List<TaskExecutor> ongoingExecutions,

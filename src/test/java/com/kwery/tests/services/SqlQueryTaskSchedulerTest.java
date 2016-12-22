@@ -239,10 +239,10 @@ public class SqlQueryTaskSchedulerTest {
         assertThat(ongoingExecutions, hasSize(2));
     }
 
-    private static class JsonToHtmlProvider implements Provider<JsonToHtmlTable> {
+    private static class JsonToHtmlProvider implements Provider<JsonToHtmlTableConvertor> {
         @Override
-        public JsonToHtmlTable get() {
-            return new JsonToHtmlTable();
+        public JsonToHtmlTableConvertor get() {
+            return new JsonToHtmlTableConvertor();
         }
     }
 

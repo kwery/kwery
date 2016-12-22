@@ -3,13 +3,15 @@ package com.kwery.services.scheduler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
+import com.google.inject.Singleton;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JsonToHtmlTable {
+@Singleton
+public class JsonToHtmlTableConvertor {
     public String convert(String json) throws IOException {
         //TODO - Is there a better way to do this, probably use some XML processing library or is it an overkill?
         ObjectMapper objectMapper = new ObjectMapper();

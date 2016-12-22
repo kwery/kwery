@@ -3,7 +3,7 @@ package com.kwery.tests.services.oneoffexecution;
 import com.google.common.collect.ImmutableList;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.services.scheduler.JsonToHtmlTable;
+import com.kwery.services.scheduler.JsonToHtmlTableConvertor;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
@@ -78,7 +78,7 @@ public class SchedulerServiceOneOffExecutionWithDependentsSuccessTest extends Sc
 
         assertThat(mail, notNullValue());
         assertThat(mail.getTos(), containsInAnyOrder(recipientEmail));
-        assertThat(mail.getBodyHtml(), is(new JsonToHtmlTable().convert(execution.getResult())));
+        assertThat(mail.getBodyHtml(), is(new JsonToHtmlTableConvertor().convert(execution.getResult())));
         assertThat(mail.getSubject(), endsWith(sqlQueryDao.getById(dependentSelectQueryId).getLabel()));
     }
 
