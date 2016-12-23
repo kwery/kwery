@@ -104,6 +104,14 @@ public class JobApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
+    public Result deleteJob(@PathParam("jobId") int jobId) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        jobDao.delete(jobId);
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(new ActionResult(success, ""));
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
     public Result executeJob(@PathParam("jobId") int jobId) {
         if (logger.isTraceEnabled()) logger.trace("<");
         jobService.launch(jobId);
