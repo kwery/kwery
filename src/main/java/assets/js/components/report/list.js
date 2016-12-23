@@ -30,6 +30,19 @@ define(["knockout", "jquery", "text!components/report/list.html"], function (ko,
             });
         };
 
+        self.deleteReport = function(report) {
+            $.ajax({
+                url: "/api/job/" + report.id + "/delete",
+                type: "POST",
+                contentType: "application/json",
+                success: function(result) {
+                    self.status(result.status);
+                    self.messages([ko.i18n("report.list.delete.success")]);
+                    self.reports.remove(report);
+                }
+            });
+        };
+
         return self;
     }
     return { viewModel: viewModel, template: template };
