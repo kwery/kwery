@@ -40,7 +40,7 @@ public class JobExecutionModel {
     @ManyToOne
     private JobModel jobModel;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "jobExecutionModel")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "jobExecutionModel", orphanRemoval = true)
     @OrderBy("id ASC")
     public Set<SqlQueryExecutionModel> sqlQueryExecutionModels;
 

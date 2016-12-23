@@ -43,13 +43,19 @@ public class TestUtil {
     public static JobExecutionModel jobExecutionModel() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        return podamFactory.manufacturePojo(JobExecutionModel.class);
+        JobExecutionModel jobExecutionModel = podamFactory.manufacturePojo(JobExecutionModel.class);
+        jobExecutionModel.setSqlQueryExecutionModels(new HashSet<>());
+        jobExecutionModel.setJobModel(null);
+
+        return jobExecutionModel;
     }
 
     public static JobExecutionModel jobExecutionModelWithoutId() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         JobExecutionModel jobExecutionModel = podamFactory.manufacturePojo(JobExecutionModel.class);
         jobExecutionModel.setId(null);
+        jobExecutionModel.setSqlQueryExecutionModels(new HashSet<>());
+        jobExecutionModel.setJobModel(null);
         return jobExecutionModel;
     }
 
@@ -188,6 +194,8 @@ public class TestUtil {
     public static SqlQueryExecutionModel sqlQueryExecutionModelWithoutId() {
         SqlQueryExecutionModel model = new PodamFactoryImpl().manufacturePojo(SqlQueryExecutionModel.class);
         model.setId(null);
+        model.setSqlQuery(null);
+        model.setJobExecutionModel(null);
         return model;
     }
 
@@ -195,6 +203,8 @@ public class TestUtil {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
         SqlQueryExecutionModel model = podamFactory.manufacturePojo(SqlQueryExecutionModel.class);
+        model.setSqlQuery(null);
+        model.setJobExecutionModel(null);
         return model;
     }
 

@@ -2,20 +2,19 @@ package com.kwery.tests.dao.datasourcedao;
 
 import com.kwery.dao.DatasourceDao;
 import com.kwery.models.Datasource;
+import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
 import java.util.List;
 
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.tests.util.TestUtil.datasourceWithoutId;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
-import static com.kwery.tests.util.TestUtil.datasource;
 
 public class DatasourceDaoQueryTest extends RepoDashDaoTestBase {
     protected DatasourceDao datasourceDao;
@@ -26,7 +25,7 @@ public class DatasourceDaoQueryTest extends RepoDashDaoTestBase {
     @Before
     public void datasourceDaoQueryTestSetup() {
         datasourceDao = getInstance(DatasourceDao.class);
-        savedDatasource0 = datasource();
+        savedDatasource0 = datasourceWithoutId();
         datasourceDao.save(savedDatasource0);
 
         savedDatasource1 = new Datasource();

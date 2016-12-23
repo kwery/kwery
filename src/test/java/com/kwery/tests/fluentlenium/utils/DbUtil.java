@@ -112,11 +112,13 @@ public class DbUtil {
         DataSetBuilder builder = new DataSetBuilder();
         builder.ensureTableIsPresent(JobModel.JOB_EMAIL_TABLE);
 
-        for (String s : m.getEmails()) {
-            builder.newRow(JobModel.JOB_EMAIL_TABLE)
-                    .with(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, m.getId())
-                    .with(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, s)
-                    .add();
+        if (m != null) {
+            for (String s : m.getEmails()) {
+                builder.newRow(JobModel.JOB_EMAIL_TABLE)
+                        .with(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, m.getId())
+                        .with(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, s)
+                        .add();
+            }
         }
 
         return builder.build();
@@ -124,6 +126,7 @@ public class DbUtil {
 
     public static IDataSet jobTable(List<JobModel> ms) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JOB_TABLE);
 
         for (JobModel m : ms) {
             builder.newRow(JOB_TABLE)
@@ -139,12 +142,15 @@ public class DbUtil {
 
     public static IDataSet jobDependentTable(JobModel jobModel) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JobModel.JOB_DEPENDENT_TABLE);
 
-        for (JobModel m : jobModel.getDependentJobs()) {
-            builder.newRow(JobModel.JOB_DEPENDENT_TABLE)
-                    .with(JobModel.JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
-                    .with(JobModel.JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, m.getId())
-                    .add();
+        if (jobModel != null) {
+            for (JobModel m : jobModel.getDependentJobs()) {
+                builder.newRow(JobModel.JOB_DEPENDENT_TABLE)
+                        .with(JobModel.JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
+                        .with(JobModel.JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, m.getId())
+                        .add();
+            }
         }
 
         return builder.build();
@@ -156,6 +162,7 @@ public class DbUtil {
 
     public static IDataSet sqlQueryTable(Collection<SqlQueryModel> ms) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(SqlQueryModel.SQL_QUERY_TABLE);
 
         for (SqlQueryModel m : ms) {
             builder.newRow(SqlQueryModel.SQL_QUERY_TABLE)
@@ -172,12 +179,15 @@ public class DbUtil {
 
     public static IDataSet jobSqlQueryTable(JobModel jobModel) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JOB_SQL_QUERY_TABLE);
 
-        for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
-            builder.newRow(JOB_SQL_QUERY_TABLE)
-                    .with(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
-                    .with(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
-                    .add();
+        if (jobModel != null) {
+            for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
+                builder.newRow(JOB_SQL_QUERY_TABLE)
+                        .with(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
+                        .with(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                        .add();
+            }
         }
 
         return builder.build();
@@ -185,32 +195,39 @@ public class DbUtil {
 
     public static IDataSet jobExecutionTable(JobExecutionModel jobExecutionModel) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JobExecutionModel.TABLE);
 
-        builder.newRow(JobExecutionModel.TABLE)
-                .with(JobExecutionModel.COLUMN_ID, jobExecutionModel.getId())
-                .with(JobExecutionModel.COLUMN_EXECUTION_ID, jobExecutionModel.getExecutionId())
-                .with(JobExecutionModel.COLUMN_EXECUTION_START, jobExecutionModel.getExecutionStart())
-                .with(JobExecutionModel.COLUMN_EXECUTION_END, jobExecutionModel.getExecutionEnd())
-                .with(JobExecutionModel.COLUMN_STATUS, jobExecutionModel.getStatus())
-                .with(JobExecutionModel.JOB_ID_FK_COLUMN, jobExecutionModel.getJobModel().getId())
-                .add();
+        if (jobExecutionModel != null) {
+            builder.newRow(JobExecutionModel.TABLE)
+                    .with(JobExecutionModel.COLUMN_ID, jobExecutionModel.getId())
+                    .with(JobExecutionModel.COLUMN_EXECUTION_ID, jobExecutionModel.getExecutionId())
+                    .with(JobExecutionModel.COLUMN_EXECUTION_START, jobExecutionModel.getExecutionStart())
+                    .with(JobExecutionModel.COLUMN_EXECUTION_END, jobExecutionModel.getExecutionEnd())
+                    .with(JobExecutionModel.COLUMN_STATUS, jobExecutionModel.getStatus())
+                    .with(JobExecutionModel.JOB_ID_FK_COLUMN, jobExecutionModel.getJobModel().getId())
+                    .add();
+        }
 
         return builder.build();
     }
 
     public static IDataSet sqlQueryExecutionTable(SqlQueryExecutionModel model) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(SqlQueryExecutionModel.TABLE);
 
-        builder.newRow(SqlQueryExecutionModel.TABLE)
-                .with(SqlQueryExecutionModel.COLUMN_ID, model.getId())
-                .with(SqlQueryExecutionModel.COLUMN_EXECUTION_ID, model.getExecutionId())
-                .with(SqlQueryExecutionModel.COLUMN_EXECUTION_START, model.getExecutionStart())
-                .with(SqlQueryExecutionModel.COLUMN_EXECUTION_END, model.getExecutionEnd())
-                .with(SqlQueryExecutionModel.COLUMN_RESULT, model.getResult())
-                .with(SqlQueryExecutionModel.COLUMN_STATUS, model.getStatus())
-                .with(SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK, model.getSqlQuery().getId())
-                .with(SqlQueryExecutionModel.COLUMN_JOB_EXECUTION_ID_FK, model.getJobExecutionModel().getId())
-                .add();
+        if (model != null) {
+            builder.newRow(SqlQueryExecutionModel.TABLE)
+                    .with(SqlQueryExecutionModel.COLUMN_ID, model.getId())
+                    .with(SqlQueryExecutionModel.COLUMN_EXECUTION_ID, model.getExecutionId())
+                    .with(SqlQueryExecutionModel.COLUMN_EXECUTION_START, model.getExecutionStart())
+                    .with(SqlQueryExecutionModel.COLUMN_EXECUTION_END, model.getExecutionEnd())
+                    .with(SqlQueryExecutionModel.COLUMN_RESULT, model.getResult())
+                    .with(SqlQueryExecutionModel.COLUMN_STATUS, model.getStatus())
+                    .with(SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK, model.getSqlQuery().getId())
+                    .with(SqlQueryExecutionModel.COLUMN_JOB_EXECUTION_ID_FK, model.getJobExecutionModel().getId())
+                    .add();
+        }
+
 
         return builder.build();
     }
@@ -314,6 +331,44 @@ public class DbUtil {
                     )
             ).launch();
         }
+    }
+
+    public static void jobExecutionDbSetUp(JobExecutionModel jobExecutionModel) {
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(JobExecutionModel.TABLE)
+                                .row()
+                                    .column(JobExecutionModel.COLUMN_ID, jobExecutionModel.getId())
+                                    .column(JobExecutionModel.COLUMN_EXECUTION_ID, jobExecutionModel.getExecutionId())
+                                    .column(JobExecutionModel.COLUMN_EXECUTION_START, jobExecutionModel.getExecutionStart())
+                                    .column(JobExecutionModel.COLUMN_EXECUTION_END, jobExecutionModel.getExecutionEnd())
+                                    .column(JobExecutionModel.COLUMN_STATUS, jobExecutionModel.getStatus())
+                                    .column(JobExecutionModel.JOB_ID_FK_COLUMN, jobExecutionModel.getJobModel().getId())
+                                .end()
+                                .build()
+                )
+        ).launch();
+    }
+
+    public static void sqlQueryExecutionDbSetUp(SqlQueryExecutionModel model) {
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(SqlQueryExecutionModel.TABLE)
+                                .row()
+                                .column(SqlQueryExecutionModel.COLUMN_ID, model.getId())
+                                .column(SqlQueryExecutionModel.COLUMN_EXECUTION_ID, model.getExecutionId())
+                                .column(SqlQueryExecutionModel.COLUMN_EXECUTION_START, model.getExecutionStart())
+                                .column(SqlQueryExecutionModel.COLUMN_EXECUTION_END, model.getExecutionEnd())
+                                .column(SqlQueryExecutionModel.COLUMN_RESULT, model.getResult())
+                                .column(SqlQueryExecutionModel.COLUMN_STATUS, model.getStatus())
+                                .column(SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK, model.getSqlQuery().getId())
+                                .column(SqlQueryExecutionModel.COLUMN_JOB_EXECUTION_ID_FK, model.getJobExecutionModel().getId())
+                                .end()
+                                .build()
+                )
+        ).launch();
     }
 
     public static int dbId() {

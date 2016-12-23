@@ -8,11 +8,9 @@ import com.kwery.models.JobExecutionModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -152,10 +150,24 @@ public class JobExecutionDao {
     @Transactional
     public void deleteByJobId(int jobId) {
         EntityManager m = entityManagerProvider.get();
-        m.createQuery(
-                "delete from JobExecutionModel e where e.jobModel.id = :jobId")
-                .setParameter("jobId", jobId
-        ).executeUpdate();
+
+        JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
+        filter.setJobId(jobId);
+        List<JobExecutionModel> jobExecutionModels = filter(filter);
+
+        //TODO - figure out why this is needed
+        for (JobExecutionModel jobExecutionModel : jobExecutionModels) {
+            jobExecutionModel.getSqlQueryExecutionModels().clear();
+        }
+
+        m.flush();
+
+        CriteriaBuilder criteriaBuilder = m.getCriteriaBuilder();
+        CriteriaDelete delete = criteriaBuilder.createCriteriaDelete(JobExecutionModel.class);
+        Root jobExecutionModel = delete.from(JobExecutionModel.class);
+        delete.where(criteriaBuilder.equal(jobExecutionModel.get("jobModel").get("id"), jobId));
+        Query query = m.createQuery(delete);
+        query.executeUpdate();
     }
 
     @Transactional

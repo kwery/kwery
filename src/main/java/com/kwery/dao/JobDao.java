@@ -13,11 +13,13 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class JobDao {
-    protected Provider<EntityManager> entityManagerProvider;
+    protected final Provider<EntityManager> entityManagerProvider;
+    protected final JobExecutionDao jobExecutionDao;
 
     @Inject
-    public JobDao(Provider<EntityManager> entityManagerProvider) {
+    public JobDao(Provider<EntityManager> entityManagerProvider, JobExecutionDao jobExecutionDao) {
         this.entityManagerProvider = entityManagerProvider;
+        this.jobExecutionDao = jobExecutionDao;
     }
 
     @Transactional
@@ -30,6 +32,13 @@ public class JobDao {
             e.persist(m);
             return m;
         }
+    }
+
+    @Transactional
+    public void delete(int jobId) {
+        EntityManager e = entityManagerProvider.get();
+        jobExecutionDao.deleteByJobId(jobId);
+        e.remove(getJobById(jobId));
     }
 
     @Transactional
