@@ -2,15 +2,14 @@ package com.kwery.tests.dao.datasourcedao;
 
 import com.kwery.dao.DatasourceDao;
 import com.kwery.models.Datasource;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
-import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.tests.util.TestUtil.datasource;
-import static com.kwery.tests.util.TestUtil.datasourceWithoutId;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
@@ -24,24 +23,19 @@ public class DatasourceDaoQueryTest extends RepoDashDaoTestBase {
 
     @Before
     public void datasourceDaoQueryTestSetup() {
-        datasourceDao = getInstance(DatasourceDao.class);
-        savedDatasource0 = datasourceWithoutId();
-        datasourceDao.save(savedDatasource0);
+        savedDatasource0 = datasource();
+        DbUtil.datasourceDbSetup(savedDatasource0);
 
-        savedDatasource1 = new Datasource();
-        savedDatasource1.setUrl("goo.com");
-        savedDatasource1.setPort(5432);
-        savedDatasource1.setUsername("testuser");
-        savedDatasource1.setPassword("password");
-        savedDatasource1.setLabel("foo");
-        savedDatasource1.setType(MYSQL);
-        datasourceDao.save(savedDatasource1);
+        savedDatasource1 = datasource();
+        DbUtil.datasourceDbSetup(savedDatasource1);
+
+        datasourceDao = getInstance(DatasourceDao.class);
     }
 
     @Test
     public void testQueryByLabel() {
-        assertThat(datasourceDao.getByLabel(datasource().getLabel()), notNullValue(Datasource.class));
-        assertThat(datasourceDao.getByLabel(datasource().getLabel() + "foo"), nullValue(Datasource.class));
+        assertThat(datasourceDao.getByLabel(savedDatasource0.getLabel()), notNullValue(Datasource.class));
+        assertThat(datasourceDao.getByLabel(savedDatasource0.getLabel() + "foo"), nullValue(Datasource.class));
     }
 
     @Test

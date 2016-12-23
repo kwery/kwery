@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import javax.persistence.PersistenceException;
 
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static com.kwery.tests.util.TestUtil.datasourceWithoutId;
 import static org.junit.Assert.assertNotNull;
@@ -32,10 +33,11 @@ public class DatasourceDaoPersistTest extends RepoDashDaoTestBase {
 
     @Test
     public void testUniqueLabel() {
-        Datasource d = datasourceWithoutId();
-        datasourceDao.save(d);
+        Datasource d = datasource();
+        datasourceDbSetup(d);
 
-        Datasource newD = datasource();
+        Datasource newD = datasourceWithoutId();
+        newD.setLabel(d.getLabel());
         try {
             datasourceDao.save(newD);
         } catch (PersistenceException e) {
