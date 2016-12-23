@@ -30,6 +30,10 @@ public class KweryScheduler {
         return scheduler.schedule(schedulingPattern, task);
     }
 
+    public void deschedule(String id) {
+        scheduler.deschedule(id);
+    }
+
     public TaskExecutor launch(Task task) {
         return scheduler.launch(task);
     }

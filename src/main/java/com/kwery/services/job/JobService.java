@@ -8,6 +8,9 @@ import it.sauronsoftware.cron4j.TaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Singleton
 public class JobService {
     protected Logger logger = LoggerFactory.getLogger(JobService.class);
@@ -15,6 +18,9 @@ public class JobService {
     protected final KweryScheduler kweryScheduler;
     protected final JobTaskFactory jobTaskFactory;
     protected final JobDao jobDao;
+
+    //TODO - Needs to be done in a better way
+    protected Map<Integer, String> jobIdSchedulerIdMap = new ConcurrentHashMap<>();
 
     @Inject
     public JobService(KweryScheduler kweryScheduler, JobTaskFactory jobTaskFactory, JobDao jobDao) {
@@ -27,7 +33,9 @@ public class JobService {
         logger.info("Scheduling job with id {}", jobId);
         JobTask jobTask = jobTaskFactory.create(jobId);
         JobModel jobModel = jobDao.getJobById(jobId);
-        return kweryScheduler.schedule(jobModel.getCronExpression(), jobTask);
+        String schedulerId = kweryScheduler.schedule(jobModel.getCronExpression(), jobTask);
+        jobIdSchedulerIdMap.put(jobId, schedulerId);
+        return schedulerId;
     }
 
     public void launch(int jobId) {
@@ -51,5 +59,16 @@ public class JobService {
         if (!found) {
             logger.info("Task execution with id {} not found", executionId);
         }
+    }
+
+    public void deschedule(int jobId) {
+        logger.info("Deleting job with id {}", jobId);
+        String id = jobIdSchedulerIdMap.get(jobId);
+
+        if (id == null) {
+            throw new RuntimeException("Schedule id not found for job id " + jobId);
+        }
+
+        kweryScheduler.deschedule(id);
     }
 }
