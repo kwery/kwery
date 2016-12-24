@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.job;
+package com.kwery.tests.services.job;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
