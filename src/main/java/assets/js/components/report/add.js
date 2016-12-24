@@ -2,15 +2,19 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
     function viewModel(params) {
         var self = this;
 
+        var reportId = params.reportId;
+        var isUpdate = reportId !== undefined && reportId > 0;
+
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
         self.title = ko.observable("");
-
         self.reportLabel = ko.observable("");
         self.cronExpression = ko.observable("");
         self.parentReportId = ko.observable();
         self.reportEmails = ko.observable("");
+
+        self.queries = ko.observableArray([]);
 
         var Datasource = function(id, label) {
             this.id = id;
@@ -19,23 +23,13 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
 
         self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
-        var Query = function(query, queryTitle, queryLabel, datasourceId) {
+        var Query = function(query, queryTitle, queryLabel, datasourceId, id) {
             this.query = query;
             this.queryLabel = queryLabel;
             this.queryTitle = queryTitle;
             this.datasourceId = datasourceId;
+            this.id = id;
         };
-
-        $.ajax({
-            url: "/api/datasource/all",
-            type: "get",
-            contentType: "application/json",
-            success: function(datasources) {
-                ko.utils.arrayForEach(datasources, function(datasource){
-                    self.datasources.push(new Datasource(datasource.id, datasource.label));
-                });
-            }
-        });
 
         var Report = function(id, label) {
             this.id = id;
@@ -44,19 +38,45 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
 
         self.reports = ko.observableArray([new Report("", ko.i18n("report.save.parent.report.id.select.default"))]);
 
-        $.ajax({
-            url: "/api/job/list",
-            type: "GET",
-            contentType: "application/json",
-            success: function(reports) {
-                ko.utils.arrayForEach(reports, function(report){
-                    self.reports.push(new Report(report.id, report.label));
-                });
-            }
-        });
-
-        self.cronExpressionEnabled = ko.observable(true);
+        self.cronExpressionEnabled = ko.observable(false);
         self.parentReportEnabled = ko.observable(false);
+
+        self.enableParentReport = function(){
+            self.cronExpressionEnabled(!self.cronExpressionEnabled());
+            self.parentReportEnabled(!self.parentReportEnabled());
+
+            $("#parentReport").attr("data-validate", self.parentReportEnabled());
+            $("#cronExpression").attr("data-validate", self.cronExpressionEnabled());
+
+            self.refreshValidation();
+
+            return false;
+        };
+
+        self.enableCronExpression = function() {
+            self.parentReportEnabled(!self.parentReportEnabled());
+            self.cronExpressionEnabled(!self.cronExpressionEnabled());
+
+            $("#parentReport").attr("data-validate", self.parentReportEnabled());
+            $("#cronExpression").attr("data-validate", self.cronExpressionEnabled());
+
+            if (!self.cronExpressionEnabled()) {
+                $("#cronExpression").attr("data-validate", false);
+            } else {
+                $("#cronExpression").attr("data-validate", true);
+            }
+
+            self.refreshValidation();
+
+            return false;
+        };
+
+        if (!isUpdate) {
+            self.cronExpressionEnabled(true);
+            $("#cronExpression").attr("data-validate", true);
+            $("#parentReport").attr("data-validate", false);
+            self.refreshValidation();
+        }
 
         self.cronExpressionEnableText = ko.computed(function(){
             if (self.cronExpressionEnabled()) {
@@ -74,37 +94,74 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
             }
         }, self);
 
-        self.enableParentReport = function(){
-            self.cronExpressionEnabled(!self.cronExpressionEnabled());
-            self.parentReportEnabled(!self.parentReportEnabled());
 
-            $("#parentReport").attr("data-validate", self.parentReportEnabled());
-            $("#cronExpression").attr("data-validate", self.cronExpressionEnabled());
-            self.refreshValidation();
+        if (!isUpdate) {
+            self.queries.push(new Query());
+        }
 
-            return false;
-        };
+        $.when(
+            $.ajax({
+                url: "/api/datasource/all",
+                type: "get",
+                contentType: "application/json",
+                success: function(datasources) {
+                    ko.utils.arrayForEach(datasources, function(datasource){
+                        self.datasources.push(new Datasource(datasource.id, datasource.label));
+                    });
+                }
+            }),
+            $.ajax({
+                url: "/api/job/list",
+                type: "GET",
+                contentType: "application/json",
+                success: function(reports) {
+                    ko.utils.arrayForEach(reports, function(jobModelHackDto){
+                        var report = jobModelHackDto.jobModel;
+                        if (isUpdate) {
+                            if (report.id !== reportId) {
+                                self.reports.push(new Report(report.id, report.label));
+                            }
+                        } else {
+                            self.reports.push(new Report(report.id, report.label));
+                        }
+                    });
+                }
+            })
+        ).done(
+            $.ajax({
+                url: "/api/job/" + reportId,
+                type: "GET",
+                contentType: "application/json",
+                success: function(jobModelHackDto) {
+                    var report = jobModelHackDto.jobModel;
+                    self.title(report.title);
+                    self.reportLabel(report.label);
+                    self.reportEmails(report.emails.join(", "));
 
-        self.enableCronExpression = function() {
-            self.parentReportEnabled(!self.parentReportEnabled());
-            self.cronExpressionEnabled(!self.cronExpressionEnabled());
+                    if (jobModelHackDto.parentJobModel != null) {
+                        self.parentReportEnabled(true);
+                        self.cronExpressionEnabled(false);
+                        self.parentReportId(jobModelHackDto.parentJobModel.id);
+                        $("#parentReport").attr("data-validate", true);
+                        $("#cronExpression").attr("data-validate", false);
+                    } else {
+                        self.parentReportEnabled(false);
+                        self.cronExpressionEnabled(true);
+                        self.cronExpression(report.cronExpression);
+                        $("#parentReport").attr("data-validate", false);
+                        $("#cronExpression").attr("data-validate", true);
+                    }
 
-            $("#parentReport").attr("data-validate", self.parentReportEnabled());
-            $("#cronExpression").attr("data-validate", self.cronExpressionEnabled());
-            self.refreshValidation();
+                    self.refreshValidation();
 
-            if (!self.cronExpressionEnabled()) {
-                $("#cronExpression").attr("data-validate", false);
-            } else {
-                $("#cronExpression").attr("data-validate", true);
-            }
+                    $.each(report.sqlQueries, function(index, sqlQuery){
+                        var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
+                        self.queries.push(query);
+                    });
+                }
+            })
+        );
 
-            //$("#reportForm").trigger('reset');
-            self.refreshValidation();
-            return false;
-        };
-
-        self.queries = ko.observableArray([new Query()]);
 
         self.addSqlQuery = function() {
             self.queries.push(new Query());
@@ -142,7 +199,8 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                         query: query.query,
                         label: query.queryLabel,
                         title: query.queryTitle,
-                        datasourceId: query.datasourceId
+                        datasourceId: query.datasourceId,
+                        id: query.id
                     });
                 });
 
@@ -158,6 +216,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     emails: emails,
                     sqlQueries: queries
                 };
+
+                if (isUpdate) {
+                    report.id = reportId;
+                }
 
                 $.ajax({
                     url: "/api/job/save",

@@ -1,5 +1,7 @@
 package com.kwery.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,6 +19,7 @@ public class JobModel {
     public static final String JOB_SQL_QUERY_TABLE = "job_sql_query";
     public static final String SQL_QUERY_ID_FK_COLUMN = "sql_query_id_fk";
     public static final String JOB_ID_FK_COLUMN = "job_id_fk";
+    public static final String JOB_SQL_QUERY_TABLE_ID_COLUMN = "id";
 
     public static final String JOB_DEPENDENT_TABLE_ID_COLUMN = "id";
     public static final String JOB_DEPENDENT_TABLE = "job_dependent";
@@ -63,6 +66,7 @@ public class JobModel {
     )
     public Set<JobModel> dependentJobs;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinTable(
             name = JOB_DEPENDENT_TABLE,

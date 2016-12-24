@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.views.ActionResult.Status.failure;
@@ -63,21 +64,39 @@ public class JobApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result saveJob(JobDto jobDto, Context context) {
-        Result json = json();
-
         if (logger.isTraceEnabled()) logger.trace("<");
+
+        boolean isUpdate = jobDto.getId() > 0;
+
+        Result json = json();
 
         List<String> errorMessages = new LinkedList<>();
 
-        if (jobDao.getJobByLabel(jobDto.getLabel()) != null) {
-            String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
-            errorMessages.add(message);
+        JobModel jobByLabel = jobDao.getJobByLabel(jobDto.getLabel());
+        if (jobByLabel != null) {
+            if (isUpdate) {
+                if (!jobByLabel.getId().equals(jobDto.getId())) {
+                    String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
+                    errorMessages.add(message);
+                }
+            } else {
+                String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
+                errorMessages.add(message);
+            }
         }
 
         for (SqlQueryDto sqlQueryDto : jobDto.getSqlQueries()) {
-            if (sqlQueryDao.getByLabel(sqlQueryDto.getLabel()) != null) {
-                String message = messages.get(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS, context, Optional.of(json), sqlQueryDto.getLabel()).get();
-                errorMessages.add(message);
+            SqlQueryModel byLabel = sqlQueryDao.getByLabel(sqlQueryDto.getLabel());
+            if (byLabel != null) {
+                if (isUpdate) {
+                    if (!byLabel.getId().equals(sqlQueryDto.getId())) {
+                        String message = messages.get(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS, context, Optional.of(json), sqlQueryDto.getLabel()).get();
+                        errorMessages.add(message);
+                    }
+                } else {
+                    String message = messages.get(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS, context, Optional.of(json), sqlQueryDto.getLabel()).get();
+                    errorMessages.add(message);
+                }
             }
         }
 
@@ -91,6 +110,9 @@ public class JobApiController {
                 parentJob.getDependentJobs().add(jobModel);
                 jobDao.save(parentJob);
             } else {
+                if (isUpdate) {
+                    jobService.deschedule(jobModel.getId());
+                }
                 jobService.schedule(jobModel.getId());
             }
 
@@ -124,8 +146,9 @@ public class JobApiController {
     public Result listAllJobs() {
         if (logger.isTraceEnabled()) logger.trace("<");
         List<JobModel> jobs = jobDao.getAllJobs();
+        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getDependsOnJob())).collect(Collectors.toList());
         if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(jobs);
+        return json().render(jobModelHackDtos);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -181,6 +204,14 @@ public class JobApiController {
             if (logger.isTraceEnabled()) logger.trace(">");
             return json.render(new JobExecutionResultDto(jobExecutionModels.get(0).getJobModel().getLabel(), sqlQueryExecutionResultDtos));
         }
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result getJob(@PathParam("jobId") int jobId) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        JobModel jobModel = jobDao.getJobById(jobId);
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(new JobModelHackDto(jobModel, jobModel.getDependsOnJob()));
     }
 
     @VisibleForTesting

@@ -108,16 +108,18 @@ public class DbUtil {
         return jobTable(ImmutableList.of(m));
     }
 
-    public static IDataSet jobEmailTable(JobModel m) throws DataSetException {
+    public static IDataSet jobEmailTable(JobModel... ms) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
         builder.ensureTableIsPresent(JobModel.JOB_EMAIL_TABLE);
 
-        if (m != null) {
-            for (String s : m.getEmails()) {
-                builder.newRow(JobModel.JOB_EMAIL_TABLE)
-                        .with(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, m.getId())
-                        .with(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, s)
-                        .add();
+        if (ms != null) {
+            for (JobModel m : ms) {
+                for (String s : m.getEmails()) {
+                    builder.newRow(JobModel.JOB_EMAIL_TABLE)
+                            .with(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, m.getId())
+                            .with(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, s)
+                            .add();
+                }
             }
         }
 
@@ -177,16 +179,18 @@ public class DbUtil {
         return builder.build();
     }
 
-    public static IDataSet jobSqlQueryTable(JobModel jobModel) throws DataSetException {
+    public static IDataSet jobSqlQueryTable(JobModel... jobModels) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
         builder.ensureTableIsPresent(JOB_SQL_QUERY_TABLE);
 
-        if (jobModel != null) {
-            for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
-                builder.newRow(JOB_SQL_QUERY_TABLE)
-                        .with(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
-                        .with(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
-                        .add();
+        if (jobModels != null) {
+            for (JobModel jobModel : jobModels) {
+                for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
+                    builder.newRow(JOB_SQL_QUERY_TABLE)
+                            .with(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
+                            .with(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                            .add();
+                }
             }
         }
 
