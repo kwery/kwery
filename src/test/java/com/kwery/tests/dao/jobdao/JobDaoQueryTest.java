@@ -8,8 +8,6 @@ import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.util.UUID.randomUUID;
@@ -19,50 +17,55 @@ import static org.junit.Assert.assertThat;
 
 public class JobDaoQueryTest extends RepoDashDaoTestBase {
     protected JobDao jobDao;
-    protected JobModel jobModel0;
+    protected JobModel jobModel;
     protected Datasource datasource;
+
+    private JobModel dependentJob0;
 
     @Before
     public void setUpJobDaoQueryTest() {
-        JobModel jobModel1 = jobModelWithoutDependents();
-        jobModel1.setEmails(new HashSet<>());
-        jobModel1.setSqlQueries(new HashSet<>());
-        jobDbSetUp(jobModel1);
+        dependentJob0 = jobModelWithoutDependents();
+        jobDbSetUp(dependentJob0);
 
-        JobModel jobModel2 = jobModelWithoutDependents();
-        jobModel2.setEmails(new HashSet<>());
-        jobModel2.setSqlQueries(new HashSet<>());
-        jobDbSetUp(jobModel2);
+        JobModel dependentJob1 = jobModelWithoutDependents();
+        jobDbSetUp(dependentJob1);
 
-        jobModel0 = jobModelWithoutDependents();
-        jobModel0.setSqlQueries(new HashSet<>());
-        jobModel0.setEmails(ImmutableSet.of(randomUUID().toString(), randomUUID().toString()));
-        jobModel0.getDependentJobs().addAll(ImmutableSet.of(jobModel1, jobModel2));
+        jobModel = jobModelWithoutDependents();
+        jobModel.setEmails(ImmutableSet.of(randomUUID().toString(), randomUUID().toString()));
+        jobModel.getDependentJobs().addAll(ImmutableSet.of(dependentJob0, dependentJob1));
 
         datasource = datasource();
 
         datasourceDbSetup(datasource);
 
-        jobModel0.getSqlQueries().addAll(ImmutableSet.of(sqlQueryModel(datasource), sqlQueryModel(datasource)));
+        jobModel.getSqlQueries().addAll(ImmutableSet.of(sqlQueryModel(datasource), sqlQueryModel(datasource)));
 
-        jobDbSetUp(jobModel0);
-        sqlQueryDbSetUp(jobModel0.getSqlQueries());
-        jobSqlQueryDbSetUp(jobModel0);
-        jobEmailDbSetUp(jobModel0);
-        jobDependentDbSetUp(jobModel0);
+        dependentJob0.setDependsOnJob(jobModel);
+        dependentJob1.setDependsOnJob(jobModel);
+
+        jobDbSetUp(jobModel);
+        sqlQueryDbSetUp(jobModel.getSqlQueries());
+        jobSqlQueryDbSetUp(jobModel);
+        jobEmailDbSetUp(jobModel);
+        jobDependentDbSetUp(jobModel);
 
         jobDao = getInstance(JobDao.class);
     }
 
     @Test
     public void testGetJobById() {
-        assertThat(jobDao.getJobById(jobModel0.getId()), theSameBeanAs(jobModel0));
-        assertThat(jobDao.getJobById(jobModel0.getId() + 1), nullValue());
+        assertThat(jobDao.getJobById(jobModel.getId()), theSameBeanAs(jobModel));
+        assertThat(jobDao.getJobById(jobModel.getId() + DB_START_ID + 100), nullValue());
     }
 
     @Test
     public void testGetJobByLabel() {
-        assertThat(jobDao.getJobByLabel(jobModel0.getLabel()), theSameBeanAs(jobModel0));
+        assertThat(jobDao.getJobByLabel(jobModel.getLabel()), theSameBeanAs(jobModel));
         assertThat(jobDao.getJobByLabel(randomUUID().toString()), nullValue());
+    }
+
+    @Test
+    public void testDependsOnJob() {
+        assertThat(jobDao.getJobById(dependentJob0.getId()), theSameBeanAs(dependentJob0));
     }
 }
