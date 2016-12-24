@@ -11,7 +11,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.title = ko.observable("");
         self.reportLabel = ko.observable("");
         self.cronExpression = ko.observable("");
-        self.parentReportId = ko.observable();
+        self.parentReportId = ko.observable(0);
         self.reportEmails = ko.observable("");
 
         self.queries = ko.observableArray([]);
@@ -75,7 +75,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
             self.cronExpressionEnabled(true);
             $("#cronExpression").attr("data-validate", true);
             $("#parentReport").attr("data-validate", false);
-            self.refreshValidation();
         }
 
         self.cronExpressionEnableText = ko.computed(function(){
@@ -127,40 +126,42 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     });
                 }
             })
-        ).done(
-            $.ajax({
-                url: "/api/job/" + reportId,
-                type: "GET",
-                contentType: "application/json",
-                success: function(jobModelHackDto) {
-                    var report = jobModelHackDto.jobModel;
-                    self.title(report.title);
-                    self.reportLabel(report.label);
-                    self.reportEmails(report.emails.join(", "));
+        ).done(function(){
+            if (isUpdate) {
+                $.ajax({
+                    url: "/api/job/" + reportId,
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function(jobModelHackDto) {
+                        var report = jobModelHackDto.jobModel;
+                        self.title(report.title);
+                        self.reportLabel(report.label);
+                        self.reportEmails(report.emails.join(", "));
 
-                    if (jobModelHackDto.parentJobModel != null) {
-                        self.parentReportEnabled(true);
-                        self.cronExpressionEnabled(false);
-                        self.parentReportId(jobModelHackDto.parentJobModel.id);
-                        $("#parentReport").attr("data-validate", true);
-                        $("#cronExpression").attr("data-validate", false);
-                    } else {
-                        self.parentReportEnabled(false);
-                        self.cronExpressionEnabled(true);
-                        self.cronExpression(report.cronExpression);
-                        $("#parentReport").attr("data-validate", false);
-                        $("#cronExpression").attr("data-validate", true);
+                        if (jobModelHackDto.parentJobModel != null) {
+                            self.parentReportEnabled(true);
+                            self.cronExpressionEnabled(false);
+                            self.parentReportId(jobModelHackDto.parentJobModel.id);
+                            $("#parentReport").attr("data-validate", true);
+                            $("#cronExpression").attr("data-validate", false);
+                        } else {
+                            self.parentReportEnabled(false);
+                            self.cronExpressionEnabled(true);
+                            self.cronExpression(report.cronExpression);
+                            $("#parentReport").attr("data-validate", false);
+                            $("#cronExpression").attr("data-validate", true);
+                        }
+
+                        self.refreshValidation();
+
+                        $.each(report.sqlQueries, function(index, sqlQuery){
+                            var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
+                            self.queries.push(query);
+                        });
                     }
-
-                    self.refreshValidation();
-
-                    $.each(report.sqlQueries, function(index, sqlQuery){
-                        var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
-                        self.queries.push(query);
-                    });
-                }
-            })
-        );
+                })
+            }
+        });
 
 
         self.addSqlQuery = function() {
@@ -208,11 +209,20 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     return elem !== null || elem !== "";
                 });
 
+                if ($("#cronExpression").prop('disabled')) {
+                    self.cronExpression("");
+                }
+
+                if ($("#parentReport").prop('disabled')) {
+                    self.parentReportId(0);
+                }
+
                 var report = {
                     cronExpression: self.cronExpression(),
                     label: self.reportLabel(),
                     title: self.title(),
-                    parentJobId: self.parentReportId(),
+                    //TODO - Updating to 0 turns into empty string
+                    parentJobId: self.parentReportId() ? self.parentReportId() : 0,
                     emails: emails,
                     sqlQueries: queries
                 };
