@@ -6,8 +6,10 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecutionModel.Status;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.apache.commons.lang3.RandomStringUtils;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -134,60 +136,55 @@ public class TestUtil {
     }
 
     public static SqlQueryModel sqlQueryModelWithoutId() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
+        SqlQueryModel sqlQueryModel = sqlQueryModel();
         sqlQueryModel.setId(null);
-        sqlQuerySetNulls(sqlQueryModel);
         return sqlQueryModel;
     }
 
     public static SqlQueryModel sqlQueryModelWithoutId(Datasource datasource) {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
-        sqlQueryModel.setId(null);
+        SqlQueryModel sqlQueryModel = sqlQueryModelWithoutId();
         sqlQueryModel.setDatasource(datasource);
-        sqlQuerySetNulls(sqlQueryModel);
         return sqlQueryModel;
     }
 
     public static SqlQueryModel sqlQueryModel() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
-        sqlQuerySetNulls(sqlQueryModel);
+        SqlQueryModel sqlQueryModel = new SqlQueryModel();
+        sqlQueryModel.setId(DbUtil.dbId());
+        sqlQueryModel.setQuery(RandomStringUtils.randomAlphanumeric(1, 1025));
+        sqlQueryModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        sqlQueryModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1025));
+        sqlQueryModel.setCronExpression(null);
+        sqlQueryModel.setDependentQueries(null);
+        sqlQueryModel.setRecipientEmails(null);
         return sqlQueryModel;
     }
 
     public static SqlQueryModel sqlQueryModel(Datasource datasource) {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        SqlQueryModel sqlQueryModel = podamFactory.manufacturePojo(SqlQueryModel.class);
+        SqlQueryModel sqlQueryModel = sqlQueryModel();
         sqlQueryModel.setDatasource(datasource);
-        sqlQuerySetNulls(sqlQueryModel);
         return sqlQueryModel;
     }
 
-    private static void sqlQuerySetNulls(SqlQueryModel sqlQueryModel) {
-        sqlQueryModel.setCronExpression(null);
-        sqlQueryModel.setDependentQueries(null);
-        sqlQueryModel.setRecipientEmails(null);
-    }
-
     public static JobModel jobModelWithoutDependents() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        JobModel jobModel = podamFactory.manufacturePojo(JobModel.class);
-        jobModel.setDependentJobs(new HashSet<>());
-        jobModel.setEmails(new HashSet<>());
-        return jobModel;
+        return jobModel();
     }
 
     public static JobModel jobModelWithoutIdWithoutDependents() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        JobModel jobModel = podamFactory.manufacturePojo(JobModel.class);
+        JobModel jobModel = jobModel();
         jobModel.setId(null);
+        return jobModel;
+    }
+
+    private static JobModel jobModel() {
+        JobModel jobModel = new JobModel();
+        jobModel.setId(DbUtil.dbId());
+        jobModel.setCronExpression("* * * * *");
+        jobModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
         jobModel.setDependentJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
+        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setDependsOnJob(null);
         return jobModel;
     }
 

@@ -63,6 +63,14 @@ public class JobModel {
     )
     public Set<JobModel> dependentJobs;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = JOB_DEPENDENT_TABLE,
+            joinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
+    )
+    private JobModel dependsOnJob;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = JOB_EMAIL_TABLE,
@@ -119,24 +127,19 @@ public class JobModel {
         this.dependentJobs = dependentJobs;
     }
 
+    public JobModel getDependsOnJob() {
+        return dependsOnJob;
+    }
+
+    public void setDependsOnJob(JobModel dependsOnJob) {
+        this.dependsOnJob = dependsOnJob;
+    }
+
     public Set<String> getEmails() {
         return emails;
     }
 
     public void setEmails(Set<String> recipientEmails) {
         this.emails = recipientEmails;
-    }
-
-    @Override
-    public String toString() {
-        return "JobModel{" +
-                "id=" + id +
-                ", cronExpression='" + cronExpression + '\'' +
-                ", label='" + label + '\'' +
-                ", title='" + title + '\'' +
-                ", sqlQueries=" + sqlQueries +
-                ", dependentJobs=" + dependentJobs +
-                ", emails=" + emails +
-                '}';
     }
 }
