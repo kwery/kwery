@@ -1,5 +1,6 @@
 package com.kwery.services.job;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kwery.dao.JobDao;
@@ -69,6 +70,12 @@ public class JobService {
             throw new RuntimeException("Schedule id not found for job id " + jobId);
         }
 
+        jobIdSchedulerIdMap.remove(jobId);
         kweryScheduler.deschedule(id);
+    }
+
+    @VisibleForTesting
+    public Map<Integer, String> getJobIdSchedulerIdMap() {
+        return jobIdSchedulerIdMap;
     }
 }
