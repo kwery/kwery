@@ -47,7 +47,6 @@ public class JobService {
         List<JobModel> jobModels = jobDao.getAllJobs();
         for (JobModel jobModel : jobModels) {
             if (!"".equals(Strings.nullToEmpty(jobModel.getCronExpression()))) {
-                logger.info("Scheduling job with id {}", jobModel.getId());
                 schedule(jobModel.getId());
             }
         }
