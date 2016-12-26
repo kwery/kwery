@@ -34,9 +34,13 @@ define(["knockout", "jquery", "text!components/report/execution-result.html"], f
                     self.title(result.title);
 
                     ko.utils.arrayForEach(result.sqlQueryExecutionResultDtos, function(executionResult){
-                        var header = executionResult.jsonResult[0];
-                        var content = executionResult.jsonResult.slice(1, executionResult.jsonResult.length);
-                        self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content));
+                        if (executionResult.status === 'SUCCESS') {
+                            var header = executionResult.jsonResult[0];
+                            var content = executionResult.jsonResult.slice(1, executionResult.jsonResult.length);
+                            self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content));
+                        } else if (executionResult.status === 'FAILURE') {
+                            self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, "", executionResult.errorResult));
+                        }
                     });
                 }
             }

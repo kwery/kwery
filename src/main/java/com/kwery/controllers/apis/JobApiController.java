@@ -186,31 +186,48 @@ public class JobApiController {
         List<JobExecutionModel> jobExecutionModels = jobExecutionDao.filter(filter);
 
         Result json = json();
-        if (jobExecutionModels.isEmpty() || jobExecutionModels.get(0).getSqlQueryExecutionModels().isEmpty()) {
+        JobExecutionModel jobExecutionModel = null;
+
+        if (!jobExecutionModels.isEmpty()) {
+            jobExecutionModel = jobExecutionModels.get(0);
+        }
+
+        if (jobExecutionModel == null || jobExecutionModel.getSqlQueryExecutionModels().isEmpty()) {
             if (logger.isTraceEnabled()) logger.trace(">");
             String message = messages.get(JOBAPICONTROLLER_REPORT_NOT_FOUND, context, Optional.of(json)).get();
             return json.render(new ActionResult(failure, message));
         } else {
             List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
             if (!jobExecutionModels.isEmpty()) {
-                for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModels.get(0).getSqlQueryExecutionModels()) {
+                for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModel.getSqlQueryExecutionModels()) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     String result = sqlQueryExecutionModel.getResult();
-                    List<List<?>> jsonResult = new LinkedList<>();
-                    if (!Strings.nullToEmpty(result).trim().equals("")) {
-                        jsonResult = objectMapper.readValue(
-                                result,
-                                objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
-                        );
-                    }
 
-                    sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getLabel(),
-                            sqlQueryExecutionModel.getStatus(), jsonResult));
+                    if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.SUCCESS) {
+                        if (isJson(result)) {
+                            List<List<?>> jsonResult = new LinkedList<>();
+                            if (!Strings.nullToEmpty(result).trim().equals("")) {
+                                jsonResult = objectMapper.readValue(
+                                        result,
+                                        objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
+                                );
+                            }
+
+                            sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getTitle(),
+                                    sqlQueryExecutionModel.getStatus(), jsonResult));
+                        } else {
+                            logger.error("SQL query execution result is success but result is not in json format for job id {} and job execution id {}",
+                                    jobExecutionModel.getJobModel().getId(), jobExecutionModel.getId());
+                        }
+                    } else if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.FAILURE) {
+                        sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getTitle(),
+                                sqlQueryExecutionModel.getStatus(), result));
+                    }
                 }
             }
 
             if (logger.isTraceEnabled()) logger.trace(">");
-            return json.render(new JobExecutionResultDto(jobExecutionModels.get(0).getJobModel().getLabel(), sqlQueryExecutionResultDtos));
+            return json.render(new JobExecutionResultDto(jobExecutionModel.getJobModel().getTitle(), sqlQueryExecutionResultDtos));
         }
     }
 
@@ -268,13 +285,15 @@ public class JobApiController {
         return jobExecutionDto;
     }
 
-    public static void main(String[] args) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<List<?>> jsonResult = objectMapper.readValue(
-                "",
-                objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
-        );
 
-        System.out.println(jsonResult);
+    @VisibleForTesting
+    public boolean isJson(String str) {
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.readTree(str);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

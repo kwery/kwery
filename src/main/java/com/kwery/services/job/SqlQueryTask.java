@@ -84,6 +84,9 @@ public class SqlQueryTask extends Task {
                 //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
             } catch (ExecutionException e) {
                 logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", sqlQuery.getQuery(), datasource.getLabel(), e);
+                SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
+                sqlQueryExecution.setResult(e.getCause().getLocalizedMessage());
+                sqlQueryExecutionDao.save(sqlQueryExecution);
                 throw new RuntimeException(e);
             }
         } catch (SQLException e) {

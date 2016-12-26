@@ -155,6 +155,8 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
 
         if (status == SqlQueryExecutionModel.Status.SUCCESS) {
             assertThat(sqlQueryExecution.getResult(), is("[[\"User\"],[\"root\"]]"));
+        } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
+            assertThat(sqlQueryExecution.getResult(), is("No database selected"));
         } else {
             assertThat(sqlQueryExecution.getResult(), nullValue());
         }
@@ -173,6 +175,8 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
 
             if (status == SqlQueryExecutionModel.Status.SUCCESS) {
                 assertThat(sqlQueryExecution.getResult(), is("[[\"User\"],[\"root\"]]"));
+            } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
+                assertThat(sqlQueryExecution.getResult(), is("No database selected"));
             } else {
                 assertThat(sqlQueryExecution.getResult(), nullValue());
             }

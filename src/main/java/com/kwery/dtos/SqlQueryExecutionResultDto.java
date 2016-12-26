@@ -11,9 +11,16 @@ public class SqlQueryExecutionResultDto {
         this.status = status;
     }
 
+    public SqlQueryExecutionResultDto(String title, SqlQueryExecutionModel.Status status, String errorResult) {
+        this.title = title;
+        this.status = status;
+        this.errorResult = errorResult;
+    }
+
     protected String title;
     protected List<List<?>> jsonResult;
     protected SqlQueryExecutionModel.Status status;
+    protected String errorResult;
 
     public String getTitle() {
         return title;
@@ -37,5 +44,13 @@ public class SqlQueryExecutionResultDto {
 
     public void setStatus(SqlQueryExecutionModel.Status status) {
         this.status = status;
+    }
+
+    public String getErrorResult() {
+        return errorResult;
+    }
+
+    public void setErrorResult(String errorResult) {
+        this.errorResult = errorResult;
     }
 }
