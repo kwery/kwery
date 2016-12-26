@@ -11,10 +11,11 @@ define(["knockout", "jquery", "text!components/report/list.html"], function (ko,
             type: "GET",
             contentType: "application/json",
             success: function (result) {
-                ko.utils.arrayForEach(result, function(report){
-                    report.executionLink = "/#report/" + report.id + "/execution-list"
+                ko.utils.arrayForEach(result, function(jobModelHackDto){
+                    jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
+                    jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
+                    self.reports.push(jobModelHackDto.jobModel);
                 });
-                self.reports(result);
             }
         });
 
