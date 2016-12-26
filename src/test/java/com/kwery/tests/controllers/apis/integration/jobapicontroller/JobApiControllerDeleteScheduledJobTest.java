@@ -7,9 +7,7 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.MysqlDockerRule;
-import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,11 +18,14 @@ import java.util.HashSet;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
+import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static com.kwery.views.ActionResult.Status.success;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class JobApiControllerDeleteJobTest extends AbstractPostLoginApiTest {
+public class JobApiControllerDeleteScheduledJobTest extends AbstractPostLoginApiTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
@@ -32,23 +33,23 @@ public class JobApiControllerDeleteJobTest extends AbstractPostLoginApiTest {
 
     @Before
     public void setUpJobApiControllerDeleteJobTest() {
-        jobModel = TestUtil.jobModelWithoutDependents();
+        jobModel = jobModelWithoutDependents();
         jobModel.setSqlQueries(new HashSet<>());
         jobModel.setCronExpression("* * * * *");
-        DbUtil.jobDbSetUp(jobModel);
+        jobDbSetUp(jobModel);
 
         Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
         datasource.setId(1);
-        DbUtil.datasourceDbSetup(datasource);
+        datasourceDbSetup(datasource);
 
-        SqlQueryModel sqlQueryModel = TestUtil.sqlQueryModel();
+        SqlQueryModel sqlQueryModel = sqlQueryModel();
         sqlQueryModel.setDatasource(datasource);
         sqlQueryModel.setQuery("select User from mysql.user where User = 'root'");
 
-        DbUtil.sqlQueryDbSetUp(sqlQueryModel);
+        sqlQueryDbSetUp(sqlQueryModel);
 
         jobModel.getSqlQueries().add(sqlQueryModel);
-        DbUtil.jobSqlQueryDbSetUp(jobModel);
+        jobSqlQueryDbSetUp(jobModel);
 
         getInjector().getInstance(JobService.class).schedule(jobModel.getId());
     }
