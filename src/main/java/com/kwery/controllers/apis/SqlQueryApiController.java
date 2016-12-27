@@ -3,10 +3,8 @@ package com.kwery.controllers.apis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.dtos.SqlQueryDto;
 import com.kwery.dtos.SqlQueryExecutionDto;
 import com.kwery.dtos.SqlQueryExecutionListDto;
 import com.kwery.dtos.SqlQueryExecutionListFilterDto;
@@ -37,9 +35,6 @@ public class SqlQueryApiController {
 
     @Inject
     private SqlQueryDao sqlQueryDao;
-
-    @Inject
-    private DatasourceDao datasourceDao;
 
     @Inject
     private SqlQueryExecutionDao sqlQueryExecutionDao;
@@ -219,37 +214,5 @@ public class SqlQueryApiController {
 
     private long getTime(String date) throws ParseException {
         return new SimpleDateFormat(FILTER_DATE_FORMAT).parse(date).getTime();
-    }
-
-    public static class SqlQueryExecutionIdContainer {
-        private String sqlQueryExecutionId;
-
-        public String getSqlQueryExecutionId() {
-            return sqlQueryExecutionId;
-        }
-
-        public void setSqlQueryExecutionId(String sqlQueryExecutionId) {
-            this.sqlQueryExecutionId = sqlQueryExecutionId;
-        }
-    }
-
-    public SqlQueryModel toSqlQueryModel(SqlQueryDto dto) {
-        SqlQueryModel model = new SqlQueryModel();
-
-        if (dto.getId() == 0) {
-            model.setId(null);
-        } else {
-            model.setId(dto.getId());
-        }
-
-        model.setLabel(dto.getLabel());
-        model.setQuery(dto.getQuery());
-        model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
-
-        return model;
-    }
-
-    public void setDatasourceDao(DatasourceDao datasourceDao) {
-        this.datasourceDao = datasourceDao;
     }
 }

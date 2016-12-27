@@ -64,7 +64,7 @@ public class Messages {
     public static final String ONBOARDING_ROOT_USER_CREATED_HTML_M = "An admin user with username <span class=\"label label-info\">{0}</span> and password <span class=\"label label-info\">{1}</span> has been created. This is the only time you will see this password, please note it down. Login with user name {0} and password {1} to complete the setup.";
     public static final String ONBOARDING_ROOT_USER_CREATED_M = "An admin user with username {0} and password {1} has been created. This is the only time you will see this password, please note it down. Login with user name {0} and password {1} to complete the setup.";
     public static final String NEXT_STEP_ADD_DATASOURCE_M = "Add Datasource";
-    public static final String NEXT_STEP_ADD_SQL_QUERY_M = "Schedule SQL Query";
+    public static final String NEXT_STEP_ADD_JOB_M = "Add Report";
     public static final String NEXT_STEP_HEADER_M = "Next Steps";
     public static final String DATE_M = "Date";
     public static final String REPORT_M = "Report";

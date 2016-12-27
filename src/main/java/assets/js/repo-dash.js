@@ -27,7 +27,6 @@
                 {url: "datasource/list", auth: true, component: "datasource-list"},
                 {url: "datasource/{datasourceId}", auth: true, component: "datasource-add"},
                 {url: "user/login{?query}", auth: false, component: "user-login"},
-                {url: "sql-query/add", auth: true, component: "sql-query-add"},
                 {url: "sql-query/executing", auth: true, component: "sql-query-executing"},
                 {url: "sql-query/{sqlQueryId}/execution-list/:?q:", auth: true, component: "sql-query-execution-list"},
                 {url: "sql-query/{sqlQueryId}/execution/{sqlQueryExecutionId}", auth: true, component: "sql-query-execution-result"},
