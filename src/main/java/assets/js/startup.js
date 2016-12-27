@@ -53,6 +53,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("report-list", {
         require: "components/report/list"
     });
+    ko.components.register("report-executing", {
+        require: "components/report/executing"
+    });
     ko.components.register("report-execution-list", {
         require: "components/report/execution-list"
     });

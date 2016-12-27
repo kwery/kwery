@@ -57,7 +57,7 @@ public class JobService {
         kweryScheduler.launch(jobTaskFactory.create(jobId));
     }
 
-    public void stopExecution(String executionId) {
+    public boolean stopExecution(String executionId) {
         logger.info("Trying to stop task execution with id {}", executionId);
 
         boolean found = false;
@@ -67,12 +67,15 @@ public class JobService {
                 taskExecutor.stop();
                 found = true;
                 logger.info("Task execution with id {} stopped successfully", executionId);
+                break;
             }
         }
 
         if (!found) {
             logger.info("Task execution with id {} not found", executionId);
         }
+
+        return found;
     }
 
     public void deschedule(int jobId) {

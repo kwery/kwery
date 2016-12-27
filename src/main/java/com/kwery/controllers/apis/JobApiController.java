@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.JobDao;
@@ -31,11 +32,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static ninja.Results.json;
 
@@ -151,10 +153,22 @@ public class JobApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
+    public Result listExecutingJobs() {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
+        filter.setStatuses(ImmutableList.of(JobExecutionModel.Status.ONGOING));
+        List<JobExecutionModel> jobExecutionModels = jobExecutionDao.filter(filter);
+        jobExecutionModels.sort(comparing(JobExecutionModel::getExecutionStart)); ;
+        List<JobExecutionDto> dtos = jobExecutionModels.stream().map(this::jobExecutionModelToJobExecutionDto).collect(toList());
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(dtos);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
     public Result listAllJobs() {
         if (logger.isTraceEnabled()) logger.trace("<");
         List<JobModel> jobs = jobDao.getAllJobs();
-        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getDependsOnJob())).collect(Collectors.toList());
+        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getDependsOnJob())).collect(toList());
         if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(jobModelHackDtos);
     }
@@ -239,6 +253,23 @@ public class JobApiController {
         return json().render(new JobModelHackDto(jobModel, jobModel.getDependsOnJob()));
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result stopJobExecution(@PathParam("jobExecutionId") String executionId) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        boolean stopped = jobService.stopExecution(executionId);
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        ActionResult actionResult = null;
+
+        if (stopped) {
+            actionResult = new ActionResult(success, "");
+        } else {
+            actionResult = new ActionResult(failure, "");
+        }
+
+        return json().render(actionResult);
+    }
+
     @VisibleForTesting
     public JobModel jobDtoToJobModel(JobDto jobDto) {
         JobModel jobModel = new JobModel();
@@ -288,6 +319,8 @@ public class JobApiController {
 
         jobExecutionDto.setStatus(model.getStatus().name());
         jobExecutionDto.setExecutionId(model.getExecutionId());
+        jobExecutionDto.setLabel(model.getJobModel().getLabel());
+
         return jobExecutionDto;
     }
 
