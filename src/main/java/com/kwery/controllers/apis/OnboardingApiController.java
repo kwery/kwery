@@ -3,25 +3,22 @@ package com.kwery.controllers.apis;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kwery.dao.DatasourceDao;
-import com.kwery.dao.SqlQueryDao;
+import com.kwery.dao.JobDao;
 import com.kwery.dao.UserDao;
 import com.kwery.dtos.OnboardingNextActionDto;
 import com.kwery.models.User;
+import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.Result;
 import ninja.i18n.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.kwery.views.ActionResult;
 
 import static com.google.common.base.Optional.of;
 import static com.kwery.controllers.MessageKeys.ONBOARDING_ROOT_USER_CREATED;
-import static com.kwery.dtos.OnboardingNextActionDto.Action.ADD_ADMIN_USER;
-import static com.kwery.dtos.OnboardingNextActionDto.Action.ADD_DATASOURCE;
-import static com.kwery.dtos.OnboardingNextActionDto.Action.ADD_SQL_QUERY;
-import static com.kwery.dtos.OnboardingNextActionDto.Action.SHOW_HOME_SCREEN;
-import static ninja.Results.json;
+import static com.kwery.dtos.OnboardingNextActionDto.Action.*;
 import static com.kwery.views.ActionResult.Status.success;
+import static ninja.Results.json;
 
 @Singleton
 public class OnboardingApiController {
@@ -40,7 +37,7 @@ public class OnboardingApiController {
     protected DatasourceDao datasourceDao;
 
     @Inject
-    protected SqlQueryDao sqlQueryDao;
+    protected JobDao jobDao;
 
     public Result addRootUser(Context context) {
         if (logger.isTraceEnabled()) logger.trace(">");
@@ -76,7 +73,7 @@ public class OnboardingApiController {
             return json().render(new OnboardingNextActionDto(ADD_DATASOURCE));
         } else if(!doesSqlQueryExist()) {
             if (logger.isTraceEnabled()) logger.trace("<");
-            return json().render(new OnboardingNextActionDto(ADD_SQL_QUERY));
+            return json().render(new OnboardingNextActionDto(ADD_JOB));
         } else {
             if (logger.isTraceEnabled()) logger.trace("<");
             return json().render(new OnboardingNextActionDto(SHOW_HOME_SCREEN));
@@ -94,6 +91,6 @@ public class OnboardingApiController {
 
     protected boolean doesSqlQueryExist() {
         //TODO - Query using count
-        return sqlQueryDao.getAll().size() > 0;
+        return jobDao.getAllJobs().size() > 0;
     }
 }

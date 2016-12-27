@@ -43,6 +43,6 @@ public class OnboardingNextStepsPage extends FluentPage implements RepoDashPage 
     }
 
     public boolean isAddSqlQueryNextStepVisible() {
-        return $(".f-add-sql-query").first().isDisplayed();
+        return $(".f-add-job").first().isDisplayed();
     }
 }

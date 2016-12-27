@@ -9,9 +9,7 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 
 import static com.kwery.tests.fluentlenium.onboarding.OnboardingNextStepsPage.NEXT_STEPS_COUNT;
-import static com.kwery.tests.util.Messages.NEXT_STEP_ADD_DATASOURCE_M;
-import static com.kwery.tests.util.Messages.NEXT_STEP_ADD_SQL_QUERY_M;
-import static com.kwery.tests.util.Messages.NEXT_STEP_HEADER_M;
+import static com.kwery.tests.util.Messages.*;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -39,6 +37,6 @@ public class OnboardingNextStepsShowAllStepsUiTest extends ChromeFluentTest {
         assertThat(page.nextStepsCount(), is(NEXT_STEPS_COUNT));
         assertThat(page.nextStepsHeaderText(), is(NEXT_STEP_HEADER_M));
         assertThat(page.nextStepText(0), is(NEXT_STEP_ADD_DATASOURCE_M));
-        assertThat(page.nextStepText(1), is(NEXT_STEP_ADD_SQL_QUERY_M));
+        assertThat(page.nextStepText(1), is(NEXT_STEP_ADD_JOB_M));
     }
 }

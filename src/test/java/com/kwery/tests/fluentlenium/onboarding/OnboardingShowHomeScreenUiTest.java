@@ -1,27 +1,16 @@
 package com.kwery.tests.fluentlenium.onboarding;
 
-import com.kwery.models.Datasource;
-import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import javax.sql.DataSource;
-
-import static com.kwery.models.Datasource.*;
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
-import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
+import static com.kwery.tests.util.TestUtil.*;
 
 public class OnboardingShowHomeScreenUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
@@ -31,21 +20,8 @@ public class OnboardingShowHomeScreenUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpOnboardingShowExecutingSqlQueriesPageTest() throws InterruptedException {
-        DataSource datasource = getDatasource();
-
-        DbSetup dbSetup = new DbSetup(new DataSourceDestination(datasource),
-                Operations.sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(1, "testQuery", "select * from foo", 1).build()
-                )
-        );
-
-        dbSetup.launch();
-
+        datasourceDbSetup(datasource());
+        jobDbSetUp(jobModelWithoutDependents());
         goTo(ninjaServerRule.getServerUrl() + "/");
     }
 
