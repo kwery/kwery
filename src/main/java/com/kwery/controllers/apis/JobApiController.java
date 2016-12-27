@@ -279,7 +279,13 @@ public class JobApiController {
     public JobExecutionDto jobExecutionModelToJobExecutionDto(JobExecutionModel model) {
         JobExecutionDto jobExecutionDto = new JobExecutionDto();
         jobExecutionDto.setStart(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(model.getExecutionStart()));
-        jobExecutionDto.setEnd(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(model.getExecutionEnd()));
+
+        if (model.getStatus() == JobExecutionModel.Status.ONGOING) {
+            jobExecutionDto.setEnd("");
+        } else {
+            jobExecutionDto.setEnd(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(model.getExecutionEnd()));
+        }
+
         jobExecutionDto.setStatus(model.getStatus().name());
         jobExecutionDto.setExecutionId(model.getExecutionId());
         return jobExecutionDto;
