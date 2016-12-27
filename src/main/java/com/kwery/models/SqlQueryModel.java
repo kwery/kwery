@@ -13,7 +13,6 @@ public class SqlQueryModel {
     public static final String LABEL_COLUMN = "label";
     public static final String DATASOURCE_ID_FK_COLUMN = "datasource_id_fk";
     public static final String TITLE_COLUMN = "title";
-    public static final String COLUMN_QUERY_RUN_ID_FK = "query_run_id_fk";
 
     @Column(name = ID_COLUMN)
     @Id
