@@ -253,6 +253,23 @@ public class JobApiController {
         return json().render(new JobModelHackDto(jobModel, jobModel.getDependsOnJob()));
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result stopJobExecution(@PathParam("jobExecutionId") String executionId) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        boolean stopped = jobService.stopExecution(executionId);
+        if (logger.isTraceEnabled()) logger.trace(">");
+
+        ActionResult actionResult = null;
+
+        if (stopped) {
+            actionResult = new ActionResult(success, "");
+        } else {
+            actionResult = new ActionResult(failure, "");
+        }
+
+        return json().render(actionResult);
+    }
+
     @VisibleForTesting
     public JobModel jobDtoToJobModel(JobDto jobDto) {
         JobModel jobModel = new JobModel();
