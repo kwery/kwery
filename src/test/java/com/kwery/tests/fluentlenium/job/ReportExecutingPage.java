@@ -2,7 +2,9 @@ package com.kwery.tests.fluentlenium.job;
 
 import com.kwery.dtos.JobExecutionDto;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import com.kwery.tests.util.Messages;
 import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
 
 import java.util.LinkedList;
@@ -10,6 +12,7 @@ import java.util.List;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.tagName;
 
 public class ReportExecutingPage extends FluentPage implements RepoDashPage {
@@ -38,6 +41,20 @@ public class ReportExecutingPage extends FluentPage implements RepoDashPage {
 
     public void waitForExecutingReportsList(int expectedRowCount) {
         await().atMost(30, SECONDS).until(".executing-reports-tbody-f  tr").hasSize(expectedRowCount);
+    }
+
+    public void stopExecution(int row) {
+        FluentList<FluentWebElement> fluentWebElements = find(".executing-reports-tbody-f tr");
+        FluentWebElement tr = fluentWebElements.get(row);
+        tr.find(className("stop-execution-f")).click();
+    }
+
+    public void waitForStopExecutionSuccessMessage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(Messages.REPORT_JOB_EXECUTING_STOP_SUCCESS_M);
+    }
+
+    public void waitForStopExecutionFailureMessage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(Messages.REPORT_JOB_EXECUTING_STOP_FAILURE_M);
     }
 
     @Override
