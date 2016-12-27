@@ -16,7 +16,6 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.i18n.Messages;
 import ninja.params.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
@@ -46,9 +42,6 @@ public class SqlQueryApiController {
     private DatasourceDao datasourceDao;
 
     @Inject
-    private Messages messages;
-
-    @Inject
     private SqlQueryExecutionDao sqlQueryExecutionDao;
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -65,7 +58,7 @@ public class SqlQueryApiController {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(ONGOING));
         List<SqlQueryExecutionModel> models = sqlQueryExecutionDao.filter(filter);
-        Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
+        Collections.sort(models, Comparator.comparing(SqlQueryExecutionModel::getExecutionStart));
 
         List<SqlQueryExecutionDto> dtos = new ArrayList<>(models.size());
 
@@ -114,7 +107,7 @@ public class SqlQueryApiController {
 
         List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(dbFilter);
 
-        Collections.sort(sqlQueryExecutions, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
+        Collections.sort(sqlQueryExecutions, Comparator.comparing(SqlQueryExecutionModel::getExecutionStart));
 
         List<SqlQueryExecutionDto> sqlQueryExecutionDtos = new ArrayList<>(sqlQueryExecutions.size());
 
