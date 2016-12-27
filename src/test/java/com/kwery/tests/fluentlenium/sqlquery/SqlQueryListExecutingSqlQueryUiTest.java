@@ -17,18 +17,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import javax.sql.DataSource;
 import java.util.List;
 
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.*;
-import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQueryExecutionModel.*;
-import static com.kwery.models.SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK;
 import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
-import static com.kwery.models.SqlQueryModel.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.sqlQueryDbSetUp;
 import static com.kwery.tests.util.Messages.*;
+import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -42,24 +40,24 @@ public class SqlQueryListExecutingSqlQueryUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     protected SqlQueryExecutingListPage page;
+    private SqlQueryModel sqlQueryModel;
+    private Datasource datasource;
 
     @Before
     public void setUpListOngoingQueriesTest() {
-        DataSource datasource = DbUtil.getDatasource();
+        datasource = datasource();
+        datasourceDbSetup(datasource);
 
-        DbSetup dbSetup = new DbSetup(new DataSourceDestination(datasource),
+        sqlQueryModel = sqlQueryModel(datasource);
+        sqlQueryDbSetUp(sqlQueryModel);
+
+        DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 Operations.sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(1, "* * * * *", "testQuery", "select * from foo", 1).build(),
                         insertInto(SqlQueryExecutionModel.TABLE)
                                 .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
-                                .values(1, null, "sjfljkl", 1475215495171l, "status", SUCCESS, 1)
-                                .values(2, null, "sjfljkl", 1475215495171l, null, ONGOING, 1)
-                                .values(3, null, "sdjfklj", 1475215333445l, null, ONGOING, 1).build()
+                                .values(1, null, "sjfljkl", 1475215495171l, "status", SUCCESS, sqlQueryModel.getId())
+                                .values(2, null, "sjfljkl", 1475215495171l, null, ONGOING, sqlQueryModel.getId())
+                                .values(3, null, "sdjfklj", 1475215333445l, null, ONGOING, sqlQueryModel.getId()).build()
                 )
         );
 
@@ -85,14 +83,14 @@ public class SqlQueryListExecutingSqlQueryUiTest extends ChromeFluentTest {
         List<FluentWebElement> columns = $("#executingSqlQueriesTable tr td");
         assertThat(columns, hasSize(8));
 
-        assertThat(columns.get(0).getText(), is("testQuery"));
+        assertThat(columns.get(0).getText(), is(sqlQueryModel.getLabel()));
         assertThat(columns.get(1).getText(), is("Fri Sep 30 2016 11:32"));
-        assertThat(columns.get(2).getText(), is("testDatasource"));
+        assertThat(columns.get(2).getText(), is(datasource.getLabel()));
         assertThat(columns.get(3).getText().toLowerCase(), is(Messages.KILL_M.toLowerCase()));
 
-        assertThat(columns.get(4).getText(), is("testQuery"));
+        assertThat(columns.get(4).getText(), is(sqlQueryModel.getLabel()));
         assertThat(columns.get(5).getText(), is("Fri Sep 30 2016 11:34"));
-        assertThat(columns.get(6).getText(), is("testDatasource"));
+        assertThat(columns.get(6).getText(), is(datasource.getLabel()));
         assertThat(columns.get(7).getText().toLowerCase(), is(Messages.KILL_M.toLowerCase()));
     }
 }

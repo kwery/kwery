@@ -17,7 +17,8 @@ import javax.sql.DataSource;
 
 import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.*;
+import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
+import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -38,8 +39,8 @@ public class OnboardingShowHomeScreenUiTest extends ChromeFluentTest {
                                 .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
                                 .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
                         insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(1, "* * * * *", "testQuery", "select * from foo", 1).build()
+                                .columns(SqlQueryModel.ID_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
+                                .values(1, "testQuery", "select * from foo", 1).build()
                 )
         );
 

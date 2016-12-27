@@ -65,10 +65,6 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
 
-        sqlQueryModel.setDependentQueries(null);
-        sqlQueryModel.setRecipientEmails(null);
-        sqlQueryModel.setCronExpression(null);
-
         sqlQueryModel.setDatasource(datasource);
         sqlQueryDto.setDatasourceId(datasource.getId());
 

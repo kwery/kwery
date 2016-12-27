@@ -3,6 +3,7 @@ package com.kwery.tests.controllers.apis.integration.security;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.kwery.controllers.apis.SqlQueryApiController;
+import com.kwery.views.ActionResult;
 import ninja.NinjaDocTester;
 import ninja.Router;
 import org.doctester.testbrowser.Request;
@@ -11,28 +12,17 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import com.kwery.views.ActionResult;
 
 import java.io.IOException;
 import java.util.List;
 
-import static com.kwery.conf.Routes.ADD_ADMIN_USER_API;
-import static com.kwery.conf.Routes.ADD_DATASOURCE_API;
-import static com.kwery.conf.Routes.ADD_SQL_QUERY_API;
-import static com.kwery.conf.Routes.ALL_DATASOURCES_API;
-import static com.kwery.conf.Routes.EXECUTING_SQL_QUERY_API;
-import static com.kwery.conf.Routes.INDEX;
-import static com.kwery.conf.Routes.LOGIN_API;
-import static com.kwery.conf.Routes.MYSQL_DATASOURCE_CONNECTION_TEST_API;
-import static com.kwery.conf.Routes.USER;
+import static com.kwery.conf.Routes.*;
 import static com.kwery.tests.controllers.apis.integration.security.ApiSecurityTestVo.HttpMethod.GET;
 import static com.kwery.tests.controllers.apis.integration.security.ApiSecurityTestVo.HttpMethod.POST;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.hasSize;
 import static com.kwery.tests.util.Messages.USER_NOT_LOGGED_IN_M;
 import static com.kwery.views.ActionResult.Status.failure;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.hasSize;
 
 public class ApiAuthenticationRequiredTest extends NinjaDocTester {
     @Rule
@@ -67,7 +57,6 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
                 new ApiSecurityTestVo(INDEX, false, GET),
                 new ApiSecurityTestVo(ADD_ADMIN_USER_API, true, POST),
                 new ApiSecurityTestVo(LOGIN_API, false, POST),
-                new ApiSecurityTestVo(ADD_SQL_QUERY_API, true, POST),
                 new ApiSecurityTestVo(ALL_DATASOURCES_API, true, GET),
                 new ApiSecurityTestVo(EXECUTING_SQL_QUERY_API, true, GET),
                 new ApiSecurityTestVo(killSqlQueryUrl, true, POST),

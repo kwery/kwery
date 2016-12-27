@@ -1,7 +1,5 @@
 package com.kwery.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,9 +15,6 @@ public class SqlQueryDto {
     @Size(min = 1, message = "label.validation")
     private String label;
 
-    @JsonIgnore
-    private String cronExpression;
-
     @Min(value = 1, message= "datasource.validation")
     @NotNull(message = "datasource.validation")
     private int datasourceId;
@@ -27,12 +22,6 @@ public class SqlQueryDto {
     @NotNull
     @Size(min = 1, max = 1024)
     private String title;
-
-    @JsonIgnore
-    private Integer dependsOnSqlQueryId;
-
-    @JsonIgnore
-    private String recipientEmailsCsv;
 
     public int getId() {
         return id;
@@ -58,14 +47,6 @@ public class SqlQueryDto {
         this.label = label;
     }
 
-    public String getCronExpression() {
-        return cronExpression;
-    }
-
-    public void setCronExpression(String cronExpression) {
-        this.cronExpression = cronExpression;
-    }
-
     public int getDatasourceId() {
         return datasourceId;
     }
@@ -74,27 +55,11 @@ public class SqlQueryDto {
         this.datasourceId = datasourceId;
     }
 
-    public Integer getDependsOnSqlQueryId() {
-        return dependsOnSqlQueryId;
-    }
-
-    public void setDependsOnSqlQueryId(Integer dependsOnSqlQueryId) {
-        this.dependsOnSqlQueryId = dependsOnSqlQueryId;
-    }
-
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getRecipientEmailsCsv() {
-        return recipientEmailsCsv;
-    }
-
-    public void setRecipientEmailsCsv(String recipientEmailsCsv) {
-        this.recipientEmailsCsv = recipientEmailsCsv;
     }
 }

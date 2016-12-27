@@ -18,14 +18,13 @@ import org.junit.rules.RuleChain;
 import java.util.List;
 import java.util.UUID;
 
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.*;
-import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQueryExecutionModel.*;
-import static com.kwery.models.SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK;
 import static com.kwery.models.SqlQueryExecutionModel.Status.*;
-import static com.kwery.models.SqlQueryModel.*;
 import static com.kwery.tests.fluentlenium.sqlquery.SqlQueryExecutionListPage.RESULT_TABLE_COLUMN_COUNT;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.sqlQueryDbSetUp;
+import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static junit.framework.TestCase.fail;
@@ -40,39 +39,42 @@ public class SqlQueryListExecutionUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     protected SqlQueryExecutionListPage page;
+    private SqlQueryModel sqlQueryModel0;
 
     @Before
     public void setUpListSqlQueryExecutionTest() {
+        Datasource datasource = datasource();
+        datasourceDbSetup(datasource);
+
+        sqlQueryModel0 = sqlQueryModel(datasource);
+        sqlQueryDbSetUp(sqlQueryModel0);
+
+        SqlQueryModel sqlQueryModel1 = sqlQueryModel(datasource);
+        sqlQueryDbSetUp(sqlQueryModel1);
+
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(1, "* * * * *", "testQuery0", "select * from foo", 1).build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(2, "* * * * *", "testQuery1", "select * from foo", 1).build(),
                         insertInto(SqlQueryExecutionModel.TABLE)
                                 .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
-                                .values(1, 1475159940797l, "executionId0", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
-                                .values(2, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, "result", SUCCESS, 2) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
+                                .values(1, 1475159940797l, "executionId0", 1475158740747l, "result", SUCCESS, sqlQueryModel0.getId()) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
+                                .values(2, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, "result", SUCCESS, sqlQueryModel1.getId()) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
 
-                                .values(11, 1475246507724l, "executionId1", 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-                                .values(12, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 2) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
+                                .values(11, 1475246507724l, "executionId1", 1475245307680l, null, FAILURE, sqlQueryModel0.getId()) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
+                                .values(12, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, sqlQueryModel1.getId()) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
 
-                                .values(21, 1475333507680l, "executionId2", 1475331707680l, null, KILLED, 1) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
-                                .values(22, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, KILLED, 2) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(21, 1475333507680l, "executionId2", 1475331707680l, null, KILLED, sqlQueryModel0.getId()) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(22, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, KILLED, sqlQueryModel1.getId()) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
 
-                                .values(31, null, "executionId3", 1475418725084l, null, ONGOING, 1) //Sun Oct 02 20:02:05 IST 2016
-                                .values(32, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, 2) //Sun Oct 02 20:02:05 IST 2016
+                                .values(31, null, "executionId3", 1475418725084l, null, ONGOING, sqlQueryModel0.getId()) //Sun Oct 02 20:02:05 IST 2016
+                                .values(32, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, sqlQueryModel1.getId()) //Sun Oct 02 20:02:05 IST 2016
                                 .build()
                 )
         );
         dbSetup.launch();
 
         page = createPage(SqlQueryExecutionListPage.class);
+        page.setSqlQueryId(sqlQueryModel0.getId());
+
         page.withDefaultUrl(ninjaServerRule.getServerUrl());
         goTo(page);
 
@@ -245,7 +247,7 @@ public class SqlQueryListExecutionUiTest extends ChromeFluentTest {
     }
 
     private String resultLink(String executionId) {
-        return ninjaServerRule.getServerUrl() + "/#sql-query/1/execution/" + executionId;
+        return ninjaServerRule.getServerUrl() + "/#sql-query/" + sqlQueryModel0.getId()  + "/execution/" + executionId;
     }
 
     private void pageInvariant() {
@@ -256,6 +258,6 @@ public class SqlQueryListExecutionUiTest extends ChromeFluentTest {
         assertThat(headerColumns.get(1), is(Messages.END_M));
         assertThat(headerColumns.get(2), is(Messages.STATUS_M));
 
-        assertThat(page.sqlQuery(), is("select * from foo"));
+        assertThat(page.sqlQuery(), is(sqlQueryModel0.getQuery()));
     }
 }
