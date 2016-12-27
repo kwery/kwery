@@ -15,15 +15,13 @@ public class SqlQueryDto {
     @Size(min = 1, message = "label.validation")
     private String label;
 
-    private String cronExpression;
-
     @Min(value = 1, message= "datasource.validation")
     @NotNull(message = "datasource.validation")
-    private Integer datasourceId;
+    private int datasourceId;
 
-    private Integer dependsOnSqlQueryId;
-
-    private String recipientEmailsCsv;
+    @NotNull
+    @Size(min = 1, max = 1024)
+    private String title;
 
     public int getId() {
         return id;
@@ -49,35 +47,19 @@ public class SqlQueryDto {
         this.label = label;
     }
 
-    public String getCronExpression() {
-        return cronExpression;
-    }
-
-    public void setCronExpression(String cronExpression) {
-        this.cronExpression = cronExpression;
-    }
-
-    public Integer getDatasourceId() {
+    public int getDatasourceId() {
         return datasourceId;
     }
 
-    public void setDatasourceId(Integer datasourceId) {
+    public void setDatasourceId(int datasourceId) {
         this.datasourceId = datasourceId;
     }
 
-    public Integer getDependsOnSqlQueryId() {
-        return dependsOnSqlQueryId;
+    public String getTitle() {
+        return title;
     }
 
-    public void setDependsOnSqlQueryId(Integer dependsOnSqlQueryId) {
-        this.dependsOnSqlQueryId = dependsOnSqlQueryId;
-    }
-
-    public String getRecipientEmailsCsv() {
-        return recipientEmailsCsv;
-    }
-
-    public void setRecipientEmailsCsv(String recipientEmailsCsv) {
-        this.recipientEmailsCsv = recipientEmailsCsv;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

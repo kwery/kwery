@@ -3,8 +3,7 @@ package com.kwery.dao;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.kwery.models.SqlQuery;
-import ninja.jpa.UnitOfWork;
+import com.kwery.models.SqlQueryModel;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -23,32 +22,18 @@ public class SqlQueryDao {
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
     @Transactional
-    public void save(SqlQuery q) {
-        EntityManager m = entityManagerProvider.get();
-        m.persist(q);
-        m.flush();
-    }
-
-    @Transactional
-    public void update(SqlQuery q) {
-        EntityManager m = entityManagerProvider.get();
-        m.merge(q);
-        m.flush();
-    }
-
-    @UnitOfWork
-    public SqlQuery getByLabel(String label) {
+    public SqlQueryModel getByLabel(String label) {
         EntityManager m = entityManagerProvider.get();
 
         CriteriaBuilder cb = m.getCriteriaBuilder();
-        CriteriaQuery<SqlQuery> cq = cb.createQuery(SqlQuery.class);
+        CriteriaQuery<SqlQueryModel> cq = cb.createQuery(SqlQueryModel.class);
 
-        Root<SqlQuery> root = cq.from(SqlQuery.class);
+        Root<SqlQueryModel> root = cq.from(SqlQueryModel.class);
         cq.where(cb.equal(root.get("label"), label));
 
-        TypedQuery<SqlQuery> tq = m.createQuery(cq);
+        TypedQuery<SqlQueryModel> tq = m.createQuery(cq);
 
-        List<SqlQuery> runs = tq.getResultList();
+        List<SqlQueryModel> runs = tq.getResultList();
 
         if (runs.isEmpty()) {
             return null;
@@ -60,37 +45,31 @@ public class SqlQueryDao {
         }
     }
 
-    @UnitOfWork
-    public List<SqlQuery> getAll() {
+    @Transactional
+    public List<SqlQueryModel> getAll() {
         EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT q FROM SqlQuery q", SqlQuery.class).getResultList();
-    }
-
-    @UnitOfWork
-    public List<SqlQuery> getAllWithSchedule() {
-        EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT q FROM SqlQuery q where q.cronExpression is not null and q.cronExpression <> ''", SqlQuery.class).getResultList();
+        return m.createQuery("SELECT q FROM SqlQueryModel q", SqlQueryModel.class).getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    @UnitOfWork
-    public SqlQuery getById(Integer id) {
+    @Transactional
+    public SqlQueryModel getById(Integer id) {
         EntityManager e = entityManagerProvider.get();
-        List<SqlQuery> m = e.createQuery("SELECT q FROM SqlQuery q where q.id = :id").setParameter("id", id).getResultList();
+        List<SqlQueryModel> m = e.createQuery("SELECT q FROM SqlQueryModel q where q.id = :id").setParameter("id", id).getResultList();
         if (m.size() == 0) {
             return null;
         }
         return m.get(0);
     }
 
-    @UnitOfWork
+    @Transactional
     public long countSqlQueriesWithDatasourceId(int datasourceId) {
         EntityManager m = entityManagerProvider.get();
 
         CriteriaBuilder c = m.getCriteriaBuilder();
         CriteriaQuery<Long> q = c.createQuery(Long.class);
 
-        Root<SqlQuery> root = q.from(SqlQuery.class);
+        Root<SqlQueryModel> root = q.from(SqlQueryModel.class);
 
         q.select(c.count(root));
 
@@ -100,22 +79,5 @@ public class SqlQueryDao {
         q.where(predicates.toArray(new Predicate[]{}));
 
         return m.createQuery(q).getSingleResult();
-    }
-
-    @Transactional
-    public void delete(int sqlQueryId) {
-        EntityManager m = entityManagerProvider.get();
-
-        //TODO - Should be a better way to handle this
-        //If we do not do the below, dependent SqlQuery gets removed from the db
-        SqlQuery sqlQuery = m.find(SqlQuery.class, sqlQueryId);
-
-        if (!sqlQuery.getDependentQueries().isEmpty()) {
-            sqlQuery.setDependentQueries(new LinkedList<>());
-            save(sqlQuery);
-        }
-
-        sqlQueryExecutionDao.deleteBySqlQueryId(sqlQueryId);
-        m.remove(m.find(SqlQuery.class, sqlQueryId));
     }
 }

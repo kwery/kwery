@@ -1,6 +1,6 @@
 package com.kwery.tests.dao.sqlquerydao;
 
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 import org.junit.Test;
 
 import java.util.List;
@@ -13,8 +13,8 @@ import static org.junit.Assert.assertThat;
 public class SqlQueryDaoListAllTest extends SqlQueryDaoListAbstractTest {
     @Test
     public void testGetAll() {
-        List<SqlQuery> sqlQueries = sqlQueryDao.getAll();
+        List<SqlQueryModel> sqlQueries = sqlQueryDao.getAll();
         assertThat(sqlQueries, hasSize(3));
-        assertThat(sqlQueries, hasItems(instanceOf(SqlQuery.class)));
+        assertThat(sqlQueries, hasItems(instanceOf(SqlQueryModel.class)));
     }
 }

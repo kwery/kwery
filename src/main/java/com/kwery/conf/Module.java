@@ -21,31 +21,30 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.kwery.custom.TemplateEngineJsFreemarker;
-import com.kwery.services.scheduler.OneOffSqlQueryTaskSchedulerReaper;
-import it.sauronsoftware.cron4j.Scheduler;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.models.SqlQueryModel;
+import com.kwery.services.job.JobTaskFactory;
+import com.kwery.services.job.SchedulerListenerImpl;
+import com.kwery.services.job.TaskExecutorListenerImpl;
 import com.kwery.services.scheduler.MysqlSqlQueryRunner;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
-import com.kwery.services.scheduler.QueryTaskSchedulerFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
-import com.kwery.services.scheduler.SchedulerService;
 import com.kwery.services.scheduler.SqlQueryRunner;
-import com.kwery.services.scheduler.SqlQueryTaskFactory;
+import it.sauronsoftware.cron4j.Scheduler;
+import it.sauronsoftware.cron4j.SchedulerListener;
+import it.sauronsoftware.cron4j.TaskExecutorListener;
 
 @Singleton
 public class Module extends AbstractModule {
     protected void configure() {
         bind(TemplateEngineJsFreemarker.class);
         bind(SqlQueryRunner.class).to(MysqlSqlQueryRunner.class);
-        bind(SchedulerService.class);
-        bind(OneOffSqlQueryTaskSchedulerReaper.class);
-
-
-        install(new FactoryModuleBuilder().build(SqlQueryTaskFactory.class));
-        install(new FactoryModuleBuilder().build(QueryTaskSchedulerFactory.class));
+        bind(SchedulerListener.class).to(SchedulerListenerImpl.class);
+        bind(TaskExecutorListener.class).to(TaskExecutorListenerImpl.class);
         install(new FactoryModuleBuilder().build(ResultSetProcessorFactory.class));
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
+        install(new FactoryModuleBuilder().build(JobTaskFactory.class));
+        install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
     }
 
     @Provides
@@ -54,12 +53,12 @@ public class Module extends AbstractModule {
     }
 
     @Provides
-    protected SqlQueryExecution provideQueryRunExecution() {
-        return new SqlQueryExecution();
+    protected SqlQueryExecutionModel provideQueryRunExecution() {
+        return new SqlQueryExecutionModel();
     }
 
     @Provides
-    protected SqlQuery provideQueryRun() {
-        return new SqlQuery();
+    protected SqlQueryModel provideQueryRun() {
+        return new SqlQueryModel();
     }
 }

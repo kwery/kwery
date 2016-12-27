@@ -2,16 +2,18 @@ package com.kwery.tests.dao.datasourcedao;
 
 import com.kwery.dao.DatasourceDao;
 import com.kwery.models.Datasource;
+import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
 import javax.persistence.PersistenceException;
 
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.tests.util.TestUtil.datasourceWithoutId;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static com.kwery.tests.util.TestUtil.datasource;
 
 public class DatasourceDaoPersistTest extends RepoDashDaoTestBase {
     private DatasourceDao datasourceDao;
@@ -23,7 +25,7 @@ public class DatasourceDaoPersistTest extends RepoDashDaoTestBase {
 
     @Test
     public void testPersist() {
-        Datasource d = datasource();
+        Datasource d = datasourceWithoutId();
         datasourceDao.save(d);
         Integer id = d.getId();
         assertNotNull("Persisted datasource has an id", id != null && id > 0);
@@ -32,9 +34,10 @@ public class DatasourceDaoPersistTest extends RepoDashDaoTestBase {
     @Test
     public void testUniqueLabel() {
         Datasource d = datasource();
-        datasourceDao.save(d);
+        datasourceDbSetup(d);
 
-        Datasource newD = datasource();
+        Datasource newD = datasourceWithoutId();
+        newD.setLabel(d.getLabel());
         try {
             datasourceDao.save(newD);
         } catch (PersistenceException e) {

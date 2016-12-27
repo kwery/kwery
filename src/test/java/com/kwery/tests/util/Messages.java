@@ -64,7 +64,7 @@ public class Messages {
     public static final String ONBOARDING_ROOT_USER_CREATED_HTML_M = "An admin user with username <span class=\"label label-info\">{0}</span> and password <span class=\"label label-info\">{1}</span> has been created. This is the only time you will see this password, please note it down. Login with user name {0} and password {1} to complete the setup.";
     public static final String ONBOARDING_ROOT_USER_CREATED_M = "An admin user with username {0} and password {1} has been created. This is the only time you will see this password, please note it down. Login with user name {0} and password {1} to complete the setup.";
     public static final String NEXT_STEP_ADD_DATASOURCE_M = "Add Datasource";
-    public static final String NEXT_STEP_ADD_SQL_QUERY_M = "Schedule SQL Query";
+    public static final String NEXT_STEP_ADD_JOB_M = "Add Report";
     public static final String NEXT_STEP_HEADER_M = "Next Steps";
     public static final String DATE_M = "Date";
     public static final String REPORT_M = "Report";
@@ -79,4 +79,10 @@ public class Messages {
     public static final String EMAIL_TEST_FAILURE_M = "Oops, got an error while trying to send mail, please check logs";
     public static final String EMAIL_TEST_SUBJECT_M = "Test mail from Kwery";
     public static final String EMAIL_TEST_BODY_M = "Congratulations, Kwery has been successfully configured to send mails.";
+
+    public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report saved successfully";
+
+    public static final String JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M = "A report already exsits with label {0}, please choose a different label";
+    public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exsits with label {0}, please choose a different label";
+    public static final String REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR = "You have already used this label, please choose a different label";
 }

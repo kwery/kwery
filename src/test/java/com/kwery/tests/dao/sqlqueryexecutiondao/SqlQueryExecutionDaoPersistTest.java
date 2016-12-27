@@ -1,68 +1,68 @@
 package com.kwery.tests.dao.sqlqueryexecutiondao;
 
-import com.kwery.dao.DatasourceDao;
-import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.*;
+import com.kwery.tests.util.RepoDashDaoTestBase;
+import org.dbunit.DatabaseUnitException;
+import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
-import static com.kwery.models.SqlQueryExecution.Status.FAILURE;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
-import static com.kwery.tests.util.TestUtil.datasource;
-import static com.kwery.tests.util.TestUtil.queryRun;
-import static com.kwery.tests.util.TestUtil.queryRunExecution;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.util.TestUtil.*;
 
 public class SqlQueryExecutionDaoPersistTest extends RepoDashDaoTestBase {
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
-    protected SqlQuery sqlQuery;
-    protected SqlQueryExecution sqlQueryExecution;
+    protected SqlQueryModel sqlQuery;
+    protected JobModel jobModel;
+
+    protected JobExecutionModel jobExecutionModel;
 
     @Before
-    public void setUpQueryRunExecutionDaoTest() {
+    public void setUpSqlQueryExecutionDaoPersistTest() {
         Datasource datasource = datasource();
-        getInstance(DatasourceDao.class).save(datasource);
+        datasourceDbSetup(datasource);
 
-        sqlQuery = queryRun();
-        sqlQuery.setDatasource(datasource);
-        getInstance(SqlQueryDao.class).save(sqlQuery);
+        sqlQuery = sqlQueryModel(datasource);
+        sqlQueryDbSetUp(sqlQuery);
+
+        jobModel = jobModelWithoutDependents();
+        jobDbSetUp(jobModel);
+
+        jobExecutionModel = jobExecutionModel();
+        jobExecutionModel.setJobModel(jobModel);
+        jobExecutionDbSetUp(jobExecutionModel);
 
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
+    }
 
-        sqlQueryExecution = queryRunExecution();
+    @Test
+    public void testPersist() throws DatabaseUnitException, SQLException, IOException {
+        SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionModelWithoutId();
         sqlQueryExecution.setSqlQuery(sqlQuery);
+        sqlQueryExecution.setJobExecutionModel(jobExecutionModel);
+
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        SqlQueryExecutionModel expected = mapper.map(sqlQueryExecution, SqlQueryExecutionModel.class);
+
+        sqlQueryExecutionDao.save(sqlQueryExecution);
+
+        expected.setId(sqlQueryExecution.getId());
+
+        assertDbState(SqlQueryExecutionModel.TABLE, sqlQueryExecutionTable(expected));
     }
 
     @Test
-    public void testPersist() {
+    public void testPersistDoesNotAffectJobExecutionTable() throws Exception {
+        SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionModelWithoutId();
+        sqlQueryExecution.setSqlQuery(sqlQuery);
+        JobExecutionModel modifiedJobExecutionModel = jobExecutionModel();
+        modifiedJobExecutionModel.setId(jobExecutionModel.getId());
+        sqlQueryExecution.setJobExecutionModel(modifiedJobExecutionModel);
         sqlQueryExecutionDao.save(sqlQueryExecution);
-
-        assertThat(sqlQueryExecution.getId(), notNullValue());
-        assertThat(sqlQueryExecution.getId(), greaterThan(0));
-    }
-
-    @Test
-    public void testUpdate() {
-        sqlQueryExecutionDao.save(sqlQueryExecution);
-
-        SqlQueryExecution updated = sqlQueryExecutionDao.getByExecutionId(sqlQueryExecution.getExecutionId());
-        updated.setExecutionEnd(100l);
-        updated.setStatus(FAILURE);
-
-        sqlQueryExecutionDao.update(updated);
-
-        assertThat(updated.getId(), is(sqlQueryExecution.getId()));
-
-        SqlQueryExecution fromDb = sqlQueryExecutionDao.getById(updated.getId());
-
-        assertThat(fromDb.getExecutionStart(), is(sqlQueryExecution.getExecutionStart()));
-        assertThat(fromDb.getExecutionEnd(), is(100l));
-        assertThat(fromDb.getStatus(), is(FAILURE));
+        assertDbState(JobExecutionModel.TABLE, jobExecutionTable(this.jobExecutionModel));
     }
 }

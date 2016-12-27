@@ -29,4 +29,6 @@
         <appender-ref ref="APPENDER" />
     </root>
 
+    <logger name="uk.co.jemos.podam" level="ERROR" />
+
 </configuration>

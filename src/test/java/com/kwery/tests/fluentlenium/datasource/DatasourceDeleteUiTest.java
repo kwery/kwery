@@ -1,13 +1,10 @@
 package com.kwery.tests.fluentlenium.datasource;
 
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,19 +12,10 @@ import org.junit.rules.RuleChain;
 
 import java.util.List;
 
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQuery.COLUMN_CRON_EXPRESSION;
-import static com.kwery.models.SqlQuery.COLUMN_DATASOURCE_ID_FK;
-import static com.kwery.models.SqlQuery.COLUMN_QUERY;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.sqlQueryDbSetUp;
+import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -41,22 +29,19 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
 
     protected DatasourceListPage page;
 
+    protected Datasource datasource0;
+    protected Datasource datasource1;
+
     @Before
     public void setUpDeleteDatasourcePageTest() {
-        DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
-                sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(1, "testDatasource0", "password0", 3306, MYSQL.name(), "foo.com", "user0")
-                                .values(2, "testDatasource1", "password1", 3307, MYSQL.name(), "bar.com", "user1")
-                                .build(),
-                        insertInto(SqlQuery.TABLE)
-                                .columns(SqlQuery.COLUMN_ID, COLUMN_CRON_EXPRESSION, SqlQuery.COLUMN_LABEL, COLUMN_QUERY, COLUMN_DATASOURCE_ID_FK)
-                                .values(1, "* * * * *", "testQuery0", "select * from foo", 2)
-                                .build()
-                )
-        );
-        dbSetup.launch();
+        datasource0 = datasource();
+        datasourceDbSetup(datasource0);
+
+        datasource1 = datasource();
+        datasourceDbSetup(datasource1);
+
+        SqlQueryModel sqlQueryModel = sqlQueryModel(datasource1);
+        sqlQueryDbSetUp(sqlQueryModel);
 
         page = createPage(DatasourceListPage.class);
         page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
@@ -69,10 +54,10 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
     @Test
     public void testSuccess() {
         page.delete(0);
-        page.waitForDeleteSuccessMessage("testDatasource0");
+        page.waitForDeleteSuccessMessage(datasource0.getLabel());
         List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(1));
-        assertThat(rows.get(0).get(0), is("testDatasource1"));
+        assertThat(rows.get(0).get(0), is(datasource1.getLabel()));
     }
 
     @Test
@@ -81,8 +66,8 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
         page.waitForDeleteFailureSqlQueryMessage();
         List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(2));
-        assertThat(rows.get(0).get(0), is("testDatasource0"));
-        assertThat(rows.get(1).get(0), is("testDatasource1"));
+        assertThat(rows.get(0).get(0), is(datasource0.getLabel()));
+        assertThat(rows.get(1).get(0), is(datasource1.getLabel()));
     }
 }
 

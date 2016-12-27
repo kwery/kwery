@@ -1,30 +1,24 @@
 package com.kwery.tests.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
-import com.kwery.models.Datasource;
-import com.kwery.models.EmailConfiguration;
-import com.kwery.models.SmtpConfiguration;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
-import com.kwery.models.SqlQueryExecution.Status;
-import com.kwery.models.User;
+import com.kwery.models.*;
+import com.kwery.models.SqlQueryExecutionModel.Status;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.apache.commons.lang3.RandomStringUtils;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
-import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
-import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
-import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
-import static com.kwery.models.SmtpConfiguration.COLUMN_HOST;
-import static com.kwery.models.SmtpConfiguration.COLUMN_PASSWORD;
-import static com.kwery.models.SmtpConfiguration.COLUMN_PORT;
-import static com.kwery.models.SmtpConfiguration.COLUMN_SSL;
-import static com.kwery.models.SmtpConfiguration.COLUMN_USERNAME;
-import static com.kwery.models.SmtpConfiguration.TABLE_SMTP_CONFIGURATION;
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import static com.kwery.models.EmailConfiguration.*;
+import static com.kwery.models.SmtpConfiguration.*;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
@@ -43,28 +37,40 @@ public class TestUtil {
     }
 
     public static Datasource datasource() {
-        Datasource datasource = new Datasource();
-        datasource.setUrl("0.0.0.0");
-        datasource.setPort(3306);
-        datasource.setUsername("root");
-        datasource.setPassword("root");
-        datasource.setLabel("label");
-        datasource.setType(MYSQL);
-        return datasource;
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        return podamFactory.manufacturePojo(Datasource.class);
     }
 
-    public static SqlQuery queryRun() {
-        SqlQuery q = new SqlQuery();
+    public static JobExecutionModel jobExecutionModel() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        JobExecutionModel jobExecutionModel = podamFactory.manufacturePojo(JobExecutionModel.class);
+        jobExecutionModel.setSqlQueryExecutionModels(new HashSet<>());
+        jobExecutionModel.setJobModel(null);
+
+        return jobExecutionModel;
+    }
+
+    public static JobExecutionModel jobExecutionModelWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        JobExecutionModel jobExecutionModel = podamFactory.manufacturePojo(JobExecutionModel.class);
+        jobExecutionModel.setId(null);
+        jobExecutionModel.setSqlQueryExecutionModels(new HashSet<>());
+        jobExecutionModel.setJobModel(null);
+        return jobExecutionModel;
+    }
+
+    public static SqlQueryModel queryRun() {
+        SqlQueryModel q = new SqlQueryModel();
         q.setQuery("select * from foo");
         q.setLabel("test query run");
-        q.setCronExpression("* * * * *");
         return q;
     }
 
-    public static SqlQuery sleepSqlQuery(Datasource datasource) {
-        SqlQuery sqlQuery = new SqlQuery();
+    public static SqlQueryModel sleepSqlQuery(Datasource datasource) {
+        SqlQueryModel sqlQuery = new SqlQueryModel();
         sqlQuery.setDatasource(datasource);
-        sqlQuery.setCronExpression("* * * * *");
         sqlQuery.setLabel("test");
         sqlQuery.setQuery("select sleep(86440)");
         return sqlQuery;
@@ -74,16 +80,15 @@ public class TestUtil {
         SqlQueryDto dto = new SqlQueryDto();
         dto.setQuery("select * from foo");
         dto.setLabel("test");
-        dto.setCronExpression("* * * * *");
         return dto;
     }
 
-    public static SqlQueryExecution queryRunExecution() {
+    public static SqlQueryExecutionModel queryRunExecution() {
         return queryRunExecution(SUCCESS);
     }
 
-    public static SqlQueryExecution queryRunExecution(Status status) {
-        SqlQueryExecution e = new SqlQueryExecution();
+    public static SqlQueryExecutionModel queryRunExecution(Status status) {
+        SqlQueryExecutionModel e = new SqlQueryExecutionModel();
         e.setExecutionStart(1l);
         e.setExecutionEnd(2l);
         e.setResult("result");
@@ -120,10 +125,109 @@ public class TestUtil {
         return emailConfiguration;
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; ++i) {
-            System.out.println(smtpConfigurationWithoutId());
-        }
+    public static Datasource datasourceWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        Datasource datasource = podamFactory.manufacturePojo(Datasource.class);
+        datasource.setId(null);
+        return datasource;
+    }
+
+    public static SqlQueryModel sqlQueryModelWithoutId() {
+        SqlQueryModel sqlQueryModel = sqlQueryModel();
+        sqlQueryModel.setId(null);
+        return sqlQueryModel;
+    }
+
+    public static SqlQueryModel sqlQueryModelWithoutId(Datasource datasource) {
+        SqlQueryModel sqlQueryModel = sqlQueryModelWithoutId();
+        sqlQueryModel.setDatasource(datasource);
+        return sqlQueryModel;
+    }
+
+    public static SqlQueryModel sqlQueryModel() {
+        SqlQueryModel sqlQueryModel = new SqlQueryModel();
+        sqlQueryModel.setId(DbUtil.dbId());
+        sqlQueryModel.setQuery(RandomStringUtils.randomAlphanumeric(1, 1025));
+        sqlQueryModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        sqlQueryModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1025));
+        return sqlQueryModel;
+    }
+
+    public static SqlQueryModel sqlQueryModel(Datasource datasource) {
+        SqlQueryModel sqlQueryModel = sqlQueryModel();
+        sqlQueryModel.setDatasource(datasource);
+        return sqlQueryModel;
+    }
+
+    public static JobModel jobModelWithoutDependents() {
+        return jobModel();
+    }
+
+    public static JobModel jobModelWithoutIdWithoutDependents() {
+        JobModel jobModel = jobModel();
+        jobModel.setId(null);
+        return jobModel;
+    }
+
+    private static JobModel jobModel() {
+        JobModel jobModel = new JobModel();
+        jobModel.setId(DbUtil.dbId());
+        jobModel.setCronExpression("* * * * *");
+        jobModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
+        jobModel.setDependentJobs(new HashSet<>());
+        jobModel.setEmails(new HashSet<>());
+        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setDependsOnJob(null);
+        return jobModel;
+    }
+
+    public static SqlQueryExecutionModel sqlQueryExecutionModelWithoutId() {
+        SqlQueryExecutionModel model = new PodamFactoryImpl().manufacturePojo(SqlQueryExecutionModel.class);
+        model.setId(null);
+        model.setSqlQuery(null);
+        model.setJobExecutionModel(null);
+        return model;
+    }
+
+    public static SqlQueryExecutionModel sqlQueryExecutionModel() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        SqlQueryExecutionModel model = podamFactory.manufacturePojo(SqlQueryExecutionModel.class);
+        model.setSqlQuery(null);
+        model.setJobExecutionModel(null);
+        return model;
+    }
+
+    public static JobDto jobDtoWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
+        jobDto.setId(0);
+        jobDto.setEmails(new HashSet<>());
+        jobDto.setSqlQueries(new ArrayList<>());
+        return jobDto;
+    }
+
+    public static JobDto jobDto() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
+        jobDto.setEmails(new HashSet<>());
+        jobDto.setSqlQueries(new ArrayList<>());
+        return jobDto;
+    }
+
+    public static SqlQueryDto sqlQueryDtoWithoutId() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        SqlQueryDto sqlQueryDto = podamFactory.manufacturePojo(SqlQueryDto.class);
+        sqlQueryDto.setId(0);
+        return sqlQueryDto;
+    }
+
+    public static SqlQueryDto sqlQueryDto() {
+        PodamFactory podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
+        return podamFactory.manufacturePojo(SqlQueryDto.class);
     }
 
     public static EmailConfiguration emailConfigurationDbSetUp() {
@@ -166,5 +270,19 @@ public class TestUtil {
         ).launch();
 
         return smtpConfiguration;
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 10; ++i) {
+            System.out.println(jobExecutionModel());
+        }
+    }
+
+    public static String toJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+        }
+        return "";
     }
 }

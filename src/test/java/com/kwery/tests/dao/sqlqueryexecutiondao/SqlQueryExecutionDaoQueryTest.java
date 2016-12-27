@@ -1,59 +1,69 @@
 package com.kwery.tests.dao.sqlqueryexecutiondao;
 
-import com.kwery.dao.DatasourceDao;
-import com.kwery.dao.SqlQueryDao;
+import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.*;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
-import com.kwery.tests.util.TestUtil;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.util.TestUtil.*;
+import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.junit.Assert.assertThat;
 
 public class SqlQueryExecutionDaoQueryTest extends RepoDashDaoTestBase {
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
-    protected SqlQuery sqlQuery;
-    protected SqlQueryExecution sqlQueryExecution;
+    protected SqlQueryModel sqlQuery;
+    protected JobModel jobModel;
+    protected SqlQueryExecutionModel sqlQueryExecutionModel;
+
+    protected JobExecutionModel jobExecutionModel;
 
     @Before
     public void setUpQueryRunExecutionDaoQueryTest() {
-        Datasource datasource = TestUtil.datasource();
-        getInstance(DatasourceDao.class).save(datasource);
+        Datasource datasource = datasource();
+        datasourceDbSetup(datasource);
 
-        sqlQuery = TestUtil.queryRun();
-        sqlQuery.setDatasource(datasource);
-        getInstance(SqlQueryDao.class).save(sqlQuery);
+        sqlQuery = sqlQueryModel(datasource);
+        DbUtil.sqlQueryDbSetUp(sqlQuery);
+
+        jobModel = jobModelWithoutDependents();
+        jobDbSetUp(jobModel);
+
+        jobModel.getSqlQueries().add(sqlQuery);
+        jobSqlQueryDbSetUp(jobModel);
+
+        jobExecutionModel = jobExecutionModel();
+        jobExecutionModel.setJobModel(jobModel);
+        jobExecutionDbSetUp(jobExecutionModel);
+
+        sqlQueryExecutionModel = sqlQueryExecutionModel();
+        sqlQueryExecutionModel.setSqlQuery(sqlQuery);
+        sqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
+
+        jobExecutionModel.setSqlQueryExecutionModels(ImmutableSet.of(sqlQueryExecutionModel));
+        sqlQueryExecutionDbSetUp(sqlQueryExecutionModel);
 
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
-
-        sqlQueryExecution = TestUtil.queryRunExecution();
-        sqlQueryExecution.setSqlQuery(sqlQuery);
-
-        sqlQueryExecutionDao.save(sqlQueryExecution);
     }
 
     @Test
     public void testGetByExecutionId() {
-        SqlQueryExecution fromDb = sqlQueryExecutionDao.getByExecutionId(sqlQueryExecution.getExecutionId());
-        assertThat(fromDb, notNullValue());
-        assertThat(fromDb.getId(), is(sqlQueryExecution.getId()));
+        SqlQueryExecutionModel fromDb = sqlQueryExecutionDao.getByExecutionId(sqlQueryExecutionModel.getExecutionId());
+
+        sqlQueryExecutionModel.setSqlQuery(sqlQuery);
+        sqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
+
+        assertThat(fromDb, theSameBeanAs(sqlQueryExecutionModel));
     }
 
     @Test
     public void testGetById() {
-        SqlQueryExecution fromDb = sqlQueryExecutionDao.getById(sqlQueryExecution.getId());
-        assertThat(fromDb, notNullValue());
-    }
-
-    @Test
-    public void testByQueryRunId() {
-        assertThat(sqlQueryExecutionDao.getById(sqlQueryExecution.getSqlQuery().getId()), notNullValue());
-        assertThat(sqlQueryExecutionDao.getById(sqlQueryExecution.getSqlQuery().getId() + 100), nullValue());
+        SqlQueryExecutionModel fromDb = sqlQueryExecutionDao.getById(sqlQueryExecutionModel.getId());
+        sqlQueryExecutionModel.setSqlQuery(sqlQuery);
+        sqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
+        assertThat(fromDb, theSameBeanAs(sqlQueryExecutionModel));
     }
 }

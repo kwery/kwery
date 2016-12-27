@@ -1,11 +1,11 @@
 package com.kwery.services.scheduler;
 
-import com.kwery.models.SqlQuery;
+import com.kwery.models.SqlQueryModel;
 
 public class OngoingSqlQueryTask {
     private long startTime;
     private String executionId;
-    private SqlQuery sqlQuery;
+    private SqlQueryModel sqlQuery;
 
     public long getStartTime() {
         return startTime;
@@ -23,11 +23,11 @@ public class OngoingSqlQueryTask {
         this.executionId = executionId;
     }
 
-    public SqlQuery getSqlQuery() {
+    public SqlQueryModel getSqlQuery() {
         return sqlQuery;
     }
 
-    public void setSqlQuery(SqlQuery sqlQuery) {
+    public void setSqlQuery(SqlQueryModel sqlQuery) {
         this.sqlQuery = sqlQuery;
     }
 }

@@ -11,9 +11,6 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("panel-add-link", {
         require: "components/panel-add-link"
     });
-    ko.components.register("kill-sql-query", {
-        require: "components/kill-sql-query"
-    });
     ko.components.register("user-add", {
         require: "components/user/admin/add"
     });
@@ -22,9 +19,6 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     });
     ko.components.register("user-login", {
         require: "components/user/login"
-    });
-    ko.components.register("sql-query-add", {
-        require: "components/sql-query/add"
     });
     ko.components.register("sql-query-executing", {
         require: "components/sql-query/executing"
@@ -52,6 +46,18 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     });
     ko.components.register("email-configuration", {
         require: "components/email/configuration"
+    });
+    ko.components.register("report-add", {
+        require: "components/report/add"
+    });
+    ko.components.register("report-list", {
+        require: "components/report/list"
+    });
+    ko.components.register("report-execution-list", {
+        require: "components/report/execution-list"
+    });
+    ko.components.register("report-execution-result", {
+        require: "components/report/execution-result"
     });
 
     ko.applyBindings({ route: router.currentRoute });

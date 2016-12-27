@@ -16,6 +16,7 @@ corresponding controller method as addUser, http path as add-user etc.
 14. Database foreign keys should be suffixed with _fk.
 15. Classname should not be verbs.
 16. Method name should be verbs.
+17. While naming models, each constraint should be on a line of it's own. Column name should be the last annotation in the list.
 
 Fluentlenium test conventions:
 1. Organize tests in packages with names of the packages based on components for example datasource, sql-query etc.

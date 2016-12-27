@@ -1,6 +1,6 @@
 package com.kwery.services.scheduler;
 
-import com.kwery.models.SqlQueryExecution.Status;
+import com.kwery.models.SqlQueryExecutionModel.Status;
 
 import java.util.List;
 

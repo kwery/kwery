@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 data-bind="text: ko.i18n('report.job.executions.header')" class="panel-title"></h3>
+        </div>
+        <div class="panel-body">
+            <table class="table" id="executionListTable">
+                <thead>
+                <tr>
+                    <th data-bind="text: ko.i18n('report.job.execution.start')"></th>
+                    <th data-bind="text: ko.i18n('report.job.execution.end')"></th>
+                    <th data-bind="text: ko.i18n('report.job.execution.status')"></th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: executions" id="executionListTableBody">
+                <tr>
+                    <td data-bind="text: start"></td>
+                    <td data-bind="text: end"></td>
+                    <td>
+                        <!-- ko if: status === 'SUCCESS' -->
+                            <a data-bind="text:status, attr:{href: executionResultLink}"></a>
+                        <!-- /ko -->
+                        <!-- ko if: status !== 'SUCCESS' -->
+                            <span data-bind="text: status"></span>
+                        <!-- /ko -->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

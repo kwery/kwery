@@ -4,9 +4,9 @@ import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.kwery.models.SqlQueryExecution;
-import ninja.jpa.UnitOfWork;
+import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -17,52 +17,55 @@ import javax.persistence.criteria.Root;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 
 public class SqlQueryExecutionDao {
     @Inject
     private Provider<EntityManager> entityManagerProvider;
 
     @Transactional
-    public void save(SqlQueryExecution e) {
+    public void save(SqlQueryExecutionModel e) {
         EntityManager m = entityManagerProvider.get();
-        m.persist(e);
-        m.flush();
-    }
 
-    @Transactional
-    public void update(SqlQueryExecution e) {
-        EntityManager m = entityManagerProvider.get();
-        m.merge(e);
+        if (e.getId() != null && e.getId() > 0) {
+           m.merge(e);
+        } else {
+            m.persist(e);
+        }
+
         m.flush();
     }
 
     @UnitOfWork
-    public SqlQueryExecution getById(Integer id) {
-        return entityManagerProvider.get().find(SqlQueryExecution.class, id);
+    public SqlQueryExecutionModel getById(Integer id) {
+        return entityManagerProvider.get().find(SqlQueryExecutionModel.class, id);
     }
 
     @SuppressWarnings("unchecked")
     @UnitOfWork
-    public SqlQueryExecution getByExecutionId(String executionId) {
+    public SqlQueryExecutionModel getByExecutionId(String executionId) {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setExecutionId(executionId);
-        List<SqlQueryExecution> executions = filter(filter);
+        List<SqlQueryExecutionModel> executions = filter(filter);
 
         if (executions.size() == 0) {
             return null;
+        }
+
+        if (executions.size() > 1) {
+            throw new AssertionError("More than one SqlQueryExecutionModel found with execution id - " + executionId);
         }
 
         return executions.get(0);
     }
 
     @UnitOfWork
-    public List<SqlQueryExecution> filter(SqlQueryExecutionSearchFilter filter) {
+    public List<SqlQueryExecutionModel> filter(SqlQueryExecutionSearchFilter filter) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder c = m.getCriteriaBuilder();
 
-        CriteriaQuery<SqlQueryExecution>  q = c.createQuery(SqlQueryExecution.class);
-        Root<SqlQueryExecution> root = q.from(SqlQueryExecution.class);
+        CriteriaQuery<SqlQueryExecutionModel>  q = c.createQuery(SqlQueryExecutionModel.class);
+        Root<SqlQueryExecutionModel> root = q.from(SqlQueryExecutionModel.class);
 
         List<Predicate> predicates = new LinkedList<>();
 
@@ -96,7 +99,7 @@ public class SqlQueryExecutionDao {
 
         q.where(predicates.toArray(new Predicate[]{}));
 
-        TypedQuery<SqlQueryExecution> tq = m.createQuery(q)
+        TypedQuery<SqlQueryExecutionModel> tq = m.createQuery(q)
                 .setMaxResults(filter.getResultCount())
                 .setFirstResult(filter.getPageNumber() * filter.getResultCount());
 
@@ -110,7 +113,7 @@ public class SqlQueryExecutionDao {
         CriteriaBuilder c = m.getCriteriaBuilder();
         CriteriaQuery<Long> q = c.createQuery(Long.class);
 
-        Root<SqlQueryExecution> root = q.from(SqlQueryExecution.class);
+        Root<SqlQueryExecutionModel> root = q.from(SqlQueryExecutionModel.class);
 
         q.select(c.count(root));
 
@@ -149,25 +152,16 @@ public class SqlQueryExecutionDao {
         return m.createQuery(q).getSingleResult();
     }
 
-    @Transactional
-    public void deleteBySqlQueryId(int sqlQueryId) {
-        EntityManager m = entityManagerProvider.get();
-        m.createQuery(
-                "delete from SqlQueryExecution e where e.sqlQuery.id = :sqlQueryId")
-                .setParameter("sqlQueryId", sqlQueryId
-        ).executeUpdate();
-    }
-
     @UnitOfWork
-    public List<SqlQueryExecution> lastSuccessfulExecution(List<Integer> sqlQueryIds) {
+    public List<SqlQueryExecutionModel> lastSuccessfulExecution(List<Integer> sqlQueryIds) {
         //TODO - Simplify
         EntityManager m = entityManagerProvider.get();
 
-        List<SqlQueryExecution> sqlQueryExecutions = new LinkedList<>();
+        List<SqlQueryExecutionModel> sqlQueryExecutions = new LinkedList<>();
 
         for (Integer sqlQueryId : sqlQueryIds) {
-            SqlQueryExecution sqlQueryExecution = m.createQuery(
-                    "select e from SqlQueryExecution e where e.status = :status and e.sqlQuery.id = :sqlQueryId and e.executionEnd is not null order by e.executionEnd desc", SqlQueryExecution.class
+            SqlQueryExecutionModel sqlQueryExecution = m.createQuery(
+                    "select e from SqlQueryExecutionModel e where e.status = :status and e.sqlQuery.id = :sqlQueryId and e.executionEnd is not null order by e.executionEnd desc", SqlQueryExecutionModel.class
 
             ).setParameter("sqlQueryId", sqlQueryId)
                     .setParameter("status", SUCCESS)

@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
+import static java.lang.String.format;
 
 public class SqlQueryExecutionResultPage extends FluentPage implements RepoDashPage {
+    protected int sqlQueryId;
+
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).until("#executionResultTable").isDisplayed();
@@ -20,7 +23,7 @@ public class SqlQueryExecutionResultPage extends FluentPage implements RepoDashP
 
     @Override
     public String getUrl() {
-        return "/#sql-query/1/execution/thik-3456-lkdsjkfkl-lskjdfkl";
+        return format("/#sql-query/%d/execution/thik-3456-lkdsjkfkl-lskjdfkl", getSqlQueryId());
     }
 
     public void waitForResultHeader(int headerCount) {
@@ -50,5 +53,13 @@ public class SqlQueryExecutionResultPage extends FluentPage implements RepoDashP
         }
 
         return container;
+    }
+
+    public int getSqlQueryId() {
+        return sqlQueryId;
+    }
+
+    public void setSqlQueryId(int sqlQueryId) {
+        this.sqlQueryId = sqlQueryId;
     }
 }

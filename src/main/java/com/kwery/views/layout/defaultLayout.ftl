@@ -70,6 +70,14 @@
                 div[class^="col-"] {
                     background-color: rgba(255, 0, 0, 0.2);
                 }*/
+
+                hr.double {
+                    border-top: 3px double #8c8b8b;
+                }
+
+                hr.dotted {
+                    border-top: 1px dashed #8c8b8b;
+                }
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->

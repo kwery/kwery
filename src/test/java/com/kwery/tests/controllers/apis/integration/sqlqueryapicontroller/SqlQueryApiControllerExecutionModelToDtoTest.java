@@ -3,13 +3,13 @@ package com.kwery.tests.controllers.apis.integration.sqlqueryapicontroller;
 import com.kwery.controllers.apis.SqlQueryApiController;
 import com.kwery.dtos.SqlQueryExecutionDto;
 import com.kwery.models.Datasource;
-import com.kwery.models.SqlQuery;
-import com.kwery.models.SqlQueryExecution;
+import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.models.SqlQueryModel;
 import org.junit.Test;
 
 import java.util.Date;
 
-import static com.kwery.models.SqlQueryExecution.Status.SUCCESS;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -19,13 +19,13 @@ public class SqlQueryApiControllerExecutionModelToDtoTest {
         Datasource datasource = new Datasource();
         datasource.setLabel("testLabel");
 
-        SqlQuery sqlQuery = new SqlQuery();
+        SqlQueryModel sqlQuery = new SqlQueryModel();
         sqlQuery.setId(1);
         sqlQuery.setLabel("testSqlQuery");
         sqlQuery.setDatasource(datasource);
         sqlQuery.setQuery("select * from foo");
 
-        SqlQueryExecution sqlQueryExecution = new SqlQueryExecution();
+        SqlQueryExecutionModel sqlQueryExecution = new SqlQueryExecutionModel();
         sqlQueryExecution.setSqlQuery(sqlQuery);
         sqlQueryExecution.setExecutionStart(1475215333445l);
         sqlQueryExecution.setExecutionEnd(1475215453445l);
