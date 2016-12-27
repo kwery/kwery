@@ -152,15 +152,6 @@ public class SqlQueryExecutionDao {
         return m.createQuery(q).getSingleResult();
     }
 
-    @Transactional
-    public void deleteBySqlQueryId(int sqlQueryId) {
-        EntityManager m = entityManagerProvider.get();
-        m.createQuery(
-                "delete from SqlQueryExecutionModel e where e.sqlQuery.id = :sqlQueryId")
-                .setParameter("sqlQueryId", sqlQueryId
-        ).executeUpdate();
-    }
-
     @UnitOfWork
     public List<SqlQueryExecutionModel> lastSuccessfulExecution(List<Integer> sqlQueryIds) {
         //TODO - Simplify

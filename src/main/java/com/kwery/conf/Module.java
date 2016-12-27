@@ -26,7 +26,10 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
-import com.kwery.services.scheduler.*;
+import com.kwery.services.scheduler.MysqlSqlQueryRunner;
+import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
+import com.kwery.services.scheduler.ResultSetProcessorFactory;
+import com.kwery.services.scheduler.SqlQueryRunner;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
@@ -36,13 +39,8 @@ public class Module extends AbstractModule {
     protected void configure() {
         bind(TemplateEngineJsFreemarker.class);
         bind(SqlQueryRunner.class).to(MysqlSqlQueryRunner.class);
-        bind(SchedulerService.class);
-        bind(OneOffSqlQueryTaskSchedulerReaper.class);
         bind(SchedulerListener.class).to(SchedulerListenerImpl.class);
         bind(TaskExecutorListener.class).to(TaskExecutorListenerImpl.class);
-
-        install(new FactoryModuleBuilder().build(SqlQueryTaskFactory.class));
-        install(new FactoryModuleBuilder().build(QueryTaskSchedulerFactory.class));
         install(new FactoryModuleBuilder().build(ResultSetProcessorFactory.class));
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
         install(new FactoryModuleBuilder().build(JobTaskFactory.class));

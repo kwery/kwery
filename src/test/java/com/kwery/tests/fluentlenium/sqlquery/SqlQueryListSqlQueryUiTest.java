@@ -2,14 +2,10 @@ package com.kwery.tests.fluentlenium.sqlquery;
 
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.Messages;
 import com.kwery.tests.util.NinjaServerRule;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,19 +13,10 @@ import org.junit.rules.RuleChain;
 
 import java.util.List;
 
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.SqlQueryModel.CRON_EXPRESSION_COLUMN;
-import static com.kwery.models.SqlQueryModel.DATASOURCE_ID_FK_COLUMN;
-import static com.kwery.models.SqlQueryModel.QUERY_COLUMN;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.sqlQueryDbSetUp;
+import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -42,23 +29,22 @@ public class SqlQueryListSqlQueryUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     protected SqlQueryListPage page;
+    private SqlQueryModel sqlQueryModel0;
+    private SqlQueryModel sqlQueryModel1;
+    private Datasource datasource;
 
     @Before
     public void setUpListSqlQueriesPageTest() {
-        UserTableUtil userTableUtil = new UserTableUtil();
-        DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
-                sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(1, "*", "testQuery0", "select * from foo", 1)
-                                .values(2, "* *", "testQuery1", "select * from bar", 1)
-                                .build()
-                )
-        );
-        dbSetup.launch();
+        datasource = datasource();
+        datasourceDbSetup(datasource);
+
+        sqlQueryModel0 = sqlQueryModel(datasource);
+        sqlQueryModel0.setId(1);
+        sqlQueryDbSetUp(sqlQueryModel0);
+
+        sqlQueryModel1 = sqlQueryModel(datasource);
+        sqlQueryModel1.setId(2);
+        sqlQueryDbSetUp(sqlQueryModel1);
 
         page = createPage(SqlQueryListPage.class);
         page.withDefaultUrl(ninjaServerRule.getServerUrl());
@@ -75,12 +61,11 @@ public class SqlQueryListSqlQueryUiTest extends ChromeFluentTest {
 
         List<String> headers = page.headers();
 
-        assertThat(headers, hasSize(5));
+        assertThat(headers, hasSize(4));
 
         assertThat(headers.get(0), is(Messages.LABEL_M));
-        assertThat(headers.get(1), is(Messages.CRON_EXPRESSION_M));
-        assertThat(headers.get(2), is(Messages.QUERY_M));
-        assertThat(headers.get(3), is(Messages.DATASOURCE_M));
+        assertThat(headers.get(1), is(Messages.QUERY_M));
+        assertThat(headers.get(2), is(Messages.DATASOURCE_M));
 
         List<List<String>> rows = page.rows();
 
@@ -88,16 +73,14 @@ public class SqlQueryListSqlQueryUiTest extends ChromeFluentTest {
 
         List<String> firstRow = rows.get(0);
 
-        assertThat(firstRow.get(0), is("testQuery0"));
-        assertThat(firstRow.get(1), is("*"));
-        assertThat(firstRow.get(2), is("select * from foo"));
-        assertThat(firstRow.get(3), is("testDatasource"));
+        assertThat(firstRow.get(0), is(sqlQueryModel0.getLabel()));
+        assertThat(firstRow.get(1), is(sqlQueryModel0.getQuery()));
+        assertThat(firstRow.get(2), is(datasource.getLabel()));
 
         List<String> secondRow = rows.get(1);
 
-        assertThat(secondRow.get(0), is("testQuery1"));
-        assertThat(secondRow.get(1), is("* *"));
-        assertThat(secondRow.get(2), is("select * from bar"));
-        assertThat(secondRow.get(3), is("testDatasource"));
+        assertThat(secondRow.get(0), is(sqlQueryModel1.getLabel()));
+        assertThat(secondRow.get(1), is(sqlQueryModel1.getQuery()));
+        assertThat(secondRow.get(2), is(datasource.getLabel()));
     }
 }

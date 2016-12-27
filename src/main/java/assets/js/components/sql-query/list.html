@@ -12,7 +12,6 @@
                 <thead>
                 <tr>
                     <th data-bind="text: ko.i18n('label')"></th>
-                    <th data-bind="text: ko.i18n('cron.expression')"></th>
                     <th data-bind="text: ko.i18n('query')"></th>
                     <th data-bind="text: ko.i18n('datasource')"></th>
                     <th></th>
@@ -24,7 +23,6 @@
                         <a data-bind="attr: {href: queryLink}, text: label">
                         </a>
                     </td>
-                    <td data-bind="text: cronExpression"></td>
                     <td data-bind="text: query"></td>
                     <td data-bind="text: datasource.label"></td>
                     <td>

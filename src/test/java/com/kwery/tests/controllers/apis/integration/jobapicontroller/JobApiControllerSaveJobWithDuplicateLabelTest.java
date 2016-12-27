@@ -47,9 +47,6 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
         datasource = datasource();
 
         SqlQueryModel sqlQueryModel = sqlQueryModel();
-        sqlQueryModel.setDependentQueries(null);
-        sqlQueryModel.setRecipientEmails(null);
-        sqlQueryModel.setCronExpression(null);
         sqlQueryModel.setDatasource(datasource);
         sqlQueryModel.setLabel(queryLabel);
         jobModel.getSqlQueries().add(sqlQueryModel);

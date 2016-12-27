@@ -12,12 +12,15 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
 public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPage {
     public static final int RESULT_TABLE_COLUMN_COUNT = 3;
+
+    protected int sqlQueryId;
 
     @Override
     public boolean isRendered() {
@@ -27,7 +30,7 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
 
     @Override
     public String getUrl() {
-        return "/#sql-query/1/execution-list";
+        return format("/#sql-query/%d/execution-list", getSqlQueryId());
     }
 
     public List<String> getExecutionListHeaders() {
@@ -141,5 +144,13 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
 
     public boolean isStatusLink(int position) {
         return find(className("status")).get(position).find(By.tagName("a")).first().isDisplayed();
+    }
+
+    public int getSqlQueryId() {
+        return sqlQueryId;
+    }
+
+    public void setSqlQueryId(int sqlQueryId) {
+        this.sqlQueryId = sqlQueryId;
     }
 }

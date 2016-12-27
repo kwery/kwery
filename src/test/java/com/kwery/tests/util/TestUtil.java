@@ -65,14 +65,12 @@ public class TestUtil {
         SqlQueryModel q = new SqlQueryModel();
         q.setQuery("select * from foo");
         q.setLabel("test query run");
-        q.setCronExpression("* * * * *");
         return q;
     }
 
     public static SqlQueryModel sleepSqlQuery(Datasource datasource) {
         SqlQueryModel sqlQuery = new SqlQueryModel();
         sqlQuery.setDatasource(datasource);
-        sqlQuery.setCronExpression("* * * * *");
         sqlQuery.setLabel("test");
         sqlQuery.setQuery("select sleep(86440)");
         return sqlQuery;
@@ -82,7 +80,6 @@ public class TestUtil {
         SqlQueryDto dto = new SqlQueryDto();
         dto.setQuery("select * from foo");
         dto.setLabel("test");
-        dto.setCronExpression("* * * * *");
         return dto;
     }
 
@@ -153,9 +150,6 @@ public class TestUtil {
         sqlQueryModel.setQuery(RandomStringUtils.randomAlphanumeric(1, 1025));
         sqlQueryModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
         sqlQueryModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1025));
-        sqlQueryModel.setCronExpression(null);
-        sqlQueryModel.setDependentQueries(null);
-        sqlQueryModel.setRecipientEmails(null);
         return sqlQueryModel;
     }
 

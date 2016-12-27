@@ -1,10 +1,6 @@
 package com.kwery.controllers.apis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.kwery.dao.DatasourceDao;
@@ -15,21 +11,13 @@ import com.kwery.dtos.SqlQueryExecutionDto;
 import com.kwery.dtos.SqlQueryExecutionListDto;
 import com.kwery.dtos.SqlQueryExecutionListFilterDto;
 import com.kwery.filters.DashRepoSecureFilter;
-import com.kwery.models.Datasource;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.services.scheduler.SchedulerService;
-import com.kwery.services.scheduler.SqlQueryExecutionNotFoundException;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.views.ActionResult;
-import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.i18n.Messages;
 import ninja.params.PathParam;
-import ninja.validation.FieldViolation;
-import ninja.validation.JSR303Validation;
-import ninja.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.kwery.controllers.ControllerUtil.fieldMessages;
-import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
-import static com.kwery.views.ActionResult.Status.failure;
-import static com.kwery.views.ActionResult.Status.success;
 import static ninja.Results.json;
 
 public class SqlQueryApiController {
@@ -66,117 +49,7 @@ public class SqlQueryApiController {
     private Messages messages;
 
     @Inject
-    private SchedulerService schedulerService;
-
-    @Inject
     private SqlQueryExecutionDao sqlQueryExecutionDao;
-
-    @FilterWith(DashRepoSecureFilter.class)
-    public Result addSqlQuery(@JSR303Validation SqlQueryDto sqlQueryDto, Context context, Validation validation) {
-        if (logger.isTraceEnabled()) logger.trace(">");
-
-        logger.info("Sql query with payload - " + sqlQueryDto);
-
-        Result json = json();
-        ActionResult actionResult = null;
-
-        boolean isUpdate = false;
-
-        if (sqlQueryDto.getId() != 0) {
-            isUpdate = true;
-        }
-
-        if (isUpdate) {
-            logger.info("Updating sql query with payload - " + sqlQueryDto);
-        } else {
-            logger.info("Adding sql query with payload - " + sqlQueryDto);
-        }
-
-        if (validation.hasViolations()) {
-            List<String> violations = new ArrayList<>();
-            violations.add("Validation errors:");
-
-            for (FieldViolation fieldViolation : validation.getBeanViolations()) {
-                violations.add(fieldViolation.constraintViolation.getMessageKey());
-            }
-
-            for (FieldViolation fieldViolation : validation.getFieldViolations()) {
-                violations.add(fieldViolation.constraintViolation.getMessageKey());
-            }
-
-            logger.error(Joiner.on(System.getProperty("line.separator")).join(violations));
-
-            actionResult = new ActionResult(failure, fieldMessages(validation, context, messages, json));
-        } else {
-            List<String> errorMessages = new LinkedList<>();
-
-            SqlQueryModel fromDb = sqlQueryDao.getByLabel(sqlQueryDto.getLabel());
-
-            if (isUpdate) {
-                if (fromDb != null && !fromDb.getId().equals(sqlQueryDto.getId())) {
-                    logger.error("{} SQL query already exists with label {}", fromDb.getId(), sqlQueryDto.getLabel());
-                    errorMessages.add(messages.get(QUERY_RUN_ADDITION_FAILURE, context, Optional.of(json), sqlQueryDto.getLabel()).get());
-                }
-            } else {
-                if (fromDb != null) {
-                    logger.error("{} SQL query already exists with label {}", fromDb.getId(), sqlQueryDto.getLabel());
-                    errorMessages.add(messages.get(QUERY_RUN_ADDITION_FAILURE, context, Optional.of(json), sqlQueryDto.getLabel()).get());
-                }
-            }
-
-            Datasource datasource = datasourceDao.getById(sqlQueryDto.getDatasourceId());
-            if (datasource == null) {
-                logger.error("Cannot add SQL query without datasource");
-                errorMessages.add(messages.get(DATASOURCE_VALIDATION, context, Optional.of(json)).get());
-            }
-
-            if (errorMessages.size() > 0) {
-                actionResult = new ActionResult(failure, errorMessages);
-            } else {
-                SqlQueryModel model = toSqlQueryModel(sqlQueryDto);
-
-                if (isUpdate) {
-                    //Stop existing schedules
-                    logger.info("Stopping existing scheduler");
-                    schedulerService.stopScheduler(sqlQueryDto.getId());
-                    sqlQueryDao.save(model);
-                    actionResult = new ActionResult(
-                            success,
-                            messages.get(QUERY_RUN_UPDATE_SUCCESS, context, Optional.of(json)).get()
-                    );
-                    schedulerService.schedule(model);
-                } else {
-                    sqlQueryDao.save(model);
-
-                    if (sqlQueryDto.getDependsOnSqlQueryId() != null && sqlQueryDto.getDependsOnSqlQueryId() > 0) {
-                        SqlQueryModel dependsOnSqlQuery = sqlQueryDao.getById(sqlQueryDto.getDependsOnSqlQueryId());
-                        dependsOnSqlQuery.getDependentQueries().add(model);
-                        sqlQueryDao.save(dependsOnSqlQuery);
-                    }
-
-                    if (isOneOffSqlQuery(sqlQueryDto)) {
-                        actionResult = new ActionResult(
-                                success,
-                                messages.get(QUERY_RUN_WITHOUT_CRON_ADDITION_SUCCESS, context, Optional.of(json)).get()
-                        );
-                    } else {
-                        actionResult = new ActionResult(
-                                success,
-                                messages.get(QUERY_RUN_WITH_CRON_ADDITION_SUCCESS, context, Optional.of(json)).get()
-                        );
-                        schedulerService.schedule(model);
-                    }
-                }
-            }
-        }
-
-        if (logger.isTraceEnabled()) logger.trace("<");
-        return json.render(actionResult);
-    }
-
-    protected boolean isOneOffSqlQuery(SqlQueryDto sqlQueryDto) {
-        return "".equals(nullToEmpty(sqlQueryDto.getCronExpression()));
-    }
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result listSqlQueries() {
@@ -202,25 +75,6 @@ public class SqlQueryApiController {
 
         if (logger.isTraceEnabled()) logger.trace("<");
         return json().render(dtos);
-    }
-
-    @FilterWith(DashRepoSecureFilter.class)
-    public Result killSqlQuery(@PathParam("sqlQueryId") Integer sqlQueryId, SqlQueryExecutionIdContainer sqlQueryExecutionId) {
-        if (logger.isTraceEnabled()) logger.trace(">");
-
-        logger.info("Killing SQL query with id {}", sqlQueryId);
-
-        ActionResult actionResult = new ActionResult(success, new LinkedList<>());
-
-        try {
-            schedulerService.stopExecution(sqlQueryId, sqlQueryExecutionId.getSqlQueryExecutionId());
-        } catch (SqlQueryExecutionNotFoundException e) {
-            logger.error("Exception while killing sql query with id {}", sqlQueryId, e);
-            actionResult.setStatus(failure);
-        }
-
-        if (logger.isTraceEnabled()) logger.trace("<");
-        return json().render(actionResult);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -321,24 +175,6 @@ public class SqlQueryApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result delete(@PathParam("sqlQueryId") int sqlQueryId, Context context) {
-        if (logger.isTraceEnabled()) logger.trace(">");
-
-        logger.info("Deleting SQL query - " + sqlQueryId);
-
-        SqlQueryModel sqlQuery = sqlQueryDao.getById(sqlQueryId);
-        //TODO - This should be part of service layer
-        sqlQueryDao.delete(sqlQueryId);
-        schedulerService.stopScheduler(sqlQueryId);
-        Result json = json();
-        String message = messages.get(SQL_QUERY_DELETE_SUCCESS, context, Optional.of(json), sqlQuery.getLabel()).get();
-
-        if (logger.isTraceEnabled()) logger.trace("<");
-
-        return json.render(new ActionResult(success, message));
-    }
-
-    @FilterWith(DashRepoSecureFilter.class)
     public Result latestSqlQueryExecutions() {
         if (logger.isTraceEnabled()) logger.trace(">");
 
@@ -357,26 +193,6 @@ public class SqlQueryApiController {
         if (logger.isTraceEnabled()) logger.trace("<");
 
         return json().render(dtos);
-    }
-
-    //TODO - Error handling
-    @FilterWith(DashRepoSecureFilter.class)
-    public Result oneOffSqlQueryExecution(@PathParam("sqlQueryId") int sqlQueryId, Context context) {
-        if (logger.isTraceEnabled()) logger.trace("<");
-
-        logger.info("One off execution of query - " + sqlQueryId);
-
-        SqlQueryModel sqlQuery = sqlQueryDao.getById(sqlQueryId);
-        sqlQuery.setCronExpression("");
-
-        schedulerService.schedule(sqlQuery);
-
-        Result json = json();
-        String message = messages.get(ONE_OFF_EXECUTION_SUCCESS_MESSAGE, context, Optional.of(json), sqlQuery.getLabel()).get();
-
-        if (logger.isTraceEnabled()) logger.trace(">");
-
-        return json().render(new ActionResult(ActionResult.Status.success, message));
     }
 
     public SqlQueryExecutionDto from(SqlQueryExecutionModel model) {
@@ -433,15 +249,9 @@ public class SqlQueryApiController {
             model.setId(dto.getId());
         }
 
-        model.setCronExpression(nullToEmpty(dto.getCronExpression()).trim());
         model.setLabel(dto.getLabel());
         model.setQuery(dto.getQuery());
         model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
-
-        if (!"".equals(Strings.nullToEmpty(dto.getRecipientEmailsCsv()))) {
-            Iterable<String> emails = Splitter.on(",").trimResults().omitEmptyStrings().split(dto.getRecipientEmailsCsv());
-            model.setRecipientEmails(newHashSet(emails));
-        }
 
         return model;
     }

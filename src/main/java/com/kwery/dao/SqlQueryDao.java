@@ -22,17 +22,6 @@ public class SqlQueryDao {
     protected SqlQueryExecutionDao sqlQueryExecutionDao;
 
     @Transactional
-    public void save(SqlQueryModel q) {
-        EntityManager m = entityManagerProvider.get();
-        if (q.getId() != null && q.getId() > 0) {
-            m.merge(q);
-        } else {
-            m.persist(q);
-        }
-        m.flush();
-    }
-
-    @Transactional
     public SqlQueryModel getByLabel(String label) {
         EntityManager m = entityManagerProvider.get();
 
@@ -60,13 +49,6 @@ public class SqlQueryDao {
     public List<SqlQueryModel> getAll() {
         EntityManager m = entityManagerProvider.get();
         return m.createQuery("SELECT q FROM SqlQueryModel q", SqlQueryModel.class).getResultList();
-    }
-
-    @Transactional
-    public List<SqlQueryModel> getAllWithSchedule() {
-/*        EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT q FROM SqlQueryModel q where q.cronExpression is not null and q.cronExpression <> ''", SqlQueryModel.class).getResultList();*/
-        return new LinkedList<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -97,12 +79,5 @@ public class SqlQueryDao {
         q.where(predicates.toArray(new Predicate[]{}));
 
         return m.createQuery(q).getSingleResult();
-    }
-
-    @Transactional
-    public void delete(int sqlQueryId) {
-        EntityManager m = entityManagerProvider.get();
-        sqlQueryExecutionDao.deleteBySqlQueryId(sqlQueryId);
-        m.remove(m.find(SqlQueryModel.class, sqlQueryId));
     }
 }

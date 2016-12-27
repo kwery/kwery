@@ -22,13 +22,12 @@ import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.*;
-import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.SqlQueryExecutionModel.*;
-import static com.kwery.models.SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK;
 import static com.kwery.models.SqlQueryExecutionModel.Status.*;
-import static com.kwery.models.SqlQueryModel.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.sqlQueryDbSetUp;
+import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static org.hamcrest.core.Is.is;
@@ -36,57 +35,32 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
+
+    private SqlQueryModel sqlQueryModel0;
+    private SqlQueryModel sqlQueryModel1;
+
     @Before
     public void before() {
+        Datasource datasource = datasource();
+        datasourceDbSetup(datasource);
+
+        sqlQueryModel0 = sqlQueryModel(datasource);
+        sqlQueryModel1 = sqlQueryModel(datasource);
+
+        sqlQueryDbSetUp(ImmutableList.of(sqlQueryModel0, sqlQueryModel1));
+
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(1, "testDatasource", "password", 3306, MYSQL.name(), "foo.com", "foo").build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(1, "* * * * *", "testQuery0", "select * from foo", 1).build(),
-                        insertInto(SqlQueryModel.SQL_QUERY_TABLE)
-                                .columns(SqlQueryModel.ID_COLUMN, CRON_EXPRESSION_COLUMN, SqlQueryModel.LABEL_COLUMN, QUERY_COLUMN, DATASOURCE_ID_FK_COLUMN)
-                                .values(2, "* * * * *", "testQuery1", "select * from foo", 1).build(),
                         insertInto(SqlQueryExecutionModel.TABLE)
                                 .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
-                                .values(1, 1475159940797l, "executionId", 1475158740747l, "result", SUCCESS, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
-                                .values(2, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, "result", SUCCESS, 2) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
-/*                                .values(3, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, null, FAILURE, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
-                                .values(4, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, null, FAILURE, 2) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
-                                .values(5, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, null, KILLED, 1) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
-                                .values(6, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, null, KILLED, 2) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
-                                .values(7, null, UUID.randomUUID().toString(), 1475158740747l, null, ONGOING, 1)
-                                .values(8, null, UUID.randomUUID().toString(), 1475158740747l, null, ONGOING, 2)*/
-
-
-/*                                .values(9, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, "result", SUCCESS, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-                                .values(10, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, "result", SUCCESS, 2) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016*/
-                                .values(11, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-                                .values(12, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, 2) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-/*                                .values(13, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, KILLED, 1) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-                                .values(14, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, KILLED, 2) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
-                                .values(15, null, UUID.randomUUID().toString(), 1475245307680l, null, ONGOING, 1) //Fri Sep 30 19:51:47 IST 2016
-                                .values(16, null, UUID.randomUUID().toString(), 1475245307680l, null, ONGOING, 2) //Fri Sep 30 19:51:47 IST 2016*/
-
-/*                                .values(17, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, "result", SUCCESS, 1) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
-                                .values(18, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, "result", SUCCESS, 2) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
-                                .values(19, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, FAILURE, 1) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
-                                .values(20, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, FAILURE, 2) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016*/
-                                .values(21, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, KILLED, 1) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
-                                .values(22, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, KILLED, 2) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
-/*                                .values(23, null, UUID.randomUUID().toString(), 1475331707680l, null, ONGOING, 1) //Sat Oct 01 19:51:47 IST 2016
-                                .values(24, null, UUID.randomUUID().toString(), 1475331707680l, null, ONGOING, 2) //Sat Oct 01 19:51:47 IST 2016*/
-
-/*                                .values(25, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, "result", SUCCESS, 1) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
-                                .values(26, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, "result", SUCCESS, 2) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
-                                .values(27, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, null, FAILURE, 1) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
-                                .values(28, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, null, FAILURE, 2) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
-                                .values(29, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, null, KILLED, 1) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016
-                                .values(30, 1475419925130l, UUID.randomUUID().toString(), 1475418725084l, null, KILLED, 2) //Sun Oct 02 20:02:05 IST 2016 - Sun Oct 02 20:22:05 IST 2016*/
-                                .values(31, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, 1) //Sun Oct 02 20:02:05 IST 2016
-                                .values(32, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, 2) //Sun Oct 02 20:02:05 IST 2016
+                                .values(1, 1475159940797l, "executionId", 1475158740747l, "result", SUCCESS, sqlQueryModel0.getId()) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
+                                .values(2, 1475159940797l, UUID.randomUUID().toString(), 1475158740747l, "result", SUCCESS, sqlQueryModel1.getId()) //Thu Sep 29 19:49:00 IST 2016  - Thu Sep 29 20:09:00 IST 2016
+                                .values(11, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, sqlQueryModel0.getId()) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
+                                .values(12, 1475246507724l, UUID.randomUUID().toString(), 1475245307680l, null, FAILURE, sqlQueryModel1.getId()) //Fri Sep 30 19:51:47 IST 2016  - Fri Sep 30 20:11:47 IST 2016
+                                .values(21, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, KILLED, sqlQueryModel0.getId()) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(22, 1475333507680l, UUID.randomUUID().toString(), 1475331707680l, null, KILLED, sqlQueryModel1.getId()) //Sat Oct 01 19:51:47 IST 2016 - Sat Oct 01 20:21:47 IST 2016
+                                .values(31, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, sqlQueryModel0.getId()) //Sun Oct 02 20:02:05 IST 2016
+                                .values(32, null, UUID.randomUUID().toString(), 1475418725084l, null, ONGOING, sqlQueryModel1.getId()) //Sun Oct 02 20:02:05 IST 2016
                                 .build()
                 )
         );
@@ -99,7 +73,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
                 SqlQueryApiController.class,
                 "listSqlQueryExecution",
                 ImmutableMap.of(
-                        "sqlQueryId", 1
+                        "sqlQueryId", sqlQueryModel0.getId()
                 )
         );
 
@@ -114,7 +88,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
 
         assertThat(json, isJson());
-        assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
+        assertThat(json, hasJsonPath("$.sqlQuery", is(sqlQueryModel0.getQuery())));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(1));
         assertThat(json, hasJsonPath("$.totalCount", is(1)));
 
@@ -130,7 +104,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
                 SqlQueryApiController.class,
                 "listSqlQueryExecution",
                 ImmutableMap.of(
-                        "sqlQueryId", 1
+                        "sqlQueryId", sqlQueryModel0.getId()
                 )
         );
 
@@ -144,7 +118,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
 
         assertThat(json, isJson());
-        assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
+        assertThat(json, hasJsonPath("$.sqlQuery", is(sqlQueryModel0.getQuery())));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(1));
         assertThat(json, hasJsonPath("$.totalCount", is(1)));
 
@@ -160,7 +134,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
                 SqlQueryApiController.class,
                 "listSqlQueryExecution",
                 ImmutableMap.of(
-                        "sqlQueryId", 1
+                        "sqlQueryId", sqlQueryModel0.getId()
                 )
         );
 
@@ -174,7 +148,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
         assertThat(json, hasJsonPath("$.totalCount", is(2)));
 
         assertThat(json, isJson());
-        assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
+        assertThat(json, hasJsonPath("$.sqlQuery", is(sqlQueryModel0.getQuery())));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(2));
 
         assertThat(json, hasJsonPath("$.sqlQueryExecutionDtos[0].sqlQueryExecutionStartTime", is("Thu Sep 29 2016 19:49")));
@@ -196,7 +170,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
                 SqlQueryApiController.class,
                 "listSqlQueryExecution",
                 ImmutableMap.of(
-                        "sqlQueryId", 1
+                        "sqlQueryId", sqlQueryModel0.getId()
                 )
         );
 
@@ -208,7 +182,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
 
         assertThat(json, isJson());
-        assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
+        assertThat(json, hasJsonPath("$.sqlQuery", is(sqlQueryModel0.getQuery())));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(2));
         assertThat(json, hasJsonPath("$.totalCount", is(4)));
 
@@ -237,7 +211,7 @@ public class ListSqlQueryExecutionListTest extends AbstractPostLoginApiTest {
         json = Configuration.defaultConfiguration().jsonProvider().parse(jsonResponse);
 
         assertThat(json, isJson());
-        assertThat(json, hasJsonPath("$.sqlQuery", is("select * from foo")));
+        assertThat(json, hasJsonPath("$.sqlQuery", is(sqlQueryModel0.getQuery())));
         assertThat(JsonPath.read(json, "$.sqlQueryExecutionDtos.length()"), is(2));
         assertThat(json, hasJsonPath("$.totalCount", is(4)));
 
