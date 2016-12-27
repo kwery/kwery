@@ -11,8 +11,14 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li>
-                    <a data-bind="text: ko.i18n('navbar.menu.reports')" href="/#report/list"></a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <!--ko text: ko.i18n('navbar.menu.reports') --><!--/ko--> <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a data-bind="text: ko.i18n('navbar.menu.reports.dropdown.list')" href="/#report/list"></a></li>
+                        <li><a data-bind="text: ko.i18n('navbar.menu.reports.dropdown.executing')" href="/#report/executing"></a></li>
+                    </ul>
                 </li>
                 <li>
                     <a data-bind="text: ko.i18n('navbar.menu.datasources')" href="/#datasource/list"></a>

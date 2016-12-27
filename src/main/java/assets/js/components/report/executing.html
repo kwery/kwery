@@ -1,0 +1,23 @@
+<div class="container executing-reports-f">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 data-bind="text: ko.i18n('report.job.executing.header')" class="panel-title"></h3>
+        </div>
+        <div class="panel-body">
+            <table class="table" id="executionListTable">
+                <thead>
+                    <tr>
+                        <th data-bind="text: ko.i18n('report.job.executing.label')"></th>
+                        <th data-bind="text: ko.i18n('report.job.executing.start')"></th>
+                    </tr>
+                </thead>
+                <tbody class="executing-reports-tbody-f" data-bind="foreach: executions" id="executionListTableBody">
+                    <tr>
+                        <td data-bind="text: label"></td>
+                        <td data-bind="text: start"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

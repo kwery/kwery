@@ -38,6 +38,7 @@
                 {url: "email/configuration", auth: true, component: "email-configuration"},
                 {url: "report/add", auth: true, component: "report-add"},
                 {url: "report/list", auth: true, component: "report-list"},
+                {url: "report/executing", auth: true, component: "report-executing"},
                 {url: "report/{reportId}", auth: true, component: "report-add"},
                 {url: "report/{jobId}/execution-list", auth: true, component: "report-execution-list"},
                 {url: "report/{jobId}/execution/{jobExecutionId}", auth: true, component: "report-execution-result"}
