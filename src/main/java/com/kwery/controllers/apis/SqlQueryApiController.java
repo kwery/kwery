@@ -3,10 +3,8 @@ package com.kwery.controllers.apis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.dtos.SqlQueryDto;
 import com.kwery.dtos.SqlQueryExecutionDto;
 import com.kwery.dtos.SqlQueryExecutionListDto;
 import com.kwery.dtos.SqlQueryExecutionListFilterDto;
@@ -16,7 +14,6 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.FilterWith;
 import ninja.Result;
-import ninja.i18n.Messages;
 import ninja.params.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.kwery.models.SqlQueryExecutionModel.Status.ONGOING;
@@ -41,12 +35,6 @@ public class SqlQueryApiController {
 
     @Inject
     private SqlQueryDao sqlQueryDao;
-
-    @Inject
-    private DatasourceDao datasourceDao;
-
-    @Inject
-    private Messages messages;
 
     @Inject
     private SqlQueryExecutionDao sqlQueryExecutionDao;
@@ -65,7 +53,7 @@ public class SqlQueryApiController {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(ONGOING));
         List<SqlQueryExecutionModel> models = sqlQueryExecutionDao.filter(filter);
-        Collections.sort(models, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
+        Collections.sort(models, Comparator.comparing(SqlQueryExecutionModel::getExecutionStart));
 
         List<SqlQueryExecutionDto> dtos = new ArrayList<>(models.size());
 
@@ -114,7 +102,7 @@ public class SqlQueryApiController {
 
         List<SqlQueryExecutionModel> sqlQueryExecutions = sqlQueryExecutionDao.filter(dbFilter);
 
-        Collections.sort(sqlQueryExecutions, (o1, o2) -> o1.getExecutionStart().compareTo(o2.getExecutionStart()));
+        Collections.sort(sqlQueryExecutions, Comparator.comparing(SqlQueryExecutionModel::getExecutionStart));
 
         List<SqlQueryExecutionDto> sqlQueryExecutionDtos = new ArrayList<>(sqlQueryExecutions.size());
 
@@ -226,37 +214,5 @@ public class SqlQueryApiController {
 
     private long getTime(String date) throws ParseException {
         return new SimpleDateFormat(FILTER_DATE_FORMAT).parse(date).getTime();
-    }
-
-    public static class SqlQueryExecutionIdContainer {
-        private String sqlQueryExecutionId;
-
-        public String getSqlQueryExecutionId() {
-            return sqlQueryExecutionId;
-        }
-
-        public void setSqlQueryExecutionId(String sqlQueryExecutionId) {
-            this.sqlQueryExecutionId = sqlQueryExecutionId;
-        }
-    }
-
-    public SqlQueryModel toSqlQueryModel(SqlQueryDto dto) {
-        SqlQueryModel model = new SqlQueryModel();
-
-        if (dto.getId() == 0) {
-            model.setId(null);
-        } else {
-            model.setId(dto.getId());
-        }
-
-        model.setLabel(dto.getLabel());
-        model.setQuery(dto.getQuery());
-        model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
-
-        return model;
-    }
-
-    public void setDatasourceDao(DatasourceDao datasourceDao) {
-        this.datasourceDao = datasourceDao;
     }
 }
