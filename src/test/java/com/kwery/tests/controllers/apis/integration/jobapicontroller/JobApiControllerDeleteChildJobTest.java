@@ -47,7 +47,7 @@ public class JobApiControllerDeleteChildJobTest extends AbstractPostLoginApiTest
         childJobModel = jobModelWithoutDependents();
         childJobModel.setCronExpression(null);
         childJobModel.setSqlQueries(new HashSet<>());
-        parentJobModel.getDependentJobs().add(childJobModel);
+        parentJobModel.getChildJobs().add(childJobModel);
 
         jobDbSetUp(childJobModel);
         jobDependentDbSetUp(parentJobModel);

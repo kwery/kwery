@@ -175,10 +175,10 @@ public class TestUtil {
         jobModel.setCronExpression("* * * * *");
         jobModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
-        jobModel.setDependentJobs(new HashSet<>());
+        jobModel.setChildJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setSqlQueries(new HashSet<>());
-        jobModel.setDependsOnJob(null);
+        jobModel.setParentJob(null);
         return jobModel;
     }
 

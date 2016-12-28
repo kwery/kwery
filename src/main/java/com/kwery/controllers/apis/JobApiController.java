@@ -109,7 +109,7 @@ public class JobApiController {
 
             if (jobDto.getParentJobId() > 0) {
                 JobModel parentJob = jobDao.getJobById(jobDto.getParentJobId());
-                parentJob.getDependentJobs().add(jobModel);
+                parentJob.getChildJobs().add(jobModel);
                 jobDao.save(parentJob);
             } else {
                 if (isUpdate) {
@@ -168,7 +168,7 @@ public class JobApiController {
     public Result listAllJobs() {
         if (logger.isTraceEnabled()) logger.trace("<");
         List<JobModel> jobs = jobDao.getAllJobs();
-        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getDependsOnJob())).collect(toList());
+        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
         if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(jobModelHackDtos);
     }
@@ -250,7 +250,7 @@ public class JobApiController {
         if (logger.isTraceEnabled()) logger.trace("<");
         JobModel jobModel = jobDao.getJobById(jobId);
         if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(new JobModelHackDto(jobModel, jobModel.getDependsOnJob()));
+        return json().render(new JobModelHackDto(jobModel, jobModel.getParentJob()));
     }
 
     @FilterWith(DashRepoSecureFilter.class)

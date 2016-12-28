@@ -42,17 +42,17 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
                 sequenceOf(
-                        insertInto(JOB_DEPENDENT_TABLE)
+                        insertInto(JOB_CHILDREN_TABLE)
                                 .row()
-                                    .column(JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel0.getId())
-                                    .column(JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, jobModel1.getId())
+                                    .column(JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, jobModel0.getId())
+                                    .column(JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, jobModel1.getId())
                                 .end()
                         .build()
                 )
         ).launch();
 
-        jobModel0.setDependentJobs(new HashSet<>());
-        jobModel0.getDependentJobs().add(jobModel1);
+        jobModel0.setChildJobs(new HashSet<>());
+        jobModel0.getChildJobs().add(jobModel1);
 
         jobDao = getInstance(JobDao.class);
     }
@@ -61,27 +61,27 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
     public void testAddDependent() throws Exception {
         JobModel toUpdate = jobDao.getJobById(jobModel0.getId());
         JobModel dependent = jobDao.getJobById(jobModel2.getId());
-        toUpdate.getDependentJobs().add(dependent);
+        toUpdate.getChildJobs().add(dependent);
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expected = mapper.map(toUpdate, JobModel.class);
 
         toUpdate = jobDao.save(toUpdate);
 
-        assertDbState(JOB_DEPENDENT_TABLE, jobDependentTable(expected), JOB_DEPENDENT_TABLE_ID_COLUMN);
+        assertDbState(JOB_CHILDREN_TABLE, jobDependentTable(expected), JOB_CHILDREN_TABLE_ID_COLUMN);
     }
 
     @Test
     public void testRemoveAndAddDependent() throws Exception {
         JobModel toUpdate = jobDao.getJobById(jobModel0.getId());
-        toUpdate.setDependentJobs(new HashSet<>());
-        toUpdate.getDependentJobs().add(jobDao.getJobById(jobModel2.getId()));
+        toUpdate.setChildJobs(new HashSet<>());
+        toUpdate.getChildJobs().add(jobDao.getJobById(jobModel2.getId()));
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expected = mapper.map(toUpdate, JobModel.class);
 
         toUpdate = jobDao.save(toUpdate);
 
-        assertDbState(JOB_DEPENDENT_TABLE, jobDependentTable(expected), JOB_DEPENDENT_TABLE_ID_COLUMN);
+        assertDbState(JOB_CHILDREN_TABLE, jobDependentTable(expected), JOB_CHILDREN_TABLE_ID_COLUMN);
     }
 }

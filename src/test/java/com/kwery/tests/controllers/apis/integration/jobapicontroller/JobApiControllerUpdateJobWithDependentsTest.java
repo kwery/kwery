@@ -72,7 +72,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         childJob = jobModelWithoutDependents();
         jobDbSetUp(childJob);
 
-        parentJobModel0.getDependentJobs().add(childJob);
+        parentJobModel0.getChildJobs().add(childJob);
         jobDependentDbSetUp(parentJobModel0);
 
         childSqlQueryModel = sqlQueryModel(datasource0);
@@ -137,7 +137,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
 
         new DbTableAsserterBuilder(SQL_QUERY_TABLE, sqlQueryTable(sqlQueries)).build().assertTable();
 
-        parentJobModel0.getDependentJobs().clear();
+        parentJobModel0.getChildJobs().clear();
 
         new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel, parentJobModel0, parentJobModel1)).columnToIgnore(JOB_SQL_QUERY_TABLE_ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JOB_EMAIL_TABLE, jobEmailTable(expectedJobModel, parentJobModel0, parentJobModel1)).columnToIgnore(JOB_EMAIL_ID_COLUMN).build().assertTable();

@@ -92,9 +92,9 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
                 //Execute dependent jobs
                 JobModel job = jobDao.getJobById(jobTask.getJobId());
 
-                if (!job.getDependentJobs().isEmpty()) {
+                if (!job.getChildJobs().isEmpty()) {
                     if (hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
-                        for (JobModel dependentJob : job.getDependentJobs()) {
+                        for (JobModel dependentJob : job.getChildJobs()) {
                             jobService.launch(dependentJob.getId());
                         }
                     }

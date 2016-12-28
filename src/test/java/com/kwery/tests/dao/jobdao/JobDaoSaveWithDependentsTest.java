@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.util.HashSet;
 
-import static com.kwery.models.JobModel.JOB_DEPENDENT_TABLE;
+import static com.kwery.models.JobModel.JOB_CHILDREN_TABLE;
 import static com.kwery.models.JobModel.JOB_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
@@ -33,12 +33,12 @@ public class JobDaoSaveWithDependentsTest extends RepoDashDaoTestBase {
     public void test() throws Exception {
         JobModel newJobModel = jobModelWithoutIdWithoutDependents();
         newJobModel.setSqlQueries(new HashSet<>());
-        newJobModel.setDependentJobs(new HashSet<>());
-        newJobModel.getDependentJobs().add(jobModel);
+        newJobModel.setChildJobs(new HashSet<>());
+        newJobModel.getChildJobs().add(jobModel);
 
         newJobModel = jobDao.save(newJobModel);
 
         assertDbState(JOB_TABLE, jobTable(ImmutableList.of(jobModel, newJobModel)));
-        assertDbState(JOB_DEPENDENT_TABLE, jobDependentTable(newJobModel), "id");
+        assertDbState(JOB_CHILDREN_TABLE, jobDependentTable(newJobModel), "id");
     }
 }

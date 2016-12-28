@@ -46,9 +46,9 @@ public class JobApiControllerGetJobTest extends AbstractPostLoginApiTest {
         dependentJob.getEmails().addAll(ImmutableSet.of("foo@bar.com", "goo@boo.com"));
         DbUtil.jobEmailDbSetUp(dependentJob);
 
-        dependentJob.setDependsOnJob(jobModel);
+        dependentJob.setParentJob(jobModel);
 
-        jobModel.getDependentJobs().add(dependentJob);
+        jobModel.getChildJobs().add(dependentJob);
 
         DbUtil.jobDependentDbSetUp(jobModel);
     }

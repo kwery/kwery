@@ -25,14 +25,14 @@ public class JobDaoDeleteJobWithDependentsTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoDeleteJobWithDependentsTest() {
         jobModel = jobModelWithoutDependents();
-        jobModel.setDependentJobs(new HashSet<>());
+        jobModel.setChildJobs(new HashSet<>());
 
         jobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@boo.com"));
 
         JobModel dependentJobModel = jobModelWithoutDependents();
         dependentJobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@boo.com"));
 
-        jobModel.getDependentJobs().add(dependentJobModel);
+        jobModel.getChildJobs().add(dependentJobModel);
 
         jobDbSetUp(ImmutableList.of(jobModel, dependentJobModel));
         jobDependentDbSetUp(jobModel);
@@ -80,7 +80,7 @@ public class JobDaoDeleteJobWithDependentsTest extends RepoDashDaoTestBase {
         jobDao.delete(jobModel.getId());
 
         new DbTableAsserterBuilder(JOB_TABLE, DbUtil.jobTable(new ArrayList<>())).build().assertTable();
-        new DbTableAsserterBuilder(JOB_DEPENDENT_TABLE, DbUtil.jobDependentTable(null)).build().assertTable();
+        new DbTableAsserterBuilder(JOB_CHILDREN_TABLE, DbUtil.jobDependentTable(null)).build().assertTable();
         new DbTableAsserterBuilder(JOB_EMAIL_TABLE, DbUtil.jobEmailTable(null)).build().assertTable();
         new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, DbUtil.jobSqlQueryTable(null)).build().assertTable();
         new DbTableAsserterBuilder(SQL_QUERY_TABLE, DbUtil.sqlQueryTable(new ArrayList<>())).build().assertTable();
