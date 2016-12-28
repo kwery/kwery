@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -105,7 +106,11 @@ public class JobApiController {
         ActionResult actionResult = null;
 
         if (errorMessages.isEmpty()) {
-            JobModel jobModel = jobDao.save(jobDtoToJobModel(jobDto));
+            JobModel jobModel = jobDtoToJobModel(jobDto);
+            jobModel.setChildJobs(new HashSet<>());
+            jobModel.getChildJobs().addAll(jobDao.getJobById(jobDto.getId()).getChildJobs());
+
+            jobModel = jobDao.save(jobModel);
 
             if (jobDto.getParentJobId() > 0) {
                 JobModel parentJob = jobDao.getJobById(jobDto.getParentJobId());
@@ -218,20 +223,26 @@ public class JobApiController {
                     String result = sqlQueryExecutionModel.getResult();
 
                     if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.SUCCESS) {
-                        if (isJson(result)) {
-                            List<List<?>> jsonResult = new LinkedList<>();
-                            if (!Strings.nullToEmpty(result).trim().equals("")) {
-                                jsonResult = objectMapper.readValue(
-                                        result,
-                                        objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
-                                );
-                            }
-
+                        if (result == null) {
+                            //Insert SQL
                             sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getTitle(),
-                                    sqlQueryExecutionModel.getStatus(), jsonResult));
+                                    sqlQueryExecutionModel.getStatus(), ""));
                         } else {
-                            logger.error("SQL query execution result is success but result is not in json format for job id {} and job execution id {}",
-                                    jobExecutionModel.getJobModel().getId(), jobExecutionModel.getId());
+                            if (isJson(result)) {
+                                List<List<?>> jsonResult = new LinkedList<>();
+                                if (!Strings.nullToEmpty(result).trim().equals("")) {
+                                    jsonResult = objectMapper.readValue(
+                                            result,
+                                            objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
+                                    );
+                                }
+
+                                sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getTitle(),
+                                        sqlQueryExecutionModel.getStatus(), jsonResult));
+                            } else {
+                                logger.error("SQL query execution result is success but result is not in json format for job id {} and job execution id {}",
+                                        jobExecutionModel.getJobModel().getId(), jobExecutionModel.getId());
+                            }
                         }
                     } else if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.FAILURE) {
                         sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getTitle(),

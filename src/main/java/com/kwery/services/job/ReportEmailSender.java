@@ -44,7 +44,13 @@ public class ReportEmailSender {
 
             for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModel.getSqlQueryExecutionModels()) {
                 emailSnippets.add("<h1>" + sqlQueryExecutionModel.getSqlQuery().getTitle() + "</h1>");
-                emailSnippets.add(jsonToHtmlTableConvertor.convert(sqlQueryExecutionModel.getResult()));
+
+                if (sqlQueryExecutionModel.getResult() == null) {
+                    emailSnippets.add("<div></div>");
+                } else {
+                    emailSnippets.add(jsonToHtmlTableConvertor.convert(sqlQueryExecutionModel.getResult()));
+                }
+
             }
 
             KweryMail kweryMail = kweryMailProvider.get();
