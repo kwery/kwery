@@ -1,12 +1,6 @@
 package com.kwery.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -116,8 +110,8 @@ public class Datasource {
         this.type = type;
     }
 
-    public static enum Type {
-        MYSQL
+    public enum Type {
+        MYSQL, POSTGRESQL
     }
 
     //TODO - Mask password

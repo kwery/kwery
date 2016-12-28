@@ -2,13 +2,13 @@ package com.kwery.tests.util;
 
 import com.kwery.models.Datasource;
 
-public class MySqlDocker extends AbstractSqlDocker {
-    protected Datasource.Type type = Datasource.Type.MYSQL;
-    protected String username = "root";
+public class PostgreSqlDocker extends AbstractSqlDocker {
+    protected Datasource.Type type = Datasource.Type.POSTGRESQL;
+    protected String username = "postgres";
     protected String password = "root";
 
-    public MySqlDocker() {
-        this.port = AbstractSqlDocker.DEFAULT_MYSQL_PORT;
+    public PostgreSqlDocker() {
+        this.port = AbstractSqlDocker.DEFAULT_POSTGRESQL_PORT;
     }
 
     @Override
