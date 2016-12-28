@@ -29,7 +29,7 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "kno
                         self.showAddJob(true);
                         break;
                     case "SHOW_HOME_SCREEN":
-                        window.location.href = "/#sql-query/execution-summary";
+                        window.location.href = "/#report/list";
                         break;
                 }
             }

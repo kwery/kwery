@@ -25,8 +25,9 @@ public class OnboardingShowHomeScreenUiTest extends ChromeFluentTest {
         goTo(ninjaServerRule.getServerUrl() + "/");
     }
 
+    //TODO -  Replace with ReportListPage
     @Test
     public void test() {
-        await().atMost(TIMEOUT_SECONDS).until(".f-execution-summary-table").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS).until(".report-list-table-f").isDisplayed();
     }
 }
