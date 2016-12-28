@@ -8,8 +8,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class MysqlDatasourceService {
-    private static Logger logger = LoggerFactory.getLogger(MysqlDatasourceService.class);
+public class DatasourceService {
+    private static Logger logger = LoggerFactory.getLogger(DatasourceService.class);
 
     public boolean testConnection(Datasource datasource) {
         try (Connection connection = DriverManager.getConnection(String.format("jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger", datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword())) {
