@@ -115,8 +115,8 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
 
         assertDbState(JobModel.JOB_TABLE, jobTable(ImmutableList.of(savedJobModel, jobModel)));
 
-        jobModel.setDependentJobs(ImmutableSet.of(savedJobModel));
+        jobModel.setChildJobs(ImmutableSet.of(savedJobModel));
 
-        assertDbState(JobModel.JOB_DEPENDENT_TABLE, jobDependentTable(jobModel), "id");
+        assertDbState(JobModel.JOB_CHILDREN_TABLE, jobDependentTable(jobModel), "id");
     }
 }

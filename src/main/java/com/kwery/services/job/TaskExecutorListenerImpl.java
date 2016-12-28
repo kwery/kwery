@@ -85,16 +85,16 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
             //Should be called only in case of successful Job execution
             if (!executor.isStopped() && exception == null) {
                 //Send email
-                if (hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
+                if (!jobExecutionModel.getJobModel().getEmails().isEmpty() && hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
                     reportEmailSender.send(jobExecutionModel);
                 }
 
                 //Execute dependent jobs
                 JobModel job = jobDao.getJobById(jobTask.getJobId());
 
-                if (!job.getDependentJobs().isEmpty()) {
+                if (!job.getChildJobs().isEmpty()) {
                     if (hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
-                        for (JobModel dependentJob : job.getDependentJobs()) {
+                        for (JobModel dependentJob : job.getChildJobs()) {
                             jobService.launch(dependentJob.getId());
                         }
                     }

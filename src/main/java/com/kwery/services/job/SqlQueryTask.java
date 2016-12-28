@@ -62,37 +62,62 @@ public class SqlQueryTask extends Task {
         SqlQueryModel sqlQuery = sqlQueryDao.getById(sqlQueryModelId);
         Datasource datasource = sqlQuery.getDatasource();
 
-        logger.info("Executing query {} on datasource {}", sqlQuery.getQuery(), datasource.getLabel());
+        String query = sqlQuery.getQuery();
+        logger.info("Executing query {} on datasource {}", query, datasource.getLabel());
         try (Connection connection = repoDashUtil.connection(datasource);
-            PreparedStatement p = connection.prepareStatement(sqlQuery.getQuery())) {
+            PreparedStatement p = connection.prepareStatement(query)) {
 
-            Future<ResultSet> queryFuture = preparedStatementExecutorFactory.create(p).execute();
+            if (sqlQuery.getQuery().trim().toLowerCase().startsWith("insert")) {
+                Future<Integer> queryFuture = preparedStatementExecutorFactory.create(p).executeUpdate();
 
-            try (ResultSet rs = queryFuture.get()) {
-                String result = resultSetProcessorFactory.create(rs).process();
-                SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
-                sqlQueryExecution.setResult(result);
-                sqlQueryExecutionDao.save(sqlQueryExecution);
-            } catch (JsonProcessingException e) {
-                logger.error("JSON processing exception while processing result of query {} running on datasource {}", sqlQuery.getQuery(), datasource.getLabel(), e);
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                logger.error("Query {} running on datasource {} cancelled, hence cancelling the prepared statement", sqlQuery.getQuery(), datasource.getLabel(), e);
-                p.cancel();
-                //TODO - Needs investigation
-                //Task executor has been cancelled.
-                //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
-            } catch (ExecutionException e) {
-                logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", sqlQuery.getQuery(), datasource.getLabel(), e);
-                SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
-                sqlQueryExecution.setResult(e.getCause().getLocalizedMessage());
-                sqlQueryExecutionDao.save(sqlQueryExecution);
-                throw new RuntimeException(e);
+                try  {
+                    Integer updatedRows = queryFuture.get();
+                    logger.info("{} rows updated by query {} running on datasource {}", updatedRows, query, datasource.getLabel());
+                } catch (InterruptedException e) {
+                    logger.error("Query {} running on datasource {} cancelled, hence cancelling the prepared statement", query, datasource.getLabel(), e);
+                    p.cancel();
+                    //TODO - Needs investigation
+                    //Task executor has been cancelled.
+                    //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
+                } catch (ExecutionException e) {
+                    logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", query, datasource.getLabel(), e);
+                    updateFailure(context, e);
+                    throw new RuntimeException(e);
+                }
+            } else {
+                Future<ResultSet> queryFuture = preparedStatementExecutorFactory.create(p).executeSelect();
+
+                try (ResultSet rs = queryFuture.get()) {
+                    String result = resultSetProcessorFactory.create(rs).process();
+                    SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
+                    sqlQueryExecution.setResult(result);
+                    sqlQueryExecutionDao.save(sqlQueryExecution);
+                } catch (JsonProcessingException e) {
+                    logger.error("JSON processing exception while processing result of query {} running on datasource {}", query, datasource.getLabel(), e);
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    logger.error("Query {} running on datasource {} cancelled, hence cancelling the prepared statement", query, datasource.getLabel(), e);
+                    p.cancel();
+                    //TODO - Needs investigation
+                    //Task executor has been cancelled.
+                    //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
+                } catch (ExecutionException e) {
+                    logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", query, datasource.getLabel(), e);
+                    updateFailure(context, e);
+                    throw new RuntimeException(e);
+                }
             }
+
         } catch (SQLException e) {
-            logger.error("Exception while running query {} on datasource {}", sqlQuery.getQuery(), datasource.getLabel(), e);
+            logger.error("Exception while running query {} on datasource {}", query, datasource.getLabel(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    private void updateFailure(TaskExecutionContext context, ExecutionException e) {
+        SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
+        sqlQueryExecution.setResult(e.getCause().getLocalizedMessage());
+        sqlQueryExecutionDao.save(sqlQueryExecution);
     }
 
     public void countdown() {

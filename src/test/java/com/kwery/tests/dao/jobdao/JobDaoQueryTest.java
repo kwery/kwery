@@ -32,7 +32,7 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
 
         jobModel = jobModelWithoutDependents();
         jobModel.setEmails(ImmutableSet.of(randomUUID().toString(), randomUUID().toString()));
-        jobModel.getDependentJobs().addAll(ImmutableSet.of(dependentJob0, dependentJob1));
+        jobModel.getChildJobs().addAll(ImmutableSet.of(dependentJob0, dependentJob1));
 
         datasource = datasource();
 
@@ -40,8 +40,8 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
 
         jobModel.getSqlQueries().addAll(ImmutableSet.of(sqlQueryModel(datasource), sqlQueryModel(datasource)));
 
-        dependentJob0.setDependsOnJob(jobModel);
-        dependentJob1.setDependsOnJob(jobModel);
+        dependentJob0.setParentJob(jobModel);
+        dependentJob1.setParentJob(jobModel);
 
         jobDbSetUp(jobModel);
         sqlQueryDbSetUp(jobModel.getSqlQueries());

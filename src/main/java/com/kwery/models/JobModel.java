@@ -21,10 +21,10 @@ public class JobModel {
     public static final String JOB_ID_FK_COLUMN = "job_id_fk";
     public static final String JOB_SQL_QUERY_TABLE_ID_COLUMN = "id";
 
-    public static final String JOB_DEPENDENT_TABLE_ID_COLUMN = "id";
-    public static final String JOB_DEPENDENT_TABLE = "job_dependent";
-    public static final String JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
-    public static final String JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN = "dependent_job_id_fk";
+    public static final String JOB_CHILDREN_TABLE_ID_COLUMN = "id";
+    public static final String JOB_CHILDREN_TABLE = "job_children";
+    public static final String JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN = "parent_job_id_fk";
+    public static final String JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN = "child_job_id_fk";
 
     public static final String JOB_EMAIL_TABLE = "job_email";
     public static final String JOB_EMAIL_ID_COLUMN = "id";
@@ -60,20 +60,20 @@ public class JobModel {
 
     @ManyToMany(fetch = FetchType.EAGER,  cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
-            name = JOB_DEPENDENT_TABLE,
-            joinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
-            inverseJoinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
+            name = JOB_CHILDREN_TABLE,
+            joinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
     )
-    public Set<JobModel> dependentJobs;
+    public Set<JobModel> childJobs;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinTable(
-            name = JOB_DEPENDENT_TABLE,
-            joinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
-            inverseJoinColumns = @JoinColumn(name = JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
+            name = JOB_CHILDREN_TABLE,
+            joinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
     )
-    private JobModel dependsOnJob;
+    private JobModel parentJob;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
@@ -123,20 +123,20 @@ public class JobModel {
         this.sqlQueries = sqlQueries;
     }
 
-    public Set<JobModel> getDependentJobs() {
-        return dependentJobs;
+    public Set<JobModel> getChildJobs() {
+        return childJobs;
     }
 
-    public void setDependentJobs(Set<JobModel> dependentJobs) {
-        this.dependentJobs = dependentJobs;
+    public void setChildJobs(Set<JobModel> childJobs) {
+        this.childJobs = childJobs;
     }
 
-    public JobModel getDependsOnJob() {
-        return dependsOnJob;
+    public JobModel getParentJob() {
+        return parentJob;
     }
 
-    public void setDependsOnJob(JobModel dependsOnJob) {
-        this.dependsOnJob = dependsOnJob;
+    public void setParentJob(JobModel parentJob) {
+        this.parentJob = parentJob;
     }
 
     public Set<String> getEmails() {

@@ -144,13 +144,13 @@ public class DbUtil {
 
     public static IDataSet jobDependentTable(JobModel jobModel) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
-        builder.ensureTableIsPresent(JobModel.JOB_DEPENDENT_TABLE);
+        builder.ensureTableIsPresent(JobModel.JOB_CHILDREN_TABLE);
 
         if (jobModel != null) {
-            for (JobModel m : jobModel.getDependentJobs()) {
-                builder.newRow(JobModel.JOB_DEPENDENT_TABLE)
-                        .with(JobModel.JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
-                        .with(JobModel.JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, m.getId())
+            for (JobModel m : jobModel.getChildJobs()) {
+                builder.newRow(JobModel.JOB_CHILDREN_TABLE)
+                        .with(JobModel.JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, jobModel.getId())
+                        .with(JobModel.JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, m.getId())
                         .add();
             }
         }
@@ -322,14 +322,14 @@ public class DbUtil {
     }
 
     public static void jobDependentDbSetUp(JobModel jobModel) {
-        for (JobModel dependentJobModel : jobModel.getDependentJobs()) {
+        for (JobModel dependentJobModel : jobModel.getChildJobs()) {
             new DbSetup(
                     new DataSourceDestination(getDatasource()),
                     sequenceOf(
-                            insertInto(JOB_DEPENDENT_TABLE)
+                            insertInto(JOB_CHILDREN_TABLE)
                                     .row()
-                                    .column(JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
-                                    .column(JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, dependentJobModel.getId())
+                                    .column(JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, jobModel.getId())
+                                    .column(JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, dependentJobModel.getId())
                                     .end()
                                     .build()
                     )

@@ -206,7 +206,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                 });
 
                 var emails = $.grep($.map(self.reportEmails().split(","), $.trim), function(elem){
-                    return elem !== null || elem !== "";
+                    return elem !== null && elem !== "";
                 });
 
                 if ($("#cronExpression").prop('disabled')) {

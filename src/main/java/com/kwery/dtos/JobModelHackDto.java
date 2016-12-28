@@ -3,7 +3,7 @@ package com.kwery.dtos;
 import com.kwery.models.JobModel;
 
 /**
- * If we serialize JobModel using Jackson, dependsOnJob field causes error due to Jackson's self reference shortcoming. This is a hack to overcome this issue.
+ * If we serialize JobModel using Jackson, parentJob field causes error due to Jackson's self reference shortcoming. This is a hack to overcome this issue.
  */
 public class JobModelHackDto {
     private JobModel jobModel;

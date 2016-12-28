@@ -67,10 +67,10 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
 
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
-                Operations.insertInto(JOB_DEPENDENT_TABLE)
+                Operations.insertInto(JOB_CHILDREN_TABLE)
                         .row()
-                        .column(JOB_DEPENDENT_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
-                        .column(JOB_DEPENDENT_TABLE_DEPENDENT_JOB_ID_FK_COLUMN, dependentJobModel.getId())
+                        .column(JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, jobModel.getId())
+                        .column(JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, dependentJobModel.getId())
                         .end()
                         .build()
         ).launch();

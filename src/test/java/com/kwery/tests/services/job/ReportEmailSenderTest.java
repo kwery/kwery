@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,14 +40,19 @@ public class ReportEmailSenderTest extends RepoDashTestBase {
         sqlQueryModel1.setTitle("Select Books");
         jobModel.getSqlQueries().add(sqlQueryModel1);
 
+        SqlQueryModel sqlQueryModel2 = new SqlQueryModel();
+        sqlQueryModel2.setTitle("Insert Books");
+        jobModel.getSqlQueries().add(sqlQueryModel2);
+
         JobExecutionModel jobExecutionModel = new JobExecutionModel();
         jobExecutionModel.setJobModel(jobModel);
 
         jobExecutionModel.setExecutionStart(1482422361284l); //Thu Dec 22 21:29:21 IST 2016
 
-        jobExecutionModel.setSqlQueryExecutionModels(new HashSet<>());
+        jobExecutionModel.setSqlQueryExecutionModels(new LinkedHashSet<>());
 
         SqlQueryExecutionModel sqlQueryExecutionModel0 = new SqlQueryExecutionModel();
+        sqlQueryExecutionModel0.setId(1);
         sqlQueryExecutionModel0.setResult(TestUtil.toJson(ImmutableList.of(
                     ImmutableList.of("author"),
                     ImmutableList.of("peter thiel")
@@ -56,6 +62,7 @@ public class ReportEmailSenderTest extends RepoDashTestBase {
         jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel0);
 
         SqlQueryExecutionModel sqlQueryExecutionModel1 = new SqlQueryExecutionModel();
+        sqlQueryExecutionModel1.setId(2);
         sqlQueryExecutionModel1.setResult(TestUtil.toJson(ImmutableList.of(
                 ImmutableList.of("book"),
                 ImmutableList.of("zero to one")
@@ -63,6 +70,11 @@ public class ReportEmailSenderTest extends RepoDashTestBase {
         ));
         sqlQueryExecutionModel1.setSqlQuery(sqlQueryModel1);
         jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel1);
+
+        SqlQueryExecutionModel sqlQueryExecutionModel2 = new SqlQueryExecutionModel();
+        sqlQueryExecutionModel2.setId(3);
+        sqlQueryExecutionModel2.setSqlQuery(sqlQueryModel2);
+        jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel2);
 
         getInstance(ReportEmailSender.class).send(jobExecutionModel);
 
@@ -82,6 +94,9 @@ public class ReportEmailSenderTest extends RepoDashTestBase {
 
         expectedBody.add("<h1>" + sqlQueryModel1.getTitle() + "</h1>");
         expectedBody.add(jsonToHtmlTableConvertor.convert(sqlQueryExecutionModel1.getResult()));
+
+        expectedBody.add("<h1>" + sqlQueryModel2.getTitle() + "</h1>");
+        expectedBody.add("<div></div>");
 
         assertThat(mail.getBodyHtml(), is(String.join("", expectedBody)));
     }

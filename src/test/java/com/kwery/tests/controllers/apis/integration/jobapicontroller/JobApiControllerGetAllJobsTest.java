@@ -29,11 +29,11 @@ public class JobApiControllerGetAllJobsTest extends AbstractPostLoginApiTest {
 
         jobDbSetUp(ImmutableList.of(jobModel, dependentJobModel));
 
-        jobModel.getDependentJobs().add(dependentJobModel);
+        jobModel.getChildJobs().add(dependentJobModel);
 
         DbUtil.jobDependentDbSetUp(jobModel);
 
-        dependentJobModel.setDependsOnJob(jobModel);
+        dependentJobModel.setParentJob(jobModel);
     }
 
     @Test
