@@ -16,6 +16,9 @@ define(["knockout", "jquery", "text!components/report/executing.html"], function
         });
 
         self.stopJobExecution = function(execution) {
+            self.status("");
+            self.messages([]);
+
             $.ajax("/api/job/execution/stop/" + execution.executionId, {
                 type: "POST",
                 contentType: "application/json",
