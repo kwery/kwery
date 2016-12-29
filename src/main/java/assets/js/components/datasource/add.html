@@ -5,31 +5,41 @@
             <h3 data-bind="text: title" class="panel-title"></h3>
         </div>
         <div class="panel-body">
-            <form data-bind="submit: submit" id="addDatasourceForm">
+            <form id="addDatasourceForm">
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('datasource.add.type')"></label>
+                    <!-- ko template: {afterRender: refreshValidation} -->
+                    <select class="form-control type-f" name="type"
+                            data-bind="options: datasourceTypes, optionsText: 'label', optionsValue: 'value', value: datasourceType" required></select>
+                    <div class="help-block with-errors type-error-f"></div>
+                    <!-- /ko -->
+                </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('url')" for="url"></label>
-                    <input data-bind="value: url" minlength="1" required class="form-control" type="text" id="url" name="url">
+                    <input data-bind="value: url" minlength="1" class="form-control url-f" type="text" id="url" name="url" required>
+                    <div class="help-block with-errors url-error-f"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('port')" for="port"></label>
-                    <input data-bind="value: port" minlength="1" min="1" required class="form-control" type="text" id="port"
-                           name="port">
+                    <input data-bind="value: port" class="form-control port-f" type="text" id="port" name="port" required>
+                    <div class="help-block with-errors port-error-f"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('user.name')" for="username"></label>
-                    <input data-bind="value: username" minlength="1" required class="form-control" type="text" id="username"
-                           name="username">
+                    <input data-bind="value: username" minlength="1" class="form-control username-f" type="text" id="username" name="username" required>
+                    <div class="help-block with-errors username-error-f"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('password')" for="password"></label>
-                    <input data-bind="value: password" class="form-control" type="password" id="password" name="password">
+                    <input data-bind="value: password" class="form-control password-f" type="password" id="password" name="password">
+                    <div class="help-block with-errors password-error-f"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('label')" for="label"></label>
-                    <input data-bind="value: label" minlength="1" required class="form-control" type="text" id="label"
-                           name="label">
+                    <input data-bind="value: label" minlength="1" required class="form-control label-f" type="text" id="label" name="label">
+                    <div class="help-block with-errors label-error-f"></div>
                 </div>
-                <button data-bind="text: actionLabel" class="btn btn-primary" id="create"></button>
+                <button data-bind="text: actionLabel" type="submit" class="btn btn-primary" id="create"></button>
             </form>
         </div>
     </div>

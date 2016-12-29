@@ -26,7 +26,6 @@ import java.util.Map;
 import static com.google.common.base.Optional.of;
 import static com.kwery.controllers.ControllerUtil.fieldMessages;
 import static com.kwery.controllers.MessageKeys.*;
-import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
 import static ninja.Results.json;
@@ -73,18 +72,18 @@ public class DatasourceApiController {
             if (isUpdate) {
                 if (fromDb != null && !datasource.getId().equals(fromDb.getId())) {
                     logger.error("Could not update datasource, a datasource with label {} already exists", datasource.getLabel());
-                    errorMessages.add(messages.get(DATASOURCE_UPDATE_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+                    errorMessages.add(messages.get(DATASOURCE_UPDATE_FAILURE, context, of(json), datasource.getType().name(), datasource.getLabel()).get());
                 }
             } else {
                 if (fromDb != null) {
                     logger.error("Could not add datasource, a datasource with label {} already exists", datasource.getLabel());
-                    errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+                    errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), datasource.getType().name(), datasource.getLabel()).get());
                 }
             }
 
             if (!datasourceService.testConnection(datasource)) {
-                logger.error("Could not add datasource as the test connection to the datasource failed");
-                errorMessages.add(messages.get(MYSQL_DATASOURCE_CONNECTION_FAILURE, context, of(json)).get());
+                logger.error("Could not connect to datasource {}", datasource);
+                errorMessages.add(messages.get(DATASOURCE_CONNECTION_FAILURE, context, of(json), datasource.getType().name()).get());
             }
 
             if (errorMessages.size() > 0) {
@@ -99,9 +98,9 @@ public class DatasourceApiController {
                 String msg = "";
 
                 if (isUpdate) {
-                    msg = messages.get(DATASOURCE_UPDATE_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+                    msg = messages.get(DATASOURCE_UPDATE_SUCCESS, context, of(json), datasource.getType().name(), datasource.getLabel()).get();
                 } else {
-                    msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+                    msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), datasource.getType().name(), datasource.getLabel()).get();
                 }
 
                 actionResult = new ActionResult(success, msg);
@@ -129,13 +128,13 @@ public class DatasourceApiController {
             logger.info("Successfully connected to datasource");
             result = new ActionResult(
                     success,
-                    messages.get(MYSQL_DATASOURCE_CONNECTION_SUCCESS, context, of(json)).get()
+                    messages.get(DATASOURCE_CONNECTION_SUCCESS, context, of(json), datasource.getType()).get()
             );
         } else {
             logger.error("Could not connect to datasource");
             result = new ActionResult(
                     failure,
-                    messages.get(MYSQL_DATASOURCE_CONNECTION_FAILURE, context, of(json)).get()
+                    messages.get(DATASOURCE_CONNECTION_FAILURE, context, of(json)).get()
             );
         }
 

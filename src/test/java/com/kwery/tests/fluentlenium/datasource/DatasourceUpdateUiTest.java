@@ -92,6 +92,6 @@ public class DatasourceUpdateUiTest extends ChromeFluentTest {
         page.fillLabel("foo");
         page.submit();
 
-        page.waitForFailureMessage("foo");
+        page.waitForFailureMessage("foo", datasource.getType());
     }
 }

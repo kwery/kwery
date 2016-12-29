@@ -21,6 +21,10 @@ public class DatasourceService {
         }
     }
 
+    public Connection connection(Datasource datasource) throws SQLException {
+        return DriverManager.getConnection(String.format(connectionString(datasource.getType()),  datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword());
+    }
+
     protected String connectionString(Datasource.Type type) {
         if (type == Datasource.Type.MYSQL) {
             return "jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger";

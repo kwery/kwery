@@ -11,7 +11,8 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.kwery.conf.Routes.MYSQL_DATASOURCE_CONNECTION_TEST_API;
-import static com.kwery.tests.util.Messages.MYSQL_DATASOURCE_CONNECTION_SUCCESS_M;
+import static com.kwery.tests.util.Messages.DATASOURCE_CONNECTION_SUCCESS_M;
+import static java.text.MessageFormat.format;
 
 public class DatasourceConnectionTestSuccessTest extends AbstractPostLoginApiTest {
     @Rule
@@ -27,6 +28,6 @@ public class DatasourceConnectionTestSuccessTest extends AbstractPostLoginApiTes
     @Test
     public void testSuccess() throws IOException {
         ActionResult successResult = actionResult(ninjaTestBrowser.postJson(getUrl(MYSQL_DATASOURCE_CONNECTION_TEST_API), datasource));
-        assertSuccess(successResult, MYSQL_DATASOURCE_CONNECTION_SUCCESS_M);
+        assertSuccess(successResult, format(DATASOURCE_CONNECTION_SUCCESS_M, datasource.getType()));
     }
 }

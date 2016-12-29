@@ -1,15 +1,14 @@
 package com.kwery.tests.fluentlenium.datasource;
 
 import com.kwery.models.Datasource;
-import com.kwery.tests.util.ChromeFluentTest;
-import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
-import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
+import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.models.Datasource.Type.POSTGRESQL;
 import static com.kwery.tests.util.Messages.CREATE_M;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -24,6 +23,9 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Rule
+    public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
+
     protected DatasourceAddPage page;
 
     @Before
@@ -37,13 +39,23 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
     }
 
     @Test
-    public void test() {
+    public void testAddMySqlDatasource() {
         assertThat(page.actionLabel().toLowerCase(), is(CREATE_M.toLowerCase()));
 
         Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
-        page.submitForm(datasource.getUrl(), String.valueOf(datasource.getPort()), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
-        page.waitForSuccessMessage(datasource.getLabel());
+        page.submitForm(datasource);
+        page.waitForSuccessMessage(datasource.getLabel(), MYSQL);
+    }
+
+    @Test
+    public void testAddPostgreSqlDatasource() {
+        assertThat(page.actionLabel().toLowerCase(), is(CREATE_M.toLowerCase()));
+
+        Datasource datasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
+
+        page.submitForm(datasource);
+        page.waitForSuccessMessage(datasource.getLabel(), POSTGRESQL);
     }
 }
 

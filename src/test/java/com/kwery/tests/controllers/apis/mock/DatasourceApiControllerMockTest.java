@@ -32,7 +32,7 @@ public class DatasourceApiControllerMockTest extends AbstractDatasourceApiContro
 
         when(datasourceService.testConnection(datasource)).thenReturn(false);
         String connectionFailedErrorMessage = "bar";
-        mockMessagesWithReturn(MYSQL_DATASOURCE_CONNECTION_FAILURE, connectionFailedErrorMessage);
+        mockMessagesWithReturn(DATASOURCE_CONNECTION_FAILURE, connectionFailedErrorMessage);
 
         assertFailure(
                 actionResult(datasourceApiController.addDatasource(datasource, context, validation)),
@@ -44,7 +44,7 @@ public class DatasourceApiControllerMockTest extends AbstractDatasourceApiContro
     public void testConnectionTestSuccess() {
         Datasource datasource = datasource();
         when(datasourceService.testConnection(datasource)).thenReturn(true);
-        mockMessages(MYSQL_DATASOURCE_CONNECTION_SUCCESS);
+        mockMessages(DATASOURCE_CONNECTION_SUCCESS);
         assertSuccess(actionResult(datasourceApiController.testConnection(datasource, context)));
     }
 
@@ -52,7 +52,7 @@ public class DatasourceApiControllerMockTest extends AbstractDatasourceApiContro
     public void testConnectionTestFailure() {
         Datasource datasource = datasource();
         when(datasourceService.testConnection(datasource)).thenReturn(false);
-        mockMessages(MYSQL_DATASOURCE_CONNECTION_FAILURE);
+        mockMessages(DATASOURCE_CONNECTION_FAILURE);
         assertFailure(actionResult(datasourceApiController.testConnection(datasource, context)));
     }
 }

@@ -7,7 +7,7 @@ import com.kwery.tests.util.TestUtil;
 
 import java.io.IOException;
 
-import static com.kwery.tests.util.Messages.MYSQL_DATASOURCE_CONNECTION_FAILURE_M;
+import static com.kwery.tests.util.Messages.DATASOURCE_CONNECTION_FAILURE_M;
 
 public class DatasourceConnectionTestFailureTest extends AbstractPostLoginApiTest {
     @Test
@@ -17,7 +17,7 @@ public class DatasourceConnectionTestFailureTest extends AbstractPostLoginApiTes
                         ninjaTestBrowser.postJson(getUrl(Routes.MYSQL_DATASOURCE_CONNECTION_TEST_API),
                                 TestUtil.datasource())
                 ),
-                MYSQL_DATASOURCE_CONNECTION_FAILURE_M
+                DATASOURCE_CONNECTION_FAILURE_M
         );
     }
 }

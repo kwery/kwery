@@ -16,6 +16,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.SmtpConfiguration.*;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
@@ -39,7 +40,9 @@ public class TestUtil {
     public static Datasource datasource() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        return podamFactory.manufacturePojo(Datasource.class);
+        Datasource datasource = podamFactory.manufacturePojo(Datasource.class);
+        datasource.setType(MYSQL);
+        return datasource;
     }
 
     public static JobExecutionModel jobExecutionModel() {

@@ -1,35 +1,46 @@
 package com.kwery.tests.fluentlenium.datasource;
 
+import com.kwery.models.Datasource;
+import com.kwery.models.Datasource.Type;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.text.MessageFormat.format;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static org.openqa.selenium.By.id;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
+import static java.text.MessageFormat.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.openqa.selenium.By.className;
+import static org.openqa.selenium.By.id;
 
 public class DatasourceAddPage extends FluentPage implements RepoDashPage {
+    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
+    public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
+
     @AjaxElement
     @FindBy(id = "addDatasourceForm")
     protected FluentWebElement form;
 
-    public void submitForm(String... params) {
-        fill("input").with(params);
+    public void submitForm(Datasource datasource) {
+        fillSelect(".type-f").withText(datasource.getType().name());
+        fill(".url-f").with(datasource.getUrl());
+        fill(".port-f").with(String.valueOf(datasource.getPort()));
+        fill(".username-f").with(datasource.getUsername());
+        fill(".password-f").with(datasource.getPassword());
+        fill(".label-f").with(datasource.getLabel());
+
         click("#create");
     }
 
     public void submitForm() {
-        fill("input").with();
         click("#create");
     }
 
@@ -54,16 +65,16 @@ public class DatasourceAddPage extends FluentPage implements RepoDashPage {
         return form.isDisplayed();
     }
 
-    public void waitForSuccessMessage(String label) {
-        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(format(DATASOURCE_ADDITION_SUCCESS_M, MYSQL, label));
+    public void waitForSuccessMessage(String label, Type type) {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(format(DATASOURCE_ADDITION_SUCCESS_M, type.name(), label));
     }
 
-    public void waitForFailureMessage(String label) {
-        await().atMost(30, SECONDS).until(".f-failure-message p").hasText(format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, label));
+    public void waitForFailureMessage(String label, Type type) {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(format(DATASOURCE_ADDITION_FAILURE_M, type.name(), label));
     }
 
     public void waitForFailureMessage() {
-        await().atMost(30, SECONDS).until(".f-failure-message").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").isDisplayed();
     }
 
     public List<String> errorMessages() {
@@ -77,5 +88,18 @@ public class DatasourceAddPage extends FluentPage implements RepoDashPage {
 
     public String actionLabel() {
         return find(id("create")).getText();
+    }
+
+    public String validationMessage(FormField formField) {
+        By locator = className(String.format("%s-error-f", formField.name()));
+        return $(locator).getText();
+    }
+
+    public void waitForReportFormValidationMessage(FormField formField, String message) {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(String.format(".%s-error-f", formField)).hasText(message);
+    }
+
+    public enum FormField {
+        type, url, port, username, password, label
     }
 }
