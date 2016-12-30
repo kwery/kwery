@@ -19,6 +19,11 @@
                     <input data-bind="value: url" minlength="1" class="form-control url-f" type="text" id="url" name="url" required>
                     <div class="help-block with-errors url-error-f"></div>
                 </div>
+                <div data-bind="visible: showDatabase" class="form-group">
+                    <label data-bind="text: ko.i18n('database')" for="database"></label>
+                    <input data-bind="value: database" minlength="1" class="form-control database-f" type="text" id="database" name="database" required>
+                    <div class="help-block with-errors database-error-f"></div>
+                </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('port')" for="port"></label>
                     <input data-bind="value: port" class="form-control port-f" type="text" id="port" name="port" required>

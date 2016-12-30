@@ -14,7 +14,7 @@ public class DatasourceConnectionTestFailureTest extends AbstractPostLoginApiTes
     public void test() throws IOException {
         assertFailure(
                 actionResult(
-                        ninjaTestBrowser.postJson(getUrl(Routes.MYSQL_DATASOURCE_CONNECTION_TEST_API),
+                        ninjaTestBrowser.postJson(getUrl(Routes.DATASOURCE_CONNECTION_TEST_API),
                                 TestUtil.datasource())
                 ),
                 DATASOURCE_CONNECTION_FAILURE_M

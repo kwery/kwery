@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.kwery.models.Datasource.Type.POSTGRESQL;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
@@ -31,6 +32,12 @@ public class DatasourceAddPage extends FluentPage implements RepoDashPage {
 
     public void submitForm(Datasource datasource) {
         fillSelect(".type-f").withText(datasource.getType().name());
+
+        if (datasource.getType() == POSTGRESQL) {
+            waitForDatabaseFormFieldToBeVisible();
+            fill(".database-f").with(datasource.getDatabase());
+        }
+
         fill(".url-f").with(datasource.getUrl());
         fill(".port-f").with(String.valueOf(datasource.getPort()));
         fill(".username-f").with(datasource.getUsername());
@@ -42,22 +49,6 @@ public class DatasourceAddPage extends FluentPage implements RepoDashPage {
 
     public void submitForm() {
         click("#create");
-    }
-
-    public String usernameValidationErrorMessage() {
-        return $("#username-error").getText();
-    }
-
-    public String urlValidationErrorMessage() {
-        return $("#url-error").getText();
-    }
-
-    public String labelValidationErrorMessage() {
-        return $("#label-error").getText();
-    }
-
-    public String portValidationErrorMessage() {
-        return $("#port-error").getText();
     }
 
     @Override
@@ -99,7 +90,23 @@ public class DatasourceAddPage extends FluentPage implements RepoDashPage {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(String.format(".%s-error-f", formField)).hasText(message);
     }
 
+    public void waitForDatabaseFormFieldToBeVisible() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".database-f").isDisplayed();
+    }
+
+    public void waitForDatabaseFormFieldToBeInvisible() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".database-f").isNotDisplayed();
+    }
+
+    public boolean isDatabaseFormFieldVisible() {
+        return $(className("database-f")).first().isDisplayed();
+    }
+
+    public void selectDatasourceType(Type type) {
+        fillSelect(".type-f").withText(type.name());
+    }
+
     public enum FormField {
-        type, url, port, username, password, label
+        type, url, database, port, username, password, label
     }
 }

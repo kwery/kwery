@@ -10,6 +10,7 @@ import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -37,10 +38,21 @@ public class TestUtil {
         return user;
     }
 
+    public static Datasource datasource(Datasource.Type type) {
+        Datasource datasource = datasource();
+        datasource.setType(type);
+        return datasource;
+    }
+
     public static Datasource datasource() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        Datasource datasource = podamFactory.manufacturePojo(Datasource.class);
+        Datasource datasource = new Datasource();
+        datasource.setId(DbUtil.dbId());
+        datasource.setUrl(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setPort(RandomUtils.nextInt(1, 65566));
+        datasource.setUsername(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setPassword(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setDatabase(RandomStringUtils.randomAlphanumeric(1, 256));
         datasource.setType(MYSQL);
         return datasource;
     }
@@ -129,8 +141,7 @@ public class TestUtil {
     }
 
     public static Datasource datasourceWithoutId() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        Datasource datasource = podamFactory.manufacturePojo(Datasource.class);
+        Datasource datasource = datasource();
         datasource.setId(null);
         return datasource;
     }

@@ -9,6 +9,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
+import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.models.Datasource.Type.POSTGRESQL;
 import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.FormField.*;
 import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.INPUT_VALIDATION_ERROR_MESSAGE;
 import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.SELECT_VALIDATION_ERROR_MESSAGE;
@@ -39,6 +41,10 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
         page.submitForm();
 
         for (FormField formField : values()) {
+            if (formField == database) {
+                continue;
+            }
+
             if (formField != password) {
                 if (formField == type) {
                     page.waitForReportFormValidationMessage(formField, SELECT_VALIDATION_ERROR_MESSAGE);
@@ -47,6 +53,42 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
                     page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
                     assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
                 }
+            }
+        }
+    }
+
+    @Test
+    public void testMySqlDatasourceValidation() {
+        page.selectDatasourceType(MYSQL);
+
+        page.submitForm();
+
+        for (FormField formField : values()) {
+            if (formField == database || formField == type) {
+                continue;
+            }
+
+            if (formField != password) {
+                page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
+            }
+        }
+    }
+
+    @Test
+    public void testPostgreSqlDatasourceValidation() {
+        page.selectDatasourceType(POSTGRESQL);
+
+        page.submitForm();
+
+        for (FormField formField : values()) {
+            if (formField == type) {
+                continue;
+            }
+
+            if (formField != password) {
+                page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
             }
         }
     }

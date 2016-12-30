@@ -12,7 +12,7 @@ public class DatasourceService {
     private static Logger logger = LoggerFactory.getLogger(DatasourceService.class);
 
     public boolean testConnection(Datasource datasource) {
-        try (Connection connection = DriverManager.getConnection(String.format(connectionString(datasource.getType()), datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword())) {
+        try (Connection connection = DriverManager.getConnection(String.format(connectionString(datasource)), datasource.getUsername(), datasource.getPassword())) {
             logger.info(String.format("Successfully connected to %s datasource %s with label %s", datasource.getType(), datasource.getUrl(), datasource.getLabel()));
             return true;
         } catch (SQLException e) {
@@ -22,17 +22,17 @@ public class DatasourceService {
     }
 
     public Connection connection(Datasource datasource) throws SQLException {
-        return DriverManager.getConnection(String.format(connectionString(datasource.getType()),  datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword());
+        return DriverManager.getConnection(String.format(connectionString(datasource), datasource.getUrl(), datasource.getPort()), datasource.getUsername(), datasource.getPassword());
     }
 
-    protected String connectionString(Datasource.Type type) {
-        if (type == Datasource.Type.MYSQL) {
-            return "jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger";
-        } else if (type == Datasource.Type.POSTGRESQL) {
-            return "jdbc:postgresql://%s:%d/?";
+    public String connectionString(Datasource datasource) {
+        if (datasource.getType() == Datasource.Type.MYSQL) {
+            return String.format("jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger", datasource.getUrl(), datasource.getPort()) ;
+        } else if (datasource.getType() == Datasource.Type.POSTGRESQL) {
+            return String.format("jdbc:postgresql://%s:%d/%s", datasource.getUrl(), datasource.getPort(), datasource.getDatabase());
         }
 
-        throw new AssertionError("JDBC connection string not present for type " + type);
+        throw new AssertionError("JDBC connection string not present for type " + datasource.getType());
     }
 
     public static void main(String[] args) {

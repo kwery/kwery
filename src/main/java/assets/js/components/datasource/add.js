@@ -4,9 +4,23 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
         self.username = ko.observable();
         self.password = ko.observable("");
         self.url = ko.observable();
+        self.database = ko.observable();
         self.port = ko.observable();
         self.label = ko.observable();
-        self.datasourceType = ko.observable();
+        self.datasourceType = ko.observable("");
+
+        self.showDatabase = ko.observable(false);
+
+        self.datasourceType.subscribe(function(val){
+            if (val === 'POSTGRESQL') {
+                self.showDatabase(true);
+                $("#database").attr("data-validate", true);
+            } else {
+                self.showDatabase(false);
+                $("#database").attr("data-validate", false);
+            }
+            self.refreshValidation();
+        });
 
         var DatasourceType = function(label, value) {
             this.label = label;
@@ -43,7 +57,8 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
                     username: self.username(),
                     password: self.password(),
                     label: self.label(),
-                    type: self.datasourceType()
+                    type: self.datasourceType(),
+                    database: self.database()
                 };
 
                 if (isUpdate) {
@@ -93,6 +108,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
                     self.port(datasource.port);
                     self.label(datasource.label);
                     self.datasourceType(datasource.type);
+                    self.database(datasource.database);
                 }
             });
         }

@@ -17,10 +17,13 @@ public class Messages {
     public static final String ADMIN_USER_ADDITION_SUCCESS_M = "User with user name {0} created successfully";
     public static final String ADMIN_USER_ADDITION_NEXT_STEP_M = "Login";
     public static final String ADMIN_USER_ADDITION_FAILURE_M = "An admin user with user name {0} already exists, please choose a different username";
+
     public static final String DATASOURCE_ADDITION_SUCCESS_M = "{0} datasource with label {1} created successfully";
     public static final String DATASOURCE_UPDATE_SUCCESS_M = "{0} datasource with label {1} updated successfully";
+
     public static final String DATASOURCE_ADDITION_FAILURE_M = "A {0} datasource with label {1} already exists, please choose a different label";
     public static final String DATASOURCE_UPDATE_FAILURE_M = "A {0} datasource with label {1} already exists, please choose a different label";
+
     public static final String USER_NOT_LOGGED_IN_M = "You need to login to perform this action";
     public static final String LOGIN_SUCCESS_M = "{0} logged in successfully";
     public static final String LOGIN_FAILURE_M = "Please check your username and/or password";

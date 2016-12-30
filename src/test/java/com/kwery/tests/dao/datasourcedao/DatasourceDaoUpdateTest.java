@@ -1,54 +1,44 @@
 package com.kwery.tests.dao.datasourcedao;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.dao.DatasourceDao;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.models.Datasource;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.tests.util.RepoDashDaoTestBase;
+import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
-import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.util.TestUtil.datasource;
 
 public class DatasourceDaoUpdateTest extends RepoDashDaoTestBase {
     protected DatasourceDao datasourceDao;
+    private Datasource datasource = null;
+
 
     @Before
     public void setUpDatasourceDaoUpdateTest () {
-        DbSetup dbSetup = new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                insertInto(Datasource.TABLE)
-                        .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                        .values(1, "testDatasource0", "password0", 3306, MYSQL.name(), "foo.com", "user0")
-                        .build()
-        );
-
-        dbSetup.launch();
+        datasource = datasource();
+        datasourceDbSetup(datasource);
 
         datasourceDao = getInstance(DatasourceDao.class);
     }
 
     @Test
     public void test() throws Exception {
-        Datasource datasource = datasourceDao.getById(1);
+        Datasource updated = datasourceDao.getById(datasource.getId());
 
-        datasource.setLabel("foo");
-        datasource.setPort(3307);
-        datasource.setUrl("bar.com");
-        datasource.setUsername("newUsername");
-        datasource.setPassword("newPassword");
+        updated.setLabel("foo");
+        updated.setPort(3307);
+        updated.setUrl("bar.com");
+        updated.setUsername("newUsername");
+        updated.setPassword("newPassword");
 
-        datasourceDao.update(datasource);
+        Datasource expected = new DozerBeanMapper().map(updated, Datasource.class);
 
-        DbUtil.assertDbState(Datasource.TABLE, "datasourceDaoUpdateTest.xml");
+        datasourceDao.update(updated);
+
+        new DbTableAsserterBuilder(Datasource.TABLE, DbUtil.datasourceTable(expected)).build().assertTable();
     }
 }

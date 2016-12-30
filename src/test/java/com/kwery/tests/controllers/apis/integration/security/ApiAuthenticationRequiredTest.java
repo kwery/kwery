@@ -52,7 +52,7 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
 
         vos = ImmutableList.of(
                 new ApiSecurityTestVo(ADD_DATASOURCE_API, true, POST),
-                new ApiSecurityTestVo(MYSQL_DATASOURCE_CONNECTION_TEST_API, true, POST),
+                new ApiSecurityTestVo(DATASOURCE_CONNECTION_TEST_API, true, POST),
                 new ApiSecurityTestVo(USER, true, GET),
                 new ApiSecurityTestVo(INDEX, false, GET),
                 new ApiSecurityTestVo(ADD_ADMIN_USER_API, true, POST),

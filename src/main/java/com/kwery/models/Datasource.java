@@ -19,6 +19,7 @@ public class Datasource {
     public static final String COLUMN_LABEL = "label";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_DATABASE = "database";
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -49,6 +50,10 @@ public class Datasource {
     @Size(min = 1, max = 255, message = "label.validation")
     @Column(name = COLUMN_LABEL, unique = true)
     private String label;
+
+    @Column(name = COLUMN_DATABASE)
+    @Size(max = 255)
+    private String database;
 
     @Enumerated(STRING)
     @Column(name = COLUMN_TYPE)
@@ -102,6 +107,14 @@ public class Datasource {
         this.label = label;
     }
 
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
     public Type getType() {
         return type;
     }
@@ -114,7 +127,6 @@ public class Datasource {
         MYSQL, POSTGRESQL
     }
 
-    //TODO - Mask password
     @Override
     public String toString() {
         return "Datasource{" +
@@ -124,6 +136,7 @@ public class Datasource {
                 ", username='" + username + '\'' +
                 ", password='" + "X" + '\'' +
                 ", label='" + label + '\'' +
+                ", database='" + database + '\'' +
                 ", type=" + type +
                 '}';
     }

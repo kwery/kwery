@@ -1,6 +1,7 @@
 package com.kwery.tests.util;
 
 import com.kwery.models.Datasource;
+import com.kwery.services.datasource.DatasourceService;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 
@@ -24,6 +25,8 @@ public abstract class AbstractSqlDocker {
 
     protected String host;
 
+    protected DatasourceService datasourceService = new DatasourceService();
+
     public void start() {
         cloudHost = CloudHostFactory.getCloudHost(getType().name().toLowerCase());
         cloudHost.setup();
@@ -32,22 +35,12 @@ public abstract class AbstractSqlDocker {
         this.host = cloudHost.getHostName();
 
         waitAtMost(2, MINUTES).until(() -> {
-            try (Connection connection = DriverManager.getConnection(String.format(connectionString(getType()), host, mappedPort), getUsername(), getPassword())) {
+            try (Connection connection = DriverManager.getConnection(String.format(datasourceService.connectionString(datasource())), getUsername(), getPassword())) {
                 return true;
             } catch (SQLException e) {
                 return false;
             }
         });
-    }
-
-    protected String connectionString(Datasource.Type type) {
-        if (type == MYSQL) {
-            return  "jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger";
-        } else if (type == POSTGRESQL) {
-            return  "jdbc:postgresql://%s:%d/?";
-        }
-
-        throw new AssertionError("Connection string not found for datasource type " + type);
     }
 
     public String host() {
@@ -70,8 +63,19 @@ public abstract class AbstractSqlDocker {
         datasource.setPort(this.mappedPort);
         datasource.setUsername(getUsername());
         datasource.setPassword(getPassword());
-        datasource.setLabel("label");
+
+        String label = MYSQL.name();
+        if (getType() == POSTGRESQL) {
+            label = POSTGRESQL.name();
+        }
+        datasource.setLabel(label);
+
         datasource.setType(getType());
+
+        if (getType() == POSTGRESQL) {
+            datasource.setDatabase("postgres");
+        }
+
         return datasource;
     }
 
