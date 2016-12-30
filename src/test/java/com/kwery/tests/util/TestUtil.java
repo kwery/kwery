@@ -10,12 +10,14 @@ import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.SmtpConfiguration.*;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
@@ -36,10 +38,23 @@ public class TestUtil {
         return user;
     }
 
+    public static Datasource datasource(Datasource.Type type) {
+        Datasource datasource = datasource();
+        datasource.setType(type);
+        return datasource;
+    }
+
     public static Datasource datasource() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        return podamFactory.manufacturePojo(Datasource.class);
+        Datasource datasource = new Datasource();
+        datasource.setId(DbUtil.dbId());
+        datasource.setUrl(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setPort(RandomUtils.nextInt(1, 65566));
+        datasource.setUsername(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setPassword(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setDatabase(RandomStringUtils.randomAlphanumeric(1, 256));
+        datasource.setType(MYSQL);
+        return datasource;
     }
 
     public static JobExecutionModel jobExecutionModel() {
@@ -126,8 +141,7 @@ public class TestUtil {
     }
 
     public static Datasource datasourceWithoutId() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        Datasource datasource = podamFactory.manufacturePojo(Datasource.class);
+        Datasource datasource = datasource();
         datasource.setId(null);
         return datasource;
     }

@@ -20,16 +20,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.kwery.custom.TemplateEngineJsFreemarker;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
-import com.kwery.services.scheduler.MysqlSqlQueryRunner;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
-import com.kwery.services.scheduler.SqlQueryRunner;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
@@ -37,8 +34,6 @@ import it.sauronsoftware.cron4j.TaskExecutorListener;
 @Singleton
 public class Module extends AbstractModule {
     protected void configure() {
-        bind(TemplateEngineJsFreemarker.class);
-        bind(SqlQueryRunner.class).to(MysqlSqlQueryRunner.class);
         bind(SchedulerListener.class).to(SchedulerListenerImpl.class);
         bind(TaskExecutorListener.class).to(TaskExecutorListenerImpl.class);
         install(new FactoryModuleBuilder().build(ResultSetProcessorFactory.class));

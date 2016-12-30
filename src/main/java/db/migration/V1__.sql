@@ -16,6 +16,7 @@ create table datasource (
   type varchar(255),
   url varchar(255) not null,
   username varchar(255) not null,
+  database varchar(255),
   primary key (id)
 );
 

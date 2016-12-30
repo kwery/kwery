@@ -11,7 +11,7 @@ public class Routes implements ApplicationRoutes {
 
     public static final String ADD_ADMIN_USER_API = "/api/user/add-admin-user";
     public static final String ADD_DATASOURCE_API = "/api/datasource/add-datasource";
-    public static final String MYSQL_DATASOURCE_CONNECTION_TEST_API = "/api/datasource/test-connection";
+    public static final String DATASOURCE_CONNECTION_TEST_API = "/api/datasource/test-connection";
     public static final String LOGIN_API = "/api/user/login";
     public static final String LOGOUT_API = "/api/user/logout";
     public static final String USER = "/api/user";
@@ -60,7 +60,7 @@ public class Routes implements ApplicationRoutes {
         router.POST().route(DELETE_USER_API).with(UserApiController.class, "delete");
 
         router.POST().route(ADD_DATASOURCE_API).with(DatasourceApiController.class, "addDatasource");
-        router.POST().route(MYSQL_DATASOURCE_CONNECTION_TEST_API).with(DatasourceApiController.class, "testConnection");
+        router.POST().route(DATASOURCE_CONNECTION_TEST_API).with(DatasourceApiController.class, "testConnection");
         router.GET().route(ALL_DATASOURCES_API).with(DatasourceApiController.class, "allDatasources");
         router.GET().route(DATASOURCE_API).with(DatasourceApiController.class, "datasource");
         router.POST().route(DELETE_DATASOURCE_API).with(DatasourceApiController.class, "delete");

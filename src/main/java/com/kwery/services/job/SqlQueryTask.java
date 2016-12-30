@@ -8,7 +8,7 @@ import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.services.RepoDashUtil;
+import com.kwery.services.datasource.DatasourceService;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
 import it.sauronsoftware.cron4j.Task;
@@ -31,7 +31,7 @@ public class SqlQueryTask extends Task {
 
     private final SqlQueryDao sqlQueryDao;
     private final SqlQueryExecutionDao sqlQueryExecutionDao;
-    private final RepoDashUtil repoDashUtil;
+    private final DatasourceService datasourceService;
     private final ResultSetProcessorFactory resultSetProcessorFactory;
     private final PreparedStatementExecutorFactory preparedStatementExecutorFactory;
     private final CountDownLatch latch;
@@ -40,7 +40,7 @@ public class SqlQueryTask extends Task {
     @Inject
     public SqlQueryTask(SqlQueryDao sqlQueryDao,
                         SqlQueryExecutionDao sqlQueryExecutionDao,
-                        RepoDashUtil repoDashUtil,
+                        DatasourceService datasourceService,
                         PreparedStatementExecutorFactory preparedStatementExecutorFactory,
                         ResultSetProcessorFactory resultSetProcessorFactory,
                         @Assisted int sqlQueryModelId,
@@ -48,7 +48,7 @@ public class SqlQueryTask extends Task {
                         @Assisted CountDownLatch latch
     ) {
         this.sqlQueryDao = sqlQueryDao;
-        this.repoDashUtil = repoDashUtil;
+        this.datasourceService = datasourceService;
         this.preparedStatementExecutorFactory = preparedStatementExecutorFactory;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.resultSetProcessorFactory = resultSetProcessorFactory;
@@ -64,7 +64,7 @@ public class SqlQueryTask extends Task {
 
         String query = sqlQuery.getQuery();
         logger.info("Executing query {} on datasource {}", query, datasource.getLabel());
-        try (Connection connection = repoDashUtil.connection(datasource);
+        try (Connection connection = datasourceService.connection(datasource);
             PreparedStatement p = connection.prepareStatement(query)) {
 
             if (sqlQuery.getQuery().trim().toLowerCase().startsWith("insert")) {

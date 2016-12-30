@@ -108,7 +108,10 @@ public class JobApiController {
         if (errorMessages.isEmpty()) {
             JobModel jobModel = jobDtoToJobModel(jobDto);
             jobModel.setChildJobs(new HashSet<>());
-            jobModel.getChildJobs().addAll(jobDao.getJobById(jobDto.getId()).getChildJobs());
+
+            if (isUpdate) {
+                jobModel.getChildJobs().addAll(jobDao.getJobById(jobDto.getId()).getChildJobs());
+            }
 
             jobModel = jobDao.save(jobModel);
 

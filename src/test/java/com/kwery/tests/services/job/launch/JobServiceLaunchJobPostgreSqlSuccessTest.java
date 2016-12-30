@@ -1,4 +1,4 @@
-package com.kwery.tests.services.job;
+package com.kwery.tests.services.job.launch;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -9,14 +9,16 @@ import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.PostgreSqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import ninja.postoffice.Mail;
+import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,15 +29,17 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
-public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
+public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
 
     protected JobModel jobModel;
     protected JobExecutionDao jobExecutionDao;
@@ -56,7 +60,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         jobModel.setSqlQueries(new HashSet<>());
         jobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));
 
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
         datasource.setId(dbId());
 
         datasourceDbSetup(datasource);
@@ -146,32 +150,11 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
 
         if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-            assertThat(sqlQueryExecution.getResult(), is("[[\"User\"],[\"root\"]]"));
+            assertThat(sqlQueryExecution.getResult(), is("[[\"table_name\"],[\"pg_depend\"]]"));
         } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
             assertThat(sqlQueryExecution.getResult(), is("No database selected"));
         } else {
             assertThat(sqlQueryExecution.getResult(), nullValue());
-        }
-    }
-
-    protected void assertSqlQueryExecutionModels(int sqlQueryId, SqlQueryExecutionModel.Status status, int size) {
-        List<SqlQueryExecutionModel> sqlQueryExecutionModels = getSqlQueryExecutionModels(sqlQueryId, status);
-        assertThat(sqlQueryExecutionModels, hasSize(greaterThanOrEqualTo(size)));
-
-        for (SqlQueryExecutionModel sqlQueryExecution : sqlQueryExecutionModels) {
-            assertThat(sqlQueryExecution.getId(), greaterThan(0));
-            assertThat(sqlQueryExecution.getExecutionId(), not(nullValue()));
-            assertThat(sqlQueryExecution.getExecutionStart(), lessThan(sqlQueryExecution.getExecutionEnd()));
-            assertThat(sqlQueryExecution.getStatus(), is(status));
-            assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
-
-            if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-                assertThat(sqlQueryExecution.getResult(), is("[[\"User\"],[\"root\"]]"));
-            } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
-                assertThat(sqlQueryExecution.getResult(), is("No database selected"));
-            } else {
-                assertThat(sqlQueryExecution.getResult(), nullValue());
-            }
         }
     }
 
@@ -207,5 +190,23 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         return sqlQueryExecutionDao.filter(filter);
     }
 
-    protected abstract String getQuery();
+    protected String getQuery() {
+        return "select table_name from information_schema.tables where table_name = 'pg_depend';";
+    }
+
+    @Test
+    public void test() throws InterruptedException {
+        jobService.launch(jobModel.getId());
+
+        waitAtMost(1, MINUTES).until(() -> !getJobExecutionModels(JobExecutionModel.Status.SUCCESS).isEmpty());
+
+        assertJobExecutionModel(JobExecutionModel.Status.SUCCESS);
+
+        assertSqlQueryExecutionModel(sqlQueryId0, SqlQueryExecutionModel.Status.SUCCESS);
+        assertSqlQueryExecutionModel(sqlQueryId1, SqlQueryExecutionModel.Status.SUCCESS);
+
+
+        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
+        assertThat(mail, notNullValue());
+    }
 }

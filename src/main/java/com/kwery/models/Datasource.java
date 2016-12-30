@@ -1,12 +1,6 @@
 package com.kwery.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -25,6 +19,7 @@ public class Datasource {
     public static final String COLUMN_LABEL = "label";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_DATABASE = "database";
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -55,6 +50,10 @@ public class Datasource {
     @Size(min = 1, max = 255, message = "label.validation")
     @Column(name = COLUMN_LABEL, unique = true)
     private String label;
+
+    @Column(name = COLUMN_DATABASE)
+    @Size(max = 255)
+    private String database;
 
     @Enumerated(STRING)
     @Column(name = COLUMN_TYPE)
@@ -108,6 +107,14 @@ public class Datasource {
         this.label = label;
     }
 
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
     public Type getType() {
         return type;
     }
@@ -116,11 +123,10 @@ public class Datasource {
         this.type = type;
     }
 
-    public static enum Type {
-        MYSQL
+    public enum Type {
+        MYSQL, POSTGRESQL
     }
 
-    //TODO - Mask password
     @Override
     public String toString() {
         return "Datasource{" +
@@ -130,6 +136,7 @@ public class Datasource {
                 ", username='" + username + '\'' +
                 ", password='" + "X" + '\'' +
                 ", label='" + label + '\'' +
+                ", database='" + database + '\'' +
                 ", type=" + type +
                 '}';
     }

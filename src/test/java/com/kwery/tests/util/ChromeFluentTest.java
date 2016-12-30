@@ -11,7 +11,7 @@ public class ChromeFluentTest extends FluentTest {
     public WebDriver getDefaultDriver() {
         System.setProperty("webdriver.chrome.driver", "/usr/lib/chromium-browser/chromedriver");
         ChromeDriver chromeDriver = new ChromeDriver();
-        chromeDriver.manage().timeouts().implicitlyWait(1, TimeUnit.DAYS);
+        chromeDriver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
         return chromeDriver;
     }
 }

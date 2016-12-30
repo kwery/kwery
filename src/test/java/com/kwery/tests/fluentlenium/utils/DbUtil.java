@@ -8,6 +8,7 @@ import com.mchange.v2.c3p0.C3P0Registry;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.apache.commons.lang3.RandomUtils;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import static com.kwery.models.Datasource.*;
@@ -236,12 +236,41 @@ public class DbUtil {
         return builder.build();
     }
 
+    public static IDataSet datasourceTable(Datasource datasource) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(Datasource.TABLE);
+
+        if (datasource != null) {
+            builder.newRow(Datasource.TABLE)
+                        .with(COLUMN_ID, datasource.getId())
+                        .with(COLUMN_LABEL, datasource.getLabel())
+                        .with(COLUMN_PASSWORD, datasource.getPassword())
+                        .with(COLUMN_PORT, datasource.getPort())
+                        .with(COLUMN_TYPE, datasource.getType())
+                        .with(COLUMN_URL, datasource.getUrl())
+                        .with(COLUMN_USERNAME, datasource.getUsername())
+                        .with(COLUMN_DATABASE, datasource.getDatabase())
+                    .add();
+
+        }
+
+        return builder.build();
+    }
+
     public static void datasourceDbSetup(Datasource datasource) {
         DbSetup dbSetup = new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
                 insertInto(Datasource.TABLE)
-                        .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                        .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(), datasource.getType(), datasource.getUrl(), datasource.getUsername())
+                        .row()
+                            .column(COLUMN_ID, datasource.getId())
+                            .column(COLUMN_LABEL, datasource.getLabel())
+                            .column(COLUMN_PASSWORD, datasource.getPassword())
+                            .column(COLUMN_PORT, datasource.getPort())
+                            .column(COLUMN_TYPE, datasource.getType())
+                            .column(COLUMN_URL, datasource.getUrl())
+                            .column(COLUMN_USERNAME, datasource.getUsername())
+                            .column(COLUMN_DATABASE, datasource.getDatabase())
+                        .end()
                         .build()
         );
 
@@ -376,8 +405,6 @@ public class DbUtil {
     }
 
     public static int dbId() {
-        int high = TestUtil.DB_START_ID;
-        int low = 1;
-        return new Random().nextInt((high + 1) - low) + low;
+        return RandomUtils.nextInt(1, TestUtil.DB_START_ID + 1);
     }
 }

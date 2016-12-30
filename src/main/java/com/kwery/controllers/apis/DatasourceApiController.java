@@ -6,6 +6,8 @@ import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.Datasource;
+import com.kwery.services.datasource.DatasourceService;
+import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -15,8 +17,6 @@ import ninja.validation.JSR303Validation;
 import ninja.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.kwery.services.datasource.MysqlDatasourceService;
-import com.kwery.views.ActionResult;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,18 +25,10 @@ import java.util.Map;
 
 import static com.google.common.base.Optional.of;
 import static com.kwery.controllers.ControllerUtil.fieldMessages;
-import static com.kwery.controllers.MessageKeys.DATASOURCE_ADDITION_FAILURE;
-import static com.kwery.controllers.MessageKeys.DATASOURCE_ADDITION_SUCCESS;
-import static com.kwery.controllers.MessageKeys.DATASOURCE_DELETE_SQL_QUERIES_PRESENT;
-import static com.kwery.controllers.MessageKeys.DATASOURCE_DELETE_SUCCESS;
-import static com.kwery.controllers.MessageKeys.DATASOURCE_UPDATE_FAILURE;
-import static com.kwery.controllers.MessageKeys.DATASOURCE_UPDATE_SUCCESS;
-import static com.kwery.controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_FAILURE;
-import static com.kwery.controllers.MessageKeys.MYSQL_DATASOURCE_CONNECTION_SUCCESS;
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static ninja.Results.json;
+import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
+import static ninja.Results.json;
 
 @Singleton
 public class DatasourceApiController {
@@ -49,7 +41,7 @@ public class DatasourceApiController {
     private Messages messages;
 
     @Inject
-    private MysqlDatasourceService mysqlDatasourceService;
+    private DatasourceService datasourceService;
 
     @Inject
     private SqlQueryDao sqlQueryDao;
@@ -80,18 +72,18 @@ public class DatasourceApiController {
             if (isUpdate) {
                 if (fromDb != null && !datasource.getId().equals(fromDb.getId())) {
                     logger.error("Could not update datasource, a datasource with label {} already exists", datasource.getLabel());
-                    errorMessages.add(messages.get(DATASOURCE_UPDATE_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+                    errorMessages.add(messages.get(DATASOURCE_UPDATE_FAILURE, context, of(json), datasource.getType().name(), datasource.getLabel()).get());
                 }
             } else {
                 if (fromDb != null) {
                     logger.error("Could not add datasource, a datasource with label {} already exists", datasource.getLabel());
-                    errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), MYSQL.name(), datasource.getLabel()).get());
+                    errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), datasource.getType().name(), datasource.getLabel()).get());
                 }
             }
 
-            if (!mysqlDatasourceService.testConnection(datasource)) {
-                logger.error("Could not add datasource as the test connection to the datasource failed");
-                errorMessages.add(messages.get(MYSQL_DATASOURCE_CONNECTION_FAILURE, context, of(json)).get());
+            if (!datasourceService.testConnection(datasource)) {
+                logger.error("Could not connect to datasource {}", datasource);
+                errorMessages.add(messages.get(DATASOURCE_CONNECTION_FAILURE, context, of(json), datasource.getType().name()).get());
             }
 
             if (errorMessages.size() > 0) {
@@ -106,9 +98,9 @@ public class DatasourceApiController {
                 String msg = "";
 
                 if (isUpdate) {
-                    msg = messages.get(DATASOURCE_UPDATE_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+                    msg = messages.get(DATASOURCE_UPDATE_SUCCESS, context, of(json), datasource.getType().name(), datasource.getLabel()).get();
                 } else {
-                    msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), MYSQL.name(), datasource.getLabel()).get();
+                    msg = messages.get(DATASOURCE_ADDITION_SUCCESS, context, of(json), datasource.getType().name(), datasource.getLabel()).get();
                 }
 
                 actionResult = new ActionResult(success, msg);
@@ -132,17 +124,17 @@ public class DatasourceApiController {
         Result json = json();
         ActionResult result;
 
-        if (mysqlDatasourceService.testConnection(datasource)) {
+        if (datasourceService.testConnection(datasource)) {
             logger.info("Successfully connected to datasource");
             result = new ActionResult(
                     success,
-                    messages.get(MYSQL_DATASOURCE_CONNECTION_SUCCESS, context, of(json)).get()
+                    messages.get(DATASOURCE_CONNECTION_SUCCESS, context, of(json), datasource.getType()).get()
             );
         } else {
             logger.error("Could not connect to datasource");
             result = new ActionResult(
                     failure,
-                    messages.get(MYSQL_DATASOURCE_CONNECTION_FAILURE, context, of(json)).get()
+                    messages.get(DATASOURCE_CONNECTION_FAILURE, context, of(json)).get()
             );
         }
 
@@ -194,7 +186,7 @@ public class DatasourceApiController {
         this.datasourceDao = datasourceDao;
     }
 
-    public void setMysqlDatasourceService(MysqlDatasourceService mysqlDatasourceService) {
-        this.mysqlDatasourceService = mysqlDatasourceService;
+    public void setDatasourceService(DatasourceService datasourceService) {
+        this.datasourceService = datasourceService;
     }
 }

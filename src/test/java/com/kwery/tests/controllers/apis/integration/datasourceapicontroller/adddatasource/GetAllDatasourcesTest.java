@@ -23,11 +23,10 @@ public class GetAllDatasourcesTest extends AbstractPostLoginApiTest {
     public void setUpGetAllDatasourcesTest() {
         DatasourceDao datasourceDao = getInjector().getInstance(DatasourceDao.class);
 
-        saved0 = TestUtil.datasource();
+        saved0 = TestUtil.datasourceWithoutId();
         datasourceDao.save(saved0);
 
-        saved1 = TestUtil.datasource();
-        saved1.setLabel("lsdjfklj");
+        saved1 = TestUtil.datasourceWithoutId();
         datasourceDao.save(saved1);
     }
 

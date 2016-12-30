@@ -1,22 +1,19 @@
 package com.kwery.tests.fluentlenium.datasource;
 
+import com.amazonaws.services.elastictranscoder.model.transform.TestRoleResultJsonUnmarshaller;
 import com.kwery.models.Datasource;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.ChromeFluentTest;
-import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
-import com.kwery.tests.util.NinjaServerRule;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.kwery.tests.util.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
 import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
-import static com.kwery.tests.util.Messages.MYSQL_DATASOURCE_CONNECTION_FAILURE_M;
+import static com.kwery.tests.util.Messages.DATASOURCE_CONNECTION_FAILURE_M;
+import static com.kwery.tests.util.TestUtil.datasource;
 import static java.text.MessageFormat.format;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -38,22 +35,9 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
     @Before
     public void setUpAddDatasourceFailureTest() {
         datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource.setId(dbId());
 
-        new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.insertInto(Datasource.TABLE)
-                        .row()
-                        .column(Datasource.COLUMN_ID, 1)
-                        .column(Datasource.COLUMN_LABEL, datasource.getLabel())
-                        .column(Datasource.COLUMN_PASSWORD, datasource.getPassword())
-                        .column(Datasource.COLUMN_PORT, datasource.getPort())
-                        .column(Datasource.COLUMN_TYPE, datasource.getType())
-                        .column(Datasource.COLUMN_URL, datasource.getUsername())
-                        .column(Datasource.COLUMN_USERNAME, datasource.getUsername())
-                        .end()
-                        .build()
-
-        ).launch();
+        datasourceDbSetup(datasource);
 
         page = createPage(DatasourceAddPage.class);
         page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
@@ -66,13 +50,16 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
 
     @Test
     public void test() {
-        page.submitForm(datasource.getUrl() + "sjdfldsjf", String.valueOf(datasource.getPort()), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
+        Datasource newDatasource = datasource();
+        newDatasource.setLabel(datasource.getLabel());
+
+        page.submitForm(newDatasource);
         page.waitForFailureMessage();
         assertThat(
                 page.errorMessages(),
                 containsInAnyOrder(
-                        format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, datasource.getLabel()),
-                        MYSQL_DATASOURCE_CONNECTION_FAILURE_M
+                        format(DATASOURCE_ADDITION_FAILURE_M, MYSQL, newDatasource.getLabel()),
+                        format(DATASOURCE_CONNECTION_FAILURE_M, newDatasource.getType().name())
                 )
         );
     }

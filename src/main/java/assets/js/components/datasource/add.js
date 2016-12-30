@@ -1,11 +1,38 @@
-define(["knockout", "jquery", "text!components/datasource/add.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/datasource/add.html", "validator"], function (ko, $, template) {
     function viewModel(params) {
         var self = this;
         self.username = ko.observable();
-        self.password = ko.observable();
+        self.password = ko.observable("");
         self.url = ko.observable();
+        self.database = ko.observable();
         self.port = ko.observable();
         self.label = ko.observable();
+        self.datasourceType = ko.observable("");
+
+        self.showDatabase = ko.observable(false);
+
+        self.datasourceType.subscribe(function(val){
+            if (val === 'POSTGRESQL') {
+                self.showDatabase(true);
+                $("#database").attr("data-validate", true);
+            } else {
+                self.showDatabase(false);
+                $("#database").attr("data-validate", false);
+            }
+            self.refreshValidation();
+        });
+
+        var DatasourceType = function(label, value) {
+            this.label = label;
+            this.value = value;
+        };
+
+        //TODO - Should be picked from the backend instead of being hardcoded here
+        self.datasourceTypes = ko.observableArray([
+            new DatasourceType(ko.i18n("datasource.add.type.select"), ""),
+            new DatasourceType("MYSQL", "MYSQL"),
+            new DatasourceType("POSTGRESQL", "POSTGRESQL")
+        ]);
 
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
@@ -20,53 +47,18 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
             self.title = ko.observable(ko.i18n('datasource.add.title'))
         }
 
-        if (isUpdate) {
-            $.ajax("/api/datasource/" + params.datasourceId, {
-                type: "GET",
-                contentType: "application/json",
-                success: function(datasource) {
-                    self.username(datasource.username);
-                    self.password(datasource.password);
-                    self.url(datasource.url);
-                    self.port(datasource.port);
-                    self.label(datasource.label);
-                    self.type(datasource.type);
-                }
-            });
-        }
-
-        var validate = $('form').validate({
-            debug: true,
-            messages: {
-                username: {
-                    required: ko.i18n("username.validation"),
-                    minlength: ko.i18n("username.validation")
-                },
-                port: {
-                    required: ko.i18n("port.validation"),
-                    minlength: ko.i18n("port.validation"),
-                    min: ko.i18n("port.validation")
-                },
-                url: {
-                    required: ko.i18n("url.validation"),
-                    minlength: ko.i18n("url.validation")
-                },
-                label: {
-                    required: ko.i18n("label.validation"),
-                    minlength: ko.i18n("label.validation")
-                }
-            }
-        });
-
-        self.submit = function(formElem) {
-            if ($(formElem).valid()) {
+        $("#addDatasourceForm").validator({
+            disable: false
+        }).on("submit", function(e){
+            if (!e.isDefaultPrevented()) {
                 var datasource = {
-                    url: self.url,
-                    port: self.port,
-                    username: self.username,
-                    password: self.password,
-                    label: self.label,
-                    type: "MYSQL"
+                    url: self.url(),
+                    port: self.port(),
+                    username: self.username(),
+                    password: self.password(),
+                    label: self.label(),
+                    type: self.datasourceType(),
+                    database: self.database()
                 };
 
                 if (isUpdate) {
@@ -97,7 +89,29 @@ define(["knockout", "jquery", "text!components/datasource/add.html"], function (
                     }
                 });
             }
+
+            return false;
+        });
+
+        self.refreshValidation = function() {
+            $("#addDatasourceForm").validator("update");
         };
+
+        if (isUpdate) {
+            $.ajax("/api/datasource/" + params.datasourceId, {
+                type: "GET",
+                contentType: "application/json",
+                success: function(datasource) {
+                    self.username(datasource.username);
+                    self.password(datasource.password);
+                    self.url(datasource.url);
+                    self.port(datasource.port);
+                    self.label(datasource.label);
+                    self.datasourceType(datasource.type);
+                    self.database(datasource.database);
+                }
+            });
+        }
 
         return self;
     }

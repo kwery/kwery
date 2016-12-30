@@ -1,6 +1,6 @@
 package com.kwery.tests.fluentlenium.datasource;
 
-import com.kwery.models.Datasource;
+import com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.FormField;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -9,11 +9,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.tests.util.Messages.LABEL_VALIDATION_M;
-import static com.kwery.tests.util.Messages.PORT_VALIDATION_M;
-import static com.kwery.tests.util.Messages.URL_VALIDATION_M;
-import static com.kwery.tests.util.Messages.USERNAME_VALIDATION_M;
-import static com.kwery.tests.util.TestUtil.datasource;
+import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.kwery.models.Datasource.Type.POSTGRESQL;
+import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.FormField.*;
+import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.INPUT_VALIDATION_ERROR_MESSAGE;
+import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.SELECT_VALIDATION_ERROR_MESSAGE;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -38,17 +38,58 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
     @Test
     public void testEmptyValues() {
-        page.submitForm("", "", "", "", "");
-        assertThat(page.usernameValidationErrorMessage(), is(USERNAME_VALIDATION_M));
-        assertThat(page.urlValidationErrorMessage(), is(URL_VALIDATION_M));
-        assertThat(page.labelValidationErrorMessage(), is(LABEL_VALIDATION_M));
-        assertThat(page.portValidationErrorMessage(), is(PORT_VALIDATION_M));
+        page.submitForm();
+
+        for (FormField formField : values()) {
+            if (formField == database) {
+                continue;
+            }
+
+            if (formField != password) {
+                if (formField == type) {
+                    page.waitForReportFormValidationMessage(formField, SELECT_VALIDATION_ERROR_MESSAGE);
+                    assertThat(page.validationMessage(formField), is(SELECT_VALIDATION_ERROR_MESSAGE));
+                } else {
+                    page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                    assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
+                }
+            }
+        }
     }
 
     @Test
-    public void testPortMinimumValue() {
-        Datasource datasource = datasource();
-        page.submitForm(datasource.getUrl(), String.valueOf(0), datasource.getUsername(), datasource.getPassword(), datasource.getLabel());
-        assertThat(page.portValidationErrorMessage(), is(PORT_VALIDATION_M));
+    public void testMySqlDatasourceValidation() {
+        page.selectDatasourceType(MYSQL);
+
+        page.submitForm();
+
+        for (FormField formField : values()) {
+            if (formField == database || formField == type) {
+                continue;
+            }
+
+            if (formField != password) {
+                page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
+            }
+        }
+    }
+
+    @Test
+    public void testPostgreSqlDatasourceValidation() {
+        page.selectDatasourceType(POSTGRESQL);
+
+        page.submitForm();
+
+        for (FormField formField : values()) {
+            if (formField == type) {
+                continue;
+            }
+
+            if (formField != password) {
+                page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
+            }
+        }
     }
 }
