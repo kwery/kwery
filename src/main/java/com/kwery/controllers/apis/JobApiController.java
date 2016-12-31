@@ -110,7 +110,17 @@ public class JobApiController {
             jobModel.setChildJobs(new HashSet<>());
 
             if (isUpdate) {
-                jobModel.getChildJobs().addAll(jobDao.getJobById(jobDto.getId()).getChildJobs());
+                JobModel jobFromDb = jobDao.getJobById(jobDto.getId());
+                jobModel.getChildJobs().addAll(jobFromDb.getChildJobs());
+                if (jobDto.getParentJobId() > 0) {
+                    //They are mutually exclusive
+                    jobModel.setCronExpression(null);
+                }
+
+                //Deschedule if it was a scheduled job earlier
+                if (jobFromDb.getCronExpression() != null) {
+                    jobService.deschedule(jobModel.getId());
+                }
             }
 
             jobModel = jobDao.save(jobModel);
@@ -120,9 +130,6 @@ public class JobApiController {
                 parentJob.getChildJobs().add(jobModel);
                 jobDao.save(parentJob);
             } else {
-                if (isUpdate) {
-                    jobService.deschedule(jobModel.getId());
-                }
                 jobService.schedule(jobModel.getId());
             }
 

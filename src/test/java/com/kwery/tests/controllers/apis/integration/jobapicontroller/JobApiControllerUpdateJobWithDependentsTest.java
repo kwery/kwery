@@ -1,9 +1,8 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
-import com.kwery.dao.DatasourceDao;
+import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
@@ -11,24 +10,20 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.MysqlDockerRule;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.HashSet;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.models.JobModel.*;
-import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.kwery.views.ActionResult.Status.success;
+import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -38,11 +33,12 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
 
     private Datasource datasource1;
 
-    private DatasourceDao datasourceDao;
     private JobModel childJob;
     private SqlQueryModel childSqlQueryModel;
     private JobModel parentJobModel0;
     private JobModel parentJobModel1;
+
+    JobDao jobDao;
 
     @Before
     public void setUpJobApiControllerUpdateJobWithDependentsTest() {
@@ -70,6 +66,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         datasourceDbSetup(datasource1);
 
         childJob = jobModelWithoutDependents();
+        childJob.setCronExpression(null);
         jobDbSetUp(childJob);
 
         parentJobModel0.getChildJobs().add(childJob);
@@ -84,7 +81,6 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
 
         childJob.getEmails().addAll(ImmutableSet.of("foo@bar.com", "goo@boo.com"));
         jobEmailDbSetUp(childJob);
-
 
         parentJobModel1 = jobModelWithoutDependents();
         parentJobModel1.setCronExpression("* * * * *");
@@ -104,7 +100,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         jobService.schedule(parentJobModel0.getId());
         jobService.schedule(parentJobModel1.getId());
 
-        datasourceDao = getInjector().getInstance(DatasourceDao.class);
+        jobDao = getInjector().getInstance(JobDao.class);
     }
 
     @Test
@@ -112,14 +108,35 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         String url = getInjector().getInstance(Router.class).getReverseRoute(JobApiController.class, "saveJob");
 
         JobDto jobDto = jobDtoWithoutId();
-        jobDto.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));
+        ImmutableSet<String> emails = ImmutableSet.of("foo@bar.com", "goo@moo.com");
+        jobDto.setEmails(emails);
         jobDto.setId(childJob.getId());
         jobDto.setParentJobId(parentJobModel1.getId());
+
+        JobModel expectedJobModel = new JobModel();
+        expectedJobModel.setLabel(jobDto.getLabel());
+        expectedJobModel.setTitle(jobDto.getTitle());
+        expectedJobModel.setEmails(emails);
+        expectedJobModel.setParentJob(parentJobModel1);
+        expectedJobModel.setChildJobs(new HashSet<>());
+        expectedJobModel.setId(jobDto.getId());
+
+        expectedJobModel.setParentJob(parentJobModel1);
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select User from mysql.user where User = 'root'");
         sqlQueryDto.setDatasourceId(datasource1.getId());
         sqlQueryDto.setId(childSqlQueryModel.getId());
+
+        SqlQueryModel expectedSqlQueryModel = new SqlQueryModel();
+        expectedSqlQueryModel.setLabel(sqlQueryDto.getLabel());
+        expectedSqlQueryModel.setTitle(sqlQueryDto.getTitle());
+        expectedSqlQueryModel.setQuery(sqlQueryDto.getQuery());
+        expectedSqlQueryModel.setDatasource(datasource1);
+        expectedSqlQueryModel.setId(childSqlQueryModel.getId());
+
+        expectedJobModel.setSqlQueries(ImmutableSet.of(expectedSqlQueryModel));
+        parentJobModel1.setChildJobs(ImmutableSet.of(expectedJobModel));
 
         jobDto.getSqlQueries().add(sqlQueryDto);
 
@@ -128,18 +145,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
-        JobModel expectedJobModel = new JobApiController(datasourceDao, null, null, null, null, null)
-                .jobDtoToJobModel(jobDto);
-        new DbTableAsserterBuilder(JOB_TABLE, jobTable(ImmutableList.of(expectedJobModel, parentJobModel0, parentJobModel1))).build().assertTable();
-
-        List<SqlQueryModel> sqlQueries = new LinkedList<>();
-        Stream.of(expectedJobModel.getSqlQueries(), parentJobModel0.getSqlQueries(), parentJobModel1.getSqlQueries()).forEach(sqlQueries::addAll);
-
-        new DbTableAsserterBuilder(SQL_QUERY_TABLE, sqlQueryTable(sqlQueries)).build().assertTable();
-
-        parentJobModel0.getChildJobs().clear();
-
-        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel, parentJobModel0, parentJobModel1)).columnToIgnore(JOB_SQL_QUERY_TABLE_ID_COLUMN).build().assertTable();
-        new DbTableAsserterBuilder(JOB_EMAIL_TABLE, jobEmailTable(expectedJobModel, parentJobModel0, parentJobModel1)).columnToIgnore(JOB_EMAIL_ID_COLUMN).build().assertTable();
+        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobById(jobDto.getId())));
+        assertThat(jobDao.getJobById(parentJobModel1.getId()).getChildJobs().iterator().next(), theSameBeanAs(jobDao.getJobById(jobDto.getId())));
     }
 }
