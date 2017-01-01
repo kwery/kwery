@@ -1,4 +1,4 @@
-package com.kwery.tests.controllers.apis.integration.jobapicontroller;
+package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
 import com.google.common.collect.ImmutableList;
 import com.kwery.controllers.apis.JobApiController;
