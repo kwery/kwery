@@ -1,8 +1,9 @@
-package com.kwery.tests.controllers.apis.integration.jobapicontroller;
+package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
 import com.google.common.collect.ImmutableSet;
+import com.jayway.jsonassert.impl.matcher.IsCollectionWithSize;
 import com.kwery.controllers.apis.JobApiController;
-import com.kwery.dao.DatasourceDao;
+import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
@@ -10,20 +11,21 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.MysqlDockerRule;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.HashSet;
+
+import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.models.JobModel.*;
-import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.kwery.views.ActionResult.Status.success;
+import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -35,7 +37,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
     private Datasource datasource1;
     private SqlQueryModel sqlQueryModel;
 
-    private DatasourceDao datasourceDao;
+    JobDao jobDao;
 
     @Before
     public void setUpJobApiControllerUpdateJobTest() {
@@ -64,7 +66,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
 
         getInjector().getInstance(JobService.class).schedule(jobModel.getId());
 
-        datasourceDao = getInjector().getInstance(DatasourceDao.class);
+        jobDao = getInjector().getInstance(JobDao.class);
     }
 
     @Test
@@ -73,14 +75,29 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
 
         JobDto jobDto = jobDtoWithoutId();
         jobDto.setCronExpression("* * * * *");
-        jobDto.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));
+        ImmutableSet<String> emails = ImmutableSet.of("foo@bar.com", "goo@moo.com");
+        jobDto.setEmails(emails);
         jobDto.setId(jobModel.getId());
         jobDto.setParentJobId(0);
+
+        JobModel expectedJobModel = new JobModel();
+        expectedJobModel.setTitle(jobDto.getTitle());
+        expectedJobModel.setLabel(jobDto.getLabel());
+        expectedJobModel.setEmails(emails);
+        expectedJobModel.setChildJobs(new HashSet<>());
+        expectedJobModel.setCronExpression(jobDto.getCronExpression());
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select User from mysql.user where User = 'root'");
         sqlQueryDto.setDatasourceId(datasource1.getId());
         sqlQueryDto.setId(sqlQueryModel.getId());
+
+        SqlQueryModel expectedSqlQueryModel = new SqlQueryModel();
+        expectedSqlQueryModel.setTitle(sqlQueryDto.getTitle());
+        expectedSqlQueryModel.setLabel(sqlQueryDto.getLabel());
+        expectedSqlQueryModel.setDatasource(datasource1);
+        expectedSqlQueryModel.setQuery(sqlQueryDto.getQuery());
+        expectedJobModel.setSqlQueries(ImmutableSet.of(expectedSqlQueryModel));
 
         jobDto.getSqlQueries().add(sqlQueryDto);
 
@@ -89,11 +106,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
-        JobModel expectedJobModel = new JobApiController(datasourceDao, null, null, null, null, null).jobDtoToJobModel(jobDto);
-        new DbTableAsserterBuilder(JOB_TABLE, jobTable(expectedJobModel)).build().assertTable();
-
-        new DbTableAsserterBuilder(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries())).build().assertTable();
-        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel)).columnToIgnore(JOB_SQL_QUERY_TABLE_ID_COLUMN).build().assertTable();
-        new DbTableAsserterBuilder(JOB_EMAIL_TABLE, jobEmailTable(expectedJobModel)).columnToIgnore(JOB_EMAIL_ID_COLUMN).build().assertTable();
+        assertThat(jobDao.getJobByLabel(expectedJobModel.getLabel()), theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id"));
+        assertThat(jobDao.getAllJobs(), hasSize(1));
     }
 }

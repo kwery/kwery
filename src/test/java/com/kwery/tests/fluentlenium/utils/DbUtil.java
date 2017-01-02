@@ -364,6 +364,20 @@ public class DbUtil {
                     )
             ).launch();
         }
+
+        if (jobModel.getParentJob() != null) {
+            new DbSetup(
+                    new DataSourceDestination(getDatasource()),
+                    sequenceOf(
+                            insertInto(JOB_CHILDREN_TABLE)
+                                    .row()
+                                    .column(JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, jobModel.getParentJob().getId())
+                                    .column(JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, jobModel.getId())
+                                    .end()
+                                    .build()
+                    )
+            ).launch();
+        }
     }
 
     public static void jobExecutionDbSetUp(JobExecutionModel jobExecutionModel) {

@@ -1,14 +1,16 @@
-package com.kwery.tests.fluentlenium.job;
+package com.kwery.tests.fluentlenium.job.save.add;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
+import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.Messages;
+import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
-import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,17 +19,22 @@ import org.junit.rules.RuleChain;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
 
-public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFluentTest {
+public class ReportSaveSuccessUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+
+    @Rule
+    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
     protected ReportSavePage page;
 
@@ -35,10 +42,12 @@ public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFlue
 
     protected Datasource datasource;
 
+    JobDao jobDao;
+
     @Before
     public void setUpReportSaveSuccessUiTest() {
-        datasource = datasource();
-
+        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource.setId(dbId());
         datasourceDbSetup(datasource);
 
         page = createPage(ReportSavePage.class);
@@ -51,15 +60,17 @@ public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFlue
         jobDto = jobDtoWithoutId();
         jobDto.setCronExpression("* * * * *");
         jobDto.setSqlQueries(new ArrayList<>(1));
+        jobDto.setEmails(ImmutableSet.of("foo@bar.com", "moo@bar.com"));
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
             sqlQueryDto.setQuery("select * from mysql.user");
             sqlQueryDto.setDatasourceId(datasource.getId());
-            sqlQueryDto.setLabel("testLabel");
 
             jobDto.getSqlQueries().add(sqlQueryDto);
         }
+
+        jobDao = ninjaServerRule.getInjector().getInstance(JobDao.class);
     }
 
     @Test
@@ -71,7 +82,10 @@ public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFlue
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         page.fillAndSubmitReportSaveForm(jobDto);
+        page.waitForReportSaveSuccessMessage();
 
-        assertThat(page.validationMessage(ReportSavePage.SqlQueryFormField.queryLabel, 1), Is.is(Messages.REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR));
+        assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
+
+        assertThat(jobDao.getAllJobs(), hasSize(1));
     }
 }

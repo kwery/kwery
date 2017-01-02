@@ -1,7 +1,8 @@
-package com.kwery.tests.fluentlenium.job;
+package com.kwery.tests.fluentlenium.job.save.add;
 
-import com.kwery.tests.fluentlenium.job.ReportSavePage.ReportFormField;
-import com.kwery.tests.fluentlenium.job.ReportSavePage.SqlQueryFormField;
+import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
+import com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField;
+import com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -10,18 +11,22 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.tests.fluentlenium.job.ReportSavePage.INPUT_VALIDATION_ERROR_MESSAGE;
-import static com.kwery.tests.fluentlenium.job.ReportSavePage.SELECT_VALIDATION_ERROR_MESSAGE;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.INPUT_VALIDATION_ERROR_MESSAGE;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.cronExpression;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.parentReportId;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SELECT_VALIDATION_ERROR_MESSAGE;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField.datasourceId;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.rules.RuleChain.outerRule;
 import static org.openqa.selenium.By.name;
 
 public class ReportSaveValidationUiTest extends ChromeFluentTest {
     NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
-    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+    public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     ReportSavePage page;
 
@@ -42,10 +47,10 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         page.waitForReportFormValidationMessage();
 
         for (ReportFormField field : ReportFormField.values()) {
-            if (field == ReportFormField.parentReportId) {
+            if (field == parentReportId) {
                 assertThat($(name(field.name())).first().isEnabled(), is(false));
             } else {
-                if (field == ReportFormField.parentReportId) {
+                if (field == parentReportId) {
                     assertThat(page.validationMessage(field), is(SELECT_VALIDATION_ERROR_MESSAGE));
                 } else {
                     assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
@@ -55,7 +60,7 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
 
         for (int i = 0; i < 2; ++i) {
             for (SqlQueryFormField field : SqlQueryFormField.values()) {
-                if (field == SqlQueryFormField.datasourceId) {
+                if (field == datasourceId) {
                     assertThat(page.validationMessage(field, i), is(SELECT_VALIDATION_ERROR_MESSAGE));
                 } else {
                     assertThat(page.validationMessage(field, i), is(INPUT_VALIDATION_ERROR_MESSAGE));
@@ -74,10 +79,10 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         page.waitForReportFormValidationMessage();
 
         for (ReportFormField field : ReportFormField.values()) {
-            if (field == ReportFormField.cronExpression) {
+            if (field == cronExpression) {
                 assertThat($(name(field.name())).first().isEnabled(), is(false));
             } else {
-                if (field == ReportFormField.parentReportId) {
+                if (field == parentReportId) {
                     assertThat(page.validationMessage(field), is(SELECT_VALIDATION_ERROR_MESSAGE));
                 } else {
                     assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
@@ -87,7 +92,7 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
 
         for (int i = 0; i < 2; ++i) {
             for (SqlQueryFormField field : SqlQueryFormField.values()) {
-                if (field == SqlQueryFormField.datasourceId) {
+                if (field == datasourceId) {
                     assertThat(page.validationMessage(field, i), is(SELECT_VALIDATION_ERROR_MESSAGE));
                 } else {
                     assertThat(page.validationMessage(field, i), is(INPUT_VALIDATION_ERROR_MESSAGE));

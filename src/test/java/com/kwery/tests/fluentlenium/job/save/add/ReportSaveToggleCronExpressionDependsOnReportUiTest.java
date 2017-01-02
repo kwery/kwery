@@ -1,6 +1,7 @@
-package com.kwery.tests.fluentlenium.job;
+package com.kwery.tests.fluentlenium.job.save.add;
 
 import com.kwery.models.Datasource;
+import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -47,5 +48,11 @@ public class ReportSaveToggleCronExpressionDependsOnReportUiTest extends ChromeF
 
         assertThat(page.isParentReportEnabled(), is(true));
         assertThat(page.isCronExpressionEnabled(), is(false));
+
+        page.toggleCronExpression();
+        page.waitUntilCronExpressionIsEnabled();
+
+        assertThat(page.isParentReportEnabled(), is(false));
+        assertThat(page.isCronExpressionEnabled(), is(true));
     }
 }

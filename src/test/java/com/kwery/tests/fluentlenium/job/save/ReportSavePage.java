@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.job;
+package com.kwery.tests.fluentlenium.job.save;
 
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
