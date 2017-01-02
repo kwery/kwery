@@ -335,7 +335,7 @@ public class TestUtil {
             expectedJobModel.setParentJob(parentJobModel);
         }
 
-        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id").excludeProperty("sqlQueries"));
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries"));
 
         List<SqlQueryModel> expectedSqlQueryModels = toList(expectedJobModel.getSqlQueries());
         sort(expectedSqlQueryModels, comparing(SqlQueryModel::getLabel));
