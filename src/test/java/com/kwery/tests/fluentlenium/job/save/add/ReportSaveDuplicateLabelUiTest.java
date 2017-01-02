@@ -8,7 +8,7 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.tests.fluentlenium.job.*;
+import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -44,7 +44,7 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
     protected String jobLabel = "label";
     protected String queryLabel = "label";
 
-    protected com.kwery.tests.fluentlenium.job.ReportSavePage page;
+    protected ReportSavePage page;
 
     protected JobDto jobDto;
 
@@ -80,7 +80,7 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
         sqlQueryDbSetUp(sqlQueryModel);
         jobSqlQueryDbSetUp(jobModel);
 
-        page = createPage(com.kwery.tests.fluentlenium.job.ReportSavePage.class);
+        page = createPage(ReportSavePage.class);
         page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
 
         if (!page.isRendered()) {

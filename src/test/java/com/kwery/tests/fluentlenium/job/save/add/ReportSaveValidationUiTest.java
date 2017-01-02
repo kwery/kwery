@@ -1,8 +1,8 @@
 package com.kwery.tests.fluentlenium.job.save.add;
 
-import com.kwery.tests.fluentlenium.job.ReportSavePage.ReportFormField;
-import com.kwery.tests.fluentlenium.job.ReportSavePage.SqlQueryFormField;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
+import com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField;
+import com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -11,11 +11,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.tests.fluentlenium.job.ReportSavePage.INPUT_VALIDATION_ERROR_MESSAGE;
-import static com.kwery.tests.fluentlenium.job.ReportSavePage.ReportFormField.cronExpression;
-import static com.kwery.tests.fluentlenium.job.ReportSavePage.ReportFormField.parentReportId;
-import static com.kwery.tests.fluentlenium.job.ReportSavePage.SELECT_VALIDATION_ERROR_MESSAGE;
-import static com.kwery.tests.fluentlenium.job.ReportSavePage.SqlQueryFormField.datasourceId;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.INPUT_VALIDATION_ERROR_MESSAGE;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.cronExpression;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.parentReportId;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SELECT_VALIDATION_ERROR_MESSAGE;
+import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField.datasourceId;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
