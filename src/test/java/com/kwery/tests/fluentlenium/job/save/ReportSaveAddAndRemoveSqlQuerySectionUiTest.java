@@ -1,5 +1,6 @@
-package com.kwery.tests.fluentlenium.job;
+package com.kwery.tests.fluentlenium.job.save;
 
+import com.kwery.tests.fluentlenium.job.*;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -18,11 +19,11 @@ public class ReportSaveAddAndRemoveSqlQuerySectionUiTest extends ChromeFluentTes
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
-    ReportSavePage page;
+    com.kwery.tests.fluentlenium.job.ReportSavePage page;
 
     @Before
     public void setUpReportSaveAddAndRemoveSqlQuerySectionUiTest() {
-        page = createPage(ReportSavePage.class);
+        page = createPage(com.kwery.tests.fluentlenium.job.ReportSavePage.class);
         page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
 
         if (!page.isRendered()) {
