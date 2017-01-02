@@ -47,5 +47,11 @@ public class ReportSaveToggleCronExpressionDependsOnReportUiTest extends ChromeF
 
         assertThat(page.isParentReportEnabled(), is(true));
         assertThat(page.isCronExpressionEnabled(), is(false));
+
+        page.toggleCronExpression();
+        page.waitUntilCronExpressionIsEnabled();
+
+        assertThat(page.isParentReportEnabled(), is(false));
+        assertThat(page.isCronExpressionEnabled(), is(true));
     }
 }
