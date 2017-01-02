@@ -61,7 +61,7 @@ public class SqlQueryListSqlQueryUiTest extends ChromeFluentTest {
 
         List<String> headers = page.headers();
 
-        assertThat(headers, hasSize(4));
+        assertThat(headers, hasSize(3));
 
         assertThat(headers.get(0), is(Messages.LABEL_M));
         assertThat(headers.get(1), is(Messages.QUERY_M));
