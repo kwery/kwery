@@ -10,9 +10,9 @@
         </then>
         <else>
             <appender name="APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>kwery.log</file>
+                <file>${logFilePath}/kwery.log</file>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>kwery.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+                    <FileNamePattern>${logFilePath}/kwery.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
                     <MaxHistory>30</MaxHistory>
                     <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                         <maxFileSize>10MB</maxFileSize>
