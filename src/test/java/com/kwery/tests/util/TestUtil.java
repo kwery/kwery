@@ -14,8 +14,7 @@ import org.apache.commons.lang3.RandomUtils;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.EmailConfiguration.*;
@@ -24,6 +23,10 @@ import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
+import static java.util.Collections.sort;
+import static java.util.Comparator.comparing;
+import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
+import static org.junit.Assert.assertThat;
 
 public class TestUtil {
     public static final int TIMEOUT_SECONDS = 30;
@@ -298,5 +301,60 @@ public class TestUtil {
         } catch (JsonProcessingException e) {
         }
         return "";
+    }
+
+    public static JobModel toJobModel(JobDto jobDto, Datasource datasource) {
+        JobModel jobModel = new JobModel();
+        jobModel.setLabel(jobDto.getLabel());
+        jobModel.setTitle(jobDto.getTitle());
+        jobModel.setCronExpression(jobDto.getCronExpression());
+        jobModel.setEmails(jobDto.getEmails());
+        jobModel.setSqlQueries(new LinkedHashSet<>());
+        jobModel.setChildJobs(new HashSet<>());
+
+        for (SqlQueryDto sqlQueryDto : jobDto.getSqlQueries()) {
+            SqlQueryModel sqlQueryModel = new SqlQueryModel();
+            sqlQueryModel.setLabel(sqlQueryDto.getLabel());
+            sqlQueryModel.setTitle(sqlQueryDto.getTitle());
+            sqlQueryModel.setQuery(sqlQueryDto.getQuery());
+            sqlQueryModel.setDatasource(datasource);
+            jobModel.getSqlQueries().add(sqlQueryModel);
+        }
+
+        return jobModel;
+    }
+
+    public static <T> List<T> toList(Collection<T> col) {
+        return new ArrayList<T>(col);
+    }
+
+    public static void assertJobModel(JobModel jobModel, JobModel parentJobModel, JobDto jobDto, Datasource datasource) {
+        JobModel expectedJobModel = toJobModel(jobDto, datasource);
+
+        if (parentJobModel != null) {
+            expectedJobModel.setParentJob(parentJobModel);
+        }
+
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id").excludeProperty("sqlQueries"));
+
+        List<SqlQueryModel> expectedSqlQueryModels = toList(expectedJobModel.getSqlQueries());
+        sort(expectedSqlQueryModels, comparing(SqlQueryModel::getLabel));
+
+        List<SqlQueryModel> sqlQueryModelsFromDb = toList(jobModel.getSqlQueries());
+        sort(sqlQueryModelsFromDb, comparing(SqlQueryModel::getLabel));
+
+        List<Pair<SqlQueryModel>> pairs = new ArrayList<>();
+
+        for (SqlQueryModel sqlQueryModel : sqlQueryModelsFromDb) {
+            pairs.add(new Pair<>(sqlQueryModel, null));
+        }
+
+        for (int i = 0; i < pairs.size(); i++) {
+            pairs.get(i).setSecond(expectedSqlQueryModels.get(i));
+        }
+
+        for (Pair<SqlQueryModel> pair : pairs) {
+            assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id"));
+        }
     }
 }
