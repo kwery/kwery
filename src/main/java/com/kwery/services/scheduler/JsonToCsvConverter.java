@@ -17,9 +17,10 @@ public class JsonToCsvConverter {
         TypeReference<List<List<?>>> typeReference = new TypeReference<List<List<?>>>() {};
         List<List<String>> table = objectMapper.readValue(json, typeReference);
 
-        CSVWriter csvWriter = new CSVWriter(stringWriter, ',');
-        for (List<String> rows : table) {
-            csvWriter.writeNext(rows.toArray(new String[rows.size()]));
+        try (CSVWriter csvWriter = new CSVWriter(stringWriter, ',')) {
+            for (List<String> rows : table) {
+                csvWriter.writeNext(rows.toArray(new String[rows.size()]));
+            }
         }
 
         return stringWriter.getBuffer().toString();
