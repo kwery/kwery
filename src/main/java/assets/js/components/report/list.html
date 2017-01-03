@@ -1,0 +1,41 @@
+<div class="container">
+    <action-result params="status: status, messages: messages"></action-result>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title pull-left">
+                <h3 data-bind="text: ko.i18n('report.list.header')" class="panel-title text-left"></h3>
+            </div>
+            <panel-add-link params="url: '/#report/add', tooltipMessageKey: 'report.list.add.report.tooltip'"></panel-add-link>
+        </div>
+        <div class="panel-body">
+            <table class="table report-list-table-f" id="reportsListTable">
+                <thead>
+                <tr>
+                    <th data-bind="text: ko.i18n('report.list.label')"></th>
+                    <th data-bind="text: ko.i18n('report.list.cron.expression')"></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: reports" id="reportsListTableBody">
+                <tr>
+                    <td>
+                        <a data-bind="attr: {href: reportLink}, text: label"></a>
+                    </td>
+                    <td data-bind="text: cronExpression"></td>
+                    <td>
+                        <a data-bind="attr: {href: executionLink, title: ko.i18n('report.list.execution.tooltip')}">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                        </a>
+                        <a data-bind="click: $parent.executeReport, attr: {title: ko.i18n('report.list.execute.now.tooltip')}">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                        </a>
+                        <a data-bind="click: $parent.deleteReport, attr: {title: ko.i18n('report.list.delete.tooltip')}">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

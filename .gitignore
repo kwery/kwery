@@ -6,4 +6,14 @@
 .idea/
 #Maven output
 target/
+#Maven file
+dependency-reduced-pom.xml
+#Derby db file, has to be fixed later
+#TODO - Fix this
+derby.log
+kwery_db
+kwery.log
+kwery.*.log.gz
+#VI swap files
+*.swp
 

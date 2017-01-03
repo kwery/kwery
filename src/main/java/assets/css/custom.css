@@ -1,3 +1,8 @@
-/* Add additional stylesheets below
--------------------------------------------------- */
-
+/* For removing close button from JQuery UI modal dialog*/
+.action-result-dialog .ui-dialog-titlebar-close {
+    display: none;
+}
+/* For removing title bar from JQuery UI modal dialog*/
+.action-result-dialog .ui-dialog-titlebar {
+    display: none;
+}

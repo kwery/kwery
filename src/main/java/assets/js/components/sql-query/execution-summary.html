@@ -1,0 +1,25 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 data-bind="text: ko.i18n('Reports')" class="panel-title"></h3>
+    </div>
+    <div class="panel-body">
+        <table class="table f-execution-summary-table">
+            <thead>
+            <tr>
+                <th data-bind="text: ko.i18n('label')"></th>
+                <th data-bind="text: ko.i18n('date')"></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody data-bind="foreach: executions" class="f-execution-summary-table-body">
+            <tr>
+                <td data-bind="text: sqlQueryLabel"></td>
+                <td data-bind="text: sqlQueryExecutionEndTime"></td>
+                <td>
+                    <a data-bind="attr: {href: resultLink}, text: ko.i18n('report')" class="status-link"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

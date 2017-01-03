@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <h3 data-bind="text: ko.i18n('sql.query.list.title')" class="panel-title text-left"></h3>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table" id="sqlQueriesListTable">
+                <thead>
+                <tr>
+                    <th data-bind="text: ko.i18n('label')"></th>
+                    <th data-bind="text: ko.i18n('query')"></th>
+                    <th data-bind="text: ko.i18n('datasource')"></th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: sqlQueries" id="sqlQueriesListTableBody">
+                <tr>
+                    <td>
+                        <a data-bind="attr: {href: queryLink}, text: label">
+                        </a>
+                    </td>
+                    <td data-bind="text: query"></td>
+                    <td data-bind="text: datasource.label"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

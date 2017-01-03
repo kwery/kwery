@@ -1,0 +1,23 @@
+<div class="row">
+    <div class="col-md-12">
+        <div id="actionResultDialog" data-bind="dialog: {isOpen: isOpen, modal: true, closeOnEscape: false, dialogClass: 'action-result-dialog'}">
+            <!-- ko foreach: messages -->
+            <p data-bind="text: $data"></p>
+            <!-- /ko -->
+            <a data-bind="text: nextActionName, attr: {href: nextAction}" id="nextAction" class="button button-primary"></a>
+        </div>
+
+        <div data-bind="visible: showSuccess" class="alert alert-success f-success-message">
+            <!-- ko foreach: messages -->
+            <p data-bind="text: $data"></p>
+            <!-- /ko -->
+        </div>
+
+        <div data-bind="visible: showFailure" class="alert alert-danger f-failure-message">
+            <!-- ko foreach: messages -->
+            <p data-bind="text: $data"></p>
+            <!-- /ko -->
+        </div>
+    </div>
+</div>
+

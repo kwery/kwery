@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <query_run_dependent query_run_id_fk="1" dependent_query_run_id_fk="2"/>
+    <query_run_dependent query_run_id_fk="1" dependent_query_run_id_fk="3"/>
+</dataset>

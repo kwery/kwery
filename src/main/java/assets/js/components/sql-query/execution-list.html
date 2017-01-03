@@ -1,0 +1,132 @@
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 data-bind="text: ko.i18n('query')" class="panel-title"></h3>
+        </div>
+        <div data-bind="text:sqlQuery" class="panel-body f-sql-query">
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="executionList">
+        <div class="panel-heading">
+            <a data-bind="text: ko.i18n('filter.execution')" data-toggle="collapse" href="#collapseOne" class="panel-title f-collapse">
+            </a>
+        </div>
+        <div data-bind="css: collapseCss" id="collapseOne" class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <form data-bind="submit: submit" id="filterExecutionListForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('execution.start.start')" for="executionStartStart"></label>
+                                    <input data-bind="value: executionStartStart" type="text" class="form-control"
+                                           id="executionStartStart" name="executionStartStart">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('execution.start.end')" for="executionStartEnd"></label>
+                                    <input data-bind="value: executionStartEnd" type="text" class="form-control"
+                                           id="executionStartEnd" name="executionStartEnd">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('execution.end.start')" for="executionEndStart"></label>
+                                    <input data-bind="value: executionEndStart" class="form-control" type="text"
+                                           id="executionEndStart" name="executionEndStart">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('execution.end.end')" for="executionEndEnd"></label>
+                                    <input data-bind="value: executionEndEnd" class="form-control" type="text"
+                                           id="executionEndEnd" name="executionEndEnd">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('status')"></label>
+                                    <div class="checkbox">
+                                        <!-- TODO Status should be picked from back end -->
+                                        <label class="example-send-yourself-copy">
+                                            <input data-bind="checked: statuses" type="checkbox" value="ONGOING">
+                                            <span id="ongoingCheckBox">ONGOING</span>
+                                        </label>
+                                        <label class="example-send-yourself-copy">
+                                            <input data-bind="checked: statuses" type="checkbox" value="SUCCESS">
+                                            <span id="successCheckBox">SUCCESS</span>
+                                        </label>
+                                        <label class="example-send-yourself-copy">
+                                            <input data-bind="checked: statuses" type="checkbox" value="FAILURE">
+                                            <span id="failureCheckBox">FAILURE</span>
+                                        </label>
+                                        <label class="example-send-yourself-copy">
+                                            <input data-bind="checked: statuses" type="checkbox" value="KILLED">
+                                            <span id="killedCheckBox">KILLED</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label data-bind="text: ko.i18n('results.to.display')" for="resultCount"></label>
+                                    <input data-bind="value: resultCount" class="form-control" type="text" id="resultCount"
+                                           name="resultCount">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button data-bind="text: ko.i18n('filter')" class="btn btn-primary" id="filterButton"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table" id="executionListTable">
+                <thead>
+                <tr>
+                    <th data-bind="text: ko.i18n('start')"></th>
+                    <th data-bind="text: ko.i18n('end')"></th>
+                    <th data-bind="text: ko.i18n('status')"></th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: executions" id="executionListTableBody">
+                <tr>
+                    <td data-bind="text: sqlQueryExecutionStartTime"></td>
+                    <td data-bind="text: sqlQueryExecutionEndTime"></td>
+                    <td class="status">
+                        <span data-bind="visible: !showLink(), text: status" class="status-text"></span>
+                        <a data-bind="visible: showLink, attr: {href: resultLink}, text: status" class="status-link"></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav>
+        <ul class="pager">
+            <li data-bind="css: previousStatus" class="previous f-previous">
+                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous"></a>
+            </li>
+            <li data-bind="css: nextStatus" class="next f-next">
+                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next"></a>
+            </li>
+        </ul>
+    </nav>
+</div>
