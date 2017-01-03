@@ -18,6 +18,7 @@ import ninja.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,9 +82,24 @@ public class DatasourceApiController {
                 }
             }
 
-            if (!datasourceService.testConnection(datasource)) {
-                logger.error("Could not connect to datasource {}", datasource);
-                errorMessages.add(messages.get(DATASOURCE_CONNECTION_FAILURE, context, of(json), datasource.getType().name()).get());
+            try {
+                datasourceService.connect(datasource);
+            } catch (SQLException e) {
+                logger.error("Could not connect to datasource {}", datasource, e);
+
+                String messageParts = messages.get(DATASOURCE_CONNECTION_FAILURE, context, of(json), datasource.getType().name()).get() + ".";
+                messageParts = messageParts + " " + e.getLocalizedMessage();
+
+
+                if (!"".equals(e.getSQLState())) {
+                    messageParts = messageParts + " " + messages.get(DATASOURCEAPICONTROLLER_CONNECTION_ERROR_SQL_STATE, context, of(json)).get() + " - " + e.getSQLState() + ".";
+                }
+
+                if (e.getErrorCode() != 0) {
+                    messageParts = messageParts + " " + messages.get(DATASOURCEAPICONTROLLER_CONNECTION_ERROR_ERROR_CODE, context, of(json)).get() + " - " + e.getErrorCode() + ".";
+                }
+
+                errorMessages.add(messageParts);
             }
 
             if (errorMessages.size() > 0) {
@@ -113,33 +129,6 @@ public class DatasourceApiController {
 
     public boolean isUpdate(Datasource datasource) {
         return datasource.getId() != null && datasource.getId() > 0;
-    }
-
-    @FilterWith(DashRepoSecureFilter.class)
-    public Result testConnection(Datasource datasource, Context context) {
-        if (logger.isTraceEnabled()) logger.trace(">");
-
-        logger.info("Testing connection to datasource - " + datasource);
-
-        Result json = json();
-        ActionResult result;
-
-        if (datasourceService.testConnection(datasource)) {
-            logger.info("Successfully connected to datasource");
-            result = new ActionResult(
-                    success,
-                    messages.get(DATASOURCE_CONNECTION_SUCCESS, context, of(json), datasource.getType()).get()
-            );
-        } else {
-            logger.error("Could not connect to datasource");
-            result = new ActionResult(
-                    failure,
-                    messages.get(DATASOURCE_CONNECTION_FAILURE, context, of(json)).get()
-            );
-        }
-
-        if (logger.isTraceEnabled()) logger.trace("<");
-        return json.render(result);
     }
 
     @FilterWith(DashRepoSecureFilter.class)

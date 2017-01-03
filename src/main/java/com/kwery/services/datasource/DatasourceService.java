@@ -11,13 +11,9 @@ import java.sql.SQLException;
 public class DatasourceService {
     private static Logger logger = LoggerFactory.getLogger(DatasourceService.class);
 
-    public boolean testConnection(Datasource datasource) {
+    public void connect(Datasource datasource) throws SQLException {
         try (Connection connection = DriverManager.getConnection(String.format(connectionString(datasource)), datasource.getUsername(), datasource.getPassword())) {
             logger.info(String.format("Successfully connected to %s datasource %s with label %s", datasource.getType(), datasource.getUrl(), datasource.getLabel()));
-            return true;
-        } catch (SQLException e) {
-            logger.error("Exception while connecting to {} datasource  {}", datasource.getType(), datasource.getUrl(), e);
-            return false;
         }
     }
 
@@ -35,7 +31,7 @@ public class DatasourceService {
         throw new AssertionError("JDBC connection string not present for type " + datasource.getType());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Datasource datasource = new Datasource();
         datasource.setId(1);
         datasource.setLabel("postgres");
@@ -46,6 +42,6 @@ public class DatasourceService {
         datasource.setPassword("root");
 
         DatasourceService datasourceService = new DatasourceService();
-        System.out.println(datasourceService.testConnection(datasource));
+        datasourceService.connect(datasource);
     }
 }

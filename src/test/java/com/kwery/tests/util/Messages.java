@@ -91,4 +91,8 @@ public class Messages {
 
     public static final String REPORT_JOB_EXECUTING_STOP_SUCCESS_M = "Report execution stopped successfully";
     public static final String REPORT_JOB_EXECUTING_STOP_FAILURE_M = "Something went wrong, report execution could not be stopped";
+
+
+    public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_SQL_STATE_M = "SQL State";
+    public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_ERROR_CODE_M = "Vendor error code";
 }
