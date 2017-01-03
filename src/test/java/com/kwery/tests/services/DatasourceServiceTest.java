@@ -9,9 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import java.sql.SQLException;
 
 public class DatasourceServiceTest {
     @Rule
@@ -29,14 +27,14 @@ public class DatasourceServiceTest {
     }
 
     @Test
-    public void testMysqlSuccess() {
+    public void testMysqlSuccess() throws SQLException {
         Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
-        assertThat(datasourceService.testConnection(datasource), is(true));
+        datasourceService.connect(datasource);
     }
 
     @Test
-    public void testPostgreSqlSuccess() {
+    public void testPostgreSqlSuccess() throws SQLException {
         Datasource datasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
-        assertThat(datasourceService.testConnection(datasource), is(true));
+        datasourceService.connect(datasource);
     }
 }

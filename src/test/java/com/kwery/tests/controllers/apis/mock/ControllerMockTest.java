@@ -39,6 +39,10 @@ public class ControllerMockTest {
         when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0), eq(str1))).thenReturn(Optional.of(dummyString));
     }
 
+    protected void mockMessagesWithReturn(String messageKey, String toReturn, String str0) {
+        when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0))).thenReturn(Optional.of(toReturn));
+    }
+
     protected void mockMessagesWithReturn(String messageKey, String toReturn, String str0, String str1) {
         when(messages.get(eq(messageKey), eq(context), any(Optional.class), eq(str0), eq(str1))).thenReturn(Optional.of(toReturn));
     }

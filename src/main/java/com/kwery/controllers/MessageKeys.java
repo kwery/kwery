@@ -69,4 +69,7 @@ public class MessageKeys {
     public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND = "jobapicontroller.report.not.found";
     public static final String JOBAPICONTROLLER_REPORT_LABEL_EXISTS = "jobapicontroller.report.label.exists";
     public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS = "jobapicontroller.sql.query.label.exists";
+
+    public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_SQL_STATE = "datasourceapicontroller.connection.error.sql.state";
+    public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_ERROR_CODE = "datasourceapicontroller.connection.error.error.code";
 }
