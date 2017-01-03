@@ -17,10 +17,10 @@
                     <td data-bind="text: start"></td>
                     <td data-bind="text: end"></td>
                     <td>
-                        <!-- ko if: status === 'SUCCESS' -->
+                        <!-- ko if: status === 'SUCCESS' || status === 'FAILURE' -->
                             <a data-bind="text:status, attr:{href: executionResultLink}"></a>
                         <!-- /ko -->
-                        <!-- ko if: status !== 'SUCCESS' -->
+                        <!-- ko if: status !== 'SUCCESS' && status !== 'FAILURE' -->
                             <span data-bind="text: status"></span>
                         <!-- /ko -->
                     </td>

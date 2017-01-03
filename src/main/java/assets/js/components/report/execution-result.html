@@ -1,6 +1,5 @@
 <div class="container">
-    <action-result params="status: status,
-                messages: messages">
+    <action-result params="status: status, messages: messages">
     </action-result>
 
     <div data-bind="visible: showReport" class="panel panel-default">
@@ -15,6 +14,9 @@
                 <div class="panel-body">
                     <div data-bind="visible: status === 'FAILURE'">
                         <p data-bind="text: content"></p>
+                    </div>
+                    <div data-bind="visible: status === 'KILLED'">
+                        <p data-bind="text: status"></p>
                     </div>
                     <table data-bind="visible: status === 'SUCCESS'" class="table" id="executionResultTable">
                         <thead>
