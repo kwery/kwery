@@ -54,7 +54,7 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
         Datasource newDatasource = datasource();
         newDatasource.setLabel(datasource.getLabel());
 
-        String connectionFailureErrorMessage = "Failed to connect to MYSQL datasource. Communications link failure" +
+        String connectionFailureErrorMessage = "Failed to connect to MYSQL datasource. Communications link failure " +
                 "The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server. SQL State - 08S01.";
 
         page.submitForm(newDatasource);
