@@ -5,11 +5,9 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import com.kwery.dao.DatasourceDao;
-import com.kwery.dao.JobDao;
-import com.kwery.dao.JobExecutionDao;
-import com.kwery.dao.SqlQueryDao;
+import com.kwery.dao.*;
 import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.JobExecutionModel;
@@ -18,16 +16,22 @@ import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
+import com.kwery.services.scheduler.JsonToCsvConverter;
+import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.i18n.Messages;
 import ninja.params.PathParam;
+import ninja.utils.ResponseStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,12 +44,14 @@ import static com.kwery.views.ActionResult.Status.success;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static ninja.Result.*;
 import static ninja.Results.json;
 
 public class JobApiController {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final String DISPLAY_DATE_FORMAT = "EEE MMM dd yyyy HH:mm";
+    public static final String CSV_FILE_NAME_DATE_PART = "EEE-MMM-dd";
 
     protected final DatasourceDao datasourceDao;
     protected final JobDao jobDao;
@@ -53,15 +59,19 @@ public class JobApiController {
     protected final JobExecutionDao jobExecutionDao;
     protected final SqlQueryDao sqlQueryDao;
     protected final Messages messages;
+    protected final SqlQueryExecutionDao sqlQueryExecutionDao;
+    protected final JsonToCsvConverter jsonToCsvConverter;
 
     @Inject
     public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao,
-                            SqlQueryDao sqlQueryDao, Messages messages) {
+                            SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao, JsonToCsvConverter jsonToCsvConverter, Messages messages) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
         this.jobService = jobService;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
+        this.sqlQueryExecutionDao = sqlQueryExecutionDao;
+        this.jsonToCsvConverter = jsonToCsvConverter;
         this.messages = messages;
     }
 
@@ -235,8 +245,11 @@ public class JobApiController {
                     if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.SUCCESS) {
                         if (result == null) {
                             //Insert SQL
-                            sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getTitle(),
-                                    sqlQueryExecutionModel.getStatus(), ""));
+                            SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
+                            dto.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
+                            dto.setStatus(sqlQueryExecutionModel.getStatus());
+                            dto.setErrorResult("");
+                            sqlQueryExecutionResultDtos.add(dto);
                         } else {
                             if (isJson(result)) {
                                 List<List<?>> jsonResult = new LinkedList<>();
@@ -247,16 +260,23 @@ public class JobApiController {
                                     );
                                 }
 
-                                sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getTitle(),
-                                        sqlQueryExecutionModel.getStatus(), jsonResult));
+                                SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
+                                dto.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
+                                dto.setStatus(sqlQueryExecutionModel.getStatus());
+                                dto.setJsonResult(jsonResult);
+                                dto.setExecutionId(sqlQueryExecutionModel.getExecutionId());
+                                sqlQueryExecutionResultDtos.add(dto);
                             } else {
                                 logger.error("SQL query execution result is success but result is not in json format for job id {} and job execution id {}",
                                         jobExecutionModel.getJobModel().getId(), jobExecutionModel.getId());
                             }
                         }
                     } else if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.FAILURE) {
-                        sqlQueryExecutionResultDtos.add(new SqlQueryExecutionResultDto(sqlQueryExecutionModel.getSqlQuery().getTitle(),
-                                sqlQueryExecutionModel.getStatus(), result));
+                        SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
+                        dto.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
+                        dto.setStatus(sqlQueryExecutionModel.getStatus());
+                        dto.setErrorResult(result);
+                        sqlQueryExecutionResultDtos.add(dto);
                     }
                 }
             }
@@ -289,6 +309,45 @@ public class JobApiController {
         }
 
         return json().render(actionResult);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result reportAsCsv(@PathParam("sqlQueryExecutionId") String executionId) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+
+        SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
+        filter.setExecutionId(executionId);
+
+        List<SqlQueryExecutionModel> models = sqlQueryExecutionDao.filter(filter);
+
+        if (!models.isEmpty()) {
+            SqlQueryExecutionModel model = models.get(0);
+            String fileName = (model.getSqlQuery().getTitle() + " " + new SimpleDateFormat(CSV_FILE_NAME_DATE_PART).format(model.getExecutionStart()))
+                    .toLowerCase().trim().replaceAll("\\s+", "-") + ".csv";
+            try {
+                String csv = jsonToCsvConverter.convert(model.getResult());
+                if (logger.isTraceEnabled()) logger.trace(">");
+                return new Result(SC_200_OK).render((context, result) -> {
+                    InputStream inputStream = new ByteArrayInputStream(csv.getBytes(Charset.forName("UTF-8")));
+                    result.addHeader("Content-Disposition", "attachment; filename=" + fileName);
+                    result.contentType("text/csv");
+                    ResponseStreams responseStreams = context.finalizeHeaders(result);
+                    try {
+                        ByteStreams.copy(inputStream, responseStreams.getOutputStream());
+                    } catch (IOException e) {
+                        logger.error("Exception while copying csv input stream to output stream for sql query execution id {}", executionId, e);
+                    }
+                });
+            } catch (IOException e) {
+                logger.error("Exception while parsing JSON to CSV for sql query execution id {}", executionId, e);
+                if (logger.isTraceEnabled()) logger.trace(">");
+                return new Result(SC_500_INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            logger.error("SQL query execution with id {} not found", executionId);
+            if (logger.isTraceEnabled()) logger.trace(">");
+            return new Result(SC_404_NOT_FOUND);
+        }
     }
 
     @VisibleForTesting

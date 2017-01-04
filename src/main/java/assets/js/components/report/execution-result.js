@@ -10,11 +10,12 @@ define(["knockout", "jquery", "text!components/report/execution-result.html"], f
 
         self.showReport = ko.observable(false);
 
-        var SqlQueryExecutionResult = function(label, status, header, content) {
+        var SqlQueryExecutionResult = function(label, status, header, content, downloadLink) {
             this.label = label;
             this.header = header;
             this.content = content;
             this.status = status;
+            this.downloadLink = downloadLink;
         };
 
         self.header = ko.observableArray([]);
@@ -37,7 +38,8 @@ define(["knockout", "jquery", "text!components/report/execution-result.html"], f
                         if (executionResult.status === 'SUCCESS') {
                             var header = executionResult.jsonResult[0];
                             var content = executionResult.jsonResult.slice(1, executionResult.jsonResult.length);
-                            self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content));
+                            var downloadLink = "/api/report/csv/" + executionResult.executionId;
+                            self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content, downloadLink));
                         } else if (executionResult.status === 'FAILURE') {
                             self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, "", executionResult.errorResult));
                         }
