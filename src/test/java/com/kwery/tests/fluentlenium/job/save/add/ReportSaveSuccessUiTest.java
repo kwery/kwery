@@ -74,7 +74,7 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
     }
 
     @Test
-    public void test() throws InterruptedException {
+    public void testWithCronExpressionChosen() throws InterruptedException {
         Map<Integer, String> datasourceIdToLabelMap = ImmutableMap.of(
                 datasource.getId(), datasource.getLabel()
         );
@@ -82,6 +82,22 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         page.fillAndSubmitReportSaveForm(jobDto);
+        page.waitForReportSaveSuccessMessage();
+
+        assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
+
+        assertThat(jobDao.getAllJobs(), hasSize(1));
+    }
+
+    @Test
+    public void testWithCronUiChosen() throws InterruptedException {
+        Map<Integer, String> datasourceIdToLabelMap = ImmutableMap.of(
+                datasource.getId(), datasource.getLabel()
+        );
+
+        page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
+
+        page.fillAndSubmitReportSaveForm(jobDto, true);
         page.waitForReportSaveSuccessMessage();
 
         assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
