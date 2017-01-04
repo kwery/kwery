@@ -5,22 +5,11 @@ import com.kwery.models.SqlQueryExecutionModel;
 import java.util.List;
 
 public class SqlQueryExecutionResultDto {
-    public SqlQueryExecutionResultDto(String title, SqlQueryExecutionModel.Status status, List<List<?>> resultJson) {
-        this.title = title;
-        this.jsonResult = resultJson;
-        this.status = status;
-    }
-
-    public SqlQueryExecutionResultDto(String title, SqlQueryExecutionModel.Status status, String errorResult) {
-        this.title = title;
-        this.status = status;
-        this.errorResult = errorResult;
-    }
-
     protected String title;
     protected List<List<?>> jsonResult;
     protected SqlQueryExecutionModel.Status status;
     protected String errorResult;
+    protected String executionId;
 
     public String getTitle() {
         return title;
@@ -52,5 +41,13 @@ public class SqlQueryExecutionResultDto {
 
     public void setErrorResult(String errorResult) {
         this.errorResult = errorResult;
+    }
+
+    public String getExecutionId() {
+        return executionId;
+    }
+
+    public void setExecutionId(String executionId) {
+        this.executionId = executionId;
     }
 }

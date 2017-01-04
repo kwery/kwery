@@ -44,6 +44,7 @@ public class Routes implements ApplicationRoutes {
     public static final String JOB_GET_API = "/api/job/{jobId}";
     public static final String JOB_LIST_EXECUTING_API = "/api/job/executing";
     public static final String JOB_EXECUTION_STOP_API = "/api/job/execution/stop/{jobExecutionId}";
+    public static final String REPORT_CSV_API = "/api/report/csv/{sqlQueryExecutionId}";
 
     @Override
     public void init(Router router) {
@@ -89,6 +90,9 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(JOB_LIST_EXECUTING_API).with(JobApiController.class, "listExecutingJobs");
         router.GET().route(JOB_GET_API).with(JobApiController.class, "getJob");
         router.POST().route(JOB_EXECUTION_STOP_API).with(JobApiController.class, "stopJobExecution");
+
+
+        router.GET().route(REPORT_CSV_API).with(JobApiController.class, "reportAsCsv");
         //Api - End
 
         //Static asset

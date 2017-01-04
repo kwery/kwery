@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class JobApiControllerExecutingJobsTest extends AbstractPostLoginApiTest {
-    protected JobApiController controller = new JobApiController(null, null, null, null, null, null);
+    protected JobApiController controller = new JobApiController(null, null, null, null, null, null, null, null);
     private JobExecutionModel jobExecutionModel0;
     private JobExecutionModel jobExecutionModel1;
 

@@ -7,7 +7,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class JobApiControllerIsJsonTest {
-    private JobApiController jobApiController = new JobApiController(null, null, null, null, null, null);
+    private JobApiController jobApiController = new JobApiController(null, null, null, null, null, null, null, null);
 
     @Test
     public void testNotJson() {
