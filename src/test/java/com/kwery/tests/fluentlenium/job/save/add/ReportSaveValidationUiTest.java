@@ -20,7 +20,6 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
-import static org.openqa.selenium.By.name;
 
 public class ReportSaveValidationUiTest extends ChromeFluentTest {
     NinjaServerRule ninjaServerRule = new NinjaServerRule();
@@ -41,55 +40,62 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
     }
 
     @Test
-    public void testWithDisabledParentReport() {
+    public void testWithCronExpressionChosen() {
+        page.chooseCronExpression();
         page.clickOnAddSqlQuery(0);
         page.submitReportSaveForm();
         page.waitForReportFormValidationMessage();
 
         for (ReportFormField field : ReportFormField.values()) {
             if (field == parentReportId) {
-                assertThat($(name(field.name())).first().isEnabled(), is(false));
+                assertThat(page.validationMessage(field), is(""));
             } else {
-                if (field == parentReportId) {
-                    assertThat(page.validationMessage(field), is(SELECT_VALIDATION_ERROR_MESSAGE));
-                } else {
-                    assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
-                }
+                assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
             }
         }
 
-        for (int i = 0; i < 2; ++i) {
-            for (SqlQueryFormField field : SqlQueryFormField.values()) {
-                if (field == datasourceId) {
-                    assertThat(page.validationMessage(field, i), is(SELECT_VALIDATION_ERROR_MESSAGE));
-                } else {
-                    assertThat(page.validationMessage(field, i), is(INPUT_VALIDATION_ERROR_MESSAGE));
-                }
-            }
-        }
+        sqlQueryFormValidation();
     }
 
     @Test
-    public void testWithDisabledCronExpression() {
-        page.toggleParentReport();
-        page.waitUntilParentReportIsEnabled();
-
+    public void testWithCronUiChosen() {
+        page.chooseCronUi();
         page.clickOnAddSqlQuery(0);
         page.submitReportSaveForm();
         page.waitForReportFormValidationMessage();
 
         for (ReportFormField field : ReportFormField.values()) {
-            if (field == cronExpression) {
-                assertThat($(name(field.name())).first().isEnabled(), is(false));
+            if (field == parentReportId || field == cronExpression) {
+                assertThat(page.validationMessage(field), is(""));
             } else {
-                if (field == parentReportId) {
-                    assertThat(page.validationMessage(field), is(SELECT_VALIDATION_ERROR_MESSAGE));
-                } else {
-                    assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
-                }
+                assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
             }
         }
 
+        sqlQueryFormValidation();
+    }
+
+    @Test
+    public void testWithParentReportChosen() {
+        page.chooseParentReport();
+        page.clickOnAddSqlQuery(0);
+        page.submitReportSaveForm();
+        page.waitForReportFormValidationMessage();
+
+        for (ReportFormField field : ReportFormField.values()) {
+            if (field == parentReportId) {
+                assertThat(page.validationMessage(field), is(SELECT_VALIDATION_ERROR_MESSAGE));
+            } else if (field == cronExpression) {
+                assertThat(page.validationMessage(field), is(""));
+            } else {
+                assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
+            }
+        }
+
+        sqlQueryFormValidation();
+    }
+
+    private void sqlQueryFormValidation() {
         for (int i = 0; i < 2; ++i) {
             for (SqlQueryFormField field : SqlQueryFormField.values()) {
                 if (field == datasourceId) {

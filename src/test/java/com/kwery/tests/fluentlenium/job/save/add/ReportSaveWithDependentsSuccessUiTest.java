@@ -91,8 +91,7 @@ public class ReportSaveWithDependentsSuccessUiTest extends ReportSaveSuccessUiTe
 
     @Test
     public void test() {
-        page.toggleParentReport();
-        page.waitUntilParentReportIsEnabled();
+        page.chooseParentReport();
 
         Map<Integer, String> datasourceIdToLabelMap = ImmutableMap.of(
                 datasource.getId(), datasource.getLabel()

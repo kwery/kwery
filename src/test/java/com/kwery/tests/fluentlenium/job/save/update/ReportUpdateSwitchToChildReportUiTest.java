@@ -124,8 +124,7 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
 
         page.waitForReportDisplay(childJobModel.getLabel());
 
-        page.toggleParentReport();
-        page.waitUntilParentReportIsEnabled();
+        page.chooseParentReport();
 
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();

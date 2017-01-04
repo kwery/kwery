@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report/add.html", "validator"], function (ko, $, template, validator) {
+define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron"], function (ko, $, template, validator, jqueryCron) {
     function viewModel(params) {
         var self = this;
 
@@ -8,6 +8,11 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
+        //Schedule options
+        self.scheduleOption = ko.observable("cronExpression");
+        $("#cronExpression").attr("data-validate", true);
+        $("#parentReport").attr("data-validate", false);
+
         self.title = ko.observable("");
         self.reportLabel = ko.observable("");
         self.cronExpression = ko.observable("");
@@ -15,6 +20,29 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.reportEmails = ko.observable("");
 
         self.queries = ko.observableArray([]);
+
+        self.scheduleOption.subscribe(function(newVal){
+            $("#parentReport").attr("data-validate", false);
+            $("#cronExpression").attr("data-validate", false);
+
+            clearValidation($("#parentReport"));
+            clearValidation($("#cronExpression"));
+
+            if (newVal === "cronExpression") {
+                $("#cronExpression").attr("data-validate", true);
+            }
+
+            if (newVal === "parentReport") {
+                $("#parentReport").attr("data-validate", true);
+            }
+
+            self.refreshValidation();
+
+            function clearValidation(obj) {
+                obj.parent(".form-group").removeClass("has-error has-danger");
+                obj.siblings(".with-errors").empty();
+            }
+        }, self);
 
         var Datasource = function(id, label) {
             this.id = id;
@@ -37,62 +65,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         };
 
         self.reports = ko.observableArray([new Report("", ko.i18n("report.save.parent.report.id.select.default"))]);
-
-        self.cronExpressionEnabled = ko.observable(false);
-        self.parentReportEnabled = ko.observable(false);
-
-        self.enableParentReport = function(){
-            self.cronExpressionEnabled(!self.cronExpressionEnabled());
-            self.parentReportEnabled(!self.parentReportEnabled());
-
-            $("#parentReport").attr("data-validate", self.parentReportEnabled());
-            $("#cronExpression").attr("data-validate", self.cronExpressionEnabled());
-
-            self.refreshValidation();
-
-            return false;
-        };
-
-        self.enableCronExpression = function() {
-            self.parentReportEnabled(!self.parentReportEnabled());
-            self.cronExpressionEnabled(!self.cronExpressionEnabled());
-
-            $("#parentReport").attr("data-validate", self.parentReportEnabled());
-            $("#cronExpression").attr("data-validate", self.cronExpressionEnabled());
-
-            if (!self.cronExpressionEnabled()) {
-                $("#cronExpression").attr("data-validate", false);
-            } else {
-                $("#cronExpression").attr("data-validate", true);
-            }
-
-            self.refreshValidation();
-
-            return false;
-        };
-
-        if (!isUpdate) {
-            self.cronExpressionEnabled(true);
-            $("#cronExpression").attr("data-validate", true);
-            $("#parentReport").attr("data-validate", false);
-        }
-
-        self.cronExpressionEnableText = ko.computed(function(){
-            if (self.cronExpressionEnabled()) {
-                return ko.i18n("report.save.disable");
-            } else {
-                return ko.i18n("report.save.enable");
-            }
-        }, self);
-
-        self.parentReportEnableText = ko.computed(function(){
-            if (self.parentReportEnabled()) {
-                return ko.i18n("report.save.disable");
-            } else {
-                return ko.i18n("report.save.enable");
-            }
-        }, self);
-
 
         if (!isUpdate) {
             self.queries.push(new Query());
@@ -139,25 +111,18 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                         self.reportEmails(report.emails.join(", "));
 
                         if (jobModelHackDto.parentJobModel != null) {
-                            self.parentReportEnabled(true);
-                            self.cronExpressionEnabled(false);
+                            self.scheduleOption("parentReport");
                             self.parentReportId(jobModelHackDto.parentJobModel.id);
-                            $("#parentReport").attr("data-validate", true);
-                            $("#cronExpression").attr("data-validate", false);
                         } else {
-                            self.parentReportEnabled(false);
-                            self.cronExpressionEnabled(true);
                             self.cronExpression(report.cronExpression);
-                            $("#parentReport").attr("data-validate", false);
-                            $("#cronExpression").attr("data-validate", true);
                         }
-
-                        self.refreshValidation();
 
                         $.each(report.sqlQueries, function(index, sqlQuery){
                             var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
                             self.queries.push(query);
                         });
+
+                        self.refreshValidation();
                     }
                 })
             }
@@ -171,6 +136,8 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
         self.removeQuery = function(query) {
             self.queries.remove(query);
         };
+
+        var cron = $("#cron").cron();
 
         $("#reportForm").validator({
             disable: false,
@@ -209,16 +176,13 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator"], f
                     return elem !== null && elem !== "";
                 });
 
-                if ($("#cronExpression").prop('disabled')) {
-                    self.cronExpression("");
-                }
-
-                if ($("#parentReport").prop('disabled')) {
+                //Reset parent report id in case the option chosen was cron expression
+                if (self.scheduleOption() !== "parentReport") {
                     self.parentReportId(0);
                 }
 
                 var report = {
-                    cronExpression: self.cronExpression(),
+                    cronExpression: self.scheduleOption() === "cronUi" ? cron.cron("value") : self.cronExpression(),
                     label: self.reportLabel(),
                     title: self.title(),
                     //TODO - Updating to 0 turns into empty string

@@ -128,7 +128,7 @@ public class JobApiController {
                 }
 
                 //Deschedule if it was a scheduled job earlier
-                if (jobFromDb.getCronExpression() != null) {
+                if (!"".equals(Strings.nullToEmpty(jobFromDb.getCronExpression()))) {
                     jobService.deschedule(jobModel.getId());
                 }
             }

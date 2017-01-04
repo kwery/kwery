@@ -125,8 +125,7 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
 
         page.waitForReportDisplay(childJobModel.getLabel());
 
-        page.toggleCronExpression();
-        page.waitUntilCronExpressionIsEnabled();
+        page.chooseCronExpression();
 
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
