@@ -25,13 +25,12 @@
                     <div class="help-block with-errors emails-form-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Schedule</label>
+                    <label data-bind="text: ko.i18n('report.save.schedule')" class="control-label"></label>
                     <div class="form-inline">
                         <div class="form-group">
                             <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="cronExpression" class="cron-expression-option-f">
                         </div>
-                        <div class="form-group">
-                            Cron Expression
+                        <div data-bind="text: ko.i18n('report.save.cron.expression')" class="form-group">
                         </div>
                         <div class="form-group">
                             <input data-bind="value: cronExpression" type="text" class="form-control f-report-cron-expression"
@@ -39,7 +38,7 @@
                             <div class="help-block with-errors cronExpression-form-validation-message-f"></div>
                         </div>
                         <div class="form-group">
-                            <a href="http://www.sauronsoftware.it/projects/cron4j/manual.php#p02" target="cron4j">Help</a>
+                            <a data-bind="text: ko.i18n('report.save.cron.expression.help')" href="http://www.sauronsoftware.it/projects/cron4j/manual.php#p02" target="cron4j"></a>
                         </div>
                     </div>
                     <div class="form-inline">
@@ -54,8 +53,7 @@
                         <div class="form-group">
                             <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="parentReport" class="parent-report-option-f">
                         </div>
-                        <div class="form-group">
-                            <span>After</span>
+                        <div data-bind="text: ko.i18n('report.save.after')" class="form-group">
                         </div>
                         <div class="form-group">
                             <select class="form-control f-parent-report" name="parentReportId" data-bind="options: reports,
@@ -63,8 +61,7 @@
                             </select>
                             <div class="help-block with-errors parentReportId-form-validation-message-f"></div>
                         </div>
-                        <div class="form-group">
-                            <span>Execution</span>
+                        <div data-bind="text: ko.i18n('report.save.execution')" class="form-group">
                         </div>
                     </div>
                 </div>
