@@ -16,7 +16,8 @@ var require = {
         "polyglot": "polyglot",
         "jquery-validate": "jquery.validate",
         "bootstrap": "/assets/bootstrap/js/bootstrap",
-        "validator": "/assets/bootstrap/js/validator"
+        "validator": "/assets/bootstrap/js/validator",
+        "jquery-cron": "jquery-cron"
     },
     shim: {
         "jquery-migrate": {
@@ -32,6 +33,9 @@ var require = {
         "validator": {
             deps: ["jquery"],
             exports: '$.fn.validator'
+        },
+        "jquery-cron": {
+            deps: ["jquery"]
         }
     }
 };

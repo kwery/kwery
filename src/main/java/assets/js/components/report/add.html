@@ -20,24 +20,53 @@
                     <div class="help-block with-errors label-form-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.cron.expression')" class="control-label" for="cronExpression"></label>
-                    <a data-bind="click: enableCronExpression, text: cronExpressionEnableText" class="pull-right f-enable-cron-expression"></a>
-                    <input data-bind="value: cronExpression, enable: cronExpressionEnabled" type="text" class="form-control f-report-cron-expression"
-                           name="cronExpression" id="cronExpression" required>
-                    <div class="help-block with-errors cronExpression-form-validation-message-f"></div>
-                </div>
-                <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.execute.after')"></label>
-                    <a data-bind="click: enableParentReport, text: parentReportEnableText" class="pull-right f-enable-parent-report"></a>
-                    <select class="form-control f-parent-report" name="parentReportId" data-bind="enable: parentReportEnabled, options: reports,
-                    optionsText: 'label', optionsValue: 'id', value: parentReportId" id="parentReport" required>
-                    </select>
-                    <div class="help-block with-errors parentReportId-form-validation-message-f"></div>
-                </div>
-                <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.emails')" class="control-label" for="emails"></label>
                     <input data-bind="value: reportEmails" type="text" class="form-control f-report-emails" name="emails" id="emails">
                     <div class="help-block with-errors emails-form-validation-message-f"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Schedule</label>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="cronExpression" class="cron-expression-option-f">
+                        </div>
+                        <div class="form-group">
+                            Cron Expression
+                        </div>
+                        <div class="form-group">
+                            <input data-bind="value: cronExpression" type="text" class="form-control f-report-cron-expression"
+                                   name="cronExpression" id="cronExpression" required>
+                            <div class="help-block with-errors cronExpression-form-validation-message-f"></div>
+                        </div>
+                        <div class="form-group">
+                            <a href="http://www.sauronsoftware.it/projects/cron4j/manual.php#p02" target="cron4j">Help</a>
+                        </div>
+                    </div>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="cronUi" class="cron-ui-option-f">
+                        </div>
+                        <div class="form-group">
+                            <span class="form-group" id="cron"></span>
+                        </div>
+                    </div>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="parentReport" class="parent-report-option-f">
+                        </div>
+                        <div class="form-group">
+                            <span>After</span>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control f-parent-report" name="parentReportId" data-bind="options: reports,
+                    optionsText: 'label', optionsValue: 'id', value: parentReportId" id="parentReport" required>
+                            </select>
+                            <div class="help-block with-errors parentReportId-form-validation-message-f"></div>
+                        </div>
+                        <div class="form-group">
+                            <span>Execution</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ko foreach: {data: queries, afterRender: refreshValidation} -->

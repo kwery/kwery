@@ -30,18 +30,23 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
     }
 
     public void fillAndSubmitReportSaveForm(JobDto jobDto) {
+        fillAndSubmitReportSaveForm(jobDto, false);
+    }
+
+    public void fillAndSubmitReportSaveForm(JobDto jobDto, boolean useCronUi) {
         fill(".f-report-title").with(jobDto.getTitle());
         fill(".f-report-label").with(jobDto.getLabel());
 
         //TODO - Tests with empty emails etc
         fill(".f-report-emails").with(String.join(",", jobDto.getEmails()));
 
-        if ($(className("f-report-cron-expression")).first().isEnabled()) {
-            fill(".f-report-cron-expression").with(jobDto.getCronExpression());
-        }
-
-        if ($(className("f-parent-report")).first().isEnabled()) {
+        if ($(className("parent-report-option-f")).first().isSelected()) {
             fillSelect(".f-parent-report").withText(parentJobIdToLabelMap.get(jobDto.getParentJobId()));
+        } else if (useCronUi) {
+            chooseCronUi();
+        } else {
+            chooseCronExpression();
+            fill(".f-report-cron-expression").with(jobDto.getCronExpression());
         }
 
         for (int i = 0; i < jobDto.getSqlQueries().size(); ++i) {
@@ -110,30 +115,6 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".reportTitle-form-validation-message-f").hasText(INPUT_VALIDATION_ERROR_MESSAGE);
     }
 
-    public void toggleParentReport() {
-        $(className("f-enable-parent-report")).first().click();
-    }
-
-    public boolean isParentReportEnabled() {
-       return $(className("f-parent-report")).first().isEnabled();
-    }
-
-    public void waitUntilParentReportIsEnabled() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-parent-report").isEnabled();
-    }
-
-    public void toggleCronExpression() {
-        $(className("f-enable-cron-expression")).first().click();
-    }
-
-    public boolean isCronExpressionEnabled() {
-        return $(className("f-report-cron-expression")).first().isEnabled();
-    }
-
-    public void waitUntilCronExpressionIsEnabled() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-report-cron-expression").isEnabled();
-    }
-
     public enum ReportFormField {
         reportTitle, label, cronExpression, parentReportId
     }
@@ -150,19 +131,23 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         return $(".f-failure-message p").stream().map(FluentWebElement::getText).collect(Collectors.toList());
     }
 
-    public Map<Integer, String> getDatasourceIdToLabelMap() {
-        return datasourceIdToLabelMap;
-    }
-
     public void setDatasourceIdToLabelMap(Map<Integer, String> datasourceIdToLabelMap) {
         this.datasourceIdToLabelMap = datasourceIdToLabelMap;
     }
 
-    public Map<Integer, String> getParentJobIdToLabelMap() {
-        return parentJobIdToLabelMap;
-    }
-
     public void setParentJobIdToLabelMap(Map<Integer, String> parentJobIdToLabelMap) {
         this.parentJobIdToLabelMap = parentJobIdToLabelMap;
+    }
+
+    public void chooseParentReport() {
+        $(className("parent-report-option-f")).click();
+    }
+
+    public void chooseCronUi() {
+        $(className("cron-ui-option-f")).click();
+    }
+
+    public void chooseCronExpression() {
+        $(className("cron-expression-option-f")).click();
     }
 }

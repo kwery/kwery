@@ -30,5 +30,6 @@
     </root>
 
     <logger name="uk.co.jemos.podam" level="ERROR" />
+    <logger name="com.mchange" level="ERROR" />
 
 </configuration>
