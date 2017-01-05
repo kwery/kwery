@@ -93,6 +93,7 @@ public class JobExecutionDao {
         }
 
         q.where(predicates.toArray(new Predicate[]{}));
+        q.orderBy(c.desc(root.get("executionStart")));
 
         TypedQuery<JobExecutionModel> tq = m.createQuery(q)
                 .setMaxResults(filter.getResultCount())

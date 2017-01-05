@@ -33,7 +33,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.views.ActionResult.Status.failure;
@@ -204,7 +207,6 @@ public class JobApiController {
         filter.setResultCount(filterDto.getResultCount());
 
         List<JobExecutionModel> executions = jobExecutionDao.filter(filter);
-        executions.sort(Comparator.comparing(JobExecutionModel::getExecutionStart));
 
         List<JobExecutionDto> dtos = new ArrayList<>(executions.size());
 
