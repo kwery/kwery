@@ -29,4 +29,15 @@
             </table>
         </div>
     </div>
+
+    <nav>
+        <ul class="pager">
+            <li data-bind="css: previousStatus" class="previous f-previous">
+                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous"></a>
+            </li>
+            <li data-bind="css: nextStatus" class="next f-next">
+                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next"></a>
+            </li>
+        </ul>
+    </nav>
 </div>

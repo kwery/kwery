@@ -33,10 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.views.ActionResult.Status.failure;
@@ -199,11 +196,15 @@ public class JobApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result listJobExecutions(@PathParam("jobId") int jobId) {
+    public Result listJobExecutions(@PathParam("jobId") int jobId, JobExecutionListFilterDto filterDto) {
         if (logger.isTraceEnabled()) logger.trace("<");
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
         filter.setJobId(jobId);
+        filter.setPageNumber(filterDto.getPageNumber());
+        filter.setResultCount(filterDto.getResultCount());
+
         List<JobExecutionModel> executions = jobExecutionDao.filter(filter);
+        executions.sort(Comparator.comparing(JobExecutionModel::getExecutionStart));
 
         List<JobExecutionDto> dtos = new ArrayList<>(executions.size());
 
@@ -211,8 +212,12 @@ public class JobApiController {
             dtos.add(jobExecutionModelToJobExecutionDto(execution));
         }
 
+        JobExecutionListDto dto = new JobExecutionListDto();
+        dto.setJobExecutionDtos(dtos);
+        dto.setTotalCount(jobExecutionDao.count(filter));
+
         if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(dtos);
+        return json().render(dto);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -403,7 +408,6 @@ public class JobApiController {
 
         return jobExecutionDto;
     }
-
 
     @VisibleForTesting
     public boolean isJson(String str) {
