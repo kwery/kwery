@@ -6,34 +6,41 @@
         </div>
 
         <div class="panel-body">
-
-            <div class="row">
-                <div class='col-sm-6'>
-                    <div class="form-group">
-                        <div class='input-group date' id='datetimepickerStart'>
-                            <input data-bind="dateTimePicker: executionStartStart" type='text' class="form-control" name="executionStartStart"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+            <form id="filterForm">
+                <div class="row">
+                    <div class='col-sm-6'>
+                        <div class="form-group">
+                            <div class='input-group' id='datetimepickerStart'>
+                                <input data-bind="dateTimePicker: executionStartStart" type='text' class="form-control" name="executionStartStart"
+                                       data-rangevalidation="rangevalidation" id="executionStartStart"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar">
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class='col-sm-6'>
+                        <div class="form-group">
+                            <div class='input-group' id='datetimepickerEnd'>
+                                <input data-bind="dateTimePicker: executionStartEnd" type='text' class="form-control" name="executionStartEnd"
+                                       data-rangevalidation="rangevalidation" id="executionStartEnd"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar">
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="help-block with-errors"></div>
                         </div>
                     </div>
                 </div>
-                <div class='col-sm-6'>
-                    <div class="form-group">
-                        <div class='input-group date' id='datetimepickerEnd'>
-                            <input data-bind="dateTimePicker: executionStartEnd" type='text' class="form-control" name="executionStartEnd"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
+                <div class="row">
+                    <div class='col-sm-12'>
+                        <button type="submit" data-bind="text: ko.i18n('filter')" class="btn btn-primary" id="filterButton"></button>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class='col-sm-12'>
-                    <button data-bind="text: ko.i18n('filter'), click: filter" class="btn btn-primary" id="filterButton"></button>
-                </div>
-            </div>
+            </form>
 
             <br>
 

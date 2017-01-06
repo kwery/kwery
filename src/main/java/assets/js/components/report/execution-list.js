@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report/execution-list.html", "moment", "datetimepicker"], function (ko, $, template, moment) {
+define(["knockout", "jquery", "text!components/report/execution-list.html", "moment", "datetimepicker", "validator"], function (ko, $, template, moment) {
     function viewModel(params) {
         //TODO - Optimize below
         var DISPLAY_DATE_FORMAT = "ddd MMM DD YYYY HH:mm";
@@ -14,10 +14,10 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
                 ko.utils.registerEventHandler(element, "dp.change", function (event) {
                     var value = valueAccessor();
                     if (ko.isObservable(value)) {
-                        if (event.date != null && !(event.date instanceof Date)) {
+                        if (event.date != null && event.date && !(event.date instanceof Date)) {
                             value(event.date.format(DISPLAY_DATE_FORMAT));
                         } else {
-                            value(event.date);
+                            value(event.date ? event.date : "");
                         }
                     }
                 });
@@ -100,9 +100,54 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
             self.navigate();
         });
 
-        self.filter = function() {
-            self.updateExecutions();
-        };
+        $("#filterForm").validator({
+            disable: false,
+            focus: false,
+            custom: {
+                "rangevalidation": function ($el) {
+                    if ($el.attr("id") === "executionStartStart") {
+                        if ($("#executionStartEnd").val() !== "") {
+                            if (new moment($("#executionStartStart").val(), DISPLAY_DATE_FORMAT)
+                                    .isAfter(new moment($("#executionStartEnd").val(), DISPLAY_DATE_FORMAT))) {
+                                return ko.i18n("report.job.execution.filter.invalid.range.start");
+                            }
+                        }
+                    }
+
+                    if ($el.attr("id") === "executionStartEnd") {
+                        if ($("#executionStartStart").val() !== "") {
+                            if (new moment($("#executionStartEnd").val(), DISPLAY_DATE_FORMAT)
+                                    .isBefore(new moment($("#executionStartStart").val(), DISPLAY_DATE_FORMAT))) {
+                                return ko.i18n("report.job.execution.filter.invalid.range.end");
+                            }
+                        }
+                    }
+                }
+            }
+        }).on("submit", function (e) {
+            if (e.isDefaultPrevented()) {
+                // handle invalid form
+            } else {
+                if (self.executionStartStart() !== "" || self.executionStartEnd() !== "") {
+                    self.updateExecutions();
+                }
+            }
+            return false;
+        });
+
+        /*
+            To accommodate this scenario:
+                1. Enter a start date.
+                2. Enter an invalid end date.
+                3. End date field is shown as error.
+                4. Now enter an invalid start date.
+                5. Start date field is now shown as an error.
+                6. Fix one of the fields.
+                7. If we do not do the below, the other field is still shown as error.
+         */
+        $("#filterForm").on("valid.bs.validator", function(){
+            $("#filterForm").validator("validate");
+        });
 
         self.executions = ko.observableArray();
         self.updateExecutions = function() {
