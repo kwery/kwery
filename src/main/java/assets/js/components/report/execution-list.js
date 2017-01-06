@@ -129,6 +129,8 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
                 // handle invalid form
             } else {
                 if (self.executionStartStart() !== "" || self.executionStartEnd() !== "") {
+                    //Reset pagination on filter click
+                    self.pageNumber(0);
                     self.updateExecutions();
                 }
             }
