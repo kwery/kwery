@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -199,27 +200,55 @@ public class JobApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result listJobExecutions(@PathParam("jobId") int jobId, JobExecutionListFilterDto filterDto) {
+    public Result listJobExecutions(@PathParam("jobId") int jobId, JobExecutionListFilterDto filterDto, Context context) {
         if (logger.isTraceEnabled()) logger.trace("<");
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
         filter.setJobId(jobId);
         filter.setPageNumber(filterDto.getPageNumber());
         filter.setResultCount(filterDto.getResultCount());
 
-        List<JobExecutionModel> executions = jobExecutionDao.filter(filter);
+        Result json = json();
 
-        List<JobExecutionDto> dtos = new ArrayList<>(executions.size());
-
-        for (JobExecutionModel execution : executions) {
-            dtos.add(jobExecutionModelToJobExecutionDto(execution));
+        List<String> errorMessages = new ArrayList<>(2);
+        //TODO - Move this to validator
+        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionStartStart()))) {
+            try {
+                filter.setExecutionStartStart(new SimpleDateFormat(DISPLAY_DATE_FORMAT).parse(filterDto.getExecutionStartStart()).getTime());
+            } catch (ParseException e) {
+                errorMessages.add(messages.get(JOBAPICONTROLLER_FILTER_DATE_PARSE_ERROR, context, Optional.of(json), filterDto.getExecutionStartStart()).get());
+            }
         }
 
-        JobExecutionListDto dto = new JobExecutionListDto();
-        dto.setJobExecutionDtos(dtos);
-        dto.setTotalCount(jobExecutionDao.count(filter));
+        if (!"".equals(Strings.nullToEmpty(filterDto.getExecutionStartEnd()))) {
+            try {
+                filter.setExecutionStartEnd(new SimpleDateFormat(DISPLAY_DATE_FORMAT).parse(filterDto.getExecutionStartEnd()).getTime());
+            } catch (ParseException e) {
+                errorMessages.add(messages.get(JOBAPICONTROLLER_FILTER_DATE_PARSE_ERROR, context, Optional.of(json), filterDto.getExecutionStartEnd()).get());
+            }
+        }
+
+        Result response = null;
+
+        if (!errorMessages.isEmpty()) {
+            ActionResult actionResult = new ActionResult(failure, errorMessages);
+            response = json.render(actionResult);
+        } else {
+            List<JobExecutionModel> executions = jobExecutionDao.filter(filter);
+
+            List<JobExecutionDto> dtos = new ArrayList<>(executions.size());
+
+            for (JobExecutionModel execution : executions) {
+                dtos.add(jobExecutionModelToJobExecutionDto(execution));
+            }
+
+            JobExecutionListDto dto = new JobExecutionListDto();
+            dto.setJobExecutionDtos(dtos);
+            dto.setTotalCount(jobExecutionDao.count(filter));
+            response = json.render(dto);
+        }
 
         if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(dto);
+        return response;
     }
 
     @FilterWith(DashRepoSecureFilter.class)

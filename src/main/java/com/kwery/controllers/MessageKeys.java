@@ -72,4 +72,6 @@ public class MessageKeys {
 
     public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_SQL_STATE = "datasourceapicontroller.connection.error.sql.state";
     public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_ERROR_CODE = "datasourceapicontroller.connection.error.error.code";
+
+    public static final String JOBAPICONTROLLER_FILTER_DATE_PARSE_ERROR = "jobapicontroller.filter.date.parse.error";
 }
