@@ -27,6 +27,7 @@
 
             <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
             <link href="/assets/css/custom.css" rel="stylesheet">
+            <link href="/assets/bootstrap/css/datetimepicker.css" rel="stylesheet">
             <link href="/assets/css/jquery-ui.css" rel="stylesheet">
             <link href="/assets/css/jquery-ui.structure.css" rel="stylesheet">
             <link href="/assets/css/jquery-ui.theme.css" rel="stylesheet">

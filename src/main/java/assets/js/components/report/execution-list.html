@@ -1,10 +1,50 @@
-<div class="container">
+<div class="container execution-list-container-f">
+    <action-result params="status: status, messages: messages"></action-result>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 data-bind="text: ko.i18n('report.job.executions.header')" class="panel-title"></h3>
         </div>
+
         <div class="panel-body">
-            <table class="table" id="executionListTable">
+            <form id="filterForm">
+                <div class="row">
+                    <div class='col-sm-6'>
+                        <div class="form-group">
+                            <div class='input-group' id='datetimepickerStart'>
+                                <input data-bind="dateTimePicker: executionStartStart" type='text' class="form-control filter-start-f" name="executionStartStart"
+                                       data-rangevalidation="rangevalidation" id="executionStartStart" autocomplete="off"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar">
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="help-block with-errors start-error-f"></div>
+                        </div>
+                    </div>
+                    <div class='col-sm-6'>
+                        <div class="form-group">
+                            <div class='input-group' id='datetimepickerEnd'>
+                                <input data-bind="dateTimePicker: executionStartEnd" type='text' class="form-control filter-end-f" name="executionStartEnd"
+                                       data-rangevalidation="rangevalidation" id="executionStartEnd" autocomplete="off"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar">
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="help-block with-errors end-error-f"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-sm-12'>
+                        <button type="submit" data-bind="text: ko.i18n('filter')" class="btn btn-primary filter-submit-f" id="filterButton"></button>
+                    </div>
+                </div>
+            </form>
+
+            <br>
+
+            <table class="table execution-list-table-f">
                 <thead>
                 <tr>
                     <th data-bind="text: ko.i18n('report.job.execution.start')"></th>
@@ -14,14 +54,14 @@
                 </thead>
                 <tbody data-bind="foreach: executions" id="executionListTableBody">
                 <tr>
-                    <td data-bind="text: start"></td>
-                    <td data-bind="text: end"></td>
+                    <td data-bind="text: start" class="execution-start-f"></td>
+                    <td data-bind="text: end" class="execution-end-f"></td>
                     <td>
                         <!-- ko if: status === 'SUCCESS' || status === 'FAILURE' -->
-                            <a data-bind="text:status, attr:{href: executionResultLink}"></a>
+                            <a data-bind="text:status, attr:{href: executionResultLink}" class="execution-status-f"></a>
                         <!-- /ko -->
                         <!-- ko if: status !== 'SUCCESS' && status !== 'FAILURE' -->
-                            <span data-bind="text: status"></span>
+                            <span data-bind="text: status" class="execution-status-f"></span>
                         <!-- /ko -->
                     </td>
                 </tr>
@@ -29,4 +69,15 @@
             </table>
         </div>
     </div>
+
+    <nav>
+        <ul class="pager">
+            <li data-bind="css: previousStatus" class="previous previous-f">
+                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous"></a>
+            </li>
+            <li data-bind="css: nextStatus" class="next next-f">
+                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next"></a>
+            </li>
+        </ul>
+    </nav>
 </div>

@@ -17,7 +17,9 @@ var require = {
         "jquery-validate": "jquery.validate",
         "bootstrap": "/assets/bootstrap/js/bootstrap",
         "validator": "/assets/bootstrap/js/validator",
-        "jquery-cron": "jquery-cron"
+        "jquery-cron": "jquery-cron",
+        "moment": "moment",
+        "datetimepicker": "/assets/bootstrap/js/datetimepicker"
     },
     shim: {
         "jquery-migrate": {
@@ -36,6 +38,9 @@ var require = {
         },
         "jquery-cron": {
             deps: ["jquery"]
+        },
+        "datetimepicker": {
+            deps: ["moment", "bootstrap", "jquery"]
         }
     }
 };
