@@ -7,7 +7,8 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
                 //initialize datepicker with some optional options
                 var options = allBindingsAccessor().dateTimePickerOptions || {};
                 $(element).datetimepicker({
-                    format: DISPLAY_DATE_FORMAT
+                    format: DISPLAY_DATE_FORMAT,
+                    keyBinds: 't: '
                 });
 
                 //when a user changes the date, update the view model
@@ -53,10 +54,10 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
         var executionStartEnd = "";
 
         if (params["?q"] !== undefined) {
-            resultCount = params["?q"].resultCount;
-            pageNumber = params["?q"].pageNumber;
-            executionStartStart = params["?q"].executionStartStart;
-            executionStartEnd = params["?q"].executionStartEnd;
+            resultCount = params["?q"].resultCount || RESULT_COUNT;
+            pageNumber = params["?q"].pageNumber || pageNumber;
+            executionStartStart = params["?q"].executionStartStart || executionStartStart;
+            executionStartEnd = params["?q"].executionStartEnd || executionStartEnd;
         }
 
         self.pageNumber = ko.observable(pageNumber);

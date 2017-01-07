@@ -97,4 +97,7 @@ public class Messages {
     public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_ERROR_CODE_M = "Vendor error code";
 
     public static final String JOBAPICONTROLLER_FILTER_DATE_PARSE_ERROR_M = "Could not parse date time {0}";
+
+    public static final String REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_START_M = "Invalid range, start is after end";
+    public static final String REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_END_M = "Invalid range, end is before start";
 }
