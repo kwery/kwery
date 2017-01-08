@@ -14,33 +14,23 @@ import org.junit.rules.RuleChain;
 
 import java.util.List;
 
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.tests.fluentlenium.datasource.DatasourceListPage.COLUMNS;
-import static com.kwery.tests.util.Messages.DELETE_M;
-import static com.kwery.tests.util.Messages.LABEL_M;
-import static com.kwery.tests.util.Messages.PASSWORD_M;
-import static com.kwery.tests.util.Messages.PORT_M;
-import static com.kwery.tests.util.Messages.URL_M;
-import static com.kwery.tests.util.Messages.USER_NAME_M;
+import static com.kwery.tests.util.Messages.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.rules.RuleChain.outerRule;
 
 public class DatasourceListUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
-    public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+    public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     protected DatasourceListPage page;
 
@@ -75,8 +65,7 @@ public class DatasourceListUiTest extends ChromeFluentTest {
         assertThat(headers.get(1), is(URL_M));
         assertThat(headers.get(2), is(PORT_M));
         assertThat(headers.get(3), is(USER_NAME_M));
-        assertThat(headers.get(4), is(PASSWORD_M));
-        assertThat(headers.get(5), is(DELETE_M));
+        assertThat(headers.get(4), is(DELETE_M));
 
         List<List<String>> rows = page.rows();
 
@@ -88,7 +77,6 @@ public class DatasourceListUiTest extends ChromeFluentTest {
         assertThat(first.get(1), is("foo.com"));
         assertThat(first.get(2), is("3306"));
         assertThat(first.get(3), is("user0"));
-        assertThat(first.get(4), is("password0"));
 
         List<String> second = rows.get(1);
 
@@ -96,6 +84,5 @@ public class DatasourceListUiTest extends ChromeFluentTest {
         assertThat(second.get(1), is("bar.com"));
         assertThat(second.get(2), is("3307"));
         assertThat(second.get(3), is("user1"));
-        assertThat(second.get(4), is("password1"));
     }
 }

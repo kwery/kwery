@@ -20,7 +20,7 @@ import static com.kwery.tests.util.Messages.DATASOURCE_DELETE_SQL_QUERIES_PRESEN
 import static com.kwery.tests.util.Messages.DATASOURCE_DELETE_SUCCESS_M;
 
 public class DatasourceListPage extends FluentPage implements RepoDashPage {
-    public static final int COLUMNS = 6;
+    public static final int COLUMNS = 5;
 
     @Override
     public boolean isRendered() {
