@@ -20,6 +20,7 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.SmtpConfiguration.*;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
@@ -34,10 +35,18 @@ public class TestUtil {
     //Corresponds to the starting id set in *sql file
     public static final int DB_START_ID = 100;
 
-    public static User user() {
+    public static User userWithoutId() {
         User user = new User();
         user.setUsername("purvi");
         user.setPassword("password");
+        return user;
+    }
+
+    public static User user() {
+        User user = new User();
+        user.setId(dbId());
+        user.setUsername(RandomStringUtils.randomAlphanumeric(1, 256));
+        user.setPassword(RandomStringUtils.randomAlphanumeric(1, 256));
         return user;
     }
 

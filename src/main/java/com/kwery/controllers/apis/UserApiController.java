@@ -194,6 +194,8 @@ public class UserApiController {
         if (logger.isTraceEnabled()) logger.trace(">");
 
         List<User> list = userDao.list();
+        //Masking password
+        list.forEach(u -> {u.setPassword("");});
 
         if (logger.isTraceEnabled()) logger.trace("<");
         return json().render(list);

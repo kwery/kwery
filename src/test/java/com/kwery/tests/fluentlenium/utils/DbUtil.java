@@ -418,6 +418,21 @@ public class DbUtil {
         ).launch();
     }
 
+    public static void userDbSetUp(User user) {
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(User.TABLE_DASH_REPO_USER)
+                                .row()
+                                    .column(User.COLUMN_ID, user.getId())
+                                    .column(User.COLUMN_USERNAME, user.getUsername())
+                                    .column(User.COLUMN_PASSWORD, user.getPassword())
+                                .end()
+                                .build()
+                )
+        ).launch();
+    }
+
     public static int dbId() {
         return RandomUtils.nextInt(1, TestUtil.DB_START_ID + 1);
     }
