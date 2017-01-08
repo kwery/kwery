@@ -28,7 +28,7 @@ public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest
 
     @Test
     public void testAddUserSuccess() {
-        User user = TestUtil.user();
+        User user = TestUtil.userWithoutId();
         when(userDao.getByUsername(user.getUsername())).thenReturn(null);
         doNothing().when(userDao).save(user);
 
@@ -43,7 +43,7 @@ public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest
 
     @Test
     public void testAddUserFailure() {
-        User user = TestUtil.user();
+        User user = TestUtil.userWithoutId();
         when(userDao.getByUsername(user.getUsername())).thenReturn(user);
         mockMessages(ADMIN_USER_ADDITION_FAILURE, user.getUsername());
         assertFailure(actionResult(userApiController.addAdminUser(context, user, validation)));
@@ -51,7 +51,7 @@ public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest
 
     @Test
     public void testLoginSuccess() {
-        User user = TestUtil.user();
+        User user = TestUtil.userWithoutId();
         when(userDao.getUser(user.getUsername(), user.getPassword())).thenReturn(user);
 
         session = new TestSession();
@@ -66,7 +66,7 @@ public class UserApiControllerMockTest extends AbstractUserApiControllerMockTest
 
     @Test
     public void testUser() {
-        User user = TestUtil.user();
+        User user = TestUtil.userWithoutId();
         user.setId(1);
 
         when(userDao.getByUsername(user.getUsername())).thenReturn(user);

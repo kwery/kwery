@@ -17,7 +17,6 @@ import java.util.List;
 
 import static com.kwery.tests.fluentlenium.user.UserListPage.COLUMNS;
 import static com.kwery.tests.util.Messages.DELETE_M;
-import static com.kwery.tests.util.Messages.PASSWORD_M;
 import static com.kwery.tests.util.Messages.USER_NAME_M;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -70,8 +69,7 @@ public class UserListUiTest extends ChromeFluentTest {
         assertThat(headers, hasSize(COLUMNS));
 
         assertThat(headers.get(0), is(USER_NAME_M));
-        assertThat(headers.get(1), is(PASSWORD_M));
-        assertThat(headers.get(2), is(DELETE_M));
+        assertThat(headers.get(1), is(DELETE_M));
 
         List<List<String>> rows = page.rows();
 
@@ -80,10 +78,8 @@ public class UserListUiTest extends ChromeFluentTest {
         List<String> firstRow = rows.get(0);
         User user0 = loginRule.getLoggedInUser();
         assertThat(firstRow.get(0), is(user0.getUsername()));
-        assertThat(firstRow.get(1), is(user0.getPassword()));
 
         List<String> secondRow = rows.get(1);
         assertThat(secondRow.get(0), is(user1.getUsername()));
-        assertThat(secondRow.get(1), is(user1.getPassword()));
     }
 }

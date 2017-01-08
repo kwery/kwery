@@ -20,7 +20,7 @@ import static com.kwery.tests.util.Messages.USER_DELETE_SUCCESS_M;
 import static com.kwery.tests.util.Messages.USER_DELETE_YOURSELF_M;
 
 public class UserListPage extends FluentPage implements RepoDashPage {
-    public static final int COLUMNS = 3;
+    public static final int COLUMNS = 2;
 
     @Override
     public boolean isRendered() {

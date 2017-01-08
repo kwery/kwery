@@ -2,13 +2,13 @@ package com.kwery.tests.controllers.apis.integration.userapicontroller;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.controllers.apis.UserApiController;
+import com.kwery.models.User;
 import com.kwery.tests.controllers.apis.integration.AbstractApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.fluentlenium.utils.UserTableUtil;
-import com.kwery.models.User;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 //ToDO requires refactoring related to user login
-public class UserListAllApiTest extends AbstractApiTest {
+public class UserApiControllerListAllApiTest extends AbstractApiTest {
     protected UserTableUtil userTableUtil;
     protected Router router;
 
@@ -58,12 +58,12 @@ public class UserListAllApiTest extends AbstractApiTest {
 
         assertThat(json, hasJsonPath("$[0].id", is(user0.getId())));
         assertThat(json, hasJsonPath("$[0].username", is(user0.getUsername())));
-        assertThat(json, hasJsonPath("$[0].password", is(user0.getPassword())));
+        assertThat(json, hasJsonPath("$[0].password", is("")));
 
         User user1 = userTableUtil.row(1);
 
         assertThat(json, hasJsonPath("$[1].id", is(user1.getId())));
         assertThat(json, hasJsonPath("$[1].username", is(user1.getUsername())));
-        assertThat(json, hasJsonPath("$[1].password", is(user1.getPassword())));
+        assertThat(json, hasJsonPath("$[1].password", is("")));
     }
 }

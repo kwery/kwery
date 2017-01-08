@@ -1,18 +1,20 @@
 package com.kwery.tests.controllers.apis.integration.datasourceapicontroller.adddatasource;
 
-import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
+import com.jayway.jsonpath.matchers.JsonPathMatchers;
+import com.kwery.controllers.apis.DatasourceApiController;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.models.Datasource;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
+import com.kwery.tests.util.TestUtil;
+import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.TestUtil;
 
 import java.io.IOException;
-import java.util.List;
 
-import static com.kwery.conf.Routes.ALL_DATASOURCES_API;
-import static org.hamcrest.Matchers.hasSize;
+import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class GetAllDatasourcesTest extends AbstractPostLoginApiTest {
@@ -32,12 +34,14 @@ public class GetAllDatasourcesTest extends AbstractPostLoginApiTest {
 
     @Test
     public void test() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<Datasource> datasources = mapper.readValue(
-                ninjaTestBrowser.makeJsonRequest(getUrl(ALL_DATASOURCES_API)),
-                mapper.getTypeFactory().constructCollectionType(List.class, Datasource.class)
-        );
+        String url = getInjector().getInstance(Router.class).getReverseRoute(DatasourceApiController.class, "allDatasources");
+        String response = ninjaTestBrowser.makeJsonRequest(getUrl(url));
 
-        assertThat(datasources, hasSize(2));
+        assertThat(response, isJson());
+        assertThat(response, JsonPathMatchers.hasJsonPath("$.[*]", hasSize(2)));
+
+        //Ensure password masking is working
+        assertThat(response, JsonPathMatchers.hasJsonPath("$.[0].password", is("")));
+        assertThat(response, JsonPathMatchers.hasJsonPath("$.[1].password", is("")));
     }
 }

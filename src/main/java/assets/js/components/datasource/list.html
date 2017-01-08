@@ -15,7 +15,6 @@
                     <th data-bind="text: ko.i18n('url')"></th>
                     <th data-bind="text: ko.i18n('port')"></th>
                     <th data-bind="text: ko.i18n('user.name')"></th>
-                    <th data-bind="text: ko.i18n('password')"></th>
                     <th data-bind="text: ko.i18n('delete')"></th>
                 </tr>
                 </thead>
@@ -25,7 +24,6 @@
                     <td data-bind="text: url"></td>
                     <td data-bind="text: port"></td>
                     <td data-bind="text: username"></td>
-                    <td data-bind="text: password"></td>
                     <td>
                         <button data-bind="click: $parent.delete, attr: {title: ko.i18n('datasource.list.delete.datasource.tooltip')}" class="f-delete">
                             <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>

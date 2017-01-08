@@ -134,8 +134,11 @@ public class DatasourceApiController {
     @FilterWith(DashRepoSecureFilter.class)
     public Result allDatasources() {
         if (logger.isTraceEnabled()) logger.trace(">");
+        List<Datasource> all = datasourceDao.getAll();
+        //Masking password
+        all.forEach((d) -> d.setPassword(""));
         if (logger.isTraceEnabled()) logger.trace("<");
-        return json().render(datasourceDao.getAll());
+        return json().render(all);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
