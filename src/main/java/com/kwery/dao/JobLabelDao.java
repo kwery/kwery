@@ -52,4 +52,15 @@ public class JobLabelDao {
             return models.get(0);
         }
     }
+
+    @Transactional
+    public List<JobLabelModel> getAllJobLabelModels() {
+        EntityManager e = entityManagerProvider.get();
+        CriteriaBuilder cb = e.getCriteriaBuilder();
+        CriteriaQuery<JobLabelModel> cq = cb.createQuery(JobLabelModel.class);
+        Root<JobLabelModel> rootEntry = cq.from(JobLabelModel.class);
+        CriteriaQuery<JobLabelModel> all = cq.select(rootEntry);
+        TypedQuery<JobLabelModel> allQuery = e.createQuery(all);
+        return allQuery.getResultList();
+    }
 }
