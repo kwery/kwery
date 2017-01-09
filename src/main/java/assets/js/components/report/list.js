@@ -37,9 +37,14 @@ define(["knockout", "jquery", "text!components/report/list.html"], function (ko,
                 type: "POST",
                 contentType: "application/json",
                 success: function(result) {
-                    self.status(result.status);
-                    self.messages([ko.i18n("report.list.delete.success")]);
-                    self.reports.remove(report);
+                    if (result.status === "success") {
+                        self.status(result.status);
+                        self.messages([ko.i18n("report.list.delete.success")]);
+                        self.reports.remove(report);
+                    } else {
+                        self.status(result.status);
+                        self.messages(result.messages);
+                    }
                 }
             });
         };

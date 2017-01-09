@@ -154,20 +154,28 @@ public class JobApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result deleteJob(@PathParam("jobId") int jobId) {
+    public Result deleteJob(@PathParam("jobId") int jobId, Context context) {
         if (logger.isTraceEnabled()) logger.trace("<");
 
         JobModel jobModel = jobDao.getJobById(jobId);
 
-        //Is this a scheduled job?
-        if (!Strings.nullToEmpty(jobModel.getCronExpression()).equals("")) {
-            jobService.deschedule(jobId);
+        Result json = json();
+        Result result = null;
+
+        if (!jobModel.getChildJobs().isEmpty()) {
+            String message = messages.get(JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN, context, Optional.of(json)).get();
+            result = json.render(new ActionResult(failure, message));
+        } else {
+            //Is this a scheduled job?
+            if (!Strings.nullToEmpty(jobModel.getCronExpression()).equals("")) {
+                jobService.deschedule(jobId);
+            }
+            jobDao.delete(jobId);
+            result = json.render(new ActionResult(success, ""));
         }
 
-        jobDao.delete(jobId);
-
         if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(new ActionResult(success, ""));
+        return result;
     }
 
     @FilterWith(DashRepoSecureFilter.class)

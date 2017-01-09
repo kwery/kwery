@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container report-list-f">
     <action-result params="status: status, messages: messages"></action-result>
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -8,28 +8,28 @@
             <panel-add-link params="url: '/#report/add', tooltipMessageKey: 'report.list.add.report.tooltip'"></panel-add-link>
         </div>
         <div class="panel-body">
-            <table class="table report-list-table-f" id="reportsListTable">
+            <table class="table report-list-table-f">
                 <thead>
-                <tr>
-                    <th data-bind="text: ko.i18n('report.list.label')"></th>
-                    <th data-bind="text: ko.i18n('report.list.cron.expression')"></th>
-                    <th></th>
-                </tr>
+                    <tr>
+                        <th data-bind="text: ko.i18n('report.list.label')"></th>
+                        <th data-bind="text: ko.i18n('report.list.cron.expression')"></th>
+                        <th></th>
+                    </tr>
                 </thead>
-                <tbody data-bind="foreach: reports" id="reportsListTableBody">
+                <tbody data-bind="foreach: reports" class="report-list-table-body-f">
                 <tr>
                     <td>
-                        <a data-bind="attr: {href: reportLink}, text: label"></a>
+                        <a data-bind="attr: {href: reportLink}, text: label" class="label-f"></a>
                     </td>
-                    <td data-bind="text: cronExpression"></td>
+                    <td data-bind="text: cronExpression" class="cron-expression-f"></td>
                     <td>
-                        <a data-bind="attr: {href: executionLink, title: ko.i18n('report.list.execution.tooltip')}">
+                        <a data-bind="attr: {href: executionLink, title: ko.i18n('report.list.execution.tooltip')}" class="execution-link-f">
                             <span class="glyphicon glyphicon-th-list"></span>
                         </a>
-                        <a data-bind="click: $parent.executeReport, attr: {title: ko.i18n('report.list.execute.now.tooltip')}">
+                        <a data-bind="click: $parent.executeReport, attr: {title: ko.i18n('report.list.execute.now.tooltip')}" class="execute-now-f">
                             <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
                         </a>
-                        <a data-bind="click: $parent.deleteReport, attr: {title: ko.i18n('report.list.delete.tooltip')}">
+                        <a data-bind="click: $parent.deleteReport, attr: {title: ko.i18n('report.list.delete.tooltip')}" class="delete-f">
                             <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                         </a>
                     </td>
