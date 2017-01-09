@@ -1,5 +1,7 @@
 package com.kwery.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -29,6 +31,7 @@ public class JobLabelModel {
     @OneToMany(mappedBy = "parentLabel", fetch = FetchType.EAGER)
     protected Set<JobLabelModel> childLabels;
 
+    @JsonIgnore /*To prevent stack overflow error while serializing this into JSON*/
     @ManyToOne
     @JoinColumn(name = PARENT_LABEL_ID_FK_COLUMN)
     protected JobLabelModel parentLabel;
