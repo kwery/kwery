@@ -2,6 +2,7 @@ package com.kwery.tests.controllers.apis.integration.jobapicontroller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kwery.controllers.apis.JobApiController;
+import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
@@ -13,17 +14,21 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M;
 import static com.kwery.tests.util.TestUtil.*;
+import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class JobApiControllerDeleteChildJobTest extends AbstractPostLoginApiTest {
+public class JobApiControllerDeleteDependentJobTest extends AbstractPostLoginApiTest {
     protected JobModel parentJobModel;
     private JobModel childJobModel;
+    private JobDao jobDao;
 
     @Before
     public void setUpJobApiControllerDeleteChildJobTest() {
@@ -60,10 +65,12 @@ public class JobApiControllerDeleteChildJobTest extends AbstractPostLoginApiTest
 
         childJobModel.getSqlQueries().add(childSqlQueryModel);
         jobSqlQueryDbSetUp(childJobModel);
+
+        jobDao = getInjector().getInstance(JobDao.class);
     }
 
     @Test
-    public void test() {
+    public void testDeleteChildJob() {
         String url = getInjector().getInstance(Router.class).getReverseRoute(
                 JobApiController.class,
                 "deleteJob",
@@ -72,5 +79,20 @@ public class JobApiControllerDeleteChildJobTest extends AbstractPostLoginApiTest
         String response = ninjaTestBrowser.postJson(getUrl(url), new HashMap<>());
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
+    }
+
+    @Test
+    public void testDeleteParentJob() {
+        String url = getInjector().getInstance(Router.class).getReverseRoute(
+                JobApiController.class,
+                "deleteJob",
+                ImmutableMap.of("jobId", parentJobModel.getId())
+        );
+        String response = ninjaTestBrowser.postJson(getUrl(url), new HashMap<>());
+        assertThat(response, isJson());
+        assertThat(response, hasJsonPath("$.status", is(failure.name())));
+        assertThat(response, hasJsonPath("$.messages[0]", is(JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M)));
+
+        assertThat(jobDao.getAllJobs(), hasSize(2));
     }
 }

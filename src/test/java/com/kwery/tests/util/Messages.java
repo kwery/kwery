@@ -100,4 +100,7 @@ public class Messages {
 
     public static final String REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_START_M = "Invalid range, start is after end";
     public static final String REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_END_M = "Invalid range, end is before start";
+
+    public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M = "There are other jobs which depend on this job, please remove the dependencies before deleting this job";
+    public static final String REPORT_LIST_DELETE_SUCCESS_M = "Report deleted successfully";
 }
