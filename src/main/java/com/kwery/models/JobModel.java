@@ -40,9 +40,10 @@ public class JobModel {
     @Size(max = 255)
     public String cronExpression;
 
-    @NotNull
+    @Transient
+/*    @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = LABEL_COLUMN)
+    @Column(name = LABEL_COLUMN)*/
     public String label;
 
     @NotNull

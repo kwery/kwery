@@ -298,12 +298,6 @@ public class TestUtil {
         return smtpConfiguration;
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; ++i) {
-            System.out.println(jobExecutionModel());
-        }
-    }
-
     public static String toJson(Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);
@@ -365,5 +359,13 @@ public class TestUtil {
         for (Pair<SqlQueryModel> pair : pairs) {
             assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id"));
         }
+    }
+
+    public static JobLabelModel jobLabelModel() {
+        JobLabelModel m = new JobLabelModel();
+        m.setId(dbId());
+        m.setLabel(RandomStringUtils.randomAlphanumeric(JobLabelModel.LABEL_MIN_LENGTH, JobLabelModel.LABEL_MAX_LENGTH + 1));
+        m.setChildLabels(new HashSet<>());
+        return m;
     }
 }

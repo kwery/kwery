@@ -257,6 +257,23 @@ public class DbUtil {
         return builder.build();
     }
 
+    public static IDataSet jobLabelTable(JobLabelModel... ms) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JobLabelModel.JOB_LABEL_TABLE);
+
+        if (ms != null) {
+            for (JobLabelModel m : ms) {
+                builder.newRow(JobLabelModel.JOB_LABEL_TABLE)
+                        .with(JobLabelModel.ID_COLUMN, m.getId())
+                        .with(JobLabelModel.LABEL_COLUMN, m.getLabel())
+                        .with(JobLabelModel.PARENT_LABEL_ID_FK_COLUMN, m.getParentLabel() == null ? null : m.getParentLabel().getId())
+                        .add();
+            }
+        }
+
+        return builder.build();
+    }
+
     public static void datasourceDbSetup(Datasource datasource) {
         DbSetup dbSetup = new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -427,6 +444,21 @@ public class DbUtil {
                                     .column(User.COLUMN_ID, user.getId())
                                     .column(User.COLUMN_USERNAME, user.getUsername())
                                     .column(User.COLUMN_PASSWORD, user.getPassword())
+                                .end()
+                                .build()
+                )
+        ).launch();
+    }
+
+    public static void jobLabelDbSetUp(JobLabelModel jobLabelModel) {
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(JobLabelModel.JOB_LABEL_TABLE)
+                                .row()
+                                .column(JobLabelModel.ID_COLUMN, jobLabelModel.getId())
+                                .column(JobLabelModel.LABEL_COLUMN, jobLabelModel.getLabel())
+                                .column(JobLabelModel.PARENT_LABEL_ID_FK_COLUMN, jobLabelModel.getParentLabel() != null ? jobLabelModel.getParentLabel().getId() : null)
                                 .end()
                                 .build()
                 )
