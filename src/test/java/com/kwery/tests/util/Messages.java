@@ -103,4 +103,6 @@ public class Messages {
 
     public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M = "There are other jobs which depend on this job, please remove the dependencies before deleting this job";
     public static final String REPORT_LIST_DELETE_SUCCESS_M = "Report deleted successfully";
+
+    public static final String REPORT_LABEL_SAVE_SUCCESS_M = "Label {0} saved successfully";
 }
