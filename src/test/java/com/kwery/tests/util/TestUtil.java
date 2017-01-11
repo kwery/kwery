@@ -173,7 +173,7 @@ public class TestUtil {
     public static SqlQueryModel sqlQueryModel() {
         SqlQueryModel sqlQueryModel = new SqlQueryModel();
         sqlQueryModel.setId(DbUtil.dbId());
-        sqlQueryModel.setQuery(RandomStringUtils.randomAlphanumeric(1, 1025));
+        sqlQueryModel.setQuery(RandomStringUtils.randomAlphanumeric(SqlQueryModel.QUERY_MIN_LENGTH, SqlQueryModel.QUERY_MAX_LENGTH + 1));
         sqlQueryModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
         sqlQueryModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1025));
         return sqlQueryModel;

@@ -14,13 +14,16 @@ public class SqlQueryModel {
     public static final String DATASOURCE_ID_FK_COLUMN = "datasource_id_fk";
     public static final String TITLE_COLUMN = "title";
 
+    public static final int QUERY_MAX_LENGTH = 32672;
+    public static final int QUERY_MIN_LENGTH = 1;
+
     @Column(name = ID_COLUMN)
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
     @Column(name = QUERY_COLUMN)
-    @Size(min = 1, message = "query.validation")
+    @Size(min = QUERY_MIN_LENGTH, max = QUERY_MAX_LENGTH, message = "query.validation")
     @NotNull(message = "query.validation")
     private String query;
 
