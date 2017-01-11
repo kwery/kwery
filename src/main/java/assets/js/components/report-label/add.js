@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/job-label/add.html", "validator"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/report-label/add.html", "validator"], function (ko, $, template) {
     function viewModel(params) {
         var self = this;
 
@@ -122,9 +122,7 @@ define(["knockout", "jquery", "text!components/job-label/add.html", "validator"]
             $("#labelForm").validator({
                 disable: false
             }).on("submit", function (e) {
-                if (e.isDefaultPrevented()) {
-                    // handle the invalid form...
-                } else {
+                if (!e.isDefaultPrevented()) {//Valid form
                     $.ajax({
                         url: "/api/job-label/save",
                         type: "POST",
@@ -135,7 +133,7 @@ define(["knockout", "jquery", "text!components/job-label/add.html", "validator"]
                         contentType: "application/json",
                         success: function(result) {
                             self.status(result.status);
-                            self.messages(["Label saved successfully"]);
+                            self.messages([ko.i18n('report.label.save.success', {0: self.labelName()})]);
                         }
                     });
                 }

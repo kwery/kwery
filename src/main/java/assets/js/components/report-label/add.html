@@ -2,33 +2,33 @@
     <action-result params="status: status, messages: messages"></action-result>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('job.label.save.header')" class="panel-title"></h3>
+            <h3 data-bind="text: ko.i18n('report.label.save.header')" class="panel-title"></h3>
         </div>
         <div class="panel-body">
-            <form id="labelForm">
+            <form id="labelForm" class="label-form-f">
                 <div class="form-group">
                     <div class="form-group">
-                        <label data-bind="text: ko.i18n('job.label.save.label.name')" for="labelName"></label>
-                        <input data-bind="value: labelName" minlength="1" class="form-control" type="text" id="labelName" name="labelName" required>
+                        <label data-bind="text: ko.i18n('report.label.save.label.name')" for="labelName"></label>
+                        <input data-bind="value: labelName" minlength="1" class="form-control label-name-f" type="text" id="labelName" name="labelName" required>
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="form-group">
                         <label for="parentLabelOpted">
-                            <input data-bind="checked: parentLabelOpted" type="checkbox" id="parentLabelOpted"> Nest Under Label
+                            <input data-bind="checked: parentLabelOpted" type="checkbox" class="parent-label-opted-f" id="parentLabelOpted">&nbsp;<span data-bind="text: ko.i18n('report.label.save.nest')"></span>
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <!-- ko template: {afterRender: refreshValidation} -->
-                        <select name="parentLabelId" id="parentLabelId"  class="form-control" data-bind="foreach: displayLabels, value: parentLabelId" required data-validate="false">
+                        <select name="parentLabelId" id="parentLabelId"  class="form-control parent-label-f" data-bind="foreach: displayLabels, value: parentLabelId" required data-validate="false">
                             <option data-bind="html: label, value: id"></option>
                         </select>
                     <!-- /ko -->
                     <div class="help-block with-errors"></div>
                 </div>
-                <button data-bind="text: ko.i18n('job.label.save.save')" type="submit" class="btn btn-primary" id="create"></button>
+                <button data-bind="text: ko.i18n('report.label.save.save')" type="submit" class="btn btn-primary submit-f" id="create"></button>
             </form>
         </div>
     </div>
