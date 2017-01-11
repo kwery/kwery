@@ -62,6 +62,9 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
     ko.components.register("report-execution-result", {
         require: "components/report/execution-result"
     });
+    ko.components.register("job-label-add", {
+        require: "components/job-label/add"
+    });
 
     ko.applyBindings({ route: router.currentRoute });
 

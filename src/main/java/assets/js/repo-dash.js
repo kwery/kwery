@@ -41,7 +41,8 @@
                 {url: "report/executing", auth: true, component: "report-executing"},
                 {url: "report/{reportId}", auth: true, component: "report-add"},
                 {url: "report/{jobId}/execution-list/:?q:", auth: true, component: "report-execution-list"},
-                {url: "report/{jobId}/execution/{jobExecutionId}", auth: true, component: "report-execution-result"}
+                {url: "report/{jobId}/execution/{jobExecutionId}", auth: true, component: "report-execution-result"},
+                {url: "job-label/add", auth: true, component: "job-label-add"}
             ];
 
             var componentMapping = {
