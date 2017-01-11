@@ -23,7 +23,7 @@
                 <div class="form-group">
                     <!-- ko template: {afterRender: refreshValidation} -->
                         <select name="parentLabelId" id="parentLabelId"  class="form-control parent-label-f" data-bind="foreach: displayLabels, value: parentLabelId" required data-validate="false">
-                            <option data-bind="html: label, value: id"></option>
+                            <option data-bind="html: label, value: id, css: 'parent-label-' + $index() + '-f'"></option>
                         </select>
                     <!-- /ko -->
                     <div class="help-block with-errors parent-error-f"></div>

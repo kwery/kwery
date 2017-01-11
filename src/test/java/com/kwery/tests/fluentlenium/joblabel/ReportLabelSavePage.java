@@ -73,4 +73,8 @@ public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
     public String parentLabelValidationMessage() {
         return $(className("parent-error-f")).getText();
     }
+
+    public String parentLabelText(int index) {
+        return $(className(String.format("parent-label-%d-f", index))).getText();
+    }
 }
