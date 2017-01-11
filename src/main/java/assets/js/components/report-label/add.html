@@ -10,7 +10,7 @@
                     <div class="form-group">
                         <label data-bind="text: ko.i18n('report.label.save.label.name')" for="labelName"></label>
                         <input data-bind="value: labelName" minlength="1" class="form-control label-name-f" type="text" id="labelName" name="labelName" required>
-                        <div class="help-block with-errors"></div>
+                        <div class="help-block with-errors name-error-f"></div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -26,7 +26,7 @@
                             <option data-bind="html: label, value: id"></option>
                         </select>
                     <!-- /ko -->
-                    <div class="help-block with-errors"></div>
+                    <div class="help-block with-errors parent-error-f"></div>
                 </div>
                 <button data-bind="text: ko.i18n('report.label.save.save')" type="submit" class="btn btn-primary submit-f" id="create"></button>
             </form>

@@ -11,6 +11,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 
 public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
+    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
+    public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
+
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".label-form-f").isDisplayed();
@@ -23,15 +26,51 @@ public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
     }
 
     public void fillAndSubmitForm(String label, Integer parentLabelIndex) {
-        fill(".label-name-f").with(label);
+        fillName(label);
         if (parentLabelIndex != null) {
-            find(className("parent-label-opted-f")).click();
+            optParentLabel();
             findFirst(className("parent-label-f")).fillSelect().withIndex(parentLabelIndex);
         }
+        submitForm();
+    }
+
+    public void fillName(String label) {
+        fill(".label-name-f").with(label);
+    }
+
+    public void optParentLabel() {
+        find(className("parent-label-opted-f")).click();
+    }
+
+    public void submitForm() {
         find(className("submit-f")).click();
     }
 
     public void waitForLabelSaveSuccessMessage(String label) {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(MessageFormat.format(REPORT_LABEL_SAVE_SUCCESS_M, label));
+    }
+
+    public void waitForLabelNameValidationError() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".name-error-f").hasText(INPUT_VALIDATION_ERROR_MESSAGE);
+    }
+
+    public void waitForLabelNameValidationErrorRemoval() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".name-error-f").hasText("");
+    }
+
+    public String labelValidationMessage() {
+        return $(className("name-error-f")).getText();
+    }
+
+    public void waitForParentLabelValidationError() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".parent-error-f").hasText(SELECT_VALIDATION_ERROR_MESSAGE);
+    }
+
+    public void waitForParentLabelValidationErrorRemoval() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".parent-error-f").hasText("");
+    }
+
+    public String parentLabelValidationMessage() {
+        return $(className("parent-error-f")).getText();
     }
 }

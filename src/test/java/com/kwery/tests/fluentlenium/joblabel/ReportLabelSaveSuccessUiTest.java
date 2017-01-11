@@ -7,7 +7,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class ReportLabelSaveSuccessTest extends AbstractReportLabelSaveTest {
+public class ReportLabelSaveSuccessUiTest extends AbstractReportLabelSaveTest {
     @Test
     public void test() {
         String label = "test";
