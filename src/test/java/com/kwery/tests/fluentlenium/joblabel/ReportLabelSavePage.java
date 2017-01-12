@@ -2,8 +2,11 @@ package com.kwery.tests.fluentlenium.joblabel;
 
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.domain.FluentWebElement;
 
 import java.text.MessageFormat;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.kwery.tests.util.Messages.REPORT_LABEL_SAVE_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
@@ -76,5 +79,15 @@ public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
 
     public String parentLabelText(int index) {
         return $(className(String.format("parent-label-%d-f", index))).getText();
+    }
+
+    public List<String> parentLabelTexts() {
+        List<String> labels = new LinkedList<>();
+
+        for (FluentWebElement option : $(".parent-label-f option")) {
+            labels.add(option.getText());
+        }
+
+        return labels;
     }
 }
