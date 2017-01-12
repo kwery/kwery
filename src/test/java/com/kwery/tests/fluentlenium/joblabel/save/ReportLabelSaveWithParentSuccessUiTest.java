@@ -15,7 +15,7 @@ import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.junit.Assert.assertThat;
 
-public class ReportLabelSaveWithParentSuccessUiTest extends AbstractReportLabelSaveTest {
+public class ReportLabelSaveWithParentSuccessUiTest extends AbstractReportLabelSaveUiTest {
     private JobLabelModel jobLabelModel0;
     private JobLabelModel jobLabelModel1;
     private Map<String, JobLabelModel> labelMap;

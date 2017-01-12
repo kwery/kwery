@@ -10,7 +10,7 @@ import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveTest {
+public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTest {
     @Before
     public void setUp() {
         JobLabelModel jobLabelModel = jobLabelModel();

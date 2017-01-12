@@ -16,7 +16,7 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ReportLabelSaveLabelWithParentPickParentUiTest extends AbstractReportLabelSaveTest {
+public class ReportLabelSaveLabelWithParentPickParentUiTest extends AbstractReportLabelSaveUiTest {
     public static final int LABELS = 3;
 
     @Before

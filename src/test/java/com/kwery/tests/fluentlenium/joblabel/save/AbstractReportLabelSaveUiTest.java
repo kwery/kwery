@@ -11,7 +11,7 @@ import org.junit.rules.RuleChain;
 import static junit.framework.TestCase.fail;
 import static org.junit.rules.RuleChain.outerRule;
 
-public class AbstractReportLabelSaveTest extends ChromeFluentTest {
+public class AbstractReportLabelSaveUiTest extends ChromeFluentTest {
     public NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
