@@ -11,6 +11,7 @@ public class JobDto {
     protected int parentJobId;
     protected Set<String> emails;
     protected List<SqlQueryDto> sqlQueries;
+    protected Set<Integer> labelIds;
 
     public int getId() {
         return id;
@@ -66,5 +67,13 @@ public class JobDto {
 
     public void setSqlQueries(List<SqlQueryDto> sqlQueries) {
         this.sqlQueries = sqlQueries;
+    }
+
+    public Set<Integer> getLabelIds() {
+        return labelIds;
+    }
+
+    public void setLabelIds(Set<Integer> labelIds) {
+        this.labelIds = labelIds;
     }
 }

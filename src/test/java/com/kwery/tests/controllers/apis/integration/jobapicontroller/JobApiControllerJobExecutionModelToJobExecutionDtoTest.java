@@ -14,7 +14,8 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
-    protected JobApiController jobApiController = new JobApiController(null, null, null, null, null, null, null, null);
+    protected JobApiController jobApiController = new JobApiController(null, null, null, null,
+            null, null, null, null, null);
 
     protected JobModel jobModel = jobModelWithoutDependents();
 

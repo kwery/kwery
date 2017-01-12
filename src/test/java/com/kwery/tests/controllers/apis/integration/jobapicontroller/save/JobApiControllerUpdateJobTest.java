@@ -1,7 +1,6 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
 import com.google.common.collect.ImmutableSet;
-import com.jayway.jsonassert.impl.matcher.IsCollectionWithSize;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
@@ -18,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -98,6 +98,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         expectedSqlQueryModel.setDatasource(datasource1);
         expectedSqlQueryModel.setQuery(sqlQueryDto.getQuery());
         expectedJobModel.setSqlQueries(ImmutableSet.of(expectedSqlQueryModel));
+        expectedJobModel.setLabels(new HashSet<>());
 
         jobDto.getSqlQueries().add(sqlQueryDto);
 
@@ -106,7 +107,10 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
-        assertThat(jobDao.getJobByLabel(expectedJobModel.getLabel()), theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id"));
+        JobModel jobModelFromDb = jobDao.getAllJobs().get(0);
+
+        assertThat(jobModelFromDb, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id"));
+
         assertThat(jobDao.getAllJobs(), hasSize(1));
     }
 }

@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
@@ -75,6 +76,7 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         expectedJobModel.setEmails(emails);
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setCronExpression("");
+        expectedJobModel.setLabels(new HashSet<>());
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select * from mysql.user");
@@ -97,6 +99,8 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
 
         expectedJobModel.setParentJob(jobDao.getJobById(jobModel.getId()));
 
-        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobByLabel(jobDto.getLabel())).excludeProperty("id").excludeProperty("sqlQueries.id"));
+        JobModel jobModelFromDb = jobDao.getAllJobs().stream().filter(jobModel1 -> !jobModel1.getId().equals(jobModel.getId())).collect(Collectors.toList()).get(0);
+
+        assertThat(expectedJobModel, theSameBeanAs(jobModelFromDb).excludeProperty("id").excludeProperty("sqlQueries.id"));
     }
 }

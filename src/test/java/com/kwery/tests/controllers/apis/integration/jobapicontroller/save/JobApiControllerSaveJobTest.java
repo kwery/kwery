@@ -64,6 +64,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         expectedJobModel.setEmails(emails);
         expectedJobModel.setSqlQueries(new HashSet<>());
         expectedJobModel.setChildJobs(new HashSet<>());
+        expectedJobModel.setLabels(new HashSet<>());
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select * from mysql.user");
@@ -84,7 +85,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
-        JobModel jobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel jobModel = jobDao.getAllJobs().get(0);
 
         assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id"));
     }
