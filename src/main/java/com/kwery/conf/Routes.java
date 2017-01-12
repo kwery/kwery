@@ -48,6 +48,7 @@ public class Routes implements ApplicationRoutes {
 
     public static final String JOB_LABEL_SAVE_API = "/api/job-label/save";
     public static final String JOB_LABEL_LIST_API = "/api/job-label/list";
+    public static final String JOB_LABEL_GET_API = "/api/job-label/{jobLabelId}";
 
     @Override
     public void init(Router router) {
@@ -98,6 +99,7 @@ public class Routes implements ApplicationRoutes {
 
         router.POST().route(JOB_LABEL_SAVE_API).with(JobLabelApiController.class, "saveJobLabel");
         router.GET().route(JOB_LABEL_LIST_API).with(JobLabelApiController.class, "getAllJobLabels");
+        router.GET().route(JOB_LABEL_GET_API).with(JobLabelApiController.class, "getJobLabelById");
         //Api - End
 
         //Static asset

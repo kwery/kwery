@@ -5,9 +5,12 @@ import com.google.inject.Singleton;
 import com.kwery.dao.JobLabelDao;
 import com.kwery.dtos.JobLabelDto;
 import com.kwery.dtos.JobLabelModelHackDto;
+import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.JobLabelModel;
 import com.kwery.views.ActionResult;
+import ninja.FilterWith;
 import ninja.Result;
+import ninja.params.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +31,7 @@ public class JobLabelApiController {
         this.jobLabelDao = jobLabelDao;
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
     public Result saveJobLabel(JobLabelDto dto) {
         if (logger.isTraceEnabled()) logger.trace("<");
 
@@ -45,11 +49,21 @@ public class JobLabelApiController {
         return json().render(new ActionResult(success, ""));
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
     public Result getAllJobLabels() {
         if (logger.isTraceEnabled()) logger.trace("<");
         List<JobLabelModel> all = jobLabelDao.getAllJobLabelModels();
         List<JobLabelModelHackDto> dtos = all.stream().map(jobLabelModel -> new JobLabelModelHackDto(jobLabelModel, jobLabelModel.getParentLabel())).collect(toList());
         if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(dtos);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result getJobLabelById(@PathParam("jobLabelId") int jobLabelId) {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        JobLabelModel m = jobLabelDao.getJobLabelModelById(jobLabelId);
+        JobLabelModelHackDto d = new JobLabelModelHackDto(m, m.getParentLabel());
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(d);
     }
 }
