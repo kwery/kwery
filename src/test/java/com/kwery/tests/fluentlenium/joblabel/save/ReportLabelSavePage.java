@@ -32,9 +32,13 @@ public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
         fillName(label);
         if (parentLabelIndex != null) {
             optParentLabel();
-            findFirst(className("parent-label-f")).fillSelect().withIndex(parentLabelIndex);
+            parentLabel(parentLabelIndex);
         }
         submitForm();
+    }
+
+    public void parentLabel(Integer parentLabelIndex) {
+        findFirst(className("parent-label-f")).fillSelect().withIndex(parentLabelIndex);
     }
 
     public void fillName(String label) {
