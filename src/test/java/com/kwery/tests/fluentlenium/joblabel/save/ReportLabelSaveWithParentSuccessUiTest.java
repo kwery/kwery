@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.joblabel;
+package com.kwery.tests.fluentlenium.joblabel.save;
 
 import com.google.common.collect.ImmutableMap;
 import com.kwery.dao.JobLabelDao;

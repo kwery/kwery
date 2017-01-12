@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.joblabel;
+package com.kwery.tests.fluentlenium.joblabel.save;
 
 import com.kwery.dao.JobLabelDao;
 import com.kwery.tests.util.ChromeFluentTest;

@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.joblabel;
+package com.kwery.tests.fluentlenium.joblabel.save;
 
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
