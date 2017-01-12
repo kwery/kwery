@@ -5,15 +5,36 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "validato
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
+        self.labelId = ko.observable(0);
+
+        var isUpdate = params.reportLabelId !== undefined;
+        if (isUpdate) {
+            self.labelId(params.reportLabelId);
+        }
+
         self.labelName = ko.observable();
 
-        var Node = function(label, id) {
+        var Node = function(label, id, parent) {
             this.label = label;
             this.id = id;
             this.children = [];
+            this.parent = parent;
 
             this.addChild = function(node) {
                 this.children.push(node);
+            };
+
+            this.remove = function() {
+                if (this.parent == null) {
+                    throw Error("Cannot delete root");
+                } else {
+                    for (var i = 0; i < this.parent.children.length; ++i) {
+                        if (this.parent.children[i] == this) {
+                            this.parent.children.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
             };
         };
 
@@ -32,14 +53,15 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "validato
         };
 
         //A dummy root node to serve as the parent of the label tree
-        var root = new Node("", 0);
+        var root = new Node("", 0, null);
 
-        var DisplayLabel = function(id, label) {
+        var DisplayLabel = function(id, formattedLabel, label) {
             this.id = id;
+            this.formattedLabel = formattedLabel;
             this.label = label;
         };
 
-        self.displayLabels = ko.observableArray([new DisplayLabel("", "")]);
+        self.displayLabels = ko.observableArray([new DisplayLabel("", "", "")]);
         self.parentLabelId = ko.observable();
         self.parentLabelOpted = ko.observable(false);
 
@@ -66,56 +88,87 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "validato
             }
         });
 
-        //Get current labels
-        $.ajax({
-            url: "/api/job-label/list",
-            type: "GET",
-            contentType: "application/json",
-            success: function (jobLabelModelHackDtos) {
-                //Create tree using labels
-                ko.utils.arrayForEach(jobLabelModelHackDtos, function (jobLabelModelHackDto) {
-                    var parent = jobLabelModelHackDto.parentJobLabelModel;
-                    var child = jobLabelModelHackDto.jobLabelModel;
+        //Add spaces and construct a tree like structure to show in select drop down
+        var populateDisplayLabels = function(node, count) {
+            if (node.id !== 0) {
+                var label = Array(count).join("&nbsp;&nbsp;&nbsp;&nbsp;") + node.label;
+                self.displayLabels.push(new DisplayLabel(node.id, label, node.label));
+            }
+            $.each(node.children, function(index, node) {
+                return populateDisplayLabels(node, count + 1);
+            });
+        };
 
-                    if (parent != undefined) {
-                        //Label has a parent label
-                        var parentNodeInTree = findNode(root, parent.id);
-                        if (parentNodeInTree !== undefined) {
-                            //Parent label is already present in the tree, hence add the child label as a child of the existing parent
-                            parentNodeInTree.addChild(new Node(child.label, child.id));
-                        } else {
-                            //Parent label is not present in the tree, create a new parent node
-                            var parentNode = new Node(parent.label, parent.id);
-                            //Add the child label as a child of the parent node
-                            parentNode.addChild(new Node(child.label, child.id));
-                            //Add parent node as a child of the root label
-                            root.addChild(parentNode);
-                        }
+        var buildLabelTree = function(jobLabelModelHackDtos) {
+            //Create tree using labels
+            ko.utils.arrayForEach(jobLabelModelHackDtos, function (jobLabelModelHackDto) {
+                var parent = jobLabelModelHackDto.parentJobLabelModel;
+                var child = jobLabelModelHackDto.jobLabelModel;
+
+                if (parent != undefined) {
+                    //Label has a parent label
+                    var parentNodeInTree = findNode(root, parent.id);
+                    if (parentNodeInTree !== undefined) {
+                        //Parent label is already present in the tree, hence add the child label as a child of the existing parent
+                        parentNodeInTree.addChild(new Node(child.label, child.id, parentNodeInTree));
                     } else {
-                        //Label does not have a parent
-                        var nodeInTree = findNode(root, child.id);
-                        if (nodeInTree === undefined) {
-                            //Node is not present in the tree, hence create a new label node and add it as child of the root node
-                            root.addChild(new Node(child.label, child.id));
-                        } else {
-                            //Label is already present in the tree. Added as the parent of some other label, no action to take
+                        //Parent label is not present in the tree, create a new parent node
+                        var parentNode = new Node(parent.label, parent.id, root);
+                        //Add the child label as a child of the parent node
+                        parentNode.addChild(new Node(child.label, child.id, parentNode));
+                        //Add parent node as a child of the root label
+                        root.addChild(parentNode);
+                    }
+                } else {
+                    //Label does not have a parent
+                    var nodeInTree = findNode(root, child.id);
+                    if (nodeInTree === undefined) {
+                        //Node is not present in the tree, hence create a new label node and add it as child of the root node
+                        root.addChild(new Node(child.label, child.id, root));
+                    } else {
+                        //Label is already present in the tree. Added as the parent of some other label, no action to take
+                    }
+                }
+            });
+        };
+
+        //Get current labels
+        $.when(
+            $.ajax({
+                url: "/api/job-label/list",
+                type: "GET",
+                contentType: "application/json",
+                success: function (jobLabelModelHackDtos) {
+                    buildLabelTree(jobLabelModelHackDtos);
+
+                    //Remove self(and it's children) from label node tree because a label or it's child labels cannot become a parent of itself
+                    if (isUpdate) {
+                        var labelNode = findNode(root, self.labelId());
+                        labelNode.remove();
+                    }
+
+                    populateDisplayLabels(root, 0);
+                }
+            })
+        ).done(function(){
+            if (isUpdate) {
+                return $.ajax({
+                    url: "/api/job-label/" + self.labelId(),
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function(model) {
+                        if (isUpdate) {
+                            self.labelName(model.jobLabelModel.label);
+                            if (model.parentJobLabelModel !== null) {
+                                self.parentLabelOpted(true);
+                                //This should happen only post population of display labels
+                                self.parentLabelId(model.parentJobLabelModel.id);
+                            }
                         }
                     }
                 });
-
-                //Add spaces and construct a tree like structure to show in select drop down
-                var formatLabels = function(node, count) {
-                    if (node.id !== 0) {
-                        var label = Array(count).join("&nbsp;&nbsp;&nbsp;&nbsp;") + node.label;
-                        self.displayLabels.push(new DisplayLabel(node.id, label));
-                    }
-                    $.each(node.children, function(index, node) {
-                        return formatLabels(node, count + 1);
-                    });
-                };
-
-                formatLabels(root, 0);
             }
+            self.refreshValidation();
         });
 
         self.validate = function() {
@@ -128,7 +181,8 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "validato
                         type: "POST",
                         data: ko.toJSON({
                             labelName: self.labelName(),
-                            parentLabelId: self.parentLabelOpted() ? self.parentLabelId() : 0
+                            labelId: self.labelId(),
+                            parentLabelId: self.parentLabelOpted() ? self.parentLabelId() : 0,
                         }),
                         contentType: "application/json",
                         success: function(result) {
