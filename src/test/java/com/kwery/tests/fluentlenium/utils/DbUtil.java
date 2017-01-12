@@ -132,7 +132,6 @@ public class DbUtil {
 
         for (JobModel m : ms) {
             builder.newRow(JOB_TABLE)
-                    .with(JobModel.LABEL_COLUMN, m.getLabel())
                     .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
                     .with(JobModel.TITLE_COLUMN, m.getTitle())
                     .with(JobModel.ID_COLUMN, m.getId())
@@ -274,6 +273,24 @@ public class DbUtil {
         return builder.build();
     }
 
+    public static IDataSet jobJobLabelTable(JobModel... ms) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JobModel.JOB_JOB_LABEL_TABLE);
+
+        if (ms != null) {
+            for (JobModel m : ms) {
+                for (JobLabelModel jobLabelModel : m.getLabels()) {
+                    builder.newRow(JOB_JOB_LABEL_TABLE)
+                            .with(JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, m.getId())
+                            .with(JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, jobLabelModel.getId())
+                            .add();
+                }
+            }
+        }
+
+        return builder.build();
+    }
+
     public static void datasourceDbSetup(Datasource datasource) {
         DbSetup dbSetup = new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -322,7 +339,6 @@ public class DbUtil {
                         .row()
                         .column(JobModel.ID_COLUMN, jobModel.getId())
                         .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
                         .column(JobModel.TITLE_COLUMN, jobModel.getTitle())
                         .end()
                         .build()
@@ -463,6 +479,23 @@ public class DbUtil {
                                 .build()
                 )
         ).launch();
+    }
+
+    public static void jobJobLabelDbSetUp(JobModel jobModel) {
+        for (JobLabelModel jobLabelModel : jobModel.getLabels()) {
+            new DbSetup(
+                    new DataSourceDestination(getDatasource()),
+                    sequenceOf(
+                            insertInto(JobModel.JOB_JOB_LABEL_TABLE)
+                                    .row()
+                                        .column(JobModel.JOB_JOB_LABEL_TABLE_ID_COLUMN, dbId())
+                                        .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, jobModel.getId())
+                                        .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, jobLabelModel.getId())
+                                    .end()
+                                    .build()
+                    )
+            ).launch();
+        }
     }
 
     public static int dbId() {

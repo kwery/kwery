@@ -199,12 +199,12 @@ public class TestUtil {
         JobModel jobModel = new JobModel();
         jobModel.setId(DbUtil.dbId());
         jobModel.setCronExpression("* * * * *");
-        jobModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
         jobModel.setChildJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setSqlQueries(new HashSet<>());
         jobModel.setParentJob(null);
+        jobModel.setLabels(new HashSet<>());
         return jobModel;
     }
 

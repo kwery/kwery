@@ -4,13 +4,14 @@ import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 
 import java.util.HashSet;
 
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobEmailTable;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobTable;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
 
 public class JobDaoSaveWithEmailTest extends RepoDashDaoTestBase {
@@ -26,7 +27,7 @@ public class JobDaoSaveWithEmailTest extends RepoDashDaoTestBase {
         jobModel = getInstance(JobDao.class).save(jobModel);
         expected.setId(jobModel.getId());
 
-        new DbTableAsserterBuilder(JobModel.JOB_TABLE, DbUtil.jobTable(expected)).build().assertTable();
-        new DbTableAsserterBuilder(JobModel.JOB_EMAIL_TABLE, DbUtil.jobEmailTable(expected)).columnToIgnore(JobModel.JOB_EMAIL_ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(JobModel.JOB_TABLE, jobTable(expected)).build().assertTable();
+        new DbTableAsserterBuilder(JobModel.JOB_EMAIL_TABLE, jobEmailTable(expected)).columnToIgnore(JobModel.JOB_EMAIL_ID_COLUMN).build().assertTable();
     }
 }

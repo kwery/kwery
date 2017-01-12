@@ -31,6 +31,11 @@ public class JobModel {
     public static final String JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
     public static final String JOB_EMAIL_TABLE_EMAIL_COLUMN = "email";
 
+    public static final String JOB_JOB_LABEL_TABLE = "job_job_label";
+    public static final String JOB_JOB_LABEL_TABLE_ID_COLUMN = "id";
+    public static final String JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN = "job_id_fk";
+    public static final String JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN = "job_label_id_fk";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = ID_COLUMN)
@@ -45,6 +50,14 @@ public class JobModel {
     @Size(min = 1, max = 255)
     @Column(name = LABEL_COLUMN)*/
     public String label;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinTable(
+            name = JOB_JOB_LABEL_TABLE,
+            joinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, referencedColumnName = ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, referencedColumnName = JobLabelModel.ID_COLUMN)
+    )
+    protected Set<JobLabelModel> labels;
 
     @NotNull
     @Size(min = 1, max = 1024)
@@ -146,5 +159,13 @@ public class JobModel {
 
     public void setEmails(Set<String> recipientEmails) {
         this.emails = recipientEmails;
+    }
+
+    public Set<JobLabelModel> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<JobLabelModel> labels) {
+        this.labels = labels;
     }
 }

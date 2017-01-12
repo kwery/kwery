@@ -3,6 +3,7 @@ package com.kwery.tests.dao.jobdao;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
+import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
@@ -49,6 +50,13 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
         jobEmailDbSetUp(jobModel);
         jobDependentDbSetUp(jobModel);
 
+        JobLabelModel jobLabelModel = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel);
+
+        jobModel.getLabels().add(jobLabelModel);
+
+        jobJobLabelDbSetUp(jobModel);
+
         jobDao = getInstance(JobDao.class);
     }
 
@@ -56,12 +64,6 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
     public void testGetJobById() {
         assertThat(jobDao.getJobById(jobModel.getId()), theSameBeanAs(jobModel));
         assertThat(jobDao.getJobById(jobModel.getId() + DB_START_ID + 100), nullValue());
-    }
-
-    @Test
-    public void testGetJobByLabel() {
-        assertThat(jobDao.getJobByLabel(jobModel.getLabel()), theSameBeanAs(jobModel));
-        assertThat(jobDao.getJobByLabel(randomUUID().toString()), nullValue());
     }
 
     @Test

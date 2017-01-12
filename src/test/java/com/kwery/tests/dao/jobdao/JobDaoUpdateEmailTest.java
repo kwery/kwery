@@ -33,7 +33,7 @@ public class JobDaoUpdateEmailTest extends RepoDashDaoTestBase {
     }
 
     @Test
-    public void testEmptyEmails() throws Exception {
+    public void testClearEmails() throws Exception {
         jobModel.getEmails().clear();
 
         JobModel expected = new DozerBeanMapper().map(jobModel, JobModel.class);
