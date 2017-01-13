@@ -414,7 +414,7 @@ public class JobApiController {
         jobModel.setEmails(jobDto.getEmails());
 
         if (jobDto.getLabelIds() != null) {
-            jobModel.setLabels(jobDto.getLabelIds().stream().map(jobLabelDao::getJobLabelModelById).collect(toSet()));
+            jobModel.setLabels(jobDto.getLabelIds().stream().filter(id -> id != null && id > 0).map(jobLabelDao::getJobLabelModelById).collect(toSet()));
         } else {
             jobModel.setLabels(new HashSet<>());
         }

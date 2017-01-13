@@ -1,6 +1,7 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.JobDao;
@@ -163,6 +164,23 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
     public void testEmptyLabelIds() {
         JobDto jobDto = jobDtoWithoutId();
         jobDto.setLabelIds(new HashSet<>());
+
+        JobModel jobModel = new JobModel();
+        jobModel.setCronExpression(jobDto.getCronExpression());
+        jobModel.setTitle(jobDto.getTitle());
+        jobModel.setName(jobDto.getName());
+        jobModel.setId(null);
+        jobModel.setLabels(new HashSet<>());
+        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setEmails(new HashSet<>());
+
+        assertThat(jobModel, theSameBeanAs(jobApiController.jobDtoToJobModel(jobDto)));
+    }
+
+    @Test
+    public void testLabelIdWithZeroesAndNulls() {
+        JobDto jobDto = jobDtoWithoutId();
+        jobDto.setLabelIds(Sets.newHashSet(0, 0, null, null));
 
         JobModel jobModel = new JobModel();
         jobModel.setCronExpression(jobDto.getCronExpression());
