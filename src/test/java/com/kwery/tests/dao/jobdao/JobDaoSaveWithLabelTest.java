@@ -10,10 +10,11 @@ import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.kwery.models.JobLabelModel.JOB_LABEL_TABLE;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobLabelModel;
-import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
+import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
 
 public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
     private JobLabelModel jobLabelModel0;
@@ -30,7 +31,7 @@ public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
 
     @Test
     public void test() throws Exception {
-        JobModel jobModel = jobModelWithoutDependents();
+        JobModel jobModel = jobModelWithoutIdWithoutDependents();
         jobModel.setLabels(ImmutableSet.of(jobLabelModel0, jobLabelModel1));
 
         DozerBeanMapper mapper = new DozerBeanMapper();
@@ -41,5 +42,6 @@ public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
 
         new DbTableAsserterBuilder(JOB_TABLE, jobTable(expected)).build().assertTable();
         new DbTableAsserterBuilder(JOB_JOB_LABEL_TABLE, jobJobLabelTable(expected)).columnToIgnore(JOB_JOB_LABEL_TABLE_ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(JOB_LABEL_TABLE, jobLabelTable(jobLabelModel0, jobLabelModel1)).build().assertTable();
     }
 }

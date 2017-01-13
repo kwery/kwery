@@ -56,7 +56,7 @@ public class JobModel {
     @Column(name = TITLE_COLUMN)
     protected String title;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = JOB_JOB_LABEL_TABLE,
             joinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, referencedColumnName = ID_COLUMN),

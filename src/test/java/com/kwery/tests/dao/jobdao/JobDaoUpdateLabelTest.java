@@ -10,6 +10,7 @@ import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.kwery.models.JobLabelModel.JOB_LABEL_TABLE;
 import static com.kwery.models.JobModel.JOB_JOB_LABEL_TABLE;
 import static com.kwery.models.JobModel.JOB_JOB_LABEL_TABLE_ID_COLUMN;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
@@ -21,10 +22,11 @@ public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
     private JobModel jobModel;
     private JobLabelModel jobLabelModel1;
     private JobLabelModel jobLabelModel2;
+    private JobLabelModel jobLabelModel0;
 
     @Before
     public void setUp() {
-        JobLabelModel jobLabelModel0 = jobLabelModel();
+        jobLabelModel0 = jobLabelModel();
         jobLabelDbSetUp(jobLabelModel0);
 
         jobLabelModel1 = jobLabelModel();
@@ -48,6 +50,7 @@ public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
         jobDao.save(jobModel);
 
         new DbTableAsserterBuilder(JOB_JOB_LABEL_TABLE, jobJobLabelTable(expected)).columnToIgnore(JOB_JOB_LABEL_TABLE_ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(JOB_LABEL_TABLE, jobLabelTable(jobLabelModel0, jobLabelModel1, jobLabelModel2)).build().assertTable();
     }
 
     @Test
@@ -59,5 +62,6 @@ public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
         jobDao.save(jobModel);
 
         new DbTableAsserterBuilder(JOB_JOB_LABEL_TABLE, jobJobLabelTable(expected)).columnToIgnore(JOB_JOB_LABEL_TABLE_ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(JOB_LABEL_TABLE, jobLabelTable(jobLabelModel0, jobLabelModel1, jobLabelModel2)).build().assertTable();
     }
 }
