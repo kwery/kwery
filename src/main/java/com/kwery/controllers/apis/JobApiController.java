@@ -61,17 +61,20 @@ public class JobApiController {
     protected final SqlQueryDao sqlQueryDao;
     protected final Messages messages;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
+    protected final JobLabelDao jobLabelDao;
     protected final JsonToCsvConverter jsonToCsvConverter;
 
     @Inject
     public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao,
-                            SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao, JsonToCsvConverter jsonToCsvConverter, Messages messages) {
+                            SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao,
+                            JsonToCsvConverter jsonToCsvConverter, Messages messages) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
         this.jobService = jobService;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
+        this.jobLabelDao = jobLabelDao;
         this.jsonToCsvConverter = jsonToCsvConverter;
         this.messages = messages;
     }
@@ -409,6 +412,13 @@ public class JobApiController {
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toSet()));
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setEmails(jobDto.getEmails());
+
+        if (jobDto.getLabelIds() != null) {
+            jobModel.setLabels(jobDto.getLabelIds().stream().map(jobLabelDao::getJobLabelModelById).collect(toSet()));
+        } else {
+            jobModel.setLabels(new HashSet<>());
+        }
+
         return jobModel;
     }
 

@@ -4,9 +4,11 @@ import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.DatasourceDao;
 import com.kwery.dao.JobDao;
+import com.kwery.dao.JobLabelDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
+import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.RepoDashDaoTestBase;
@@ -19,10 +21,12 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.jobLabelDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
@@ -36,6 +40,9 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
     protected int datasourceId = 1;
 
     protected final Set<String> emails = ImmutableSet.of("foo@bar.com", "goo@moo.com");
+    private JobLabelDao jobLabelDao;
+    private Set<Integer> jobLabelIds;
+    private ImmutableSet<JobLabelModel> jobLabelModels;
 
     @Before
     public void setUpJobApiControllerJobDtoToJobModelTest() {
@@ -49,15 +56,27 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
                 )
         ).launch();
 
-        datasourceDao = getInstance(DatasourceDao.class);
+        JobLabelModel jobLabelModel0 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel0);
 
-        jobApiController = new JobApiController(datasourceDao, getInstance(JobDao.class), null, null, null, null, null, null);
+        JobLabelModel jobLabelModel1 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel1);
+
+        jobLabelModels = ImmutableSet.of(jobLabelModel0, jobLabelModel1);
+        jobLabelIds = jobLabelModels.stream().map(JobLabelModel::getId).collect(Collectors.toSet());
+
+        datasourceDao = getInstance(DatasourceDao.class);
+        jobLabelDao = getInstance(JobLabelDao.class);
+
+        jobApiController = new JobApiController(datasourceDao, getInstance(JobDao.class), null, null, null,
+                null, jobLabelDao, null, null);
     }
 
     @Test
     public void testWithoutId() {
         JobDto jobDto = jobDtoWithoutId();
         jobDto.setEmails(emails);
+        jobDto.setLabelIds(jobLabelIds);
 
         jobDto.setSqlQueries(new ArrayList<>(2));
 
@@ -67,6 +86,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setId(null);
         jobModel.setEmails(emails);
+        jobModel.setLabels(jobLabelModels);
 
         jobModel.setSqlQueries(new HashSet<>(2));
 
@@ -92,6 +112,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         JobDto jobDto = TestUtil.jobDto();
         jobDto.setEmails(emails);
         jobDto.setSqlQueries(new ArrayList<>(2));
+        jobDto.setLabelIds(jobLabelIds);
 
         JobModel jobModel = new JobModel();
         jobModel.setName(jobDto.getName());
@@ -101,6 +122,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setSqlQueries(new HashSet<>(2));
         jobModel.setId(jobDto.getId());
         jobModel.setEmails(emails);
+        jobModel.setLabels(jobLabelModels);
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDto();
@@ -116,6 +138,40 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
 
             jobModel.getSqlQueries().add(model);
         }
+
+        assertThat(jobModel, theSameBeanAs(jobApiController.jobDtoToJobModel(jobDto)));
+    }
+
+    @Test
+    public void testNullLabelIds() {
+        JobDto jobDto = jobDtoWithoutId();
+        jobDto.setLabelIds(null);
+
+        JobModel jobModel = new JobModel();
+        jobModel.setCronExpression(jobDto.getCronExpression());
+        jobModel.setTitle(jobDto.getTitle());
+        jobModel.setName(jobDto.getName());
+        jobModel.setId(null);
+        jobModel.setLabels(new HashSet<>());
+        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setEmails(new HashSet<>());
+
+        assertThat(jobModel, theSameBeanAs(jobApiController.jobDtoToJobModel(jobDto)));
+    }
+
+    @Test
+    public void testEmptyLabelIds() {
+        JobDto jobDto = jobDtoWithoutId();
+        jobDto.setLabelIds(new HashSet<>());
+
+        JobModel jobModel = new JobModel();
+        jobModel.setCronExpression(jobDto.getCronExpression());
+        jobModel.setTitle(jobDto.getTitle());
+        jobModel.setName(jobDto.getName());
+        jobModel.setId(null);
+        jobModel.setLabels(new HashSet<>());
+        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setEmails(new HashSet<>());
 
         assertThat(jobModel, theSameBeanAs(jobApiController.jobDtoToJobModel(jobDto)));
     }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -61,7 +62,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, referencedColumnName = ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, referencedColumnName = JobLabelModel.ID_COLUMN)
     )
-    protected Set<JobLabelModel> labels;
+    protected Set<JobLabelModel> labels = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinTable(
