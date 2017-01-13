@@ -13,7 +13,7 @@ public class JobModel {
     public static final String JOB_TABLE = "job";
     public static final String ID_COLUMN = "id";
     public static final String CRON_EXPRESSION_COLUMN = "cron_expression";
-    public static final String LABEL_COLUMN = "label";
+    public static final String NAME_COLUMN = "j_name";
     public static final String TITLE_COLUMN = "title";
 
     public static final String JOB_SQL_QUERY_TABLE = "job_sql_query";
@@ -40,10 +40,9 @@ public class JobModel {
     @Size(max = 255)
     public String cronExpression;
 
-    @Transient
-/*    @NotNull
+    @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = LABEL_COLUMN)*/
+    @Column(name = NAME_COLUMN)
     public String label;
 
     @NotNull

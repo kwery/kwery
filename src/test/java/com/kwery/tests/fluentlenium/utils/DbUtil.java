@@ -132,7 +132,7 @@ public class DbUtil {
 
         for (JobModel m : ms) {
             builder.newRow(JOB_TABLE)
-                    .with(JobModel.LABEL_COLUMN, m.getLabel())
+                    .with(JobModel.NAME_COLUMN, m.getLabel())
                     .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
                     .with(JobModel.TITLE_COLUMN, m.getTitle())
                     .with(JobModel.ID_COLUMN, m.getId())
@@ -322,7 +322,7 @@ public class DbUtil {
                         .row()
                         .column(JobModel.ID_COLUMN, jobModel.getId())
                         .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
-                        .column(JobModel.LABEL_COLUMN, jobModel.getLabel())
+                        .column(JobModel.NAME_COLUMN, jobModel.getLabel())
                         .column(JobModel.TITLE_COLUMN, jobModel.getTitle())
                         .end()
                         .build()
