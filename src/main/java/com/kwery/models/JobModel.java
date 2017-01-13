@@ -34,21 +34,21 @@ public class JobModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = ID_COLUMN)
-    public Integer id;
+    protected Integer id;
 
     @Column(name = CRON_EXPRESSION_COLUMN)
     @Size(max = 255)
-    public String cronExpression;
+    protected String cronExpression;
 
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = NAME_COLUMN)
-    public String label;
+    protected String label;
 
     @NotNull
     @Size(min = 1, max = 1024)
     @Column(name = TITLE_COLUMN)
-    private String title;
+    protected String title;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinTable(
@@ -56,7 +56,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_ID_FK_COLUMN, referencedColumnName = ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = SQL_QUERY_ID_FK_COLUMN, referencedColumnName = SqlQueryModel.ID_COLUMN)
     )
-    public Set<SqlQueryModel> sqlQueries;
+    protected Set<SqlQueryModel> sqlQueries;
 
     @ManyToMany(fetch = FetchType.EAGER,  cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
@@ -64,7 +64,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
     )
-    public Set<JobModel> childJobs;
+    protected Set<JobModel> childJobs;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
@@ -73,7 +73,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
     )
-    private JobModel parentJob;
+    protected JobModel parentJob;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
@@ -81,7 +81,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN)
     )
     @Column(name = JOB_EMAIL_TABLE_EMAIL_COLUMN)
-    private Set<String> emails;
+    protected Set<String> emails;
 
     public Integer getId() {
         return id;
