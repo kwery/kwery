@@ -21,7 +21,7 @@ import java.util.HashSet;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M;
+import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_NAME_EXISTS_M;
 import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.kwery.views.ActionResult.Status.failure;
@@ -82,7 +82,7 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
 
         ActionResult actionResult = new ActionResult();
         actionResult.setStatus(ActionResult.Status.failure);
-        actionResult.setMessages(ImmutableList.of(format(JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel)));
+        actionResult.setMessages(ImmutableList.of(format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel)));
 
         assertEquals(toJson(actionResult), response, false);
     }

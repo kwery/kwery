@@ -90,11 +90,11 @@ public class JobApiController {
         if (jobByLabel != null) {
             if (isUpdate) {
                 if (!jobByLabel.getId().equals(jobDto.getId())) {
-                    String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getName()).get();
+                    String message = messages.get(JOBAPICONTROLLER_REPORT_NAME_EXISTS, context, Optional.of(json), jobDto.getName()).get();
                     errorMessages.add(message);
                 }
             } else {
-                String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getName()).get();
+                String message = messages.get(JOBAPICONTROLLER_REPORT_NAME_EXISTS, context, Optional.of(json), jobDto.getName()).get();
                 errorMessages.add(message);
             }
         }

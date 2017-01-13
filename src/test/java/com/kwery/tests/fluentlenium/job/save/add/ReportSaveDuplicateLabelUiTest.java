@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M;
+import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_NAME_EXISTS_M;
 import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.text.MessageFormat.format;
@@ -101,7 +101,7 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForErrorMessages();
 
-        List<String> expectedErrorMessages = ImmutableList.of(format(JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel));
+        List<String> expectedErrorMessages = ImmutableList.of(format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel));
 
         Assert.assertThat(expectedErrorMessages, IsIterableContainingInAnyOrder.containsInAnyOrder(page.getErrorMessages().toArray(new String[2])));
     }
