@@ -97,6 +97,6 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
 
         expectedJobModel.setParentJob(jobDao.getJobById(jobModel.getId()));
 
-        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobByLabel(jobDto.getName())).excludeProperty("id").excludeProperty("sqlQueries.id"));
+        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobByName(jobDto.getName())).excludeProperty("id").excludeProperty("sqlQueries.id"));
     }
 }

@@ -85,7 +85,7 @@ public class Messages {
 
     public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report saved successfully";
 
-    public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS_M = "A report already exists with name {0}, please choose a different label";
+    public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS_M = "A report already exists with name {0}, please choose a different name";
     public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exists with label {0}, please choose a different label";
     public static final String REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR = "You have already used this label, please choose a different label";
 

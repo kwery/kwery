@@ -84,7 +84,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
-        JobModel jobModel = jobDao.getJobByLabel(jobDto.getName());
+        JobModel jobModel = jobDao.getJobByName(jobDto.getName());
 
         assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id"));
     }

@@ -59,9 +59,9 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
     }
 
     @Test
-    public void testGetJobByLabel() {
-        assertThat(jobDao.getJobByLabel(jobModel.getName()), theSameBeanAs(jobModel));
-        assertThat(jobDao.getJobByLabel(randomUUID().toString()), nullValue());
+    public void testGetJobByName() {
+        assertThat(jobDao.getJobByName(jobModel.getName()), theSameBeanAs(jobModel));
+        assertThat(jobDao.getJobByName(randomUUID().toString()), nullValue());
     }
 
     @Test

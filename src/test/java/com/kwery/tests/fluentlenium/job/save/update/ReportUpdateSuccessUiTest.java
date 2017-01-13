@@ -108,6 +108,6 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
         assertThat(sqlQueryDao.getAll(), hasSize(2));
-        assertJobModel(jobDao.getJobByLabel(jobDto.getName()), null, jobDto, datasource);
+        assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
     }
 }

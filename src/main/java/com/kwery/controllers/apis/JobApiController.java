@@ -86,7 +86,7 @@ public class JobApiController {
 
         List<String> errorMessages = new LinkedList<>();
 
-        JobModel jobByLabel = jobDao.getJobByLabel(jobDto.getName());
+        JobModel jobByLabel = jobDao.getJobByName(jobDto.getName());
         if (jobByLabel != null) {
             if (isUpdate) {
                 if (!jobByLabel.getId().equals(jobDto.getId())) {
