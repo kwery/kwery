@@ -10,6 +10,7 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
+import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -20,6 +21,7 @@ import org.junit.rules.RuleChain;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
@@ -29,7 +31,7 @@ import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
 
-public class ReportSaveWithDependentsSuccessUiTest extends ReportSaveSuccessUiTest {
+public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -109,7 +111,8 @@ public class ReportSaveWithDependentsSuccessUiTest extends ReportSaveSuccessUiTe
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
 
-        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel savedJobModel = jobDao.getAllJobs().stream().filter(jobModel -> !parentJobModel.getId().equals(jobModel.getId())).collect(Collectors.toList()).get(0);
+
         parentJobModel.setChildJobs(ImmutableSet.of(savedJobModel));
         assertJobModel(savedJobModel, parentJobModel, jobDto, datasource);
 

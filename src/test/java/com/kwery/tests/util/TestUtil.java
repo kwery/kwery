@@ -305,7 +305,7 @@ public class TestUtil {
         return "";
     }
 
-    public static JobModel toJobModel(JobDto jobDto, Datasource datasource) {
+    public static JobModel toJobModel(JobDto jobDto, Datasource datasource, Set<JobLabelModel> labels) {
         JobModel jobModel = new JobModel();
         jobModel.setLabel(jobDto.getLabel());
         jobModel.setTitle(jobDto.getTitle());
@@ -313,6 +313,7 @@ public class TestUtil {
         jobModel.setEmails(jobDto.getEmails());
         jobModel.setSqlQueries(new LinkedHashSet<>());
         jobModel.setChildJobs(new HashSet<>());
+        jobModel.setLabels(labels);
 
         for (SqlQueryDto sqlQueryDto : jobDto.getSqlQueries()) {
             SqlQueryModel sqlQueryModel = new SqlQueryModel();
@@ -331,7 +332,7 @@ public class TestUtil {
     }
 
     public static void assertJobModel(JobModel jobModel, JobModel parentJobModel, JobDto jobDto, Datasource datasource) {
-        JobModel expectedJobModel = toJobModel(jobDto, datasource);
+        JobModel expectedJobModel = toJobModel(jobDto, datasource, new HashSet<>());
 
         if (parentJobModel != null) {
             expectedJobModel.setParentJob(parentJobModel);

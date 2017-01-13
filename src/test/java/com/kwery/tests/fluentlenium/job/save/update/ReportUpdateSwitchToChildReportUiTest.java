@@ -118,18 +118,18 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         Map<Integer, String> parentReportIdToLabelMap = ImmutableMap.of(
-                parentJobModel.getId(), parentJobModel.getLabel()
+                parentJobModel.getId(), parentJobModel.getTitle()
         );
         page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
 
-        page.waitForReportDisplay(childJobModel.getLabel());
+        page.waitForReportDisplay(childJobModel.getTitle());
 
         page.chooseParentReport();
 
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
 
-        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel savedJobModel = jobDao.getJobById(childJobModel.getId());
         parentJobModel.getChildJobs().add(jobDao.getJobById(childJobModel.getId()));
 
         assertJobModel(savedJobModel, parentJobModel, jobDto, datasource);

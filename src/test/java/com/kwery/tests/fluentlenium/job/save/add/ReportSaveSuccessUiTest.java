@@ -6,6 +6,7 @@ import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
+import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
@@ -84,7 +85,8 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
 
-        assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
+        JobModel savedJobModel = jobDao.getAllJobs().get(0);
+        assertJobModel(savedJobModel, null, jobDto, datasource);
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
     }
@@ -100,7 +102,8 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
         page.fillAndSubmitReportSaveForm(jobDto, true);
         page.waitForReportSaveSuccessMessage();
 
-        assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
+        JobModel savedjobModel = jobDao.getAllJobs().get(0);
+        assertJobModel(savedjobModel, null, jobDto, datasource);
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
     }

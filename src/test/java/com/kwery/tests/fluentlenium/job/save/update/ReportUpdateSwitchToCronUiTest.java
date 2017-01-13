@@ -123,14 +123,14 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
         );
         page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
 
-        page.waitForReportDisplay(childJobModel.getLabel());
+        page.waitForReportDisplay(childJobModel.getTitle());
 
         page.chooseCronExpression();
 
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
 
-        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel savedJobModel = jobDao.getJobById(childJobModel.getId());
         parentJobModel.getChildJobs().clear();
 
         assertJobModel(savedJobModel, null, jobDto, datasource);

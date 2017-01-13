@@ -90,7 +90,7 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
-        page.waitForReportDisplay(jobModel.getLabel());
+        page.waitForReportDisplay(jobModel.getTitle());
 
         JobDto jobDto = jobDto();
         jobDto.setCronExpression("* * * * *");
@@ -108,6 +108,7 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
         assertThat(sqlQueryDao.getAll(), hasSize(2));
-        assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
+        JobModel savedJobModel = jobDao.getJobById(jobModel.getId());
+        assertJobModel(savedJobModel, null, jobDto, datasource);
     }
 }

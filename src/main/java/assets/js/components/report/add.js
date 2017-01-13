@@ -59,9 +59,8 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             this.id = id;
         };
 
-        var Report = function(id, label) {
+        var Report = function(id) {
             this.id = id;
-            this.label = label;
         };
 
         self.reports = ko.observableArray([new Report("", ko.i18n("report.save.parent.report.id.select.default"))]);
@@ -90,10 +89,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         var report = jobModelHackDto.jobModel;
                         if (isUpdate) {
                             if (report.id !== reportId) {
-                                self.reports.push(new Report(report.id, report.label));
+                                self.reports.push(new Report(report.id));
                             }
                         } else {
-                            self.reports.push(new Report(report.id, report.label));
+                            self.reports.push(new Report(report.id));
                         }
                     });
                 }
@@ -107,7 +106,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     success: function(jobModelHackDto) {
                         var report = jobModelHackDto.jobModel;
                         self.title(report.title);
-                        self.reportLabel(report.label);
                         self.reportEmails(report.emails.join(", "));
 
                         if (jobModelHackDto.parentJobModel != null) {
@@ -183,7 +181,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
                 var report = {
                     cronExpression: self.scheduleOption() === "cronUi" ? cron.cron("value") : self.cronExpression(),
-                    label: self.reportLabel(),
                     title: self.title(),
                     //TODO - Updating to 0 turns into empty string
                     parentJobId: self.parentReportId() ? self.parentReportId() : 0,
