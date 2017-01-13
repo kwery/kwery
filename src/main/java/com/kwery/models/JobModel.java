@@ -43,7 +43,7 @@ public class JobModel {
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = NAME_COLUMN)
-    protected String label;
+    protected String name;
 
     @NotNull
     @Size(min = 1, max = 1024)
@@ -99,12 +99,12 @@ public class JobModel {
         this.cronExpression = cronExpression;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setName(String label) {
+        this.name = label;
     }
 
     public String getTitle() {

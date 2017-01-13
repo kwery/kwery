@@ -138,12 +138,12 @@ public class ReportUpdateSwitchParentUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         Map<Integer, String> parentReportIdToLabelMap = ImmutableMap.of(
-                parentJobModel0.getId(), parentJobModel0.getLabel(),
-                parentJobModel1.getId(), parentJobModel1.getLabel()
+                parentJobModel0.getId(), parentJobModel0.getName(),
+                parentJobModel1.getId(), parentJobModel1.getName()
         );
         page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
 
-        page.waitForReportDisplay(childJobModel.getLabel());
+        page.waitForReportDisplay(childJobModel.getName());
 
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();

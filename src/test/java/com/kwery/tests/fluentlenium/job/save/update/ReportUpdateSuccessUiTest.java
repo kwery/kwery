@@ -90,7 +90,7 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
-        page.waitForReportDisplay(jobModel.getLabel());
+        page.waitForReportDisplay(jobModel.getName());
 
         JobDto jobDto = jobDto();
         jobDto.setCronExpression("* * * * *");

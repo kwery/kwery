@@ -114,7 +114,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         jobDto.setParentJobId(parentJobModel1.getId());
 
         JobModel expectedJobModel = new JobModel();
-        expectedJobModel.setLabel(jobDto.getName());
+        expectedJobModel.setName(jobDto.getName());
         expectedJobModel.setTitle(jobDto.getTitle());
         expectedJobModel.setEmails(emails);
         expectedJobModel.setParentJob(parentJobModel1);

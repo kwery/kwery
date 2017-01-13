@@ -62,7 +62,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobDto.setSqlQueries(new ArrayList<>(2));
 
         JobModel jobModel = new JobModel();
-        jobModel.setLabel(jobDto.getName());
+        jobModel.setName(jobDto.getName());
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setId(null);
@@ -94,7 +94,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobDto.setSqlQueries(new ArrayList<>(2));
 
         JobModel jobModel = new JobModel();
-        jobModel.setLabel(jobDto.getName());
+        jobModel.setName(jobDto.getName());
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setId(null);

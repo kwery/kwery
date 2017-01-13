@@ -60,7 +60,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setTitle(jobDto.getTitle());
         expectedJobModel.setCronExpression(jobDto.getCronExpression());
-        expectedJobModel.setLabel(jobDto.getName());
+        expectedJobModel.setName(jobDto.getName());
         expectedJobModel.setEmails(emails);
         expectedJobModel.setSqlQueries(new HashSet<>());
         expectedJobModel.setChildJobs(new HashSet<>());

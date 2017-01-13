@@ -53,7 +53,7 @@ public class JobDao {
         CriteriaBuilder cb = m.getCriteriaBuilder();
         CriteriaQuery<JobModel> cq = cb.createQuery(JobModel.class);
         Root<JobModel> root = cq.from(JobModel.class);
-        cq.where(cb.equal(root.get("label"), label));
+        cq.where(cb.equal(root.get("name"), label));
         TypedQuery<JobModel> tq = m.createQuery(cq);
         List<JobModel> jobModels = tq.getResultList();
         if (jobModels.isEmpty()) {

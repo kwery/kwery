@@ -99,7 +99,7 @@ public class ReportSaveWithDependentsSuccessUiTest extends ReportSaveSuccessUiTe
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         Map<Integer, String> parentReportIdToLabelMap = ImmutableMap.of(
-                parentJobModel.getId(), parentJobModel.getLabel()
+                parentJobModel.getId(), parentJobModel.getName()
         );
         page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
 

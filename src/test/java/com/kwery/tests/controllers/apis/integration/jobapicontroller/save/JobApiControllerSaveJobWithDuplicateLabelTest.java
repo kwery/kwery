@@ -42,7 +42,7 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
     public void setUpJobApiControllerSaveJobWithDuplicateLabelTest() {
         jobModel = jobModelWithoutDependents();
         jobModel.setSqlQueries(new HashSet<>());
-        jobModel.setLabel(jobLabel);
+        jobModel.setName(jobLabel);
 
         datasource = datasource();
 

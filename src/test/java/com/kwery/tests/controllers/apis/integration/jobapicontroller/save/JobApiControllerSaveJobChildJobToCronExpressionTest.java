@@ -75,7 +75,7 @@ public class JobApiControllerSaveJobChildJobToCronExpressionTest extends Abstrac
     public void test() {
         JobDto jobDto = new JobDto();
         jobDto.setTitle(jobModel.getTitle());
-        jobDto.setName(jobModel.getLabel());
+        jobDto.setName(jobModel.getName());
         jobDto.setId(jobModel.getId());
         jobDto.setCronExpression("* * * * *");
 

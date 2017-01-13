@@ -119,11 +119,11 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         Map<Integer, String> parentReportIdToLabelMap = ImmutableMap.of(
-                parentJobModel.getId(), parentJobModel.getLabel()
+                parentJobModel.getId(), parentJobModel.getName()
         );
         page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
 
-        page.waitForReportDisplay(childJobModel.getLabel());
+        page.waitForReportDisplay(childJobModel.getName());
 
         page.chooseCronExpression();
 

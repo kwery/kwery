@@ -57,8 +57,8 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
         jobModel.setSqlQueries(new HashSet<>());
         jobDto.setSqlQueries(new LinkedList<>());
 
-        jobModel.setLabel(jobLabel);
-        jobDto.setName(jobModel.getLabel());
+        jobModel.setName(jobLabel);
+        jobDto.setName(jobModel.getName());
 
         datasource = datasource();
 

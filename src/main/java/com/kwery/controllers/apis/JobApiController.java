@@ -404,7 +404,7 @@ public class JobApiController {
             jobModel.setId(jobDto.getId());
         }
 
-        jobModel.setLabel(jobDto.getName());
+        jobModel.setName(jobDto.getName());
         jobModel.setCronExpression(Strings.nullToEmpty(jobDto.getCronExpression()));
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toSet()));
         jobModel.setTitle(jobDto.getTitle());
@@ -443,7 +443,7 @@ public class JobApiController {
 
         jobExecutionDto.setStatus(model.getStatus().name());
         jobExecutionDto.setExecutionId(model.getExecutionId());
-        jobExecutionDto.setLabel(model.getJobModel().getLabel());
+        jobExecutionDto.setLabel(model.getJobModel().getName());
 
         return jobExecutionDto;
     }

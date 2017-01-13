@@ -70,7 +70,7 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         jobDto.setEmails(emails);
 
         JobModel expectedJobModel = new JobModel();
-        expectedJobModel.setLabel(jobDto.getName());
+        expectedJobModel.setName(jobDto.getName());
         expectedJobModel.setTitle(jobDto.getTitle());
         expectedJobModel.setEmails(emails);
         expectedJobModel.setChildJobs(new HashSet<>());

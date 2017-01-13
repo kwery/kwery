@@ -199,7 +199,7 @@ public class TestUtil {
         JobModel jobModel = new JobModel();
         jobModel.setId(DbUtil.dbId());
         jobModel.setCronExpression("* * * * *");
-        jobModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        jobModel.setName(RandomStringUtils.randomAlphanumeric(1, 256));
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
         jobModel.setChildJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
@@ -308,7 +308,7 @@ public class TestUtil {
 
     public static JobModel toJobModel(JobDto jobDto, Datasource datasource) {
         JobModel jobModel = new JobModel();
-        jobModel.setLabel(jobDto.getName());
+        jobModel.setName(jobDto.getName());
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setEmails(jobDto.getEmails());

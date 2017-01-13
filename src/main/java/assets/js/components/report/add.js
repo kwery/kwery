@@ -90,10 +90,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         var report = jobModelHackDto.jobModel;
                         if (isUpdate) {
                             if (report.id !== reportId) {
-                                self.reports.push(new Report(report.id, report.label));
+                                self.reports.push(new Report(report.id, report.name));
                             }
                         } else {
-                            self.reports.push(new Report(report.id, report.label));
+                            self.reports.push(new Report(report.id, report.name));
                         }
                     });
                 }
@@ -107,7 +107,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     success: function(jobModelHackDto) {
                         var report = jobModelHackDto.jobModel;
                         self.title(report.title);
-                        self.reportName(report.label);
+                        self.reportName(report.name);
                         self.reportEmails(report.emails.join(", "));
 
                         if (jobModelHackDto.parentJobModel != null) {
