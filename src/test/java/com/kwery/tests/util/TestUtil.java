@@ -205,6 +205,7 @@ public class TestUtil {
         jobModel.setEmails(new HashSet<>());
         jobModel.setSqlQueries(new HashSet<>());
         jobModel.setParentJob(null);
+        jobModel.setLabels(new HashSet<>());
         return jobModel;
     }
 

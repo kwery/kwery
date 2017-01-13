@@ -21,3 +21,4 @@ create table job_job_label (
 
 alter table job_job_label add constraint fk_job_job_label_job_id_fk foreign key (job_id_fk) references job;
 alter table job_job_label add constraint fk_job_job_label_job_label_id_fk foreign key (job_label_id_fk) references job_label;
+alter table job_job_label add constraint uc_job_job_label_job_id_fk_job_label_id_fk unique (job_id_fk, job_label_id_fk);

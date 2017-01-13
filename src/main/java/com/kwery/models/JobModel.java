@@ -31,6 +31,11 @@ public class JobModel {
     public static final String JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
     public static final String JOB_EMAIL_TABLE_EMAIL_COLUMN = "email";
 
+    public static final String JOB_JOB_LABEL_TABLE = "job_job_label";
+    public static final String JOB_JOB_LABEL_TABLE_ID_COLUMN = "id";
+    public static final String JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN = "job_id_fk";
+    public static final String JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN = "job_label_id_fk";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = ID_COLUMN)
@@ -49,6 +54,14 @@ public class JobModel {
     @Size(min = 1, max = 1024)
     @Column(name = TITLE_COLUMN)
     protected String title;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinTable(
+            name = JOB_JOB_LABEL_TABLE,
+            joinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, referencedColumnName = ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, referencedColumnName = JobLabelModel.ID_COLUMN)
+    )
+    protected Set<JobLabelModel> labels;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinTable(
@@ -113,6 +126,14 @@ public class JobModel {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Set<JobLabelModel> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<JobLabelModel> labels) {
+        this.labels = labels;
     }
 
     public Set<SqlQueryModel> getSqlQueries() {
