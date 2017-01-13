@@ -129,7 +129,7 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
 
-        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getName());
         parentJobModel.getChildJobs().add(jobDao.getJobById(childJobModel.getId()));
 
         assertJobModel(savedJobModel, parentJobModel, jobDto, datasource);

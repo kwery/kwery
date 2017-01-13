@@ -84,7 +84,7 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
 
-        assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
+        assertJobModel(jobDao.getJobByLabel(jobDto.getName()), null, jobDto, datasource);
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
     }
@@ -100,7 +100,7 @@ public class ReportSaveSuccessUiTest extends ChromeFluentTest {
         page.fillAndSubmitReportSaveForm(jobDto, true);
         page.waitForReportSaveSuccessMessage();
 
-        assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
+        assertJobModel(jobDao.getJobByLabel(jobDto.getName()), null, jobDto, datasource);
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
     }

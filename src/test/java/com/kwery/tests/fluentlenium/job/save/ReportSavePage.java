@@ -35,7 +35,7 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
 
     public void fillAndSubmitReportSaveForm(JobDto jobDto, boolean useCronUi) {
         fill(".f-report-title").with(jobDto.getTitle());
-        fill(".f-report-label").with(jobDto.getLabel());
+        fill(".f-report-name").with(jobDto.getName());
 
         //TODO - Tests with empty emails etc
         fill(".f-report-emails").with(String.join(",", jobDto.getEmails()));
@@ -116,7 +116,7 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
     }
 
     public enum ReportFormField {
-        reportTitle, label, cronExpression, parentReportId
+        reportTitle, name, cronExpression, parentReportId
     }
 
     public enum SqlQueryFormField {

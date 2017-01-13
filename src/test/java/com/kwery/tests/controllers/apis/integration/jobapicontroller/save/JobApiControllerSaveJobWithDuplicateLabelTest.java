@@ -66,7 +66,7 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
         JobDto jobDto = jobDtoWithoutId();
         jobDto.setCronExpression("* * * * *");
         jobDto.setSqlQueries(new ArrayList<>(1));
-        jobDto.setLabel(jobLabel);
+        jobDto.setName(jobLabel);
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select * from mysql.user");

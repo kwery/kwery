@@ -20,7 +20,7 @@ public class ReportUpdatePage extends ReportSavePage {
         return "/#report/" + getReportId();
     }
 
-    public void waitForReportDisplay(String label) {
-        await().until($(className("f-report-label"))).hasAttribute("value", label);
+    public void waitForReportDisplay(String name) {
+        await().until($(className("f-report-name"))).hasAttribute("value", name);
     }
 }

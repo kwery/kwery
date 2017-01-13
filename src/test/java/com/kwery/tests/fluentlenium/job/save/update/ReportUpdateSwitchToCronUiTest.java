@@ -130,7 +130,7 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
 
-        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getName());
         parentJobModel.getChildJobs().clear();
 
         assertJobModel(savedJobModel, null, jobDto, datasource);

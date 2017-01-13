@@ -109,7 +109,7 @@ public class ReportSaveWithDependentsSuccessUiTest extends ReportSaveSuccessUiTe
         page.fillAndSubmitReportSaveForm(jobDto);
         page.waitForReportSaveSuccessMessage();
 
-        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getName());
         parentJobModel.setChildJobs(ImmutableSet.of(savedJobModel));
         assertJobModel(savedJobModel, parentJobModel, jobDto, datasource);
 

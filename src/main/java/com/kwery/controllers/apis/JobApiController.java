@@ -86,15 +86,15 @@ public class JobApiController {
 
         List<String> errorMessages = new LinkedList<>();
 
-        JobModel jobByLabel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel jobByLabel = jobDao.getJobByLabel(jobDto.getName());
         if (jobByLabel != null) {
             if (isUpdate) {
                 if (!jobByLabel.getId().equals(jobDto.getId())) {
-                    String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
+                    String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getName()).get();
                     errorMessages.add(message);
                 }
             } else {
-                String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
+                String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getName()).get();
                 errorMessages.add(message);
             }
         }
@@ -404,7 +404,7 @@ public class JobApiController {
             jobModel.setId(jobDto.getId());
         }
 
-        jobModel.setLabel(jobDto.getLabel());
+        jobModel.setLabel(jobDto.getName());
         jobModel.setCronExpression(Strings.nullToEmpty(jobDto.getCronExpression()));
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toSet()));
         jobModel.setTitle(jobDto.getTitle());

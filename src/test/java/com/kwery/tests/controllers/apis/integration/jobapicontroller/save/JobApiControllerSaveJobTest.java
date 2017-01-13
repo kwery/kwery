@@ -60,7 +60,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setTitle(jobDto.getTitle());
         expectedJobModel.setCronExpression(jobDto.getCronExpression());
-        expectedJobModel.setLabel(jobDto.getLabel());
+        expectedJobModel.setLabel(jobDto.getName());
         expectedJobModel.setEmails(emails);
         expectedJobModel.setSqlQueries(new HashSet<>());
         expectedJobModel.setChildJobs(new HashSet<>());
@@ -84,7 +84,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
-        JobModel jobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel jobModel = jobDao.getJobByLabel(jobDto.getName());
 
         assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id"));
     }

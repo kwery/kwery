@@ -308,7 +308,7 @@ public class TestUtil {
 
     public static JobModel toJobModel(JobDto jobDto, Datasource datasource) {
         JobModel jobModel = new JobModel();
-        jobModel.setLabel(jobDto.getLabel());
+        jobModel.setLabel(jobDto.getName());
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setEmails(jobDto.getEmails());
