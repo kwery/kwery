@@ -346,7 +346,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         };
 
         //Get current labels
-        //TODO - Figure out why this is chained
         $.ajax({
             url: "/api/job-label/list",
             type: "GET",
