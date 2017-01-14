@@ -7,6 +7,7 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.views.ActionResult;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -16,6 +17,8 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.util.*;
 
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.SmtpConfiguration.*;
@@ -27,6 +30,8 @@ import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static java.util.Collections.sort;
 import static java.util.Comparator.comparing;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class TestUtil {
@@ -366,5 +371,16 @@ public class TestUtil {
         m.setLabel(RandomStringUtils.randomAlphanumeric(JobLabelModel.LABEL_MIN_LENGTH, JobLabelModel.LABEL_MAX_LENGTH + 1));
         m.setChildLabels(new HashSet<>());
         return m;
+    }
+
+    public static void assertJsonActionResult(String response, ActionResult expected) {
+        assertThat(response, isJson());
+        assertThat(response, hasJsonPath("$.status", is(expected.getStatus().name())));
+        if (expected.getMessages() != null) {
+            assertThat(response, hasJsonPath("$.messages.length()", is(expected.getMessages().size())));
+            for (String message : expected.getMessages()) {
+                assertThat(response, hasJsonPath("$.messages", hasItem(message)));
+            }
+        }
     }
 }

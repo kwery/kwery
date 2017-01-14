@@ -75,4 +75,8 @@ public class MessageKeys {
 
     public static final String JOBAPICONTROLLER_FILTER_DATE_PARSE_ERROR = "jobapicontroller.filter.date.parse.error";
     public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN = "jobapicontroller.delete.job.has.children";
+
+    public static final String JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN = "joblabelapicontroller.delete.has.children";
+    public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL = "joblabelapicontroller.delete.job.has.label";
+    public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS = "joblabelapicontroller.delete.success";
 }
