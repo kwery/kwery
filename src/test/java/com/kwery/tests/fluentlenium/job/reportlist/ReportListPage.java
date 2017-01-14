@@ -35,8 +35,8 @@ public class ReportListPage extends FluentPage implements RepoDashPage {
         for (FluentWebElement tr : $(".report-list-table-body-f tr")) {
             ReportListRow row = new ReportListRow();
 
-            row.setLabel(tr.find(className("label-f")).first().getText());
-            row.setReportLink(tr.find(className("label-f")).getAttribute("href"));
+            row.setLabel(tr.find(className("name-f")).first().getText());
+            row.setReportLink(tr.find(className("name-f")).getAttribute("href"));
             row.setCronExpression(tr.find(className("cron-expression-f")).getText());
             row.setExecutionListLink(tr.find(className("execution-link-f")).getAttribute("href"));
             row.setExecuteNowLink(tr.find(className("execute-now-f")).getAttribute("href"));

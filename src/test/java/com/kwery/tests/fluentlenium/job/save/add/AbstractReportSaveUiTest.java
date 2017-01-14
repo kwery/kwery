@@ -9,30 +9,24 @@ import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
-import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
-import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.RuleChain;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
-import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
-import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
 
-public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
+public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -48,10 +42,10 @@ public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
     protected Datasource datasource;
 
     JobDao jobDao;
-    private JobModel parentJobModel;
+    JobModel parentJobModel;
 
     @Before
-    public void setUpReportSaveSuccessUiTest() {
+    public void setUp() {
         datasource = mysqlDockerRule.getMySqlDocker().datasource();
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
@@ -90,36 +84,9 @@ public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
         if (!page.isRendered()) {
             fail("Could not render report save page");
         }
-    }
 
-    @Test
-    public void test() {
-        page.chooseParentReport();
-
-        Map<Integer, String> datasourceIdToLabelMap = ImmutableMap.of(
+        page.setDatasourceIdToLabelMap(ImmutableMap.of(
                 datasource.getId(), datasource.getLabel()
-        );
-        page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
-
-        Map<Integer, String> parentReportIdToLabelMap = ImmutableMap.of(
-                parentJobModel.getId(), parentJobModel.getName()
-        );
-        page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
-
-        jobDto.setCronExpression("");
-        jobDto.setParentJobId(parentJobModel.getId());
-
-        DozerBeanMapper mapper = new DozerBeanMapper();
-        JobForm jobForm = mapper.map(jobDto, JobForm.class);
-        page.fillAndSubmitReportSaveForm(jobForm);
-        page.waitForReportSaveSuccessMessage();
-
-        JobModel savedJobModel = jobDao.getJobByName(jobDto.getName());
-        parentJobModel.setChildJobs(ImmutableSet.of(savedJobModel));
-        assertJobModel(savedJobModel, parentJobModel, jobDto, datasource);
-
-        assertThat(parentJobModel, theSameBeanAs(jobDao.getJobById(parentJobModel.getId())));
-
-        assertThat(jobDao.getAllJobs(), hasSize(2));
+        ));
     }
 }

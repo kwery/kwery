@@ -103,6 +103,7 @@ alter table kwery_user add constraint uc_kwery_user_username unique (username);
 alter table datasource add constraint uc_datasource_label unique (label);
 
 alter table job add constraint uc_job_label unique (label);
+
 alter table job_sql_query add constraint fk_job_sql_query_sql_query_id_fk foreign key (sql_query_id_fk) references sql_query;
 alter table job_sql_query add constraint fk_job_sql_query_job_id_fk foreign key (job_id_fk) references job;
 alter table job_sql_query add constraint uc_sql_query_id_fk_job_id_fk unique (sql_query_id_fk, job_id_fk);

@@ -199,12 +199,13 @@ public class TestUtil {
         JobModel jobModel = new JobModel();
         jobModel.setId(DbUtil.dbId());
         jobModel.setCronExpression("* * * * *");
-        jobModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        jobModel.setName(RandomStringUtils.randomAlphanumeric(1, 256));
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
         jobModel.setChildJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setSqlQueries(new HashSet<>());
         jobModel.setParentJob(null);
+        jobModel.setLabels(new HashSet<>());
         return jobModel;
     }
 
@@ -226,11 +227,8 @@ public class TestUtil {
     }
 
     public static JobDto jobDtoWithoutId() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
+        JobDto jobDto = jobDto();
         jobDto.setId(0);
-        jobDto.setEmails(new HashSet<>());
-        jobDto.setSqlQueries(new ArrayList<>());
         return jobDto;
     }
 
@@ -240,6 +238,7 @@ public class TestUtil {
         JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
         jobDto.setEmails(new HashSet<>());
         jobDto.setSqlQueries(new ArrayList<>());
+        jobDto.setLabelIds(new HashSet<>());
         return jobDto;
     }
 
@@ -308,7 +307,7 @@ public class TestUtil {
 
     public static JobModel toJobModel(JobDto jobDto, Datasource datasource) {
         JobModel jobModel = new JobModel();
-        jobModel.setLabel(jobDto.getLabel());
+        jobModel.setName(jobDto.getName());
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setEmails(jobDto.getEmails());

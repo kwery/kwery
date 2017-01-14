@@ -70,7 +70,7 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         jobDto.setEmails(emails);
 
         JobModel expectedJobModel = new JobModel();
-        expectedJobModel.setLabel(jobDto.getLabel());
+        expectedJobModel.setName(jobDto.getName());
         expectedJobModel.setTitle(jobDto.getTitle());
         expectedJobModel.setEmails(emails);
         expectedJobModel.setChildJobs(new HashSet<>());
@@ -97,6 +97,6 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
 
         expectedJobModel.setParentJob(jobDao.getJobById(jobModel.getId()));
 
-        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobByLabel(jobDto.getLabel())).excludeProperty("id").excludeProperty("sqlQueries.id"));
+        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobByName(jobDto.getName())).excludeProperty("id").excludeProperty("sqlQueries.id"));
     }
 }

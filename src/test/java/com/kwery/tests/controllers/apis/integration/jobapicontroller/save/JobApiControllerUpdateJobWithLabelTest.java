@@ -6,6 +6,7 @@ import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
+import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
@@ -17,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -28,7 +30,7 @@ import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
+public class JobApiControllerUpdateJobWithLabelTest extends AbstractPostLoginApiTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
@@ -37,6 +39,9 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
     private SqlQueryModel sqlQueryModel;
 
     JobDao jobDao;
+    private JobLabelModel jobLabelModel0;
+    private JobLabelModel jobLabelModel1;
+    private JobLabelModel jobLabelModel2;
 
     @Before
     public void setUpJobApiControllerUpdateJobTest() {
@@ -65,6 +70,20 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
 
         getInjector().getInstance(JobService.class).schedule(jobModel.getId());
 
+        jobLabelModel0 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel0);
+
+        jobLabelModel1 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel1);
+
+        Set<JobLabelModel> labels = ImmutableSet.of(jobLabelModel0, jobLabelModel1);
+        jobModel.setLabels(labels);
+
+        jobJobLabelDbSetUp(jobModel);
+
+        jobLabelModel2 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel2);
+
         jobDao = getInjector().getInstance(JobDao.class);
     }
 
@@ -78,6 +97,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         jobDto.setEmails(emails);
         jobDto.setId(jobModel.getId());
         jobDto.setParentJobId(0);
+        jobDto.setLabelIds(ImmutableSet.of(jobLabelModel1.getId(), jobLabelModel2.getId()));
 
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setTitle(jobDto.getTitle());
@@ -85,6 +105,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         expectedJobModel.setEmails(emails);
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setCronExpression(jobDto.getCronExpression());
+        expectedJobModel.setLabels(ImmutableSet.of(jobLabelModel1, jobLabelModel2));
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select User from mysql.user where User = 'root'");

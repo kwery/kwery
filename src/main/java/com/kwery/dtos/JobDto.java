@@ -1,5 +1,6 @@
 package com.kwery.dtos;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -7,10 +8,11 @@ public class JobDto {
     protected int id;
     protected String title;
     protected String cronExpression;
-    protected String label;
+    protected String name;
     protected int parentJobId;
     protected Set<String> emails;
     protected List<SqlQueryDto> sqlQueries;
+    protected Set<Integer> labelIds = new HashSet<>();
 
     public int getId() {
         return id;
@@ -36,12 +38,12 @@ public class JobDto {
         this.cronExpression = cronExpression;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getParentJobId() {
@@ -66,5 +68,13 @@ public class JobDto {
 
     public void setSqlQueries(List<SqlQueryDto> sqlQueries) {
         this.sqlQueries = sqlQueries;
+    }
+
+    public Set<Integer> getLabelIds() {
+        return labelIds;
+    }
+
+    public void setLabelIds(Set<Integer> labelIds) {
+        this.labelIds = labelIds;
     }
 }

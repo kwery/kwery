@@ -1,37 +1,35 @@
 package com.kwery.tests.fluentlenium.job.save.update;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
+import com.kwery.dao.JobLabelDao;
 import com.kwery.dao.SqlQueryDao;
-import com.kwery.dtos.JobDto;
-import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
+import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
-import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
-import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
 
-public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
+public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -40,24 +38,19 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
-    String email0 = "foo@bar.com";
-    String email1 = "boo@goo.com";
-    String email2 = "moo@goo.com";
-
     ReportUpdatePage page;
     JobModel jobModel;
     Datasource datasource;
     JobDao jobDao;
     private SqlQueryDao sqlQueryDao;
+    private JobLabelModel jobLabelModel2;
+    private JobLabelDao jobLabelDao;
 
     @Before
     public void setUp() {
         jobModel = jobModelWithoutDependents();
         jobModel.setCronExpression("* * * * *");
         jobDbSetUp(jobModel);
-
-        jobModel.setEmails(ImmutableSet.of(email0));
-        jobEmailDbSetUp(jobModel);
 
         datasource = mysqlDockerRule.getMySqlDocker().datasource();
         datasource.setId(dbId());
@@ -69,6 +62,19 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
 
         jobModel.getSqlQueries().add(sqlQueryModel);
         jobSqlQueryDbSetUp(jobModel);
+
+        JobLabelModel jobLabelModel0 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel0);
+
+        JobLabelModel jobLabelModel1 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel1);
+
+        jobModel.setLabels(ImmutableSet.of(jobLabelModel0, jobLabelModel1));
+
+        jobJobLabelDbSetUp(jobModel);
+
+        jobLabelModel2 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel2);
 
         page = createPage(ReportUpdatePage.class);
         page.setReportId(jobModel.getId());
@@ -82,36 +88,25 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
 
         jobDao = ninjaServerRule.getInjector().getInstance(JobDao.class);
         sqlQueryDao = ninjaServerRule.getInjector().getInstance(SqlQueryDao.class);
+        jobLabelDao = ninjaServerRule.getInjector().getInstance(JobLabelDao.class);
     }
 
     @Test
     public void test() {
-        Map<Integer, String> datasourceIdToLabelMap = ImmutableMap.of(
-                datasource.getId(), datasource.getLabel()
-        );
-        page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
+        page.clickOnRemoveLabel(0);
+        List<String> selectedLabels = page.selectedLabels();
 
-        page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
-        page.waitForReportDisplay(jobModel.getName());
+        page.clickOnAddLabel(1);
+        page.selectLabel(jobLabelModel2.getId(), 1);
+        selectedLabels.add(jobLabelModel2.getLabel());
 
-        JobDto jobDto = jobDto();
-        jobDto.setCronExpression("* * * * *");
-        jobDto.setEmails(ImmutableSet.of(email1, email2));
-
-        for (int i = 0; i < 2; ++i) {
-            SqlQueryDto sqlQueryDto = sqlQueryDto();
-            sqlQueryDto.setQuery("select * from mysql.user");
-            sqlQueryDto.setDatasourceId(datasource.getId());
-            jobDto.getSqlQueries().add(sqlQueryDto);
-        }
-
-        DozerBeanMapper mapper = new DozerBeanMapper();
-        JobForm jobForm = mapper.map(jobDto, JobForm.class);
-        page.fillAndSubmitReportSaveForm(jobForm);
+        page.submitReportSaveForm();
         page.waitForReportSaveSuccessMessage();
 
-        assertThat(jobDao.getAllJobs(), hasSize(1));
-        assertThat(sqlQueryDao.getAll(), hasSize(2));
-        assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
+        List<Integer> labelIds = selectedLabels.stream().map(label -> jobLabelDao.getJobLabelModelByLabel(label).getId()).collect(Collectors.toList());
+        JobModel saved = jobDao.getJobById(jobModel.getId());
+        List<Integer> savedLabels = saved.getLabels().stream().map(JobLabelModel::getId).collect(Collectors.toList());
+
+        assertThat(labelIds, containsInAnyOrder(savedLabels.get(0), savedLabels.get(1)));
     }
 }

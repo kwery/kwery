@@ -64,7 +64,7 @@ public class JobApiControllerUpdateJobAddAndRemoveEmailsTest extends AbstractPos
     public void test() {
         JobDto jobDto = new JobDto();
         jobDto.setTitle(jobModel.getTitle());
-        jobDto.setLabel(jobModel.getLabel());
+        jobDto.setName(jobModel.getName());
         jobDto.setId(jobModel.getId());
         jobDto.setCronExpression(jobModel.getCronExpression());
         jobDto.setEmails(ImmutableSet.of(email1, email2));

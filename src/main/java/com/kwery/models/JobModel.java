@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,7 +14,7 @@ public class JobModel {
     public static final String JOB_TABLE = "job";
     public static final String ID_COLUMN = "id";
     public static final String CRON_EXPRESSION_COLUMN = "cron_expression";
-    public static final String LABEL_COLUMN = "label";
+    public static final String NAME_COLUMN = "j_name";
     public static final String TITLE_COLUMN = "title";
 
     public static final String JOB_SQL_QUERY_TABLE = "job_sql_query";
@@ -31,25 +32,37 @@ public class JobModel {
     public static final String JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
     public static final String JOB_EMAIL_TABLE_EMAIL_COLUMN = "email";
 
+    public static final String JOB_JOB_LABEL_TABLE = "job_job_label";
+    public static final String JOB_JOB_LABEL_TABLE_ID_COLUMN = "id";
+    public static final String JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN = "job_id_fk";
+    public static final String JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN = "job_label_id_fk";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = ID_COLUMN)
-    public Integer id;
+    protected Integer id;
 
     @Column(name = CRON_EXPRESSION_COLUMN)
     @Size(max = 255)
-    public String cronExpression;
+    protected String cronExpression;
 
-    @Transient
-/*    @NotNull
+    @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = LABEL_COLUMN)*/
-    public String label;
+    @Column(name = NAME_COLUMN)
+    protected String name;
 
     @NotNull
     @Size(min = 1, max = 1024)
     @Column(name = TITLE_COLUMN)
-    private String title;
+    protected String title;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = JOB_JOB_LABEL_TABLE,
+            joinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, referencedColumnName = ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, referencedColumnName = JobLabelModel.ID_COLUMN)
+    )
+    protected Set<JobLabelModel> labels = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinTable(
@@ -57,7 +70,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_ID_FK_COLUMN, referencedColumnName = ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = SQL_QUERY_ID_FK_COLUMN, referencedColumnName = SqlQueryModel.ID_COLUMN)
     )
-    public Set<SqlQueryModel> sqlQueries;
+    protected Set<SqlQueryModel> sqlQueries;
 
     @ManyToMany(fetch = FetchType.EAGER,  cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
@@ -65,7 +78,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
     )
-    public Set<JobModel> childJobs;
+    protected Set<JobModel> childJobs;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
@@ -74,7 +87,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
     )
-    private JobModel parentJob;
+    protected JobModel parentJob;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
@@ -82,7 +95,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN)
     )
     @Column(name = JOB_EMAIL_TABLE_EMAIL_COLUMN)
-    private Set<String> emails;
+    protected Set<String> emails;
 
     public Integer getId() {
         return id;
@@ -100,12 +113,12 @@ public class JobModel {
         this.cronExpression = cronExpression;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setName(String label) {
+        this.name = label;
     }
 
     public String getTitle() {
@@ -114,6 +127,14 @@ public class JobModel {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Set<JobLabelModel> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<JobLabelModel> labels) {
+        this.labels = labels;
     }
 
     public Set<SqlQueryModel> getSqlQueries() {

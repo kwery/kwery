@@ -14,7 +14,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         $("#parentReport").attr("data-validate", false);
 
         self.title = ko.observable("");
-        self.reportLabel = ko.observable("");
+        self.reportName = ko.observable("");
         self.cronExpression = ko.observable("");
         self.parentReportId = ko.observable(0);
         self.reportEmails = ko.observable("");
@@ -59,9 +59,9 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             this.id = id;
         };
 
-        var Report = function(id, label) {
+        var Report = function(id, name) {
             this.id = id;
-            this.label = label;
+            this.name = name;
         };
 
         self.reports = ko.observableArray([new Report("", ko.i18n("report.save.parent.report.id.select.default"))]);
@@ -90,10 +90,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         var report = jobModelHackDto.jobModel;
                         if (isUpdate) {
                             if (report.id !== reportId) {
-                                self.reports.push(new Report(report.id, report.label));
+                                self.reports.push(new Report(report.id, report.name));
                             }
                         } else {
-                            self.reports.push(new Report(report.id, report.label));
+                            self.reports.push(new Report(report.id, report.name));
                         }
                     });
                 }
@@ -107,7 +107,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     success: function(jobModelHackDto) {
                         var report = jobModelHackDto.jobModel;
                         self.title(report.title);
-                        self.reportLabel(report.label);
+                        self.reportName(report.name);
                         self.reportEmails(report.emails.join(", "));
 
                         if (jobModelHackDto.parentJobModel != null) {
@@ -120,6 +120,15 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         $.each(report.sqlQueries, function(index, sqlQuery){
                             var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
                             self.queries.push(query);
+                        });
+
+                        if (jobModelHackDto.jobModel.labels.length > 0) {
+                            //Pop the empty label value since we have labels to show
+                            self.labelIds.pop();
+                        }
+
+                        $.each(jobModelHackDto.jobModel.labels, function(index, label){
+                            self.labelIds.push(new LabelId(label.id));
                         });
 
                         self.refreshValidation();
@@ -183,12 +192,21 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
                 var report = {
                     cronExpression: self.scheduleOption() === "cronUi" ? cron.cron("value") : self.cronExpression(),
-                    label: self.reportLabel(),
+                    name: self.reportName(),
                     title: self.title(),
                     //TODO - Updating to 0 turns into empty string
                     parentJobId: self.parentReportId() ? self.parentReportId() : 0,
                     emails: emails,
-                    sqlQueries: queries
+                    sqlQueries: queries,
+                    labelIds: (function(){
+                        var ids = [];
+                        ko.utils.arrayForEach(self.labelIds(), function(labelId){
+                            if (labelId.id !== "") {
+                                ids.push(labelId.id);
+                            }
+                        });
+                        return ids;
+                    })()
                 };
 
                 if (isUpdate) {
@@ -217,6 +235,128 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.refreshValidation = function() {
             $("#reportForm").validator("update");
         };
+
+        var LabelId = function(id) {
+            this.id = id;
+        };
+
+        self.labelIds = ko.observableArray([new LabelId(0)]);
+
+        self.addLabel = function() {
+            self.labelIds.push(new LabelId(0));
+        };
+
+        self.removeLabel = function(labelId) {
+            self.labelIds.remove(labelId);
+        };
+
+        //TODO - Duplicated code with add label page, needs to be refactored into a common code
+        //Label related - start
+        var Node = function(label, id, parent) {
+            this.label = label;
+            this.id = id;
+            this.children = [];
+            this.parent = parent;
+
+            this.addChild = function(node) {
+                this.children.push(node);
+            };
+
+            this.remove = function() {
+                if (this.parent == null) {
+                    throw Error("Cannot delete root");
+                } else {
+                    for (var i = 0; i < this.parent.children.length; ++i) {
+                        if (this.parent.children[i] == this) {
+                            this.parent.children.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+            };
+        };
+
+        //This is n2, but we are not bothered about efficiency at this scale
+        var findNode = function(node, id) {
+            if (node.id === id) {
+                return node;
+            } else {
+                for (var i = 0; i < node.children.length; ++i) {
+                    var ret = findNode(node.children[i], id);
+                    if (ret !== undefined) {
+                        return ret;
+                    }
+                }
+            }
+        };
+
+        //A dummy root node to serve as the parent of the label tree
+        var root = new Node("", 0, null);
+
+        var DisplayLabel = function(id, formattedLabel, label) {
+            this.id = id;
+            this.formattedLabel = formattedLabel;
+            this.label = label;
+        };
+
+        self.displayLabels = ko.observableArray([new DisplayLabel("", "", "")]);
+
+        //Add spaces and construct a tree like structure to show in select drop down
+        var populateDisplayLabels = function(node, count) {
+            if (node.id !== 0) {
+                var label = Array(count).join("&nbsp;&nbsp;&nbsp;&nbsp;") + node.label;
+                self.displayLabels.push(new DisplayLabel(node.id, label, node.label));
+            }
+            $.each(node.children, function(index, node) {
+                return populateDisplayLabels(node, count + 1);
+            });
+        };
+
+        var buildLabelTree = function(jobLabelModelHackDtos) {
+            //Create tree using labels
+            ko.utils.arrayForEach(jobLabelModelHackDtos, function (jobLabelModelHackDto) {
+                var parent = jobLabelModelHackDto.parentJobLabelModel;
+                var child = jobLabelModelHackDto.jobLabelModel;
+
+                if (parent != undefined) {
+                    //Label has a parent label
+                    var parentNodeInTree = findNode(root, parent.id);
+                    if (parentNodeInTree !== undefined) {
+                        //Parent label is already present in the tree, hence add the child label as a child of the existing parent
+                        parentNodeInTree.addChild(new Node(child.label, child.id, parentNodeInTree));
+                    } else {
+                        //Parent label is not present in the tree, create a new parent node
+                        var parentNode = new Node(parent.label, parent.id, root);
+                        //Add the child label as a child of the parent node
+                        parentNode.addChild(new Node(child.label, child.id, parentNode));
+                        //Add parent node as a child of the root label
+                        root.addChild(parentNode);
+                    }
+                } else {
+                    //Label does not have a parent
+                    var nodeInTree = findNode(root, child.id);
+                    if (nodeInTree === undefined) {
+                        //Node is not present in the tree, hence create a new label node and add it as child of the root node
+                        root.addChild(new Node(child.label, child.id, root));
+                    } else {
+                        //Label is already present in the tree. Added as the parent of some other label, no action to take
+                    }
+                }
+            });
+        };
+
+        //Get current labels
+        //TODO - Figure out why this is chained
+        $.ajax({
+            url: "/api/job-label/list",
+            type: "GET",
+            contentType: "application/json",
+            success: function (jobLabelModelHackDtos) {
+                buildLabelTree(jobLabelModelHackDtos);
+                populateDisplayLabels(root, 0);
+            }
+        });
+        //Label related - end
 
         return self;
     }

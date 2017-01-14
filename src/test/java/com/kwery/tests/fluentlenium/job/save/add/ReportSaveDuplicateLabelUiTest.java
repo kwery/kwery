@@ -8,11 +8,13 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
+import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import junit.framework.TestCase;
+import org.dozer.DozerBeanMapper;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M;
+import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_NAME_EXISTS_M;
 import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.text.MessageFormat.format;
@@ -57,8 +59,8 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
         jobModel.setSqlQueries(new HashSet<>());
         jobDto.setSqlQueries(new LinkedList<>());
 
-        jobModel.setLabel(jobLabel);
-        jobDto.setLabel(jobModel.getLabel());
+        jobModel.setName(jobLabel);
+        jobDto.setName(jobModel.getName());
 
         datasource = datasource();
 
@@ -98,10 +100,12 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
 
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
-        page.fillAndSubmitReportSaveForm(jobDto);
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        JobForm jobForm = mapper.map(jobDto, JobForm.class);
+        page.fillAndSubmitReportSaveForm(jobForm);
         page.waitForErrorMessages();
 
-        List<String> expectedErrorMessages = ImmutableList.of(format(JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel));
+        List<String> expectedErrorMessages = ImmutableList.of(format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel));
 
         Assert.assertThat(expectedErrorMessages, IsIterableContainingInAnyOrder.containsInAnyOrder(page.getErrorMessages().toArray(new String[2])));
     }
