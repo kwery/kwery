@@ -4,12 +4,12 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobLabelModel;
+import com.kwery.models.JobModel;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import java.util.Collection;
 import java.util.List;
 
 public class JobLabelDao {
@@ -62,5 +62,38 @@ public class JobLabelDao {
         CriteriaQuery<JobLabelModel> all = cq.select(rootEntry);
         TypedQuery<JobLabelModel> allQuery = e.createQuery(all);
         return allQuery.getResultList();
+    }
+
+    @Transactional
+    public void deleteJobLabelById(int jobLabelId) {
+        EntityManager e = entityManagerProvider.get();
+        e.remove(getJobLabelModelById(jobLabelId));
+    }
+
+    @Transactional
+    public boolean isParentLabel(int jobLabelId) {
+        EntityManager m = entityManagerProvider.get();
+        CriteriaBuilder cb = m.getCriteriaBuilder();
+        CriteriaQuery<JobLabelModel> cq = cb.createQuery(JobLabelModel.class);
+        Root<JobLabelModel> root = cq.from(JobLabelModel.class);
+        cq.where(cb.equal(root.get("parentLabel").get("id"), jobLabelId));
+        TypedQuery<JobLabelModel> tq = m.createQuery(cq);
+        List<JobLabelModel> models = tq.getResultList();
+        return !models.isEmpty();
+    }
+
+    @Transactional
+    public boolean doJobsDependOnLabel(int jobLabelId) {
+        EntityManager m = entityManagerProvider.get();
+
+        CriteriaBuilder cb = m.getCriteriaBuilder();
+        CriteriaQuery<JobModel> cq = cb.createQuery(JobModel.class);
+        Root<JobModel> jobModel = cq.from(JobModel.class);
+
+        Join<JobModel, JobLabelModel> join = jobModel.join("labels");
+        cq.where(cb.equal(join.get("id"), jobLabelId));
+
+        TypedQuery<JobModel> tq = m.createQuery(cq);
+        return !tq.getResultList().isEmpty();
     }
 }
