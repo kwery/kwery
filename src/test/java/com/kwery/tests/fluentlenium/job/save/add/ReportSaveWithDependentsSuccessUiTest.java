@@ -9,10 +9,13 @@ import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
+import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
+import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +32,7 @@ import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
 
-public class ReportSaveWithDependentsSuccessUiTest extends ReportSaveSuccessUiTest {
+public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -99,17 +102,19 @@ public class ReportSaveWithDependentsSuccessUiTest extends ReportSaveSuccessUiTe
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         Map<Integer, String> parentReportIdToLabelMap = ImmutableMap.of(
-                parentJobModel.getId(), parentJobModel.getLabel()
+                parentJobModel.getId(), parentJobModel.getName()
         );
         page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
 
         jobDto.setCronExpression("");
         jobDto.setParentJobId(parentJobModel.getId());
 
-        page.fillAndSubmitReportSaveForm(jobDto);
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        JobForm jobForm = mapper.map(jobDto, JobForm.class);
+        page.fillAndSubmitReportSaveForm(jobForm);
         page.waitForReportSaveSuccessMessage();
 
-        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel savedJobModel = jobDao.getJobByName(jobDto.getName());
         parentJobModel.setChildJobs(ImmutableSet.of(savedJobModel));
         assertJobModel(savedJobModel, parentJobModel, jobDto, datasource);
 

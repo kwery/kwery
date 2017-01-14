@@ -15,9 +15,30 @@
                     <div class="help-block with-errors reportTitle-form-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.label')" class="control-label" for="label"></label>
-                    <input data-bind="value: reportLabel" type="text" class="form-control f-report-label" name="label" id="label" required>
-                    <div class="help-block with-errors label-form-validation-message-f"></div>
+                    <label data-bind="text: ko.i18n('report.save.name')" class="control-label" for="name"></label>
+                    <input data-bind="value: reportName" type="text" class="form-control f-report-name" name="name" id="name" required>
+                    <div class="help-block with-errors name-form-validation-message-f"></div>
+                </div>
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('report.save.label')" class="control-label"></label>
+                    <span>
+                        <a data-bind="click: addLabel, attr:{title: ko.i18n('report.save.label.add.tooltip')}" class="add-label-f">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a>
+                    </span>
+                    <!-- ko foreach: {data: labelIds} -->
+                        <div class="form-inline">
+                            <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: $parent.displayLabels, value: id, css: 'select-' + $index() + '-f'">
+                                <option data-bind="html: formattedLabel, value: id, css: 'label-' + $index() + '-f'"></option>
+                            </select>
+                            <a data-bind="click: $parent.removeLabel, attr:{title: ko.i18n('report.save.label.delete.tooltip')}, css: 'remove-label-' + $index() + '-f'">
+                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                            </a>
+                        </div>
+                        <!-- ko if: $index() < $parent.labelIds().length - 1 --> <!-- Do not want a line break after last label as it will screw up UI -->
+                            <br>
+                        <!-- /ko -->
+                    <!-- /ko -->
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.schedule')" class="control-label"></label>
@@ -36,6 +57,7 @@
                             <a data-bind="text: ko.i18n('report.save.cron.expression.help')" href="http://www.sauronsoftware.it/projects/cron4j/manual.php#p02" target="cron4j"></a>
                         </div>
                     </div>
+                    <br>
                     <div class="form-inline">
                         <div class="form-group">
                             <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="cronUi" class="cron-ui-option-f">
@@ -45,6 +67,7 @@
                             <span class="form-group" id="cron"></span>
                         </div>
                     </div>
+                    <br>
                     <div class="form-inline">
                         <div class="form-group">
                             <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="parentReport" class="parent-report-option-f">
@@ -53,7 +76,7 @@
                         </div>
                         <div class="form-group">
                             <select class="form-control f-parent-report" name="parentReportId" data-bind="options: reports,
-                    optionsText: 'label', optionsValue: 'id', value: parentReportId" id="parentReport" required>
+                    optionsText: 'name', optionsValue: 'id', value: parentReportId" id="parentReport" required>
                             </select>
                             <div class="help-block with-errors parentReportId-form-validation-message-f"></div>
                         </div>

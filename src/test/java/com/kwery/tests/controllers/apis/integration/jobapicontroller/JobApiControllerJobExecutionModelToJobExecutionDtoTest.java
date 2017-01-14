@@ -14,7 +14,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
-    protected JobApiController jobApiController = new JobApiController(null, null, null, null, null, null, null, null);
+    protected JobApiController jobApiController = new JobApiController(null, null, null, null, null, null, null, null, null);
 
     protected JobModel jobModel = jobModelWithoutDependents();
 
@@ -37,7 +37,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
         assertThat(dto.getStart(), is("Tue Dec 06 2016 17:16"));
         assertThat(dto.getEnd(), is("Fri Feb 07 2020 03:03"));
         assertThat(dto.getExecutionId(), is(executionId));
-        assertThat(dto.getLabel(), is(jobModel.getLabel()));
+        assertThat(dto.getLabel(), is(jobModel.getName()));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
         assertThat(dto.getStart(), is("Tue Dec 06 2016 17:16"));
         assertThat(dto.getEnd(), is("Fri Feb 07 2020 03:03"));
         assertThat(dto.getExecutionId(), is(executionId));
-        assertThat(dto.getLabel(), is(jobModel.getLabel()));
+        assertThat(dto.getLabel(), is(jobModel.getName()));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
         assertThat(dto.getStart(), is("Tue Dec 06 2016 17:16"));
         assertThat(dto.getEnd(), is(""));
         assertThat(dto.getExecutionId(), is(executionId));
-        assertThat(dto.getLabel(), is(jobModel.getLabel()));
+        assertThat(dto.getLabel(), is(jobModel.getName()));
     }
 
     @Test
@@ -103,6 +103,6 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
         assertThat(dto.getStart(), is("Tue Dec 06 2016 17:16"));
         assertThat(dto.getEnd(), is("Fri Feb 07 2020 03:03"));
         assertThat(dto.getExecutionId(), is(executionId));
-        assertThat(dto.getLabel(), is(jobModel.getLabel()));
+        assertThat(dto.getLabel(), is(jobModel.getName()));
     }
 }

@@ -41,7 +41,7 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         setSqlQueryModel(jobModel);
 
         JobModel parentJob = jobModelWithoutDependents();
-        parentJobLabel = parentJob.getLabel();
+        parentJobLabel = parentJob.getName();
         jobDbSetUp(parentJob);
         setSqlQueryModel(parentJob);
 
@@ -63,9 +63,9 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
             fail("Could not render report list page");
         }
 
-        rowMap.put(jobModel.getLabel(), toRow(jobModel));
-        rowMap.put(parentJob.getLabel(), toRow(parentJob));
-        rowMap.put(childJob.getLabel(), toRow(childJob));
+        rowMap.put(jobModel.getName(), toRow(jobModel));
+        rowMap.put(parentJob.getName(), toRow(parentJob));
+        rowMap.put(childJob.getName(), toRow(childJob));
     }
 
     void setSqlQueryModel(JobModel jobModel) {
@@ -78,7 +78,7 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
     ReportListRow toRow(JobModel jobModel) {
         ReportListRow row = new ReportListRow();
 
-        row.setLabel(jobModel.getLabel());
+        row.setLabel(jobModel.getName());
         row.setReportLink(String.format(ninjaServerRule.getServerUrl() + "/#report/%d", jobModel.getId()));
         row.setCronExpression(jobModel.getCronExpression());
         row.setExecutionListLink(String.format(ninjaServerRule.getServerUrl() + "/#report/%d/execution-list", jobModel.getId()));

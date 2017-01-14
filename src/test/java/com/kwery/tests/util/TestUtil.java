@@ -7,6 +7,7 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.views.ActionResult;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -16,6 +17,8 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.util.*;
 
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.SmtpConfiguration.*;
@@ -27,6 +30,8 @@ import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static java.util.Collections.sort;
 import static java.util.Comparator.comparing;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class TestUtil {
@@ -199,12 +204,13 @@ public class TestUtil {
         JobModel jobModel = new JobModel();
         jobModel.setId(DbUtil.dbId());
         jobModel.setCronExpression("* * * * *");
-        jobModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
+        jobModel.setName(RandomStringUtils.randomAlphanumeric(1, 256));
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
         jobModel.setChildJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setSqlQueries(new HashSet<>());
         jobModel.setParentJob(null);
+        jobModel.setLabels(new HashSet<>());
         return jobModel;
     }
 
@@ -226,11 +232,8 @@ public class TestUtil {
     }
 
     public static JobDto jobDtoWithoutId() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
+        JobDto jobDto = jobDto();
         jobDto.setId(0);
-        jobDto.setEmails(new HashSet<>());
-        jobDto.setSqlQueries(new ArrayList<>());
         return jobDto;
     }
 
@@ -240,6 +243,7 @@ public class TestUtil {
         JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
         jobDto.setEmails(new HashSet<>());
         jobDto.setSqlQueries(new ArrayList<>());
+        jobDto.setLabelIds(new HashSet<>());
         return jobDto;
     }
 
@@ -298,12 +302,6 @@ public class TestUtil {
         return smtpConfiguration;
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; ++i) {
-            System.out.println(jobExecutionModel());
-        }
-    }
-
     public static String toJson(Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);
@@ -314,7 +312,7 @@ public class TestUtil {
 
     public static JobModel toJobModel(JobDto jobDto, Datasource datasource) {
         JobModel jobModel = new JobModel();
-        jobModel.setLabel(jobDto.getLabel());
+        jobModel.setName(jobDto.getName());
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setEmails(jobDto.getEmails());
@@ -364,6 +362,25 @@ public class TestUtil {
 
         for (Pair<SqlQueryModel> pair : pairs) {
             assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id"));
+        }
+    }
+
+    public static JobLabelModel jobLabelModel() {
+        JobLabelModel m = new JobLabelModel();
+        m.setId(dbId());
+        m.setLabel(RandomStringUtils.randomAlphanumeric(JobLabelModel.LABEL_MIN_LENGTH, JobLabelModel.LABEL_MAX_LENGTH + 1));
+        m.setChildLabels(new HashSet<>());
+        return m;
+    }
+
+    public static void assertJsonActionResult(String response, ActionResult expected) {
+        assertThat(response, isJson());
+        assertThat(response, hasJsonPath("$.status", is(expected.getStatus().name())));
+        if (expected.getMessages() != null) {
+            assertThat(response, hasJsonPath("$.messages.length()", is(expected.getMessages().size())));
+            for (String message : expected.getMessages()) {
+                assertThat(response, hasJsonPath("$.messages", hasItem(message)));
+            }
         }
     }
 }

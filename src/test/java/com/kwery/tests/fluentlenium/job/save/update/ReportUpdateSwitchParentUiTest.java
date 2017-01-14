@@ -10,11 +10,13 @@ import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
+import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -138,17 +140,19 @@ public class ReportUpdateSwitchParentUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         Map<Integer, String> parentReportIdToLabelMap = ImmutableMap.of(
-                parentJobModel0.getId(), parentJobModel0.getLabel(),
-                parentJobModel1.getId(), parentJobModel1.getLabel()
+                parentJobModel0.getId(), parentJobModel0.getName(),
+                parentJobModel1.getId(), parentJobModel1.getName()
         );
         page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
 
-        page.waitForReportDisplay(childJobModel.getLabel());
+        page.waitForReportDisplay(childJobModel.getName());
 
-        page.fillAndSubmitReportSaveForm(jobDto);
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        JobForm jobForm = mapper.map(jobDto, JobForm.class);
+        page.fillAndSubmitReportSaveForm(jobForm);
         page.waitForReportSaveSuccessMessage();
 
-        JobModel savedJobModel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel savedJobModel = jobDao.getJobByName(jobDto.getName());
         parentJobModel1.setChildJobs(ImmutableSet.of(savedJobModel));
         assertJobModel(savedJobModel, parentJobModel1, jobDto, datasource);
 

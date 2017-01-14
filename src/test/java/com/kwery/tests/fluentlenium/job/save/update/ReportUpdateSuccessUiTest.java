@@ -10,11 +10,13 @@ import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
+import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -90,7 +92,7 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
-        page.waitForReportDisplay(jobModel.getLabel());
+        page.waitForReportDisplay(jobModel.getName());
 
         JobDto jobDto = jobDto();
         jobDto.setCronExpression("* * * * *");
@@ -103,11 +105,13 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
             jobDto.getSqlQueries().add(sqlQueryDto);
         }
 
-        page.fillAndSubmitReportSaveForm(jobDto);
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        JobForm jobForm = mapper.map(jobDto, JobForm.class);
+        page.fillAndSubmitReportSaveForm(jobForm);
         page.waitForReportSaveSuccessMessage();
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
         assertThat(sqlQueryDao.getAll(), hasSize(2));
-        assertJobModel(jobDao.getJobByLabel(jobDto.getLabel()), null, jobDto, datasource);
+        assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
     }
 }
