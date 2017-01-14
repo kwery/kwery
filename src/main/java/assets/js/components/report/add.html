@@ -22,16 +22,16 @@
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.label')" class="control-label"></label>
                     <span>
-                        <a data-bind="click: addLabel, attr:{title: ko.i18n('report.save.label.add.tooltip')}">
+                        <a data-bind="click: addLabel, attr:{title: ko.i18n('report.save.label.add.tooltip')}" class="add-label-f">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         </a>
                     </span>
                     <!-- ko foreach: {data: labelIds} -->
                         <div class="form-inline">
-                            <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: $parent.displayLabels, value: id">
+                            <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: $parent.displayLabels, value: id, css: 'select-' + $index() + '-f'">
                                 <option data-bind="html: formattedLabel, value: id, css: 'label-' + $index() + '-f'"></option>
                             </select>
-                            <a data-bind="click: $parent.removeLabel, attr:{title: ko.i18n('report.save.label.delete.tooltip')}">
+                            <a data-bind="click: $parent.removeLabel, attr:{title: ko.i18n('report.save.label.delete.tooltip')}, css: 'remove-label-' + $index() + '-f'">
                                 <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                             </a>
                         </div>

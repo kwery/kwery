@@ -227,11 +227,8 @@ public class TestUtil {
     }
 
     public static JobDto jobDtoWithoutId() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
+        JobDto jobDto = jobDto();
         jobDto.setId(0);
-        jobDto.setEmails(new HashSet<>());
-        jobDto.setSqlQueries(new ArrayList<>());
         return jobDto;
     }
 
@@ -241,6 +238,7 @@ public class TestUtil {
         JobDto jobDto = podamFactory.manufacturePojo(JobDto.class);
         jobDto.setEmails(new HashSet<>());
         jobDto.setSqlQueries(new ArrayList<>());
+        jobDto.setLabelIds(new HashSet<>());
         return jobDto;
     }
 

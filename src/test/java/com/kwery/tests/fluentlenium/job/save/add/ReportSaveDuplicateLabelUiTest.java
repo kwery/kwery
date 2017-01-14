@@ -8,11 +8,13 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
+import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import junit.framework.TestCase;
+import org.dozer.DozerBeanMapper;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Assert;
 import org.junit.Before;
@@ -98,7 +100,9 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
 
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
-        page.fillAndSubmitReportSaveForm(jobDto);
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        JobForm jobForm = mapper.map(jobDto, JobForm.class);
+        page.fillAndSubmitReportSaveForm(jobForm);
         page.waitForErrorMessages();
 
         List<String> expectedErrorMessages = ImmutableList.of(format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel));
