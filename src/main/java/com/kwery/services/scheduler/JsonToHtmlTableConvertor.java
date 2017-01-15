@@ -3,15 +3,15 @@ package com.kwery.services.scheduler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
-import com.google.inject.Singleton;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-@Singleton
 public class JsonToHtmlTableConvertor {
+    protected boolean hasContent = false;
+
     public String convert(String json) throws IOException {
         //TODO - Is there a better way to do this, probably use some XML processing library or is it an overkill?
         ObjectMapper objectMapper = new ObjectMapper();
@@ -41,6 +41,7 @@ public class JsonToHtmlTableConvertor {
             //Has data?
 
             if (table.size() > 1) {
+                this.hasContent = true;
                 //Skip headers
                 for (int i = 1; i < table.size(); ++i) {
                     htmlTableParts.add("<tr style='border: 1px solid black;'>");
@@ -61,5 +62,13 @@ public class JsonToHtmlTableConvertor {
         htmlTableParts.add("</table>");
 
         return Joiner.on("").join(htmlTableParts);
+    }
+
+    public boolean isHasContent() {
+        return hasContent;
+    }
+
+    public void setHasContent(boolean hasContent) {
+        this.hasContent = hasContent;
     }
 }

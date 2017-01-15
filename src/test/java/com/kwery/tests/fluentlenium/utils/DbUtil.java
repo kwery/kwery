@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.kwery.models.Datasource.*;
@@ -292,6 +293,25 @@ public class DbUtil {
         return builder.build();
     }
 
+    public static IDataSet jobRuleTable(JobModel... ms) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JobModel.JOB_RULE_TABLE);
+
+        if (ms != null) {
+            for (JobModel m : ms) {
+                for (Map.Entry<Rules, String> rule : m.getRules().entrySet()) {
+                    builder.newRow(JOB_RULE_TABLE)
+                            .with(JobModel.JOB_RULE_TABLE_NAME_COLUMN, rule.getKey())
+                            .with(JobModel.JOB_RULE_TABLE_VALUE_COLUMN, rule.getValue())
+                            .with(JobModel.JOB_RULE_JOB_ID_FK_COLUMN, m.getId())
+                            .add();
+                }
+            }
+        }
+
+        return builder.build();
+    }
+
     public static void datasourceDbSetup(Datasource datasource) {
         DbSetup dbSetup = new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -493,6 +513,24 @@ public class DbUtil {
                                         .column(JobModel.JOB_JOB_LABEL_TABLE_ID_COLUMN, dbId())
                                         .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, jobModel.getId())
                                         .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, jobLabelModel.getId())
+                                    .end()
+                                    .build()
+                    )
+            ).launch();
+        }
+    }
+
+    public static void jobRuleDbSetUp(JobModel jobModel) {
+        for (Map.Entry<Rules, String> rule : jobModel.getRules().entrySet()) {
+            new DbSetup(
+                    new DataSourceDestination(getDatasource()),
+                    sequenceOf(
+                            insertInto(JobModel.JOB_RULE_TABLE)
+                                    .row()
+                                    .column(JobModel.JOB_RULE_TABLE_ID_COLUMN, dbId())
+                                    .column(JobModel.JOB_RULE_TABLE_NAME_COLUMN, rule.getKey())
+                                    .column(JobModel.JOB_RULE_TABLE_VALUE_COLUMN, rule.getValue())
+                                    .column(JobModel.JOB_RULE_JOB_ID_FK_COLUMN, jobModel.getId())
                                     .end()
                                     .build()
                     )

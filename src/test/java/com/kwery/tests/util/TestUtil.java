@@ -211,6 +211,7 @@ public class TestUtil {
         jobModel.setSqlQueries(new HashSet<>());
         jobModel.setParentJob(null);
         jobModel.setLabels(new HashSet<>());
+/*        jobModel.setRules(new HashMap<>());*/
         return jobModel;
     }
 

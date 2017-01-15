@@ -5,8 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import static javax.persistence.EnumType.STRING;
 
 @Entity
 @Table(name = JobModel.JOB_TABLE)
@@ -36,6 +40,12 @@ public class JobModel {
     public static final String JOB_JOB_LABEL_TABLE_ID_COLUMN = "id";
     public static final String JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN = "job_id_fk";
     public static final String JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN = "job_label_id_fk";
+
+    public static final String JOB_RULE_TABLE = "job_rule";
+    public static final String JOB_RULE_TABLE_ID_COLUMN = "id";
+    public static final String JOB_RULE_TABLE_NAME_COLUMN = "r_name";
+    public static final String JOB_RULE_TABLE_VALUE_COLUMN = "value";
+    public static final String JOB_RULE_JOB_ID_FK_COLUMN = "job_id_fk";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -96,6 +106,13 @@ public class JobModel {
     )
     @Column(name = JOB_EMAIL_TABLE_EMAIL_COLUMN)
     protected Set<String> emails;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name= JOB_RULE_TABLE_NAME_COLUMN)
+    @Column(name= JOB_RULE_TABLE_VALUE_COLUMN)
+    @CollectionTable(name=JOB_RULE_TABLE, joinColumns=@JoinColumn(name= JOB_RULE_JOB_ID_FK_COLUMN))
+    @MapKeyEnumerated(STRING)
+    protected Map<Rules, String> rules = new HashMap<>();
 
     public Integer getId() {
         return id;
@@ -167,5 +184,17 @@ public class JobModel {
 
     public void setEmails(Set<String> recipientEmails) {
         this.emails = recipientEmails;
+    }
+
+    public Map<Rules, String> getRules() {
+        return rules;
+    }
+
+    public void setRules(Map<Rules, String> rules) {
+        this.rules = rules;
+    }
+
+    public enum Rules {
+        EMPTY_REPORT_NO_EMAIL
     }
 }

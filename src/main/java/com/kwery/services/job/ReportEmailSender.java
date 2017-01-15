@@ -1,5 +1,6 @@
 package com.kwery.services.job;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -27,15 +28,15 @@ import static com.kwery.utils.KweryUtil.fileName;
 public class ReportEmailSender {
     protected Logger logger = LoggerFactory.getLogger(ReportEmailSender.class);
 
-    protected final JsonToHtmlTableConvertor jsonToHtmlTableConvertor;
+    protected final Provider<JsonToHtmlTableConvertor> jsonToHtmlTableConvertorProvider;
     protected final JsonToCsvConverter jsonToCsvConverter;
     protected final Provider<KweryMail> kweryMailProvider;
     protected final MailService mailService;
 
     @Inject
-    public ReportEmailSender(JsonToHtmlTableConvertor jsonToHtmlTableConvertor, JsonToCsvConverter jsonToCsvConverter, Provider<KweryMail> kweryMailProvider,
+    public ReportEmailSender(Provider<JsonToHtmlTableConvertor> jsonToHtmlTableConvertorProvider , JsonToCsvConverter jsonToCsvConverter, Provider<KweryMail> kweryMailProvider,
                              MailService mailService) {
-        this.jsonToHtmlTableConvertor = jsonToHtmlTableConvertor;
+        this.jsonToHtmlTableConvertorProvider = jsonToHtmlTableConvertorProvider;
         this.jsonToCsvConverter = jsonToCsvConverter;
         this.kweryMailProvider = kweryMailProvider;
         this.mailService = mailService;
@@ -51,12 +52,17 @@ public class ReportEmailSender {
             List<String> emailSnippets = new LinkedList<>();
 
             List<KweryMailAttachment> attachments = new LinkedList<>();
+
+            boolean emptyResult = false;
+
             for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModel.getSqlQueryExecutionModels()) {
                 emailSnippets.add("<h1>" + sqlQueryExecutionModel.getSqlQuery().getTitle() + "</h1>");
 
                 if (sqlQueryExecutionModel.getResult() == null) {
                     emailSnippets.add("<div></div>");
                 } else {
+                    JsonToHtmlTableConvertor jsonToHtmlTableConvertor = jsonToHtmlTableConvertorProvider.get();
+                    emptyResult = emptyResult || jsonToHtmlTableConvertor.isHasContent();
                     emailSnippets.add(jsonToHtmlTableConvertor.convert(sqlQueryExecutionModel.getResult()));
                 }
 
@@ -71,20 +77,33 @@ public class ReportEmailSender {
                 }
             }
 
-            KweryMail kweryMail = kweryMailProvider.get();
-            kweryMail.setSubject(subject);
-            kweryMail.setBodyHtml(String.join("", emailSnippets));
-            jobModel.getEmails().forEach(kweryMail::addTo);
-            kweryMail.setAttachments(attachments);
+            if (shouldSend(emptyResult, jobModel)) {
+                KweryMail kweryMail = kweryMailProvider.get();
+                kweryMail.setSubject(subject);
+                kweryMail.setBodyHtml(String.join("", emailSnippets));
+                jobModel.getEmails().forEach(kweryMail::addTo);
+                kweryMail.setAttachments(attachments);
 
-            try {
-                mailService.send(kweryMail);
-                logger.info("Job id {} and execution id {} email sent to {}", jobModel.getId(), jobExecutionModel.getId(), String.join(", ", jobModel.getEmails()));
-            } catch (Exception e) {
-                logger.error("Exception while trying to send report email for job id {} and execution id {}", jobModel.getId(), jobExecutionModel.getId(), e);
+                try {
+                    mailService.send(kweryMail);
+                    logger.info("Job id {} and execution id {} email sent to {}", jobModel.getId(), jobExecutionModel.getId(), String.join(", ", jobModel.getEmails()));
+                } catch (Exception e) {
+                    logger.error("Exception while trying to send report email for job id {} and execution id {}", jobModel.getId(), jobExecutionModel.getId(), e);
+                }
             }
         } catch (IOException e) {
             logger.error("Exception while trying to convert result to html for job id {} and execution id {}", jobModel.getId(), jobExecutionModel.getId(), e);
         }
+    }
+
+    @VisibleForTesting
+    public boolean shouldSend(boolean hasContent, JobModel jobModel) {
+        if (!jobModel.getRules().isEmpty()) {
+            if (!hasContent) {
+                String emptyResultSendRule = jobModel.getRules().get(JobModel.Rules.EMPTY_REPORT_NO_EMAIL);
+                return !Boolean.valueOf(emptyResultSendRule);
+            }
+        }
+        return true;
     }
 }
