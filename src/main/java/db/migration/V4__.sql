@@ -7,3 +7,4 @@ create table job_rule (
 );
 
 alter table job_rule add constraint fk_job_rule_job_id_fk foreign key (job_id_fk) references job;
+alter table job_rule add constraint uc_job_rule_r_name_job_id_fk unique(r_name, job_id_fk);
