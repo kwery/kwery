@@ -61,17 +61,20 @@ public class JobApiController {
     protected final SqlQueryDao sqlQueryDao;
     protected final Messages messages;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
+    protected final JobLabelDao jobLabelDao;
     protected final JsonToCsvConverter jsonToCsvConverter;
 
     @Inject
     public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao,
-                            SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao, JsonToCsvConverter jsonToCsvConverter, Messages messages) {
+                            SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao,
+                            JsonToCsvConverter jsonToCsvConverter, Messages messages) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
         this.jobService = jobService;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
+        this.jobLabelDao = jobLabelDao;
         this.jsonToCsvConverter = jsonToCsvConverter;
         this.messages = messages;
     }
@@ -86,15 +89,15 @@ public class JobApiController {
 
         List<String> errorMessages = new LinkedList<>();
 
-        JobModel jobByLabel = jobDao.getJobByLabel(jobDto.getLabel());
+        JobModel jobByLabel = jobDao.getJobByName(jobDto.getName());
         if (jobByLabel != null) {
             if (isUpdate) {
                 if (!jobByLabel.getId().equals(jobDto.getId())) {
-                    String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
+                    String message = messages.get(JOBAPICONTROLLER_REPORT_NAME_EXISTS, context, Optional.of(json), jobDto.getName()).get();
                     errorMessages.add(message);
                 }
             } else {
-                String message = messages.get(JOBAPICONTROLLER_REPORT_LABEL_EXISTS, context, Optional.of(json), jobDto.getLabel()).get();
+                String message = messages.get(JOBAPICONTROLLER_REPORT_NAME_EXISTS, context, Optional.of(json), jobDto.getName()).get();
                 errorMessages.add(message);
             }
         }
@@ -404,11 +407,18 @@ public class JobApiController {
             jobModel.setId(jobDto.getId());
         }
 
-        jobModel.setLabel(jobDto.getLabel());
+        jobModel.setName(jobDto.getName());
         jobModel.setCronExpression(Strings.nullToEmpty(jobDto.getCronExpression()));
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toSet()));
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setEmails(jobDto.getEmails());
+
+        if (jobDto.getLabelIds() != null) {
+            jobModel.setLabels(jobDto.getLabelIds().stream().filter(id -> id != null && id > 0).map(jobLabelDao::getJobLabelModelById).collect(toSet()));
+        } else {
+            jobModel.setLabels(new HashSet<>());
+        }
+
         return jobModel;
     }
 
@@ -443,7 +453,7 @@ public class JobApiController {
 
         jobExecutionDto.setStatus(model.getStatus().name());
         jobExecutionDto.setExecutionId(model.getExecutionId());
-        jobExecutionDto.setLabel(model.getJobModel().getLabel());
+        jobExecutionDto.setLabel(model.getJobModel().getName());
 
         return jobExecutionDto;
     }

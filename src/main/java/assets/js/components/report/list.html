@@ -11,7 +11,7 @@
             <table class="table report-list-table-f">
                 <thead>
                     <tr>
-                        <th data-bind="text: ko.i18n('report.list.label')"></th>
+                        <th data-bind="text: ko.i18n('report.list.name')"></th>
                         <th data-bind="text: ko.i18n('report.list.cron.expression')"></th>
                         <th></th>
                     </tr>
@@ -19,7 +19,7 @@
                 <tbody data-bind="foreach: reports" class="report-list-table-body-f">
                 <tr>
                     <td>
-                        <a data-bind="attr: {href: reportLink}, text: label" class="label-f"></a>
+                        <a data-bind="attr: {href: reportLink}, text: name" class="name-f"></a>
                     </td>
                     <td data-bind="text: cronExpression" class="cron-expression-f"></td>
                     <td>

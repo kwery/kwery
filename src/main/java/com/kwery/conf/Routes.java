@@ -46,6 +46,11 @@ public class Routes implements ApplicationRoutes {
     public static final String JOB_EXECUTION_STOP_API = "/api/job/execution/stop/{jobExecutionId}";
     public static final String REPORT_CSV_API = "/api/report/csv/{sqlQueryExecutionId}";
 
+    public static final String JOB_LABEL_SAVE_API = "/api/job-label/save";
+    public static final String JOB_LABEL_LIST_API = "/api/job-label/list";
+    public static final String JOB_LABEL_GET_API = "/api/job-label/{jobLabelId}";
+    public static final String JOB_LABEL_DELETE_API = "/api/job-label/delete/{jobLabelId}";
+
     @Override
     public void init(Router router) {
         router.GET().route(INDEX).with(IndexController.class, "index");
@@ -91,8 +96,12 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(JOB_GET_API).with(JobApiController.class, "getJob");
         router.POST().route(JOB_EXECUTION_STOP_API).with(JobApiController.class, "stopJobExecution");
 
-
         router.GET().route(REPORT_CSV_API).with(JobApiController.class, "reportAsCsv");
+
+        router.POST().route(JOB_LABEL_SAVE_API).with(JobLabelApiController.class, "saveJobLabel");
+        router.GET().route(JOB_LABEL_LIST_API).with(JobLabelApiController.class, "getAllJobLabels");
+        router.GET().route(JOB_LABEL_GET_API).with(JobLabelApiController.class, "getJobLabelById");
+        router.POST().route(JOB_LABEL_DELETE_API).with(JobLabelApiController.class, "deleteJobLabelById");
         //Api - End
 
         //Static asset

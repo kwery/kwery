@@ -7,6 +7,7 @@ import com.kwery.models.Datasource;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,7 +72,10 @@ public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFlue
 
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
-        page.fillAndSubmitReportSaveForm(jobDto);
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        JobForm jobForm = mapper.map(jobDto, JobForm.class);
+
+        page.fillAndSubmitReportSaveForm(jobForm);
 
         assertThat(page.validationMessage(queryLabel, 1), is(REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR));
     }

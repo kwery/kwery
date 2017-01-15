@@ -85,8 +85,8 @@ public class Messages {
 
     public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report saved successfully";
 
-    public static final String JOBAPICONTROLLER_REPORT_LABEL_EXISTS_M = "A report already exsits with label {0}, please choose a different label";
-    public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exsits with label {0}, please choose a different label";
+    public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS_M = "A report already exists with name {0}, please choose a different name";
+    public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exists with label {0}, please choose a different label";
     public static final String REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR = "You have already used this label, please choose a different label";
 
     public static final String REPORT_JOB_EXECUTING_STOP_SUCCESS_M = "Report execution stopped successfully";
@@ -103,4 +103,10 @@ public class Messages {
 
     public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M = "There are other jobs which depend on this job, please remove the dependencies before deleting this job";
     public static final String REPORT_LIST_DELETE_SUCCESS_M = "Report deleted successfully";
+
+    public static final String REPORT_LABEL_SAVE_SUCCESS_M = "Label {0} saved successfully";
+
+    public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL_M = "There are reports which have label {0}";
+    public static final String JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN_M = "There are labels which are nested under {0}";
+    public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS_M = "Label {0} deleted successfully";
 }

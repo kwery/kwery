@@ -1,7 +1,6 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
 import com.google.common.collect.ImmutableSet;
-import com.jayway.jsonassert.impl.matcher.IsCollectionWithSize;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
@@ -82,7 +81,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
 
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setTitle(jobDto.getTitle());
-        expectedJobModel.setLabel(jobDto.getLabel());
+        expectedJobModel.setName(jobDto.getName());
         expectedJobModel.setEmails(emails);
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setCronExpression(jobDto.getCronExpression());
@@ -106,7 +105,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
-        assertThat(jobDao.getJobByLabel(expectedJobModel.getLabel()), theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id"));
+        assertThat(jobDao.getJobByName(expectedJobModel.getName()), theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id"));
         assertThat(jobDao.getAllJobs(), hasSize(1));
     }
 }

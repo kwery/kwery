@@ -67,7 +67,7 @@ public class MessageKeys {
     public static final String EMAIL_TEST_SUCCESS = "email.test.success";
 
     public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND = "jobapicontroller.report.not.found";
-    public static final String JOBAPICONTROLLER_REPORT_LABEL_EXISTS = "jobapicontroller.report.label.exists";
+    public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS = "jobapicontroller.report.name.exists";
     public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS = "jobapicontroller.sql.query.label.exists";
 
     public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_SQL_STATE = "datasourceapicontroller.connection.error.sql.state";
@@ -75,4 +75,8 @@ public class MessageKeys {
 
     public static final String JOBAPICONTROLLER_FILTER_DATE_PARSE_ERROR = "jobapicontroller.filter.date.parse.error";
     public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN = "jobapicontroller.delete.job.has.children";
+
+    public static final String JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN = "joblabelapicontroller.delete.has.children";
+    public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL = "joblabelapicontroller.delete.job.has.label";
+    public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS = "joblabelapicontroller.delete.success";
 }
