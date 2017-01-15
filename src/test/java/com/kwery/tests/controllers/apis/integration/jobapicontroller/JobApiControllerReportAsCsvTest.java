@@ -42,14 +42,15 @@ public class JobApiControllerReportAsCsvTest extends AbstractPostLoginApiTest {
         jobSqlQueryDbSetUp(jobModel);
 
         JobExecutionModel jobExecutionModel = jobExecutionModel();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2017, Calendar.JANUARY, 4);
+        jobExecutionModel.setExecutionStart(calendar.getTimeInMillis());
         jobExecutionModel.setJobModel(jobModel);
 
         jobExecutionDbSetUp(jobExecutionModel);
 
         sqlQueryExecutionModel = sqlQueryExecutionModel();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2017, Calendar.JANUARY, 4);
         sqlQueryExecutionModel.setExecutionStart(calendar.getTimeInMillis());
 
         String json = toJson(

@@ -40,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.kwery.controllers.MessageKeys.*;
+import static com.kwery.utils.KweryUtil.fileName;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
 import static java.util.Comparator.comparing;
@@ -52,7 +53,6 @@ public class JobApiController {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final String DISPLAY_DATE_FORMAT = "EEE MMM dd yyyy HH:mm";
-    public static final String CSV_FILE_NAME_DATE_PART = "EEE-MMM-dd";
 
     protected final DatasourceDao datasourceDao;
     protected final JobDao jobDao;
@@ -369,8 +369,7 @@ public class JobApiController {
 
         if (!models.isEmpty()) {
             SqlQueryExecutionModel model = models.get(0);
-            String fileName = (model.getSqlQuery().getTitle() + " " + new SimpleDateFormat(CSV_FILE_NAME_DATE_PART).format(model.getExecutionStart()))
-                    .toLowerCase().trim().replaceAll("\\s+", "-") + ".csv";
+            String fileName = fileName(model.getSqlQuery().getTitle(), model.getJobExecutionModel().getExecutionStart());
             try {
                 String csv = jsonToCsvConverter.convert(model.getResult());
                 if (logger.isTraceEnabled()) logger.trace(">");
