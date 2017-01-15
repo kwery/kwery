@@ -420,7 +420,7 @@ public class JobApiController {
             jobModel.setLabels(new HashSet<>());
         }
 
-        jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoMailRule())));
+        jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 
         return jobModel;
     }

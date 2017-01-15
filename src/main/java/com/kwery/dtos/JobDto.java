@@ -13,7 +13,7 @@ public class JobDto {
     protected Set<String> emails;
     protected List<SqlQueryDto> sqlQueries;
     protected Set<Integer> labelIds = new HashSet<>();
-    protected boolean emptyReportNoMailRule;
+    protected boolean emptyReportNoEmailRule;
 
     public int getId() {
         return id;
@@ -79,11 +79,11 @@ public class JobDto {
         this.labelIds = labelIds;
     }
 
-    public boolean isEmptyReportNoMailRule() {
-        return emptyReportNoMailRule;
+    public boolean isEmptyReportNoEmailRule() {
+        return emptyReportNoEmailRule;
     }
 
-    public void setEmptyReportNoMailRule(boolean emptyReportNoMailRule) {
-        this.emptyReportNoMailRule = emptyReportNoMailRule;
+    public void setEmptyReportNoEmailRule(boolean emptyReportNoEmailRule) {
+        this.emptyReportNoEmailRule = emptyReportNoEmailRule;
     }
 }

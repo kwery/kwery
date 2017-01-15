@@ -20,6 +20,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.reportEmails = ko.observable("");
 
         self.queries = ko.observableArray([]);
+        self.emptyReportNoEmailRule = ko.observable(false);
 
         self.scheduleOption.subscribe(function(newVal){
             $("#parentReport").attr("data-validate", false);
@@ -131,6 +132,8 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             self.labelIds.push(new LabelId(label.id));
                         });
 
+                        self.emptyReportNoEmailRule(jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === undefined ? false : (jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === "true") );
+
                         self.refreshValidation();
                     }
                 })
@@ -206,7 +209,8 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             }
                         });
                         return ids;
-                    })()
+                    })(),
+                    emptyReportNoEmailRule: self.emptyReportNoEmailRule()
                 };
 
                 if (isUpdate) {
