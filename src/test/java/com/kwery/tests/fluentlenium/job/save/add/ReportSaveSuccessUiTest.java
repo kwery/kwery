@@ -28,4 +28,28 @@ public class ReportSaveSuccessUiTest extends AbstractReportSaveUiTest {
 
         assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
     }
+
+    @Test
+    public void testWithEmailRuleChecked() throws InterruptedException {
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        jobDto.setEmptyReportNoEmailRule(true);
+        JobForm jobForm = mapper.map(jobDto, JobForm.class);
+
+        page.fillAndSubmitReportSaveForm(jobForm);
+        page.waitForReportSaveSuccessMessage();
+
+        assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
+    }
+
+    @Test
+    public void testWithEmailRuleUnchecked() throws InterruptedException {
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        jobDto.setEmptyReportNoEmailRule(false);
+        JobForm jobForm = mapper.map(jobDto, JobForm.class);
+
+        page.fillAndSubmitReportSaveForm(jobForm);
+        page.waitForReportSaveSuccessMessage();
+
+        assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
+    }
 }
