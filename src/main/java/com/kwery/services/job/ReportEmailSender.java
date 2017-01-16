@@ -12,7 +12,8 @@ import com.kwery.services.mail.KweryMailAttachment;
 import com.kwery.services.mail.KweryMailAttachmentImpl;
 import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.JsonToCsvConverter;
-import com.kwery.services.scheduler.JsonToHtmlTableConvertor;
+import com.kwery.services.scheduler.JsonToHtmlTableConverter;
+import com.kwery.services.scheduler.JsonToHtmlTableConverterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,15 +29,15 @@ import static com.kwery.utils.KweryUtil.fileName;
 public class ReportEmailSender {
     protected Logger logger = LoggerFactory.getLogger(ReportEmailSender.class);
 
-    protected final Provider<JsonToHtmlTableConvertor> jsonToHtmlTableConvertorProvider;
+    protected final JsonToHtmlTableConverterFactory jsonToHtmlTableConverterFactory;
     protected final JsonToCsvConverter jsonToCsvConverter;
     protected final Provider<KweryMail> kweryMailProvider;
     protected final MailService mailService;
 
     @Inject
-    public ReportEmailSender(Provider<JsonToHtmlTableConvertor> jsonToHtmlTableConvertorProvider , JsonToCsvConverter jsonToCsvConverter, Provider<KweryMail> kweryMailProvider,
-                             MailService mailService) {
-        this.jsonToHtmlTableConvertorProvider = jsonToHtmlTableConvertorProvider;
+    public ReportEmailSender(JsonToHtmlTableConverterFactory jsonToHtmlTableConverterFactory, JsonToCsvConverter jsonToCsvConverter,
+                             Provider<KweryMail> kweryMailProvider, MailService mailService) {
+        this.jsonToHtmlTableConverterFactory = jsonToHtmlTableConverterFactory;
         this.jsonToCsvConverter = jsonToCsvConverter;
         this.kweryMailProvider = kweryMailProvider;
         this.mailService = mailService;
@@ -61,9 +62,9 @@ public class ReportEmailSender {
                 if (sqlQueryExecutionModel.getResult() == null) {
                     emailSnippets.add("<div></div>");
                 } else {
-                    JsonToHtmlTableConvertor jsonToHtmlTableConvertor = jsonToHtmlTableConvertorProvider.get();
-                    emptyResult = emptyResult || jsonToHtmlTableConvertor.isHasContent();
-                    emailSnippets.add(jsonToHtmlTableConvertor.convert(sqlQueryExecutionModel.getResult()));
+                    JsonToHtmlTableConverter jsonToHtmlTableConverter = jsonToHtmlTableConverterFactory.create(sqlQueryExecutionModel.getResult());
+                    emailSnippets.add(jsonToHtmlTableConverter.convert());
+                    emptyResult = emptyResult || jsonToHtmlTableConverter.isHasContent();
                 }
 
                 //We do not want to send out attachments if the execution did not yield in any result, happens in case of insert queries
