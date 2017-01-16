@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.kwery.services.scheduler.JsonToHtmlTableConvertor;
-import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class JsonToHtmlTableConvertorTest {
@@ -39,7 +39,9 @@ public class JsonToHtmlTableConvertorTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
+        JsonToHtmlTableConvertor jsonToHtmlTableConvertor = new JsonToHtmlTableConvertor();
+        assertThat(jsonToHtmlTableConvertor.convert(json), is(expectedHtmlTable));
+        assertThat(jsonToHtmlTableConvertor.isHasContent(), is(true));
     }
 
     @Test
@@ -61,7 +63,9 @@ public class JsonToHtmlTableConvertorTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
+        JsonToHtmlTableConvertor jsonToHtmlTableConvertor = new JsonToHtmlTableConvertor();
+        assertThat(jsonToHtmlTableConvertor.convert(json), is(expectedHtmlTable));
+        assertThat(jsonToHtmlTableConvertor.isHasContent(), is(false));
     }
 
     @Test
@@ -77,7 +81,9 @@ public class JsonToHtmlTableConvertorTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
+        JsonToHtmlTableConvertor jsonToHtmlTableConvertor = new JsonToHtmlTableConvertor();
+        assertThat(jsonToHtmlTableConvertor.convert(json), is(expectedHtmlTable));
+        assertThat(jsonToHtmlTableConvertor.isHasContent(), is(false));
     }
 
     @Test(expected = JsonProcessingException.class)

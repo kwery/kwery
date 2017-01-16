@@ -5,6 +5,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.kwery.dao.*;
@@ -40,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.kwery.controllers.MessageKeys.*;
+import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.utils.KweryUtil.fileName;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
@@ -417,6 +419,8 @@ public class JobApiController {
         } else {
             jobModel.setLabels(new HashSet<>());
         }
+
+        jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 
         return jobModel;
     }
