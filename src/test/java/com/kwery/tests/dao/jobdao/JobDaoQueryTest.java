@@ -1,5 +1,6 @@
 package com.kwery.tests.dao.jobdao;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
@@ -9,6 +10,7 @@ import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.util.UUID.randomUUID;
@@ -50,6 +52,9 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
         jobEmailDbSetUp(jobModel);
         jobDependentDbSetUp(jobModel);
 
+        jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(true)));
+        jobRuleDbSetUp(jobModel);
+
         JobLabelModel jobLabelModel = jobLabelModel();
         jobLabelDbSetUp(jobLabelModel);
 
@@ -76,5 +81,4 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
         assertThat(jobDao.getJobByName(jobModel.getName()), theSameBeanAs(jobModel));
         assertThat(jobDao.getJobByName(randomUUID().toString()), nullValue());
     }
-
 }

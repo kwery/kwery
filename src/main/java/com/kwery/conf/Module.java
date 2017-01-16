@@ -25,6 +25,7 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
+import com.kwery.services.scheduler.JsonToHtmlTableConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
 import it.sauronsoftware.cron4j.Scheduler;
@@ -40,6 +41,7 @@ public class Module extends AbstractModule {
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
         install(new FactoryModuleBuilder().build(JobTaskFactory.class));
         install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
+        install(new FactoryModuleBuilder().build(JsonToHtmlTableConverterFactory.class));
     }
 
     @Provides

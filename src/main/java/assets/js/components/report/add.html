@@ -89,6 +89,12 @@
                     <input data-bind="value: reportEmails" type="text" class="form-control f-report-emails" name="emails" id="emails">
                     <div class="help-block with-errors emails-form-validation-message-f"></div>
                 </div>
+                <div class="checkbox">
+                    <label>
+                        <input data-bind="checked: emptyReportNoEmailRule" class="no-email-rule-f" name="noEmailRule" type="checkbox">
+                        <span data-bind="text: ko.i18n('report.save.empty.report.no.email.rule')"> </span>
+                    </label>
+                </div>
 
                 <!-- ko foreach: {data: queries, afterRender: refreshValidation} -->
 

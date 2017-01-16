@@ -4,17 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.kwery.services.scheduler.JsonToHtmlTableConvertor;
-import org.hamcrest.core.Is;
+import com.kwery.services.scheduler.JsonToHtmlTableConverter;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class JsonToHtmlTableConvertorTest {
+public class JsonToHtmlTableConverterTest {
     @Test
     public void test() throws IOException {
         List<List<String>> result = ImmutableList.of(
@@ -39,7 +39,9 @@ public class JsonToHtmlTableConvertorTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
+        JsonToHtmlTableConverter jsonToHtmlTableConverter = new JsonToHtmlTableConverter(json);
+        assertThat(jsonToHtmlTableConverter.convert(), is(expectedHtmlTable));
+        assertThat(jsonToHtmlTableConverter.isHasContent(), is(true));
     }
 
     @Test
@@ -61,7 +63,9 @@ public class JsonToHtmlTableConvertorTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
+        JsonToHtmlTableConverter jsonToHtmlTableConverter = new JsonToHtmlTableConverter(json);
+        assertThat(jsonToHtmlTableConverter.convert(), is(expectedHtmlTable));
+        assertThat(jsonToHtmlTableConverter.isHasContent(), is(false));
     }
 
     @Test
@@ -77,11 +81,13 @@ public class JsonToHtmlTableConvertorTest {
                 )
         );
 
-        assertThat(new JsonToHtmlTableConvertor().convert(json), Is.is(expectedHtmlTable));
+        JsonToHtmlTableConverter jsonToHtmlTableConverter = new JsonToHtmlTableConverter(json);
+        assertThat(jsonToHtmlTableConverter.convert(), is(expectedHtmlTable));
+        assertThat(jsonToHtmlTableConverter.isHasContent(), is(false));
     }
 
     @Test(expected = JsonProcessingException.class)
     public void malformedJsonTest() throws IOException {
-        new JsonToHtmlTableConvertor().convert("sdjkfljsl");
+        new JsonToHtmlTableConverter("sdjkfljsl").convert();
     }
 }

@@ -58,6 +58,12 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
             fillSelect(".f-sql-query" + i + " .f-datasource").withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
         }
 
+        if (jobForm.isEmptyReportNoEmailRule()) {
+            ensureEmailRuleChecked();
+        } else {
+            ensureEmailRuleUnchecked();
+        }
+
         int i = 0;
         for (Integer id : jobForm.getLabelIds()) {
             clickOnAddLabel(i);
@@ -66,6 +72,18 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         }
 
         submitReportSaveForm();
+    }
+
+    public void ensureEmailRuleUnchecked() {
+        if (findFirst(className("no-email-rule-f")).isSelected()) {
+            click(findFirst(className("no-email-rule-f")));
+        }
+    }
+
+    public void ensureEmailRuleChecked() {
+        if (!findFirst(className("no-email-rule-f")).isSelected()) {
+            click(findFirst(className("no-email-rule-f")));
+        }
     }
 
     public void selectLabel(Integer labelId, int index) {

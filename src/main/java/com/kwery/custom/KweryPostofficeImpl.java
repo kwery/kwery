@@ -4,11 +4,20 @@ import com.google.inject.Inject;
 import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
 import com.kwery.services.mail.EmailConfigurationService;
+import com.kwery.services.mail.KweryMail;
+import com.kwery.services.mail.KweryMailAttachment;
 import com.kwery.services.mail.smtp.SmtpService;
 import ninja.postoffice.Mail;
 import ninja.postoffice.Postoffice;
 import ninja.postoffice.commonsmail.CommonsmailHelper;
+import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
+
+import javax.activation.DataSource;
+import javax.mail.util.ByteArrayDataSource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class KweryPostofficeImpl implements Postoffice {
     private final CommonsmailHelper commonsmailHelper;
@@ -43,6 +52,8 @@ public class KweryPostofficeImpl implements Postoffice {
         // fill the from, to, bcc, css and all other fields:
         commonsmailHelper.doPopulateMultipartMailWithContent(multiPartEmail, mail);
 
+        attachAttachments(multiPartEmail, (KweryMail) mail);
+
         // set server parameters so we can send the MultiPartEmail:
         SmtpConfiguration smtpConfiguration = smtpService.getSmtpConfiguration();
 
@@ -58,5 +69,13 @@ public class KweryPostofficeImpl implements Postoffice {
 
         // And send it:
         multiPartEmail.send();
+    }
+
+    protected void attachAttachments(MultiPartEmail multiPartEmail, KweryMail kweryMail) throws IOException, EmailException {
+        for (KweryMailAttachment kweryMailAttachment : kweryMail.getAttachments()) {
+            InputStream byteArrayInputStream = new ByteArrayInputStream(kweryMailAttachment.getContent().getBytes("UTF-8"));
+            DataSource datasource = new ByteArrayDataSource(byteArrayInputStream, "text/csv");
+            multiPartEmail.attach(datasource, kweryMailAttachment.getName(), kweryMailAttachment.getDescription());
+        }
     }
 }

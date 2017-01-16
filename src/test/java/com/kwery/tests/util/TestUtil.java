@@ -2,6 +2,7 @@ package com.kwery.tests.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
@@ -21,6 +22,7 @@ import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.EmailConfiguration.*;
+import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.models.SmtpConfiguration.*;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
@@ -211,6 +213,7 @@ public class TestUtil {
         jobModel.setSqlQueries(new HashSet<>());
         jobModel.setParentJob(null);
         jobModel.setLabels(new HashSet<>());
+/*        jobModel.setRules(new HashMap<>());*/
         return jobModel;
     }
 
@@ -337,6 +340,8 @@ public class TestUtil {
 
     public static void assertJobModel(JobModel jobModel, JobModel parentJobModel, JobDto jobDto, Datasource datasource) {
         JobModel expectedJobModel = toJobModel(jobDto, datasource);
+
+        expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 
         if (parentJobModel != null) {
             expectedJobModel.setParentJob(parentJobModel);
