@@ -1,4 +1,4 @@
-define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "knockout-projections", "bootstrap"], function ($, ko, router, polyglot) {
+define(["jquery", "knockout", "router", "polyglot", "knockout-projections", "bootstrap", "waitingfor"], function ($, ko, router, polyglot) {
     ko.components.register("nav-bar", {
         require: "components/nav-bar"
     });
@@ -73,13 +73,15 @@ define(["jquery-migrate", "knockout", "router", "polyglot", "jquery-validate", "
 
     //Attach polyglot for i18n to ko
     (function i18n(Polyglot) {
-        var polyglot = new Polyglot({phrases: dashRepoMessages});
-        ko.i18n = function(key, options) {
-            if (options === undefined) {
-                options = {};
-            }
+        $.getJSON("/api/messages/list", function(messages){
+            var polyglot = new Polyglot({phrases: messages});
+            ko.i18n = function(key, options) {
+                if (options === undefined) {
+                    options = {};
+                }
 
-            return polyglot.t(key, options);
-        };
+                return polyglot.t(key, options);
+            };
+        });
     })(polyglot);
 });

@@ -1,7 +1,6 @@
 package com.kwery.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -23,7 +22,6 @@ public class IndexController {
         String title = messages.get(MessageKeys.TITLE, context, of(html)).get();
         html.render("title", title);
         html.render("userAuthenticated", String.valueOf(isUserAuthenticated(context)));
-        html.render("allMessages", new ObjectMapper().writeValueAsString(messages.getAll(context, of(html))));
         return html;
     }
 

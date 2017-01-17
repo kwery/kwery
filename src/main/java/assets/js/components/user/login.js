@@ -7,7 +7,6 @@ define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login
         self.status = ko.observable("");
         self.messages = ko.observable("");
 
-        self.onSuccessShowDialog = ko.observable(true);
         self.nextAction = ko.observable("");
         self.nextActionName = ko.observable("");
 

@@ -89,11 +89,5 @@
         </body>
         <script src="/assets/app/require.config.js"></script>
         <script data-main="startup" src="/assets/js/require.js"></script>
-        <#--    TODO - Fix this, using deprecated directive-->
-        <#noescape>
-            <script type="text/javascript">
-                var dashRepoMessages = ${allMessages};
-            </script>
-        </#noescape>
     </html>
 </#macro>
