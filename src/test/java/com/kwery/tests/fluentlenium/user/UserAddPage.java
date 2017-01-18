@@ -27,12 +27,12 @@ public class UserAddPage extends FluentPage implements RepoDashPage {
 
     public void submitForm(String... inputs) {
         fill("input").with(inputs);
-        click("#createAdminUser");
+        click(".user-save-f");
     }
 
     public void submitForm() {
         fill("input").with();
-        click("#createAdminUser");
+        click(".user-save-f");
     }
 
     public String usernameValidationErrorMessage() {

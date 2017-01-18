@@ -17,7 +17,8 @@ var require = {
         "moment": "moment",
         "datetimepicker": "/assets/bootstrap/js/datetimepicker",
         "waitingmodal": "/assets/bootstrap/js/waitingmodal",
-        "ajaxutil": "ajaxutil"
+        "ajaxutil": "ajaxutil",
+        "messages": "/messages"
     },
     shim: {
         "bootstrap": {
