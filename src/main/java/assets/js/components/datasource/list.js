@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/datasource/list.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/datasource/list.html", "ajaxutil"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -6,7 +6,7 @@ define(["knockout", "jquery", "text!components/datasource/list.html"], function 
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
-        $.ajax({
+        ajaxUtil.waitingAjax({
             url: "/api/datasource/all",
             type: "get",
             contentType: "application/json",
@@ -19,7 +19,7 @@ define(["knockout", "jquery", "text!components/datasource/list.html"], function 
         });
 
         self.delete = function(datasource) {
-            $.ajax({
+            ajaxUtil.waitingAjax({
                 url: "/api/datasource/delete/" + datasource.id,
                 type: "POST",
                 contentType: "application/json",

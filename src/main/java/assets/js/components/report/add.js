@@ -1,4 +1,5 @@
-define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron"], function (ko, $, template, validator, jqueryCron) {
+define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron", "ajaxutil", "waitingmodal"],
+    function (ko, $, template, validator, jqueryCron, ajaxUtil, waitingModal) {
     function viewModel(params) {
         var self = this;
 
@@ -71,6 +72,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             self.queries.push(new Query());
         }
 
+        waitingModal.show();
         $.when(
             $.ajax({
                 url: "/api/datasource/all",
@@ -138,8 +140,9 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     }
                 })
             }
+        }).always(function(){
+            waitingModal.hide();
         });
-
 
         self.addSqlQuery = function() {
             self.queries.push(new Query());
@@ -217,7 +220,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     report.id = reportId;
                 }
 
-                $.ajax({
+                ajaxUtil.waitingAjax({
                     url: "/api/job/save",
                     data: ko.toJSON(report),
                     type: "POST",

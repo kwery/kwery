@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/datasource/add.html", "validator"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil", "validator"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
         self.username = ko.observable();
@@ -65,9 +65,11 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
                     datasource.id = params.datasourceId;
                 }
 
-                $.ajax("/api/datasource/add-datasource", {
+                ajaxUtil.waitingAjax( {
+                    url: "/api/datasource/add-datasource",
                     data: ko.toJSON(datasource),
-                    type: "post", contentType: "application/json",
+                    type: "POST",
+                    contentType: "application/json",
                     success: function(result) {
                         self.status(result.status);
 
@@ -98,7 +100,8 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
         };
 
         if (isUpdate) {
-            $.ajax("/api/datasource/" + params.datasourceId, {
+            ajaxUtil.waitingAjax({
+                url: "/api/datasource/" + params.datasourceId,
                 type: "GET",
                 contentType: "application/json",
                 success: function(datasource) {
@@ -110,7 +113,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
                     self.datasourceType(datasource.type);
                     self.database(datasource.database);
                 }
-            });
+            })
         }
 
         return self;

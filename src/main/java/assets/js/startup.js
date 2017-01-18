@@ -1,4 +1,4 @@
-define(["jquery", "knockout", "router", "polyglot", "knockout-projections", "bootstrap", "waitingfor"], function ($, ko, router, polyglot) {
+define(["jquery", "knockout", "router", "polyglot", "knockout-projections", "bootstrap"], function ($, ko, router, polyglot) {
     ko.components.register("nav-bar", {
         require: "components/nav-bar"
     });

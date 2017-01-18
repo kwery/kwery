@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report/list.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -6,7 +6,7 @@ define(["knockout", "jquery", "text!components/report/list.html"], function (ko,
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
-        $.ajax({
+        ajaxUtil.waitingAjax({
             url: "/api/job/list",
             type: "GET",
             contentType: "application/json",
@@ -20,7 +20,7 @@ define(["knockout", "jquery", "text!components/report/list.html"], function (ko,
         });
 
         self.executeReport = function(report) {
-            $.ajax({
+            ajaxUtil.waitingAjax({
                 url: "/api/job/" + report.id + "/execute",
                 type: "POST",
                 contentType: "application/json",
@@ -28,11 +28,11 @@ define(["knockout", "jquery", "text!components/report/list.html"], function (ko,
                     self.status(result.status);
                     self.messages([ko.i18n("report.list.execute.now.success")]);
                 }
-            });
+            })
         };
 
         self.deleteReport = function(report) {
-            $.ajax({
+            ajaxUtil.waitingAjax({
                 url: "/api/job/" + report.id + "/delete",
                 type: "POST",
                 contentType: "application/json",
@@ -46,7 +46,7 @@ define(["knockout", "jquery", "text!components/report/list.html"], function (ko,
                         self.messages(result.messages);
                     }
                 }
-            });
+            })
         };
 
         return self;

@@ -16,7 +16,8 @@ var require = {
         "jquery-cron": "jquery-cron",
         "moment": "moment",
         "datetimepicker": "/assets/bootstrap/js/datetimepicker",
-        "waitingfor": "/assets/bootstrap/js/waitingfor"
+        "waitingmodal": "/assets/bootstrap/js/waitingmodal",
+        "ajaxutil": "ajaxutil"
     },
     shim: {
         "bootstrap": {
@@ -32,8 +33,11 @@ var require = {
         "datetimepicker": {
             deps: ["moment", "bootstrap", "jquery"]
         },
-        "waitingfor": {
+        "waitingmodal": {
             deps: ["bootstrap", "jquery"]
+        },
+        "ajaxutil": {
+            deps: ["jquery", "waitingmodal"]
         }
     }
 };

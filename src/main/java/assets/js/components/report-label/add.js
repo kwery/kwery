@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report-label/add.html", "validator"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/report-label/add.html", "waitingmodal", "validator"], function (ko, $, template, waitingModal) {
     function viewModel(params) {
         var self = this;
 
@@ -138,6 +138,9 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "validato
                 url: "/api/job-label/list",
                 type: "GET",
                 contentType: "application/json",
+                beforeSend: function(){
+                    waitingModal.show();
+                },
                 success: function (jobLabelModelHackDtos) {
                     buildLabelTree(jobLabelModelHackDtos);
 
@@ -166,7 +169,11 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "validato
                             }
                         }
                     }
+                }).always(function(){
+                    waitingModal.hide();
                 });
+            } else {
+                waitingModal.hide();
             }
             self.refreshValidation();
         });
@@ -185,10 +192,15 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "validato
                             parentLabelId: self.parentLabelOpted() ? self.parentLabelId() : 0,
                         }),
                         contentType: "application/json",
+                        beforeSend: function() {
+                            waitingModal.show();
+                        },
                         success: function(result) {
                             self.status(result.status);
                             self.messages([ko.i18n('report.label.save.success', {0: self.labelName()})]);
                         }
+                    }).always(function(){
+                        waitingModal.hide();
                     });
                 }
 

@@ -79,6 +79,12 @@
                 hr.dotted {
                     border-top: 1px dashed #8c8b8b;
                 }
+
+                .modal {
+                    position: fixed;
+                    top: 50% !important;
+                    left: 50%;
+                }
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->

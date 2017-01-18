@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report-label/list.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/report-label/list.html", "ajaxutil"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -101,7 +101,7 @@ define(["knockout", "jquery", "text!components/report-label/list.html"], functio
         };
 
         //Get current labels
-        $.ajax({
+        ajaxUtil.waitingAjax({
             url: "/api/job-label/list",
             type: "GET",
             contentType: "application/json",
@@ -113,7 +113,7 @@ define(["knockout", "jquery", "text!components/report-label/list.html"], functio
         //Label related - end
 
         self.delete = function(displayLabel) {
-            $.ajax({
+            ajaxUtil.waitingAjax({
                 url: "/api/job-label/delete/" + displayLabel.id,
                 type: "POST",
                 contentType: "application/json",
