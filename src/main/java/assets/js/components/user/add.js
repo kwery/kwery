@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/user/add.html", "ajaxutil", "validator"], function (ko, $, template, ajaxUtil) {
+define(["knockout", "jquery", "text!components/user/add.html", "ajaxutil", "waitingmodal", "validator", "jstorage"], function (ko, $, template, ajaxUtil, waitingModal) {
     function viewModel(params) {
         var self = this;
 
@@ -43,14 +43,28 @@ define(["knockout", "jquery", "text!components/user/add.html", "ajaxutil", "vali
                     data.id = params.userId;
                 }
 
-                ajaxUtil.waitingAjax({
+                $.ajax({
                     url: "/api/user/add-admin-user",
                     data: ko.toJSON(data),
                     type: "POST",
                     contentType: "application/json",
+                    beforeSend: function(){
+                        waitingModal.show();
+                    },
                     success: function(result) {
-                        self.status(result.status);
-                        self.messages(result.messages);
+                        if (result.status === "success") {
+                            if ($.jStorage.storageAvailable()) {
+                                $.jStorage.set("user:status", result.status, {TTL: (10 * 60 * 1000)});
+                                $.jStorage.set("user:messages", result.messages, {TTL: (10 * 60 * 1000)});
+                                window.location.href = "#user/list";
+                            } else {
+                                throw new Error("Not enough space available to store result in browser");
+                            }
+                        } else {
+                            waitingModal.hide();
+                            self.status(result.status);
+                            self.messages(result.messages);
+                        }
                     }
                 });
 

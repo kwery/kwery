@@ -1,11 +1,23 @@
-define(["knockout", "jquery", "text!components/user/list.html", "ajaxutil"], function (ko, $, template, ajaxUtil) {
+define(["knockout", "jquery", "text!components/user/list.html", "ajaxutil", "jstorage"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
-        self.users = ko.observableArray([]);
-
+        //To show save messages
+        var status = $.jStorage.get("user:status", null);
         self.status = ko.observable("");
+        if (status != null) {
+            self.status(status);
+            $.jStorage.deleteKey("user:status");
+        }
+
+        var messages = $.jStorage.get("user:messages", null);
         self.messages = ko.observableArray([]);
+        if (messages != null) {
+            self.messages(messages);
+            $.jStorage.deleteKey("user:messages");
+        }
+
+        self.users = ko.observableArray([]);
 
         ajaxUtil.waitingAjax({
             url: "/api/user/list",

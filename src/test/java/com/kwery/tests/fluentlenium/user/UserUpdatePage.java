@@ -18,6 +18,7 @@ public class UserUpdatePage extends UserAddPage {
     }
 
     public void updateForm(String password) {
+        waitForModalDisappearance();
         fill(".password-f").with(password);
         click(".user-save-f");
     }

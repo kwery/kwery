@@ -40,6 +40,7 @@ public class UserUpdateUiTest extends ChromeFluentTest {
         page.waitForUsername(user.getUsername());
         assertThat(page.isUsernameDisabled(), is(true));
         page.updateForm("foo");
+        page.waitForUserListPage();
         page.waitForSuccessMessage(user.getUsername());
     }
 }

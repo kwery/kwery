@@ -9,7 +9,9 @@ import org.openqa.selenium.support.FindBy;
 
 import static com.kwery.tests.util.Messages.ADMIN_USER_ADDITION_FAILURE_M;
 import static com.kwery.tests.util.Messages.ADMIN_USER_ADDITION_SUCCESS_M;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class UserAddPage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
@@ -52,5 +54,9 @@ public class UserAddPage extends KweryFluentPage implements RepoDashPage {
 
     public void waitForFailureMessage(User user) {
         waitForFailureMessage(format(ADMIN_USER_ADDITION_FAILURE_M, user.getUsername()));
+    }
+
+    public void waitForUserListPage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#user/list"));
     }
 }
