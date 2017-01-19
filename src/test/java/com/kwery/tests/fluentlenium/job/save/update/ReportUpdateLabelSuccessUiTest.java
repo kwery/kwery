@@ -89,6 +89,8 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
         jobDao = ninjaServerRule.getInjector().getInstance(JobDao.class);
         sqlQueryDao = ninjaServerRule.getInjector().getInstance(SqlQueryDao.class);
         jobLabelDao = ninjaServerRule.getInjector().getInstance(JobLabelDao.class);
+
+        page.waitForModalDisappearance();
     }
 
     @Test
@@ -101,6 +103,7 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
         selectedLabels.add(jobLabelModel2.getLabel());
 
         page.submitReportSaveForm();
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         List<Integer> labelIds = selectedLabels.stream().map(label -> jobLabelDao.getJobLabelModelByLabel(label).getId()).collect(Collectors.toList());

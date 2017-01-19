@@ -28,6 +28,8 @@ public class ReportSaveAddAndRemoveSqlQuerySectionUiTest extends ChromeFluentTes
         if (!page.isRendered()) {
             fail("Could not render report save page");
         }
+
+        page.waitForModalDisappearance();
     }
 
     @Test

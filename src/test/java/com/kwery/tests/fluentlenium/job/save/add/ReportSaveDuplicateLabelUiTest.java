@@ -103,7 +103,7 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
         page.fillAndSubmitReportSaveForm(jobForm);
-        page.waitForErrorMessages();
+        page.waitForFailureMessageDisplay();
 
         List<String> expectedErrorMessages = ImmutableList.of(format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel));
 

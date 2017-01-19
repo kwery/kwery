@@ -7,8 +7,10 @@ public class ReportUpdateNoEamilRuleToggleToFalseUiTest extends AbstractReportUp
 
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         page.ensureEmailRuleUnchecked();
         page.submitReportSaveForm();
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
         assertNoEmailRule(!noEmail);
     }
