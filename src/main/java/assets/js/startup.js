@@ -92,9 +92,6 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
     //Attach polyglot for i18n to ko
     (function i18n(Polyglot) {
         var polyglot = new Polyglot({phrases: messages.messages});
-
-        debugger;
-
         ko.i18n = function(key, options) {
             if (options === undefined) {
                 options = {};

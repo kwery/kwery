@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.user;
 
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
 
@@ -10,21 +10,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.kwery.tests.util.Messages.USER_DELETE_SUCCESS_M;
+import static com.kwery.tests.util.Messages.USER_DELETE_YOURSELF_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
-import static org.openqa.selenium.By.id;
 import static org.openqa.selenium.By.tagName;
-import static com.kwery.tests.util.Messages.USER_DELETE_SUCCESS_M;
-import static com.kwery.tests.util.Messages.USER_DELETE_YOURSELF_M;
 
-public class UserListPage extends FluentPage implements RepoDashPage {
+public class UserListPage extends KweryFluentPage implements RepoDashPage {
     public static final int COLUMNS = 2;
 
     @Override
     public boolean isRendered() {
-        return find(id("usersListTable")).first().isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".users-list-table-tbody-f").isDisplayed();
+        waitForModalDisappearance();
+        return true;
     }
 
     @Override
@@ -33,7 +34,7 @@ public class UserListPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForRows(int rowCount) {
-        await().atMost(30, SECONDS).until("#usersListTableBody tr").hasSize(rowCount);
+        await().atMost(30, SECONDS).until(".users-list-table-tbody-f tr").hasSize(rowCount);
     }
 
     public List<String> headers() {
@@ -49,7 +50,7 @@ public class UserListPage extends FluentPage implements RepoDashPage {
     public List<List<String>> rows() {
         List<List<String>> rows = new LinkedList<>();
 
-        for (FluentWebElement tr : $("#usersListTableBody tr")) {
+        for (FluentWebElement tr : $(".users-list-table-tbody-f tr")) {
             List<String> row = new ArrayList<>(COLUMNS);
             row.addAll(tr.find(tagName("td")).stream().map(FluentWebElement::getText).collect(Collectors.toList()));
             rows.add(row);
@@ -59,16 +60,16 @@ public class UserListPage extends FluentPage implements RepoDashPage {
     }
 
     public void delete(int row) {
-        FluentList<FluentWebElement> fluentWebElements = find("#usersListTableBody tr");
+        FluentList<FluentWebElement> fluentWebElements = find(".users-list-table-tbody-f tr");
         FluentWebElement tr = fluentWebElements.get(row);
         tr.find(className("f-delete")).click();
     }
 
     public void waitForDeleteSuccessMessage(String username) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(format(USER_DELETE_SUCCESS_M, username));
+        super.waitForSuccessMessage(format(USER_DELETE_SUCCESS_M, username));
     }
 
     public void waitForDeleteYourselfMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(USER_DELETE_YOURSELF_M);
+        super.waitForFailureMessage(USER_DELETE_YOURSELF_M);
     }
 }

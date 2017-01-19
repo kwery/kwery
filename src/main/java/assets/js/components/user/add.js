@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/user/add.html", "validator"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/user/add.html", "ajaxutil", "validator"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -19,7 +19,8 @@ define(["knockout", "jquery", "text!components/user/add.html", "validator"], fun
         if (isUpdate) {
             self.isUpdate(true);
 
-            $.ajax("/api/user/" + params.userId, {
+            ajaxUtil.waitingAjax({
+                url: "/api/user/" + params.userId,
                 type: "GET",
                 contentType: "appliction/json",
                 success: function(result) {
@@ -42,7 +43,8 @@ define(["knockout", "jquery", "text!components/user/add.html", "validator"], fun
                     data.id = params.userId;
                 }
 
-                $.ajax("/api/user/add-admin-user", {
+                ajaxUtil.waitingAjax({
+                    url: "/api/user/add-admin-user",
                     data: ko.toJSON(data),
                     type: "POST",
                     contentType: "application/json",

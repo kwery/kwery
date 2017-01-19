@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/user/list.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/user/list.html", "ajaxutil"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -7,7 +7,7 @@ define(["knockout", "jquery", "text!components/user/list.html"], function (ko, $
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
-        $.ajax({
+        ajaxUtil.waitingAjax({
             url: "/api/user/list",
             type: "GET",
             contentType: "application/json",
@@ -20,7 +20,7 @@ define(["knockout", "jquery", "text!components/user/list.html"], function (ko, $
         });
 
         self.delete = function(user) {
-            $.ajax({
+            ajaxUtil.waitingAjax({
                 url: "/api/user/delete/" + user.id,
                 type: "POST",
                 contentType: "application/json",

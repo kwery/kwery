@@ -6,7 +6,7 @@
                 $modal.remove();
             }
             return $(
-                '<div class="modal fade" data-backdrop="static" data-keyboard="false" id="waitingFor" tabindex="-1" role="dialog" aria-labelledby="waitingFor">' +
+                '<div class="modal fade waiting-modal-f" data-backdrop="static" data-keyboard="false" id="waitingFor" tabindex="-1" role="dialog" aria-labelledby="waitingFor">' +
                 '<div class="modal-dialog" role="document">' +
                 '<div>' +
                 '<img src="/assets/images/loader.gif">' +
