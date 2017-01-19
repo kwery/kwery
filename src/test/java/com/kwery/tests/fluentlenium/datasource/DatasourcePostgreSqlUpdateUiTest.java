@@ -56,6 +56,8 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
 
     @Test
     public void test() {
+        page.waitForModalDisappearance();
+
         page.waitForForm(DatasourceAddPage.FormField.label, postgreSqlDatasource.getLabel());
 
         List<String> fields = page.formFields();
@@ -73,10 +75,13 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
         page.fillLabel(newLabel);
         page.submit();
 
+        page.waitForModalDisappearance();
         page.waitForSuccessMessage(newLabel, postgreSqlDatasource.getType());
 
         page.fillLabel(anotherDatasource.getLabel());
+
         page.submit();
+        page.waitForModalDisappearance();
 
         page.waitForFailureMessage(anotherDatasource.getLabel(), postgreSqlDatasource.getType());
     }

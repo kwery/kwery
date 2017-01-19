@@ -72,22 +72,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                     contentType: "application/json",
                     success: function(result) {
                         self.status(result.status);
-
-                        var messages = result.messages;
-                        var fieldMessages = result.fieldMessages;
-
-                        self.messages([]);
-                        if (messages != null) {
-                            ko.utils.arrayPushAll(self.messages, result.messages)
-                        }
-
-                        if (fieldMessages != null) {
-                            ko.utils.arrayForEach(["url", "username", "label"], function(elem){
-                                if (elem in fieldMessages) {
-                                    ko.utils.arrayPushAll(self.messages, fieldMessages[elem])
-                                }
-                            });
-                        }
+                        self.messages(result.messages);
                     }
                 });
             }

@@ -2,14 +2,12 @@ package com.kwery.tests.fluentlenium;
 
 import org.fluentlenium.core.FluentPage;
 
-import java.util.concurrent.TimeUnit;
-
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class KweryFluentPage extends FluentPage {
     public void waitForModalDisappearance() {
-        await().pollingEvery(1, TimeUnit.MILLISECONDS).until(".waiting-modal-f").isNotDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".waiting-modal-f").isNotDisplayed();
     }
 
     public void waitForModalAppearance() {
