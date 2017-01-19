@@ -35,5 +35,7 @@ public class EmailConfigurationPageWithDataSetUp extends ChromeFluentTest {
         if (!page.isRendered()) {
             fail("Could not render email configuration page");
         }
+
+        page.waitForModalDisappearance();
     }
 }

@@ -24,5 +24,7 @@ public class EmailConfigurationEmptyPageSetUp extends ChromeFluentTest {
         if (!page.isRendered()) {
             TestCase.fail("Could not render email configuration page");
         }
+
+        page.waitForModalDisappearance();
     }
 }

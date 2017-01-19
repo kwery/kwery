@@ -2,15 +2,15 @@ package com.kwery.tests.fluentlenium.email;
 
 import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 
-public class EmailConfigurationPage extends FluentPage implements RepoDashPage {
+public class EmailConfigurationPage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String RADIO_VALIDATION_ERROR_MESSAGE = "Please select one of these options.";
 
@@ -34,6 +34,7 @@ public class EmailConfigurationPage extends FluentPage implements RepoDashPage {
     }
 
     public void submitEmailConfigurationForm(EmailConfiguration emailConfiguration) {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-from-email").isClickable();
         fill(".f-from-email").with(emailConfiguration.getFrom());
         fill(".f-bcc").with(emailConfiguration.getBcc());
         fill(".f-reply-to").with(emailConfiguration.getReplyTo());
@@ -54,7 +55,7 @@ public class EmailConfigurationPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSaveMessage(String message) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(message);
+        waitForSuccessMessage(message);
     }
 
     public String validationMessage(SmtpConfigurationFormField field) {

@@ -4,9 +4,7 @@ import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
 import org.junit.Test;
 
-import static com.kwery.tests.util.Messages.EMAIL_CONFIGURATION_SAVED_M;
-import static com.kwery.tests.util.Messages.EMAIL_TEST_SUCCESS_M;
-import static com.kwery.tests.util.Messages.SMTP_CONFIGURATION_ADDED_M;
+import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.emailConfigurationWithoutId;
 import static com.kwery.tests.util.TestUtil.smtpConfigurationWithoutId;
 
@@ -18,6 +16,7 @@ public class EmailConfigurationTestEmailConfigurationSuccessUiTest extends Email
         page.waitForSaveMessage(SMTP_CONFIGURATION_ADDED_M);
 
         EmailConfiguration emailConfiguration = emailConfigurationWithoutId();
+        page.waitForModalDisappearance();
         page.submitEmailConfigurationForm(emailConfiguration);
         page.waitForSaveMessage(EMAIL_CONFIGURATION_SAVED_M);
 
