@@ -1,6 +1,10 @@
-define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil", "validator"], function (ko, $, template, ajaxUtil) {
+define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil", "waitingmodal", "jstorage", "validator"], function (ko, $, template, ajaxUtil, waitingModal) {
     function viewModel(params) {
         var self = this;
+
+        self.status = ko.observable("");
+        self.messages = ko.observableArray([]);
+
         self.username = ko.observable();
         self.password = ko.observable("");
         self.url = ko.observable();
@@ -34,9 +38,6 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
             new DatasourceType("POSTGRESQL", "POSTGRESQL")
         ]);
 
-        self.status = ko.observable("");
-        self.messages = ko.observableArray([]);
-
         var isUpdate = params.datasourceId !== undefined;
 
         if (isUpdate) {
@@ -65,14 +66,28 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                     datasource.id = params.datasourceId;
                 }
 
-                ajaxUtil.waitingAjax( {
+                $.ajax({
                     url: "/api/datasource/add-datasource",
                     data: ko.toJSON(datasource),
                     type: "POST",
                     contentType: "application/json",
+                    beforeSend: function(){
+                        waitingModal.show();
+                    },
                     success: function(result) {
-                        self.status(result.status);
-                        self.messages(result.messages);
+                        if (result.status === "success") {
+                            if ($.jStorage.storageAvailable()) {
+                                $.jStorage.set("ds:status", result.status, {TTL: (10 * 60 * 1000)});
+                                $.jStorage.set("ds:messages", result.messages, {TTL: (10 * 60 * 1000)});
+                                window.location.href = "#datasource/list";
+                            } else {
+                                throw new Error("Not enough space available to store result in browser");
+                            }
+                        } else {
+                            waitingModal.hide();
+                            self.status(result.status);
+                            self.messages(result.messages);
+                        }
                     }
                 });
             }

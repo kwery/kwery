@@ -1,10 +1,23 @@
-define(["knockout", "jquery", "text!components/datasource/list.html", "ajaxutil"], function (ko, $, template, ajaxUtil) {
+define(["knockout", "jquery", "text!components/datasource/list.html", "ajaxutil", "jstorage"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
-        self.datasources = ko.observableArray([]);
+        //To show save messages
+        var status = $.jStorage.get("ds:status", null);
         self.status = ko.observable("");
+        if (status != null) {
+            self.status(status);
+            $.jStorage.deleteKey("ds:status");
+        }
+
+        var messages = $.jStorage.get("ds:messages", null);
         self.messages = ko.observableArray([]);
+        if (messages != null) {
+            self.messages(messages);
+            $.jStorage.deleteKey("ds:messages");
+        }
+
+        self.datasources = ko.observableArray([]);
 
         ajaxUtil.waitingAjax({
             url: "/api/datasource/all",

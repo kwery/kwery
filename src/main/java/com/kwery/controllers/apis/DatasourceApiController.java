@@ -73,12 +73,12 @@ public class DatasourceApiController {
             if (isUpdate) {
                 if (fromDb != null && !datasource.getId().equals(fromDb.getId())) {
                     logger.error("Could not update datasource, a datasource with label {} already exists", datasource.getLabel());
-                    errorMessages.add(messages.get(DATASOURCE_UPDATE_FAILURE, context, of(json), datasource.getType().name(), datasource.getLabel()).get());
+                    errorMessages.add(messages.get(DATASOURCE_UPDATE_FAILURE, context, of(json), fromDb.getType().name(), datasource.getLabel()).get());
                 }
             } else {
                 if (fromDb != null) {
                     logger.error("Could not add datasource, a datasource with label {} already exists", datasource.getLabel());
-                    errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), datasource.getType().name(), datasource.getLabel()).get());
+                    errorMessages.add(messages.get(DATASOURCE_ADDITION_FAILURE, context, of(json), fromDb.getType().name(), datasource.getLabel()).get());
                 }
             }
 

@@ -45,6 +45,7 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
         Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
         page.submitForm(datasource);
+        page.waitForDatasourceListPage();
         page.waitForSuccessMessage(datasource.getLabel(), MYSQL);
     }
 
@@ -55,6 +56,7 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
         Datasource datasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
 
         page.submitForm(datasource);
+        page.waitForDatasourceListPage();
         page.waitForSuccessMessage(datasource.getLabel(), POSTGRESQL);
     }
 }

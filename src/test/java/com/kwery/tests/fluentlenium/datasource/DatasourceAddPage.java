@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.datasource;
 
+import com.google.common.base.Supplier;
 import com.kwery.models.Datasource;
 import com.kwery.models.Datasource.Type;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
@@ -48,7 +49,7 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void submitForm() {
-        click("#create");
+        click(".save-datasource-f");
     }
 
     @Override
@@ -108,5 +109,14 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
 
     public enum FormField {
         type, url, database, port, username, password, label
+    }
+
+    public void waitForDatasourceListPage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return url().equals("/#datasource/list");
+            }
+        });
     }
 }

@@ -18,6 +18,7 @@ var require = {
         "datetimepicker": "/assets/bootstrap/js/datetimepicker",
         "waitingmodal": "/assets/bootstrap/js/waitingmodal",
         "ajaxutil": "ajaxutil",
+        "jstorage": "jstorage",
         "messages": "/messages"
     },
     shim: {
@@ -39,6 +40,10 @@ var require = {
         },
         "ajaxutil": {
             deps: ["jquery", "waitingmodal"]
+        },
+        "jstorage": {
+            deps: ["jquery"],
+            exports: "jstorage"
         }
     }
 };

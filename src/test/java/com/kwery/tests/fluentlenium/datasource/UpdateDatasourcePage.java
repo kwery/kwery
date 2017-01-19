@@ -10,7 +10,7 @@ import java.util.List;
 import static com.kwery.tests.util.Messages.DATASOURCE_UPDATE_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.openqa.selenium.By.id;
+import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.name;
 
 public class UpdateDatasourcePage extends DatasourceAddPage {
@@ -46,7 +46,8 @@ public class UpdateDatasourcePage extends DatasourceAddPage {
     }
 
     public void submit() {
-        find(id("create")).click();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".save-datasource-f").isClickable();
+        find(className("save-datasource-f")).click();
     }
 
     public int getDatasourceId() {

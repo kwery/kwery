@@ -76,13 +76,16 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
         page.submit();
 
         page.waitForModalDisappearance();
+        page.waitForDatasourceListPage();
         page.waitForSuccessMessage(newLabel, postgreSqlDatasource.getType());
+    }
 
-        page.fillLabel(anotherDatasource.getLabel());
-
-        page.submit();
+    @Test
+    public void testDuplicateLabel() {
         page.waitForModalDisappearance();
-
-        page.waitForFailureMessage(anotherDatasource.getLabel(), postgreSqlDatasource.getType());
+        page.fillLabel(anotherDatasource.getLabel());
+        page.waitForForm(DatasourceAddPage.FormField.label, postgreSqlDatasource.getLabel());
+        page.submit();
+        page.waitForFailureMessage(anotherDatasource.getLabel(), anotherDatasource.getType());
     }
 }
