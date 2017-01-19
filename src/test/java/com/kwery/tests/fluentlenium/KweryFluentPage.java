@@ -21,4 +21,8 @@ public class KweryFluentPage extends FluentPage {
     public void waitForFailureMessage(String message) {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(message);
     }
+
+    public void waitForFailureMessageDisplay() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").isDisplayed();
+    }
 }

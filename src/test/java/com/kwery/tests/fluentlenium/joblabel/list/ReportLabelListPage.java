@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.joblabel.list;
 
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 
 import java.text.MessageFormat;
@@ -13,7 +13,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.By.className;
 
-public class ReportLabelListPage extends FluentPage implements RepoDashPage {
+public class ReportLabelListPage extends KweryFluentPage implements RepoDashPage {
     protected int expectedRows;
 
     @Override
@@ -43,15 +43,11 @@ public class ReportLabelListPage extends FluentPage implements RepoDashPage {
         $(className(String.format("delete-%d-f", index))).click();
     }
 
-    public void waitForFailureMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").isDisplayed();
-    }
-
     public List<String> errorMessages() {
         return $(".f-failure-message p").stream().map(FluentWebElement::getText).collect(toList());
     }
 
     public void waitForSuccessMessage(String label) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(MessageFormat.format(JOBLABELAPICONTROLLER_DELETE_SUCCESS_M, label));
+        super.waitForSuccessMessage(MessageFormat.format(JOBLABELAPICONTROLLER_DELETE_SUCCESS_M, label));
     }
 }

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertThat;
 public class ReportLabelListUiTest extends AbstractReportLabelListUiTest {
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         //Trimming to remove the UI padded spaces
         List<String> labels = page.getLabels().stream().map(String::trim).collect(toList());
         assertThat(labels, containsInAnyOrder(jobLabelModel.getLabel(), parentJobLabelModel.getLabel()));

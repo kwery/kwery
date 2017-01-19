@@ -25,8 +25,10 @@ public class ReportLabelUpdateWithoutParentUiTest extends AbstractReportLabelUpd
 
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         String newLabel = UUID.randomUUID().toString();
         page.fillAndSubmitForm(newLabel, null);
+        page.waitForJobLabelListPage();
         page.waitForLabelSaveSuccessMessage(newLabel);
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(1));
         JobLabelModel fromDb = jobLabelDao.getJobLabelModelByLabel(newLabel);

@@ -27,8 +27,10 @@ public class ReportLabelUpdateWithParentToWithoutParentUiTest extends AbstractRe
 
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         page.optParentLabel();
         page.submitForm();
+        page.waitForJobLabelListPage();
         page.waitForLabelSaveSuccessMessage(getReportLabel());
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(2));
         assertThat(jobLabelDao.getJobLabelModelByLabel(getReportLabel()).getParentLabel(), nullValue());

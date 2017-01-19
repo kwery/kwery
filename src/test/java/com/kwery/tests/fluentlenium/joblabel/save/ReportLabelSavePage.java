@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.joblabel.save;
 
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 
 import java.text.MessageFormat;
@@ -13,7 +13,7 @@ import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 
-public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
+public class ReportLabelSavePage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
 
@@ -28,12 +28,16 @@ public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
         return "/#report-label/add";
     }
 
-    public void fillAndSubmitForm(String label, Integer parentLabelIndex) {
+    public void fillForm(String label, Integer parentLabelIndex) {
         fillName(label);
         if (parentLabelIndex != null) {
             optParentLabel();
             parentLabel(parentLabelIndex);
         }
+    }
+
+    public void fillAndSubmitForm(String label, Integer parentLabelIndex) {
+        fillForm(label, parentLabelIndex);
         submitForm();
     }
 
@@ -50,11 +54,12 @@ public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
     }
 
     public void submitForm() {
+        waitForModalDisappearance();
         find(className("submit-f")).click();
     }
 
     public void waitForLabelSaveSuccessMessage(String label) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(MessageFormat.format(REPORT_LABEL_SAVE_SUCCESS_M, label));
+        super.waitForSuccessMessage(MessageFormat.format(REPORT_LABEL_SAVE_SUCCESS_M, label));
     }
 
     public void waitForLabelNameValidationError() {
@@ -65,20 +70,12 @@ public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".name-error-f").hasText("");
     }
 
-    public String labelValidationMessage() {
-        return $(className("name-error-f")).getText();
-    }
-
     public void waitForParentLabelValidationError() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".parent-error-f").hasText(SELECT_VALIDATION_ERROR_MESSAGE);
     }
 
     public void waitForParentLabelValidationErrorRemoval() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".parent-error-f").hasText("");
-    }
-
-    public String parentLabelValidationMessage() {
-        return $(className("parent-error-f")).getText();
     }
 
     public String parentLabelText(int index) {
@@ -93,5 +90,9 @@ public class ReportLabelSavePage extends FluentPage implements RepoDashPage {
         }
 
         return labels;
+    }
+
+    public void waitForJobLabelListPage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#report-label/list"));
     }
 }

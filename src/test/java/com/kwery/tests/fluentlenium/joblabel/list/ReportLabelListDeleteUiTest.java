@@ -13,8 +13,9 @@ import static org.junit.Assert.assertThat;
 public class ReportLabelListDeleteUiTest extends AbstractReportLabelListUiTest {
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         page.clickDelete(0);
-        page.waitForFailureMessage();
+        page.waitForFailureMessageDisplay();
         assertThat(page.errorMessages(), containsInAnyOrder(
                 MessageFormat.format(JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL_M, parentJobLabelModel.getLabel()),
                 MessageFormat.format(JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN_M, parentJobLabelModel.getLabel())

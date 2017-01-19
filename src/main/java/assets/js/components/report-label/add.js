@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report-label/add.html", "waitingmodal", "validator"], function (ko, $, template, waitingModal) {
+define(["knockout", "jquery", "text!components/report-label/add.html", "waitingmodal", "jstorage", "validator"], function (ko, $, template, waitingModal) {
     function viewModel(params) {
         var self = this;
 
@@ -196,12 +196,21 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                             waitingModal.show();
                         },
                         success: function(result) {
-                            self.status(result.status);
-                            self.messages([ko.i18n('report.label.save.success', {0: self.labelName()})]);
+                            if (result.status === "success") {
+                                if ($.jStorage.storageAvailable()) {
+                                    $.jStorage.set("reportLabel:status", result.status, {TTL: (10 * 60 * 1000)});
+                                    $.jStorage.set("reportLabel:messages", [ko.i18n('report.label.save.success', {0: self.labelName()})], {TTL: (10 * 60 * 1000)});
+                                    window.location.href = "#report-label/list";
+                                } else {
+                                    throw new Error("Not enough space available to store result in browser");
+                                }
+                            } else {
+                                waitingModal.hide();
+                                self.status(result.status);
+                                self.messages(result.messages);
+                            }
                         }
-                    }).always(function(){
-                        waitingModal.hide();
-                    });
+                    })
                 }
 
                 return false;
