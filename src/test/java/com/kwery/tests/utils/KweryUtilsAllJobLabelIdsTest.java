@@ -4,7 +4,6 @@ import com.kwery.dao.JobLabelDao;
 import com.kwery.models.JobLabelModel;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
-import com.kwery.tests.util.TestUtil;
 import com.kwery.utils.KweryUtil;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
@@ -28,7 +27,7 @@ public class KweryUtilsAllJobLabelIdsTest extends RepoDashDaoTestBase {
         jobLabelDao = getInstance(JobLabelDao.class);
         expectedIds = new LinkedList<>();
 
-        jobLabelModel = TestUtil.jobLabelModel();
+        jobLabelModel = jobLabelModel();
         jobLabelModel.setId(RandomUtils.nextInt());
         DbUtil.jobLabelDbSetUp(jobLabelModel);
         expectedIds.add(jobLabelModel.getId());
