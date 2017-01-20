@@ -90,7 +90,7 @@ public class Routes implements ApplicationRoutes {
         router.POST().route(MAIL_CONFIGURATION_TEST_API).with(MailApiController.class, "testEmailConfiguration");
 
         router.POST().route(JOB_SAVE_API).with(JobApiController.class, "saveJob");
-        router.GET().route(JOB_LIST_API).with(JobApiController.class, "listAllJobs");
+        router.POST().route(JOB_LIST_API).with(JobApiController.class, "listJobs");
         router.POST().route(JOB_EXECUTION_API).with(JobApiController.class, "listJobExecutions");
         router.GET().route(JOB_EXECUTION_RESULT).with(JobApiController.class, "jobExecutionResult");
         router.POST().route(JOB_EXECUTE_API).with(JobApiController.class, "executeJob");

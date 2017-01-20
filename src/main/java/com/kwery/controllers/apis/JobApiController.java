@@ -11,14 +11,12 @@ import com.google.inject.Inject;
 import com.kwery.dao.*;
 import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
-import com.kwery.models.JobExecutionModel;
-import com.kwery.models.JobModel;
-import com.kwery.models.SqlQueryExecutionModel;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import com.kwery.utils.KweryUtil;
 import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterWith;
@@ -35,10 +33,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
@@ -204,9 +199,18 @@ public class JobApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result listAllJobs() {
+    public Result listJobs(JobListFilterDto filterDto) {
         if (logger.isTraceEnabled()) logger.trace("<");
-        List<JobModel> jobs = jobDao.getAllJobs();
+
+        List<JobModel> jobs = null;
+        if (filterDto.getJobLabelId() == 0) {
+            jobs = jobDao.getAllJobs();
+        } else {
+            JobLabelModel label = jobLabelDao.getJobLabelModelById(filterDto.getJobLabelId());
+            Set<Integer> allLabelIds = KweryUtil.allJobLabelIds(label) ;
+            jobs = jobDao.getJobsByJobLabelIds(allLabelIds);
+        }
+
         List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
         if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(jobModelHackDtos);

@@ -21,8 +21,11 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", "j
 
         ajaxUtil.waitingAjax({
             url: "/api/job/list",
-            type: "GET",
+            type: "POST",
             contentType: "application/json",
+            data: ko.toJSON({
+                jobLabelId: 0
+            }),
             success: function (result) {
                 ko.utils.arrayForEach(result, function(jobModelHackDto){
                     jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
