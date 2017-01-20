@@ -9,7 +9,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
+import java.util.Collection;
 import java.util.List;
 
 public class JobDao {
@@ -75,5 +77,20 @@ public class JobDao {
         CriteriaQuery<JobModel> all = cq.select(rootEntry);
         TypedQuery<JobModel> allQuery = e.createQuery(all);
         return allQuery.getResultList();
+    }
+
+    @Transactional
+    public List<JobModel> getJobsByJobLabelIds(Collection<Integer> jobLabelIds) {
+        EntityManager m = entityManagerProvider.get();
+
+        CriteriaBuilder cb = m.getCriteriaBuilder();
+        CriteriaQuery<JobModel> cq = cb.createQuery(JobModel.class);
+        Root<JobModel> jobModel = cq.from(JobModel.class);
+
+        Expression<Collection<Integer>> ids = jobModel.join("labels").get("id");
+        cq.where(ids.in(jobLabelIds));
+
+        TypedQuery<JobModel> tq = m.createQuery(cq);
+        return tq.getResultList();
     }
 }
