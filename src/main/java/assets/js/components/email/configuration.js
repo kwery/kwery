@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/email/configuration.html", "validator"], function (ko, $, template, validator) {
+define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxutil", "waitingmodal", "validator"], function (ko, $, template, ajaxUtil, waitingModal) {
     function viewModel(params) {
         var self = this;
 
@@ -22,36 +22,41 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "valid
 
         self.toEmail = ko.observable();
 
-        $.ajax("/api/mail/smtp-configuration", {
-            type: "GET",
-            contentType: "application/json",
-            success: function(conf) {
-                if (conf != null) {
-                    self.smtpConfigurationId(conf.id);
-                    self.host(conf.host);
-                    self.port(conf.port);
-                    self.ssl(conf.ssl.toString());
-                    self.username(conf.username);
-                    self.password(conf.password);
+        waitingModal.show();
 
-                    self.smtpConfigurationPresent(true);
+        $.when(
+            $.ajax("/api/mail/smtp-configuration", {
+                type: "GET",
+                contentType: "application/json",
+                success: function(conf) {
+                    if (conf != null) {
+                        self.smtpConfigurationId(conf.id);
+                        self.host(conf.host);
+                        self.port(conf.port);
+                        self.ssl(conf.ssl.toString());
+                        self.username(conf.username);
+                        self.password(conf.password);
+
+                        self.smtpConfigurationPresent(true);
+                    }
                 }
-            }
-        });
+            }),
+            $.ajax("/api/mail/email-configuration", {
+                type: "GET",
+                contentType: "application/json",
+                success: function(conf) {
+                    if (conf != null) {
+                        self.emailConfigurationId(conf.id);
+                        self.from(conf.from);
+                        self.bcc(conf.bcc);
+                        self.replyTo(conf.replyTo);
 
-        $.ajax("/api/mail/email-configuration", {
-            type: "GET",
-            contentType: "application/json",
-            success: function(conf) {
-                if (conf != null) {
-                    self.emailConfigurationId(conf.id);
-                    self.from(conf.from);
-                    self.bcc(conf.bcc);
-                    self.replyTo(conf.replyTo);
-
-                    self.emailConfigurationPresent(true);
+                        self.emailConfigurationPresent(true);
+                    }
                 }
-            }
+            })
+        ).always(function(){
+            waitingModal.hide();
         });
 
         $("#saveEmailConfigurationForm").validator({disable: false}).on("submit", function (e) {
@@ -65,16 +70,20 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "valid
                     replyTo: self.replyTo()
                 };
 
-                $.ajax("/api/mail/save-email-configuration", {
+                ajaxUtil.waitingAjax({
+                    "url": "/api/mail/save-email-configuration",
                     type: "POST",
                     data: ko.toJSON(conf),
                     contentType: "application/json",
+                    beforeSend: function(){
+                        waitingModal.show(ko.i18n("progress.indicator.msg.saving"));
+                    },
                     success: function(result) {
                         self.status(result.status);
                         self.messages(result.messages);
                         self.emailConfigurationPresent(true);
                     }
-                });
+                })
             }
 
             return false;
@@ -93,7 +102,8 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "valid
                     password: self.password()
                 };
 
-                $.ajax("/api/mail/save-smtp-configuration", {
+                ajaxUtil.waitingAjax({
+                    url: "/api/mail/save-smtp-configuration",
                     type: "POST",
                     data: ko.toJSON(smtpConfiguration),
                     contentType: "application/json",
@@ -112,7 +122,8 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "valid
             if (e.isDefaultPrevented()) {
                 // handle the invalid form...
             } else {
-                $.ajax("/api/mail/" + self.toEmail() + "/email-configuration-test", {
+                ajaxUtil.waitingAjax({
+                    url: "/api/mail/" + self.toEmail() + "/email-configuration-test",
                     type: "POST",
                     contentType: "application/json",
                     success: function(result) {

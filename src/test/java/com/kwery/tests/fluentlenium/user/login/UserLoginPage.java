@@ -1,19 +1,17 @@
 package com.kwery.tests.fluentlenium.user.login;
 
-import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.models.User;
-import com.kwery.tests.util.TestUtil;
-import org.fluentlenium.core.FluentPage;
+import com.kwery.tests.fluentlenium.KweryFluentPage;
+import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.support.FindBy;
 
-import static java.text.MessageFormat.format;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static com.kwery.tests.util.Messages.LOGIN_FAILURE_M;
 import static com.kwery.tests.util.Messages.LOGIN_SUCCESS_M;
+import static java.text.MessageFormat.format;
 
-public class UserLoginPage extends FluentPage implements RepoDashPage {
+public class UserLoginPage extends KweryFluentPage implements RepoDashPage {
     @AjaxElement
     @FindBy(id = "loginForm")
     protected FluentWebElement loginForm;
@@ -34,14 +32,14 @@ public class UserLoginPage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForSuccessMessage(User user) {
-        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(LOGIN_SUCCESS_M, user.getUsername()));
+        super.waitForSuccessMessage(format(LOGIN_SUCCESS_M, user.getUsername()));
     }
 
     public void waitForSuccessMessage(String username) {
-        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(format(LOGIN_SUCCESS_M, username));
+        super.waitForSuccessMessage(format(LOGIN_SUCCESS_M, username));
     }
 
     public void waitForFailureMessage() {
-        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").hasText(LOGIN_FAILURE_M);
+        super.waitForFailureMessage(LOGIN_FAILURE_M);
     }
 }

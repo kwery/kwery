@@ -44,6 +44,7 @@ public class ReportLabelUpdateParentLabelDropDownUiTest extends AbstractReportLa
 
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         assertThat(page.parentLabelTexts(), hasSize(2));//Label to be updated is not part of the drop-down
         assertThat(page.parentLabelTexts().get(1), is(displayedParentJobLabelModel.getLabel()));
         assertThat(page.selectedParentLabelOptionText(), is(jobLabelModel.getParentLabel().getLabel()));

@@ -1,9 +1,10 @@
 package com.kwery.tests.fluentlenium.datasource;
 
+import com.google.common.base.Supplier;
 import com.kwery.models.Datasource;
 import com.kwery.models.Datasource.Type;
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.AjaxElement;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
@@ -22,7 +23,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
-public class DatasourceAddPage extends FluentPage implements RepoDashPage {
+public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
 
@@ -48,7 +49,7 @@ public class DatasourceAddPage extends FluentPage implements RepoDashPage {
     }
 
     public void submitForm() {
-        click("#create");
+        click(".save-datasource-f");
     }
 
     @Override
@@ -108,5 +109,14 @@ public class DatasourceAddPage extends FluentPage implements RepoDashPage {
 
     public enum FormField {
         type, url, database, port, username, password, label
+    }
+
+    public void waitForDatasourceListPage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return url().equals("/#datasource/list");
+            }
+        });
     }
 }

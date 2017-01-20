@@ -92,7 +92,10 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
 
         page.setDatasourceIdToLabelMap(datasourceIdToLabelMap);
+
+        page.waitForModalDisappearance();
         page.waitForReportDisplay(jobModel.getName());
+
 
         JobDto jobDto = jobDto();
         jobDto.setCronExpression("* * * * *");
@@ -108,6 +111,8 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
         page.fillAndSubmitReportSaveForm(jobForm);
+
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         assertThat(jobDao.getAllJobs(), hasSize(1));

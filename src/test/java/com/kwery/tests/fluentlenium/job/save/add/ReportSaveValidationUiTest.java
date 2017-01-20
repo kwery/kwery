@@ -37,6 +37,8 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         if (!page.isRendered()) {
             fail("Save report page could not be rendered");
         }
+
+        page.waitForModalDisappearance();
     }
 
     @Test

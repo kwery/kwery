@@ -31,6 +31,7 @@ public class ReportLabelUpdateChangeParentUiTest extends AbstractReportLabelUpda
 
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         int selected = page.selectedParentLabelOptionIndex();
         int updated = 2;
         //Only two parents
@@ -39,6 +40,7 @@ public class ReportLabelUpdateChangeParentUiTest extends AbstractReportLabelUpda
         }
         page.parentLabel(updated);
         page.submitForm();
+        page.waitForJobLabelListPage();
         page.waitForLabelSaveSuccessMessage(getReportLabel());
 
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(3));

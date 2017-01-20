@@ -79,6 +79,12 @@
                 hr.dotted {
                     border-top: 1px dashed #8c8b8b;
                 }
+
+                .modal {
+                    position: fixed;
+                    top: 50% !important;
+                    left: 50%;
+                }
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->
@@ -89,11 +95,5 @@
         </body>
         <script src="/assets/app/require.config.js"></script>
         <script data-main="startup" src="/assets/js/require.js"></script>
-        <#--    TODO - Fix this, using deprecated directive-->
-        <#noescape>
-            <script type="text/javascript">
-                var dashRepoMessages = ${allMessages};
-            </script>
-        </#noescape>
     </html>
 </#macro>

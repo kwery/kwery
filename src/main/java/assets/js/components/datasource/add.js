@@ -1,6 +1,10 @@
-define(["knockout", "jquery", "text!components/datasource/add.html", "validator"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil", "waitingmodal", "jstorage", "validator"], function (ko, $, template, ajaxUtil, waitingModal) {
     function viewModel(params) {
         var self = this;
+
+        self.status = ko.observable("");
+        self.messages = ko.observableArray([]);
+
         self.username = ko.observable();
         self.password = ko.observable("");
         self.url = ko.observable();
@@ -34,9 +38,6 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
             new DatasourceType("POSTGRESQL", "POSTGRESQL")
         ]);
 
-        self.status = ko.observable("");
-        self.messages = ko.observableArray([]);
-
         var isUpdate = params.datasourceId !== undefined;
 
         if (isUpdate) {
@@ -65,26 +66,27 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
                     datasource.id = params.datasourceId;
                 }
 
-                $.ajax("/api/datasource/add-datasource", {
+                $.ajax({
+                    url: "/api/datasource/add-datasource",
                     data: ko.toJSON(datasource),
-                    type: "post", contentType: "application/json",
+                    type: "POST",
+                    contentType: "application/json",
+                    beforeSend: function(){
+                        waitingModal.show();
+                    },
                     success: function(result) {
-                        self.status(result.status);
-
-                        var messages = result.messages;
-                        var fieldMessages = result.fieldMessages;
-
-                        self.messages([]);
-                        if (messages != null) {
-                            ko.utils.arrayPushAll(self.messages, result.messages)
-                        }
-
-                        if (fieldMessages != null) {
-                            ko.utils.arrayForEach(["url", "username", "label"], function(elem){
-                                if (elem in fieldMessages) {
-                                    ko.utils.arrayPushAll(self.messages, fieldMessages[elem])
-                                }
-                            });
+                        if (result.status === "success") {
+                            if ($.jStorage.storageAvailable()) {
+                                $.jStorage.set("ds:status", result.status, {TTL: (10 * 60 * 1000)});
+                                $.jStorage.set("ds:messages", result.messages, {TTL: (10 * 60 * 1000)});
+                                window.location.href = "#datasource/list";
+                            } else {
+                                throw new Error("Not enough space available to store result in browser");
+                            }
+                        } else {
+                            waitingModal.hide();
+                            self.status(result.status);
+                            self.messages(result.messages);
                         }
                     }
                 });
@@ -98,7 +100,8 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
         };
 
         if (isUpdate) {
-            $.ajax("/api/datasource/" + params.datasourceId, {
+            ajaxUtil.waitingAjax({
+                url: "/api/datasource/" + params.datasourceId,
                 type: "GET",
                 contentType: "application/json",
                 success: function(datasource) {
@@ -110,7 +113,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "validator"
                     self.datasourceType(datasource.type);
                     self.database(datasource.database);
                 }
-            });
+            })
         }
 
         return self;

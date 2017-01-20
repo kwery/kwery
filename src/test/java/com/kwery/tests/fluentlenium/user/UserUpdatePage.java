@@ -1,32 +1,26 @@
 package com.kwery.tests.fluentlenium.user;
 
-import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
-
+import static com.kwery.tests.util.Messages.USER_UPDATE_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.openqa.selenium.By.id;
-import static com.kwery.tests.util.Messages.USER_UPDATE_SUCCESS_M;
 
-public class UserUpdatePage extends FluentPage implements RepoDashPage {
-    @Override
-    public boolean isRendered() {
-        return find(id("createAdminUserForm")).first().isDisplayed();
-    }
+public class UserUpdatePage extends UserAddPage {
+    protected int userId;
 
     @Override
     public String getUrl() {
-        return "/#user/update/1";
+        return "/#user/" + getUserId();
     }
 
     public void waitForUsername(String username) {
-        await().atMost(30, SECONDS).until("#username").with("value").startsWith(username);
+        await().atMost(30, SECONDS).until(".username-f").with("value").startsWith(username);
     }
 
     public void updateForm(String password) {
-        fill("#password").with(password);
-        find(id("createAdminUser")).click();
+        waitForModalDisappearance();
+        fill(".password-f").with(password);
+        click(".user-save-f");
     }
 
     public void waitForSuccessMessage(String username) {
@@ -34,6 +28,14 @@ public class UserUpdatePage extends FluentPage implements RepoDashPage {
     }
 
     public boolean isUsernameDisabled() {
-       return !find(id("username")).first().isEnabled();
+       return !find((".username-f")).first().isEnabled();
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

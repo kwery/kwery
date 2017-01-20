@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report/execution-result.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/report/execution-result.html", "ajaxutil"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -21,7 +21,7 @@ define(["knockout", "jquery", "text!components/report/execution-result.html"], f
         self.header = ko.observableArray([]);
         self.contents = ko.observableArray([]);
 
-        $.ajax({
+        ajaxUtil.waitingAjax({
             url: "/api/job/execution/" + params.jobExecutionId,
             type: "get",
             contentType: "application/json",

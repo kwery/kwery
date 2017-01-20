@@ -1,8 +1,8 @@
 package com.kwery.tests.fluentlenium.job.save;
 
 import com.kwery.dtos.SqlQueryDto;
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
 
@@ -17,7 +17,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.By.className;
 
-public class ReportSavePage extends FluentPage implements RepoDashPage {
+public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
 
@@ -121,7 +121,7 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
     }
 
     public void waitForReportSaveSuccessMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(REPORT_SAVE_SUCCESS_MESSAGE_M);
+        super.waitForSuccessMessage(REPORT_SAVE_SUCCESS_MESSAGE_M);
     }
 
     public List<String> selectedLabels() {
@@ -174,14 +174,6 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         query, datasourceId, queryTitle, queryLabel
     }
 
-    public void waitForErrorMessages() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").isDisplayed();
-    }
-
-    public List<String> getErrorMessages() {
-        return $(".f-failure-message p").stream().map(FluentWebElement::getText).collect(toList());
-    }
-
     public void setDatasourceIdToLabelMap(Map<Integer, String> datasourceIdToLabelMap) {
         this.datasourceIdToLabelMap = datasourceIdToLabelMap;
     }
@@ -202,15 +194,15 @@ public class ReportSavePage extends FluentPage implements RepoDashPage {
         $(className("cron-expression-option-f")).click();
     }
 
-    public String labelText(int index) {
-        return $(className(String.format("parent-label-%d-f", index))).getText().trim();
-    }
-
     public List<String> labelTexts(int index) {
         return $(String.format(".select-%d-f option", index)).stream().map(option -> option.getText().trim()).collect(toList());
     }
 
     public int labelSelectCount() {
         return $(className("label-f")).size();
+    }
+
+    public void waitForReportListPage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#report/list"));
     }
 }

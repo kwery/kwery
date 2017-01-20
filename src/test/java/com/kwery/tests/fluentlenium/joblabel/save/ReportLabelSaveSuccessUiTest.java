@@ -12,6 +12,7 @@ public class ReportLabelSaveSuccessUiTest extends AbstractReportLabelSaveUiTest 
     public void test() {
         String label = "test";
         page.fillAndSubmitForm(label, null);
+        page.waitForJobLabelListPage();
         page.waitForLabelSaveSuccessMessage(label);
 
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(1));

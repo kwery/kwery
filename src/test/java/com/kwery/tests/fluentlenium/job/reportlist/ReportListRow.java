@@ -46,4 +46,15 @@ public class ReportListRow {
     public void setExecuteNowLink(String executeNowLink) {
         this.executeNowLink = executeNowLink;
     }
+
+    @Override
+    public String toString() {
+        return "ReportListRow{" +
+                "label='" + label + '\'' +
+                ", reportLink='" + reportLink + '\'' +
+                ", cronExpression='" + cronExpression + '\'' +
+                ", executionLink='" + executionLink + '\'' +
+                ", executeNowLink='" + executeNowLink + '\'' +
+                '}';
+    }
 }

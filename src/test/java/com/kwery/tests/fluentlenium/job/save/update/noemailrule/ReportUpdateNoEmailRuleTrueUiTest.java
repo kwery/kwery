@@ -7,8 +7,10 @@ public class ReportUpdateNoEmailRuleTrueUiTest extends AbstractReportUpdateNoEma
 
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         page.ensureEmailRuleChecked();
         page.submitReportSaveForm();
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
         assertNoEmailRule(noEmail);
     }

@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report/executing.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/report/executing.html", "ajaxutil"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -7,7 +7,8 @@ define(["knockout", "jquery", "text!components/report/executing.html"], function
 
         self.executions = ko.observableArray();
 
-        $.ajax("/api/job/executing", {
+        ajaxUtil.waitingAjax({
+            url: "/api/job/executing",
             type: "GET",
             contentType: "application/json",
             success: function(result) {
@@ -19,7 +20,8 @@ define(["knockout", "jquery", "text!components/report/executing.html"], function
             self.status("");
             self.messages([]);
 
-            $.ajax("/api/job/execution/stop/" + execution.executionId, {
+            ajaxUtil.waitingAjax({
+                url: "/api/job/execution/stop/" + execution.executionId,
                 type: "POST",
                 contentType: "application/json",
                 success: function(result) {

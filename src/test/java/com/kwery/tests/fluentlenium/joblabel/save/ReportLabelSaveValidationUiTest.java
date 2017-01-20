@@ -20,6 +20,7 @@ public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTe
 
     @Test
     public void testNameValidationError() {
+        page.waitForModalDisappearance();
         page.submitForm();
         page.waitForLabelNameValidationError();
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(1));
@@ -29,12 +30,14 @@ public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTe
         page.waitForLabelNameValidationErrorRemoval();
         //Post validation cleanup, form can be submitted
         page.submitForm();
+        page.waitForJobLabelListPage();
         page.waitForLabelSaveSuccessMessage(label);
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(2));
     }
 
     @Test
     public void testValidationError() {
+        page.waitForModalDisappearance();
         page.optParentLabel();
         page.submitForm();
         page.waitForLabelNameValidationError();
@@ -48,6 +51,7 @@ public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTe
         //Post validation cleanup, form can be submitted
         String label = "test";
         page.fillAndSubmitForm(label, 1);
+        page.waitForJobLabelListPage();
         page.waitForLabelSaveSuccessMessage(label);
 
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(2));
@@ -56,6 +60,8 @@ public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTe
 
     @Test
     public void uncheckParentFormSubmit() {
+        page.waitForModalDisappearance();
+
         String label = "test";
         page.fillName(label);
         page.optParentLabel();
@@ -65,6 +71,7 @@ public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTe
         page.optParentLabel();
         page.waitForParentLabelValidationErrorRemoval();
         page.submitForm();
+        page.waitForJobLabelListPage();
         page.waitForLabelSaveSuccessMessage(label);
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(2));
     }

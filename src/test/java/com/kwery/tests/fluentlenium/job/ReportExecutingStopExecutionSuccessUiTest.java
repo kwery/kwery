@@ -57,6 +57,8 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
         if (!page.isRendered()) {
             fail("Could not render executing reports page");
         }
+
+        page.waitForModalDisappearance();
     }
 
     private void setUpJob() {

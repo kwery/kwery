@@ -24,6 +24,8 @@ public class UserUpdateUiTest extends ChromeFluentTest {
     @Before
     public void setUpUpdateUserPageTest() {
         page = createPage(UserUpdatePage.class);
+        page.setUserId(loginRule.getLoggedInUser().getId());
+
         page.withDefaultUrl(ninjaServerRule.getServerUrl());
         goTo(page);
 
@@ -38,6 +40,7 @@ public class UserUpdateUiTest extends ChromeFluentTest {
         page.waitForUsername(user.getUsername());
         assertThat(page.isUsernameDisabled(), is(true));
         page.updateForm("foo");
+        page.waitForUserListPage();
         page.waitForSuccessMessage(user.getUsername());
     }
 }

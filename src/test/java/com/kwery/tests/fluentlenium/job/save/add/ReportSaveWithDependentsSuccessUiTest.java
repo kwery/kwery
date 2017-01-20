@@ -90,6 +90,8 @@ public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
         if (!page.isRendered()) {
             fail("Could not render report save page");
         }
+
+        page.waitForModalDisappearance();
     }
 
     @Test
@@ -111,7 +113,9 @@ public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
+        page.waitForModalDisappearance();
         page.fillAndSubmitReportSaveForm(jobForm);
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         JobModel savedJobModel = jobDao.getJobByName(jobDto.getName());

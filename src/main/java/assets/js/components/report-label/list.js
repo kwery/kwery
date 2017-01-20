@@ -1,9 +1,21 @@
-define(["knockout", "jquery", "text!components/report-label/list.html"], function (ko, $, template) {
+define(["knockout", "jquery", "text!components/report-label/list.html", "ajaxutil", "jstorage"], function (ko, $, template, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
+        //To show save messages
+        var status = $.jStorage.get("reportLabel:status", null);
         self.status = ko.observable("");
+        if (status != null) {
+            self.status(status);
+            $.jStorage.deleteKey("reportLabel:status");
+        }
+
+        var messages = $.jStorage.get("reportLabel:messages", null);
         self.messages = ko.observableArray([]);
+        if (messages != null) {
+            self.messages(messages);
+            $.jStorage.deleteKey("reportLabel:messages");
+        }
 
         //TODO - Duplicated code with add label page, needs to be refactored into a common code
         //Label related - start
@@ -101,7 +113,7 @@ define(["knockout", "jquery", "text!components/report-label/list.html"], functio
         };
 
         //Get current labels
-        $.ajax({
+        ajaxUtil.waitingAjax({
             url: "/api/job-label/list",
             type: "GET",
             contentType: "application/json",
@@ -113,7 +125,7 @@ define(["knockout", "jquery", "text!components/report-label/list.html"], functio
         //Label related - end
 
         self.delete = function(displayLabel) {
-            $.ajax({
+            ajaxUtil.waitingAjax({
                 url: "/api/job-label/delete/" + displayLabel.id,
                 type: "POST",
                 contentType: "application/json",

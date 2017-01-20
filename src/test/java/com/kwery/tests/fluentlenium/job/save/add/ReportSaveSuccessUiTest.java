@@ -11,7 +11,9 @@ public class ReportSaveSuccessUiTest extends AbstractReportSaveUiTest {
     public void testWithCronExpressionChosen() throws InterruptedException {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
+        page.waitForModalDisappearance();
         page.fillAndSubmitReportSaveForm(jobForm);
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
@@ -23,7 +25,9 @@ public class ReportSaveSuccessUiTest extends AbstractReportSaveUiTest {
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
         jobForm.setUseCronUi(true);
 
+        page.waitForModalDisappearance();
         page.fillAndSubmitReportSaveForm(jobForm);
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
@@ -35,7 +39,9 @@ public class ReportSaveSuccessUiTest extends AbstractReportSaveUiTest {
         jobDto.setEmptyReportNoEmailRule(true);
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
 
+        page.waitForModalDisappearance();
         page.fillAndSubmitReportSaveForm(jobForm);
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
@@ -47,7 +53,9 @@ public class ReportSaveSuccessUiTest extends AbstractReportSaveUiTest {
         jobDto.setEmptyReportNoEmailRule(false);
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
 
+        page.waitForModalDisappearance();
         page.fillAndSubmitReportSaveForm(jobForm);
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);

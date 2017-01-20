@@ -1,6 +1,7 @@
 package com.kwery.conf;
 
 import com.kwery.controllers.IndexController;
+import com.kwery.controllers.MessageApiController;
 import com.kwery.controllers.apis.*;
 import ninja.AssetsController;
 import ninja.Router;
@@ -50,6 +51,8 @@ public class Routes implements ApplicationRoutes {
     public static final String JOB_LABEL_LIST_API = "/api/job-label/list";
     public static final String JOB_LABEL_GET_API = "/api/job-label/{jobLabelId}";
     public static final String JOB_LABEL_DELETE_API = "/api/job-label/delete/{jobLabelId}";
+
+    public static final String MESSAGES_JS = "/messages.js";
 
     @Override
     public void init(Router router) {
@@ -102,6 +105,8 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(JOB_LABEL_LIST_API).with(JobLabelApiController.class, "getAllJobLabels");
         router.GET().route(JOB_LABEL_GET_API).with(JobLabelApiController.class, "getJobLabelById");
         router.POST().route(JOB_LABEL_DELETE_API).with(JobLabelApiController.class, "deleteJobLabelById");
+
+        router.GET().route(MESSAGES_JS).with(MessageApiController.class, "getAllMessages");
         //Api - End
 
         //Static asset

@@ -1,4 +1,5 @@
-define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron"], function (ko, $, template, validator, jqueryCron) {
+define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron", "waitingmodal", "jstorage"],
+    function (ko, $, template, validator, jqueryCron, waitingModal) {
     function viewModel(params) {
         var self = this;
 
@@ -71,6 +72,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             self.queries.push(new Query());
         }
 
+        waitingModal.show();
         $.when(
             $.ajax({
                 url: "/api/datasource/all",
@@ -138,8 +140,9 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     }
                 })
             }
+        }).always(function(){
+            waitingModal.hide();
         });
-
 
         self.addSqlQuery = function() {
             self.queries.push(new Query());
@@ -222,12 +225,22 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     data: ko.toJSON(report),
                     type: "POST",
                     contentType: "application/json",
+                    beforeSend: function() {
+                        waitingModal.show();
+                    },
                     success: function(result) {
-                        self.status(result.status);
-                        if (result.status === 'failure') {
-                            self.messages(result.messages);
+                        if (result.status === "success") {
+                            if ($.jStorage.storageAvailable()) {
+                                $.jStorage.set("report:status", result.status, {TTL: (10 * 60 * 1000)});
+                                $.jStorage.set("report:messages", [ko.i18n('report.save.success.message')], {TTL: (10 * 60 * 1000)});
+                                window.location.href = "#report/list";
+                            } else {
+                                throw new Error("Not enough space available to store result in browser");
+                            }
                         } else {
-                            self.messages([ko.i18n('report.save.success.message')]);
+                            waitingModal.hide();
+                            self.status(result.status);
+                            self.messages(result.messages);
                         }
                     }
                 });

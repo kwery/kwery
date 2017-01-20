@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report/execution-list.html", "moment", "datetimepicker", "validator"], function (ko, $, template, moment) {
+define(["knockout", "jquery", "text!components/report/execution-list.html", "moment", "ajaxutil", "datetimepicker", "validator"], function (ko, $, template, moment, ajaxUtil) {
     function viewModel(params) {
         //TODO - Optimize below
         var DISPLAY_DATE_FORMAT = "ddd MMM DD YYYY HH:mm";
@@ -154,7 +154,8 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
 
         self.executions = ko.observableArray();
         self.updateExecutions = function() {
-            $.ajax("/api/job/" + params.jobId + "/execution", {
+            ajaxUtil.waitingAjax({
+                url: "/api/job/" + params.jobId + "/execution",
                 data: ko.toJSON({
                     pageNumber: self.pageNumber(),
                     resultCount: self.resultCount(),

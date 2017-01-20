@@ -145,11 +145,14 @@ public class ReportUpdateSwitchParentUiTest extends ChromeFluentTest {
         );
         page.setParentJobIdToLabelMap(parentReportIdToLabelMap);
 
+        page.waitForModalDisappearance();
         page.waitForReportDisplay(childJobModel.getName());
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
         page.fillAndSubmitReportSaveForm(jobForm);
+
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         JobModel savedJobModel = jobDao.getJobByName(jobDto.getName());

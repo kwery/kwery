@@ -16,6 +16,7 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
     public void setUp() throws Exception {
         this.setResultCount(1);
         super.setUp();
+        page.waitForModalDisappearance();
     }
 
     @Test

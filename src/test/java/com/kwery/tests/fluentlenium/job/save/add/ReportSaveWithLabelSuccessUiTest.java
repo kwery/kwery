@@ -40,7 +40,9 @@ public class ReportSaveWithLabelSuccessUiTest extends AbstractReportSaveUiTest {
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
+        page.waitForModalDisappearance();
         page.fillAndSubmitReportSaveForm(jobForm);
+        page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
         JobModel savedJob = jobDao.getJobByName(jobDto.getName());

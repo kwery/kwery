@@ -54,6 +54,7 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
     @Test
     public void testSuccess() {
         page.delete(0);
+        page.waitForModalDisappearance();
         page.waitForDeleteSuccessMessage(datasource0.getLabel());
         List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(1));
@@ -64,6 +65,7 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
     public void testDeleteDatasourceWithSqlQuery() {
         page.delete(1);
         page.waitForDeleteFailureSqlQueryMessage();
+        page.waitForModalDisappearance();
         List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(2));
         assertThat(rows.get(0).get(0), is(datasource0.getLabel()));

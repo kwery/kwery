@@ -40,8 +40,10 @@ public class ReportLabelSaveWithParentSuccessUiTest extends AbstractReportLabelS
 
     @Test
     public void test() {
+        page.waitForModalDisappearance();
         String label = "test";
         page.fillAndSubmitForm(label, 1);
+        page.waitForJobLabelListPage();
         page.waitForLabelSaveSuccessMessage(label);
 
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(3));

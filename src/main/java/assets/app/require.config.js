@@ -3,32 +3,25 @@ var require = {
     paths: {
         "crossroads": "crossroads",
         "jquery": "jquery",
-        "jquery-migrate": "jquery-migrate",
         "knockout": "knockout",
         "knockout-projections": "knockout-projections",
         "signals": "signals",
         "hasher": "hasher",
         "text": "requirejs-text",
-        "jquery-ui": "jquery-ui",
-        "knockout-jqueryui": "knockout-jqueryui",
         "repo-dash": "repo-dash",
         "router": "router",
         "polyglot": "polyglot",
-        "jquery-validate": "jquery.validate",
         "bootstrap": "/assets/bootstrap/js/bootstrap",
         "validator": "/assets/bootstrap/js/validator",
         "jquery-cron": "jquery-cron",
         "moment": "moment",
-        "datetimepicker": "/assets/bootstrap/js/datetimepicker"
+        "datetimepicker": "/assets/bootstrap/js/datetimepicker",
+        "waitingmodal": "/assets/bootstrap/js/waitingmodal",
+        "ajaxutil": "ajaxutil",
+        "jstorage": "jstorage",
+        "messages": "/messages"
     },
     shim: {
-        "jquery-migrate": {
-            deps: ["jquery"],
-            exports: "jquery"
-        },
-        "jquery-validate": {
-            deps: ["jquery"]
-        },
         "bootstrap": {
             deps: ["jquery"]
         },
@@ -41,6 +34,16 @@ var require = {
         },
         "datetimepicker": {
             deps: ["moment", "bootstrap", "jquery"]
+        },
+        "waitingmodal": {
+            deps: ["bootstrap", "jquery"]
+        },
+        "ajaxutil": {
+            deps: ["jquery", "waitingmodal"]
+        },
+        "jstorage": {
+            deps: ["jquery"],
+            exports: "jstorage"
         }
     }
 };

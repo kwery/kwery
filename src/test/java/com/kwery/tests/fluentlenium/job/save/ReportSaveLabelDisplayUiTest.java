@@ -12,7 +12,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ReportSaveLabelDisplayUiTest extends AbstractReportSaveUiTest {
-
     private JobLabelModel jobLabelModel0;
     private JobLabelModel jobLabelModel1;
 

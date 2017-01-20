@@ -19,7 +19,6 @@ import org.junit.Rule;
 import org.junit.rules.RuleChain;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
@@ -88,5 +87,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
         page.setDatasourceIdToLabelMap(ImmutableMap.of(
                 datasource.getId(), datasource.getLabel()
         ));
+
+        page.waitForModalDisappearance();
     }
 }

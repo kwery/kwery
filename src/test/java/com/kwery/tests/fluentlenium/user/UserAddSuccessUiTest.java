@@ -9,8 +9,8 @@ public class UserAddSuccessUiTest extends UserAddUiTest {
         User newUser = new User();
         newUser.setUsername("user");
         newUser.setPassword("password");
-
         page.submitForm(newUser.getUsername(), newUser.getPassword());
+        page.waitForUserListPage();
         page.waitForSuccessMessage(newUser);
     }
 }

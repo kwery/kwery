@@ -72,11 +72,15 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
         page.fillLabel(newLabel);
         page.submit();
 
+        page.waitForDatasourceListPage();
         page.waitForSuccessMessage(newLabel, mySqlDatasource.getType());
+    }
 
+    @Test
+    public void testLabelExists() {
+        page.waitForForm(DatasourceAddPage.FormField.label, mySqlDatasource.getLabel());
         page.fillLabel(anotherDatasource.getLabel());
         page.submit();
-
-        page.waitForFailureMessage(anotherDatasource.getLabel(), mySqlDatasource.getType());
+        page.waitForFailureMessage(anotherDatasource.getLabel(), anotherDatasource.getType());
     }
 }

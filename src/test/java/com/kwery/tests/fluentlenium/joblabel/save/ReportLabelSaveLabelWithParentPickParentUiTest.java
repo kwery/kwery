@@ -39,16 +39,20 @@ public class ReportLabelSaveLabelWithParentPickParentUiTest extends AbstractRepo
 
     @Test
     public void testLabelSavedWithSelectedParent() {
+        page.waitForModalDisappearance();
         int parentLabelIndex = RandomUtils.nextInt(1, LABELS);
         String label = UUID.randomUUID().toString();
-        page.fillAndSubmitForm(label, parentLabelIndex);
+        page.fillForm(label, parentLabelIndex);
+        String parentLabelFromPage = page.parentLabelText(parentLabelIndex).trim();
+        page.submitForm();
         page.waitForLabelSaveSuccessMessage(label);
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(LABELS + 1));
-        assertThat(jobLabelDao.getJobLabelModelByLabel(label).getParentLabel().getLabel(), is(page.parentLabelText(parentLabelIndex).trim()));
+        assertThat(jobLabelDao.getJobLabelModelByLabel(label).getParentLabel().getLabel(), is(parentLabelFromPage));
     }
 
     @Test
     public void testAllLabelsPresentInParentDropDown() {
+        page.waitForModalDisappearance();
         List<String> expectedParentLabels = jobLabelDao.getAllJobLabelModels().stream().map(JobLabelModel::getLabel).collect(Collectors.toList());
         expectedParentLabels.add("");
 
