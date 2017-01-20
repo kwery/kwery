@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.job.executionlist;
 
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
@@ -17,7 +17,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
-public class ReportExecutionListPage extends FluentPage implements RepoDashPage {
+public class ReportExecutionListPage extends KweryFluentPage implements RepoDashPage {
     protected int jobId;
     protected int resultCount;
 
