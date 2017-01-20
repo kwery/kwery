@@ -1,6 +1,7 @@
 package com.kwery.tests.fluentlenium.job.reportlist;
 
 import com.kwery.models.Datasource;
+import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
@@ -28,8 +29,9 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
 
     Map<String, ReportListRow> rowMap = new HashMap<>();
 
-    String parentJobLabel;
+    String parentJobName;
     private Datasource datasource;
+    JobLabelModel jobLabelModel;
 
     @Before
     public void setUp() {
@@ -40,8 +42,13 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         jobDbSetUp(jobModel);
         setSqlQueryModel(jobModel);
 
+        jobLabelModel = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel);
+        jobModel.getLabels().add(jobLabelModel);
+        jobJobLabelDbSetUp(jobModel);
+
         JobModel parentJob = jobModelWithoutDependents();
-        parentJobLabel = parentJob.getName();
+        parentJobName = parentJob.getName();
         jobDbSetUp(parentJob);
         setSqlQueryModel(parentJob);
 

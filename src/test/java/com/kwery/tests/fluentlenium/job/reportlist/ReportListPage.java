@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.job.reportlist;
 
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 
 import java.util.LinkedList;
@@ -11,9 +11,10 @@ import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_DELETE_JOB_HAS_CHIL
 import static com.kwery.tests.util.Messages.REPORT_LIST_DELETE_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.By.className;
 
-public class ReportListPage extends FluentPage implements RepoDashPage {
+public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".report-list-f").isDisplayed();
@@ -57,5 +58,17 @@ public class ReportListPage extends FluentPage implements RepoDashPage {
 
     public void waitForDeleteFailureMessage() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M);
+    }
+
+    public void selectLabel(int index) {
+        fillSelect(String.format(".label-f")).withIndex(index);
+    }
+
+    public void filterReport() {
+        $(className("report-filter-f")).click();
+    }
+
+    public List<String> labelTexts() {
+        return $(".label-f option").stream().map(option -> option.getText().trim()).collect(toList());
     }
 }

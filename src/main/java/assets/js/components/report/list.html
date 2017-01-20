@@ -8,6 +8,25 @@
             <panel-add-link params="url: '/#report/add', tooltipMessageKey: 'report.list.add.report.tooltip'"></panel-add-link>
         </div>
         <div class="panel-body">
+            <form data-bind="submit: function(){filter(true)}">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 data-bind="text: ko.i18n('report.list.filter.header')" class="panel-title"></h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label data-bind="text: ko.i18n('report.list.filter.label')" class="control-label"></label>
+                            <div class="form-inline">
+                                <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: displayLabels, value: reportLabelId">
+                                    <option data-bind="html: formattedLabel, value: id"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <button data-bind="text: ko.i18n('report.list.filter.filter')" type="submit" class="btn btn-primary report-filter-f"></button>
+                    </div>
+                </div>
+            </form>
+
             <table class="table report-list-table-f">
                 <thead>
                     <tr>
