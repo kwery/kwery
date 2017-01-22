@@ -11,8 +11,8 @@ import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import org.junit.Before;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 
@@ -28,7 +28,7 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
     public void setUp() {
         JobModel jobModel = new JobModel();
         jobModel.setTitle("Test Report");
-        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(ImmutableSet.of("foo@bar.com", "moo@goo.com"));
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(getEmptyReportEmailRule())));
 

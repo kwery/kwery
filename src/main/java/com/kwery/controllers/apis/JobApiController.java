@@ -414,7 +414,7 @@ public class JobApiController {
 
         jobModel.setName(jobDto.getName());
         jobModel.setCronExpression(Strings.nullToEmpty(jobDto.getCronExpression()));
-        jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toSet()));
+        jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toList()));
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setEmails(jobDto.getEmails());
 

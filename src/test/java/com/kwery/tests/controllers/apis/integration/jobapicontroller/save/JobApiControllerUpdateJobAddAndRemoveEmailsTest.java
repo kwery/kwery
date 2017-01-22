@@ -1,6 +1,7 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.JobDao;
@@ -18,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.sqlQueryModel;
@@ -52,7 +54,7 @@ public class JobApiControllerUpdateJobAddAndRemoveEmailsTest extends AbstractPos
         sqlQueryModel = sqlQueryModel(datasource);
         sqlQueryDbSetUp(sqlQueryModel);
 
-        jobModel.setSqlQueries(ImmutableSet.of(sqlQueryModel));
+        jobModel.setSqlQueries(ImmutableList.of(sqlQueryModel));
         jobSqlQueryDbSetUp(jobModel);
 
         getInjector().getInstance(JobService.class).schedule(jobModel.getId());
@@ -86,6 +88,7 @@ public class JobApiControllerUpdateJobAddAndRemoveEmailsTest extends AbstractPos
         jobModel.setEmails(ImmutableSet.of(email1, email2));
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
+        jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
         assertThat(jobDao.getJobById(jobDto.getId()), theSameBeanAs(jobModel));
     }
 }

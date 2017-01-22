@@ -82,6 +82,7 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
 
     public void ensureEmailRuleChecked() {
         if (!findFirst(className("no-email-rule-f")).isSelected()) {
+            await().atMost(TIMEOUT_SECONDS, SECONDS).until(className("no-email-rule-f")).isClickable();
             click(findFirst(className("no-email-rule-f")));
         }
     }
@@ -91,6 +92,7 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void submitReportSaveForm() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-report-submit").isClickable();
         click(".f-report-submit");
     }
 

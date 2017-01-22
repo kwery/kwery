@@ -19,7 +19,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import static com.kwery.models.Datasource.*;
@@ -38,7 +37,6 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoUpdateTest() {
         jobModel = jobModelWithoutDependents();
-        jobModel.setSqlQueries(new HashSet<>());
 
         datasource = datasource();
 
@@ -68,8 +66,9 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                             Operations.insertInto(JOB_SQL_QUERY_TABLE)
                                     .row()
                                     .column(JobModel.ID_COLUMN, ++id)
-                                    .column(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
+                                    .column(JOB_ID_FK_COLUMN, jobModel.getId())
                                     .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                                    .column(JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN, dbId())
                                     .end()
                                     .build()
                     )
@@ -82,7 +81,6 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
         JobModel modifiedJobModel = jobModelWithoutIdWithoutDependents();
-        modifiedJobModel.setSqlQueries(new HashSet<>());
         modifiedJobModel.getSqlQueries().addAll(jobModel.getSqlQueries());
 
         modifiedJobModel.setId(jobModel.getId());
@@ -94,7 +92,8 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()));
-        assertDbState(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel), ID_COLUMN);
+        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
+                .columnsToIgnore(ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
     }
 
     @Test
@@ -110,7 +109,8 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()), ID_COLUMN);
-        assertDbState(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel), ID_COLUMN, SQL_QUERY_ID_FK_COLUMN);
+        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
+                .columnsToIgnore(ID_COLUMN, SQL_QUERY_ID_FK_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
 
         for (SqlQueryModel queryModel : fromDbJobModel.getSqlQueries()) {
             Assert.assertThat(queryModel.getId(), Matchers.greaterThan(0));
@@ -133,7 +133,8 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()));
-        assertDbState(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel), ID_COLUMN);
+        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
+                .columnsToIgnore(ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
     }
 
 
@@ -161,11 +162,10 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                 .build();
         sqlQueryTableAsserter.assertTable();
 
-        DbTableAsserter jobSqlQueryTableAsserter = new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
-                .columnsToCompare(JobModel.JOB_ID_FK_COLUMN, JobModel.SQL_QUERY_ID_FK_COLUMN)
-                .columnToIgnore("id")
-                .build();
-        jobSqlQueryTableAsserter.assertTable();
+        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
+                .columnsToCompare(JOB_ID_FK_COLUMN, SQL_QUERY_ID_FK_COLUMN)
+                .columnsToIgnore(JOB_SQL_QUERY_TABLE_ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN)
+                .build().assertTable();
 
     }
 }

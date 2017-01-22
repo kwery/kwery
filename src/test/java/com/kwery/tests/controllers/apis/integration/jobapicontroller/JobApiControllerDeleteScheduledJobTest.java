@@ -14,7 +14,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
@@ -34,7 +33,6 @@ public class JobApiControllerDeleteScheduledJobTest extends AbstractPostLoginApi
     @Before
     public void setUpJobApiControllerDeleteJobTest() {
         jobModel = jobModelWithoutDependents();
-        jobModel.setSqlQueries(new HashSet<>());
         jobModel.setCronExpression("* * * * *");
         jobDbSetUp(jobModel);
 

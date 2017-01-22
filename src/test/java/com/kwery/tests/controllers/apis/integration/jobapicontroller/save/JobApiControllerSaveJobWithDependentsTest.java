@@ -1,5 +1,7 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.JobDao;
@@ -21,6 +23,7 @@ import java.util.Set;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.kwery.views.ActionResult.Status.success;
@@ -41,7 +44,6 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
     public void setUp() {
         jobModel = jobModelWithoutDependents();
         jobModel.setCronExpression("* * * * *");
-        jobModel.setSqlQueries(new HashSet<>());
 
         datasource = datasource();
         datasourceDbSetup(datasource);
@@ -86,7 +88,7 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         expectedSqlQueryModel.setQuery(sqlQueryDto.getQuery());
         expectedSqlQueryModel.setDatasource(datasource);
 
-        expectedJobModel.setSqlQueries(ImmutableSet.of(expectedSqlQueryModel));
+        expectedJobModel.setSqlQueries(ImmutableList.of(expectedSqlQueryModel));
 
         jobDto.getSqlQueries().add(sqlQueryDto);
 
@@ -95,8 +97,11 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
+        expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
         expectedJobModel.setParentJob(jobDao.getJobById(jobModel.getId()));
 
-        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobByName(jobDto.getName())).excludeProperty("id").excludeProperty("sqlQueries.id"));
+        JobModel jobModelFromDb = jobDao.getJobByName(jobDto.getName());
+
+        assertThat(jobModelFromDb, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id"));
     }
 }

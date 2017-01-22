@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -91,7 +92,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setEmails(emails);
         jobModel.setLabels(jobLabelModels);
 
-        jobModel.setSqlQueries(new HashSet<>(2));
+        jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 
         for (int i = 0; i < 2; ++i) {
@@ -123,7 +124,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setId(null);
-        jobModel.setSqlQueries(new HashSet<>(2));
+        jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setId(jobDto.getId());
         jobModel.setEmails(emails);
         jobModel.setLabels(jobLabelModels);
@@ -158,7 +159,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setName(jobDto.getName());
         jobModel.setId(null);
         jobModel.setLabels(new HashSet<>());
-        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 
@@ -176,7 +177,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setName(jobDto.getName());
         jobModel.setId(null);
         jobModel.setLabels(new HashSet<>());
-        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 
@@ -194,7 +195,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setName(jobDto.getName());
         jobModel.setId(null);
         jobModel.setLabels(new HashSet<>());
-        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 

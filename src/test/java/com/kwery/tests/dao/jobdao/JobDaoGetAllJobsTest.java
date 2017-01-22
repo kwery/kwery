@@ -8,7 +8,10 @@ import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
@@ -29,7 +32,6 @@ public class JobDaoGetAllJobsTest extends RepoDashDaoTestBase {
 
         for (int i = 0; i < 2; ++i) {
             jobModel = jobModelWithoutDependents();
-            jobModel.setSqlQueries(new HashSet<>());
             jobModels.add(jobModel);
 
             idJobModelMap.put(jobModel.getId(), jobModel);

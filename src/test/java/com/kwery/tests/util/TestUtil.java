@@ -210,10 +210,9 @@ public class TestUtil {
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
         jobModel.setChildJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
-        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setParentJob(null);
         jobModel.setLabels(new HashSet<>());
-/*        jobModel.setRules(new HashMap<>());*/
         return jobModel;
     }
 
@@ -319,7 +318,7 @@ public class TestUtil {
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setEmails(jobDto.getEmails());
-        jobModel.setSqlQueries(new LinkedHashSet<>());
+        jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setChildJobs(new HashSet<>());
 
         for (SqlQueryDto sqlQueryDto : jobDto.getSqlQueries()) {

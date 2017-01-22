@@ -1,10 +1,12 @@
 package com.kwery.tests.dao.jobdao;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import org.dbunit.DatabaseUnitException;
@@ -14,10 +16,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashSet;
 
-import static com.kwery.models.JobModel.JOB_SQL_QUERY_TABLE;
-import static com.kwery.models.JobModel.JOB_TABLE;
+import static com.kwery.models.JobModel.*;
 import static com.kwery.models.SqlQueryModel.ID_COLUMN;
 import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
@@ -40,7 +40,6 @@ public class JobDaoSaveTest extends RepoDashTestBase {
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
-        jobModel.setSqlQueries(new HashSet<>());
         JobModel expectedJobModel = new DozerBeanMapper().map(jobModel, JobModel.class);
 
         jobDao.save(jobModel);
@@ -61,7 +60,7 @@ public class JobDaoSaveTest extends RepoDashTestBase {
         SqlQueryModel sqlQueryModel1 = sqlQueryModelWithoutId(datasource);
         SqlQueryModel expectedSqlQueryModel1 = dozerBeanMapper.map(sqlQueryModel1, SqlQueryModel.class);
 
-        jobModel.setSqlQueries(ImmutableSet.of(sqlQueryModel0, sqlQueryModel1));
+        jobModel.setSqlQueries(ImmutableList.of(sqlQueryModel0, sqlQueryModel1));
 
         jobDao.save(jobModel);
 
@@ -70,7 +69,9 @@ public class JobDaoSaveTest extends RepoDashTestBase {
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(ImmutableSet.of(expectedSqlQueryModel0, expectedSqlQueryModel1)), ID_COLUMN);
-        assertDbState(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(jobModel), ID_COLUMN);
+
+        new DbTableAsserter.DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(jobModel))
+                .columnsToIgnore(JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN, JOB_SQL_QUERY_TABLE_ID_COLUMN).build().assertTable();
 
         assertThat(sqlQueryModel0.getId(), greaterThan(0));
         assertThat(sqlQueryModel1.getId(), greaterThan(0));
