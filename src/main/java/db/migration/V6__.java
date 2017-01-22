@@ -41,7 +41,7 @@ public class V6__ implements JdbcMigration {
     }
 
     private List<Integer> sqlQueryIds(Connection connection, int jobId) throws SQLException {
-        try (PreparedStatement jobIdPreparedStatement = connection.prepareStatement("select sql_query_id_fk as sqlQueryId from job_sql_query where job_id = ?")) {
+        try (PreparedStatement jobIdPreparedStatement = connection.prepareStatement("select sql_query_id_fk as sqlQueryId from job_sql_query where job_id_fk = ?")) {
             jobIdPreparedStatement.setInt(1, jobId);
 
             ResultSet jobIdResultSet = jobIdPreparedStatement.executeQuery();
