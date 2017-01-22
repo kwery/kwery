@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import static com.kwery.models.JobModel.JOB_CHILDREN_TABLE;
 import static com.kwery.models.JobModel.JOB_TABLE;
@@ -22,7 +23,7 @@ public class JobDaoSaveWithDependentsTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoSaveTest() {
         jobModel = jobModelWithoutDependents();
-        jobModel.setSqlQueries(new HashSet<>());
+        jobModel.setSqlQueries(new LinkedList<>());
 
         jobDbSetUp(jobModel);
 
@@ -32,7 +33,6 @@ public class JobDaoSaveWithDependentsTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws Exception {
         JobModel newJobModel = jobModelWithoutIdWithoutDependents();
-        newJobModel.setSqlQueries(new HashSet<>());
         newJobModel.setChildJobs(new HashSet<>());
         newJobModel.getChildJobs().add(jobModel);
 

@@ -1,5 +1,7 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.JobDao;
@@ -21,6 +23,7 @@ import java.util.HashSet;
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.kwery.views.ActionResult.Status.success;
@@ -96,7 +99,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         expectedSqlQueryModel.setLabel(sqlQueryDto.getLabel());
         expectedSqlQueryModel.setDatasource(datasource1);
         expectedSqlQueryModel.setQuery(sqlQueryDto.getQuery());
-        expectedJobModel.setSqlQueries(ImmutableSet.of(expectedSqlQueryModel));
+        expectedJobModel.setSqlQueries(ImmutableList.of(expectedSqlQueryModel));
 
         jobDto.getSqlQueries().add(sqlQueryDto);
 
@@ -105,6 +108,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
+        expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
         assertThat(jobDao.getJobByName(expectedJobModel.getName()), theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id"));
         assertThat(jobDao.getAllJobs(), hasSize(1));
     }

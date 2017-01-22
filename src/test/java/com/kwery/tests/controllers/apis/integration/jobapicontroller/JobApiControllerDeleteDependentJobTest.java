@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -33,7 +32,6 @@ public class JobApiControllerDeleteDependentJobTest extends AbstractPostLoginApi
     @Before
     public void setUpJobApiControllerDeleteChildJobTest() {
         parentJobModel = jobModelWithoutDependents();
-        parentJobModel.setSqlQueries(new HashSet<>());
         parentJobModel.setCronExpression("* * * * *");
         jobDbSetUp(parentJobModel);
 
@@ -51,7 +49,6 @@ public class JobApiControllerDeleteDependentJobTest extends AbstractPostLoginApi
 
         childJobModel = jobModelWithoutDependents();
         childJobModel.setCronExpression(null);
-        childJobModel.setSqlQueries(new HashSet<>());
         parentJobModel.getChildJobs().add(childJobModel);
 
         jobDbSetUp(childJobModel);

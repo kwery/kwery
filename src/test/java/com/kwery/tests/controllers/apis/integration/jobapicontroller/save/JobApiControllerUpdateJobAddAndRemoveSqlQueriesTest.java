@@ -1,7 +1,7 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
@@ -22,6 +22,7 @@ import java.util.List;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.util.Collections.sort;
@@ -49,7 +50,7 @@ public class JobApiControllerUpdateJobAddAndRemoveSqlQueriesTest extends Abstrac
         SqlQueryModel sqlQueryModel = sqlQueryModel(datasource);
         sqlQueryDbSetUp(sqlQueryModel);
 
-        jobModel.setSqlQueries(ImmutableSet.of(sqlQueryModel));
+        jobModel.setSqlQueries(ImmutableList.of(sqlQueryModel));
         jobSqlQueryDbSetUp(jobModel);
 
         getInjector().getInstance(JobService.class).schedule(jobModel.getId());
@@ -104,6 +105,8 @@ public class JobApiControllerUpdateJobAddAndRemoveSqlQueriesTest extends Abstrac
         sort(expectedSqlQueryModels, comparing(SqlQueryModel::getLabel));
         sort(sqlQueryModelsFromDb, comparing(SqlQueryModel::getLabel));
 
+
+        jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
         assertThat(jobModel, theSameBeanAs(jobModelFromDb));
 
         assertThat(sqlQueryModelsFromDb.get(0), theSameBeanAs(expectedSqlQueryModels.get(0)).excludeProperty("id"));

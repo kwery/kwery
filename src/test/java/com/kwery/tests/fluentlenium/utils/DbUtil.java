@@ -389,6 +389,7 @@ public class DbUtil {
     }
 
     public static void jobSqlQueryDbSetUp(JobModel jobModel) {
+        int order = 0;
         for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
             new DbSetup(
                     new DataSourceDestination(getDatasource()),
@@ -398,10 +399,12 @@ public class DbUtil {
                                     .column(JobModel.ID_COLUMN, dbId())
                                     .column(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
                                     .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                                    .column(JobModel.JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN, order)
                                     .end()
                                     .build()
                     )
             ).launch();
+            order = order + 1;
         }
     }
 

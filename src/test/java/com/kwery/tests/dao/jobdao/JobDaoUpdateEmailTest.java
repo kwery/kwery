@@ -9,8 +9,6 @@ import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-
 import static com.kwery.models.JobModel.JOB_EMAIL_ID_COLUMN;
 import static com.kwery.models.JobModel.JOB_EMAIL_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
@@ -23,7 +21,6 @@ public class JobDaoUpdateEmailTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoUpdateEmailTest() {
         jobModel = jobModelWithoutDependents();
-        jobModel.setSqlQueries(new HashSet<>());
         jobModel.getEmails().addAll(ImmutableSet.of("foo@goo.com", "bar@foo.com"));
 
         jobDbSetUp(jobModel);

@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -25,6 +22,7 @@ public class JobModel {
     public static final String SQL_QUERY_ID_FK_COLUMN = "sql_query_id_fk";
     public static final String JOB_ID_FK_COLUMN = "job_id_fk";
     public static final String JOB_SQL_QUERY_TABLE_ID_COLUMN = "id";
+    public static final String JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN = "ui_order";
 
     public static final String JOB_CHILDREN_TABLE_ID_COLUMN = "id";
     public static final String JOB_CHILDREN_TABLE = "job_children";
@@ -80,7 +78,8 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_ID_FK_COLUMN, referencedColumnName = ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = SQL_QUERY_ID_FK_COLUMN, referencedColumnName = SqlQueryModel.ID_COLUMN)
     )
-    protected Set<SqlQueryModel> sqlQueries;
+    @OrderColumn(name = JobModel.JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN)
+    protected List<SqlQueryModel> sqlQueries = new LinkedList<>();
 
     @ManyToMany(fetch = FetchType.EAGER,  cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
@@ -154,11 +153,11 @@ public class JobModel {
         this.labels = labels;
     }
 
-    public Set<SqlQueryModel> getSqlQueries() {
+    public List<SqlQueryModel> getSqlQueries() {
         return sqlQueries;
     }
 
-    public void setSqlQueries(Set<SqlQueryModel> sqlQueries) {
+    public void setSqlQueries(List<SqlQueryModel> sqlQueries) {
         this.sqlQueries = sqlQueries;
     }
 

@@ -1,5 +1,6 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
@@ -30,7 +31,7 @@ public class JobApiControllerGetJobTest extends AbstractPostLoginApiTest {
         Datasource datasource = TestUtil.datasource();
         DbUtil.datasourceDbSetup(datasource);
 
-        jobModel.getSqlQueries().addAll(ImmutableSet.of(TestUtil.sqlQueryModel(datasource)));
+        jobModel.getSqlQueries().addAll(ImmutableList.of(TestUtil.sqlQueryModel(datasource)));
         DbUtil.sqlQueryDbSetUp(jobModel.getSqlQueries());
         DbUtil.jobSqlQueryDbSetUp(jobModel);
 

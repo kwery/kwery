@@ -39,11 +39,7 @@ public class JobExecutionDaoTestFilter extends RepoDashDaoTestBase {
     @Before
     public void setUpJobExecutionDaoTestFilter() {
         job0 = jobModelWithoutDependents();
-        job0.setSqlQueries(new HashSet<>());
-
         job1 = jobModelWithoutDependents();
-        job1.setSqlQueries(new HashSet<>());
-
         jobDbSetUp(ImmutableList.of(job0, job1));
 
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(getDatasource()),
