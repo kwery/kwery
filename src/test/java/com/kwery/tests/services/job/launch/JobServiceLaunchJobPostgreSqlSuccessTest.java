@@ -11,24 +11,18 @@ import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.util.PostgreSqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import ninja.postoffice.Mail;
 import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.HashSet;
 import java.util.List;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
-import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.sqlQueryModel;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.Matchers.*;
@@ -57,7 +51,6 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
     public void setUpJobServiceJobSetUpAbstractTest() {
         jobModel = jobModelWithoutDependents();
         jobModel.setCronExpression("* * * * *");
-        jobModel.setSqlQueries(new HashSet<>());
         jobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));
 
         datasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
@@ -79,25 +72,9 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
         }
 
         jobDbSetUp(jobModel);
-
         sqlQueryDbSetUp(jobModel.getSqlQueries());
-
         jobEmailDbSetUp(jobModel);
-
-        for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
-            new DbSetup(
-                    new DataSourceDestination(getDatasource()),
-                    Operations.sequenceOf(
-                            insertInto(JOB_SQL_QUERY_TABLE)
-                                    .row()
-                                    .column(ID_COLUMN, sqlQueryModel.getId())
-                                    .column(JOB_ID_FK_COLUMN, jobModel.getId())
-                                    .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
-                                    .end()
-                                    .build()
-                    )
-            ).launch();
-        }
+        jobSqlQueryDbSetUp(jobModel);
 
         jobExecutionDao = getInstance(JobExecutionDao.class);
         jobService = getInstance(JobService.class);

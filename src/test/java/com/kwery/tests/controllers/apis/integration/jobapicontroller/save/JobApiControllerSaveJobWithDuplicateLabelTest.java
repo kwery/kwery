@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
@@ -41,7 +40,6 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
     @Before
     public void setUpJobApiControllerSaveJobWithDuplicateLabelTest() {
         jobModel = jobModelWithoutDependents();
-        jobModel.setSqlQueries(new HashSet<>());
         jobModel.setName(jobLabel);
 
         datasource = datasource();

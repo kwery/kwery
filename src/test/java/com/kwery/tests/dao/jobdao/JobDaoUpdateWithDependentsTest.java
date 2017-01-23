@@ -29,13 +29,8 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoUpdateWithDependentsTest() {
         jobModel0 = jobModelWithoutDependents();
-        jobModel0.setSqlQueries(new HashSet<>());
-
         jobModel1 = jobModelWithoutDependents();
-        jobModel1.setSqlQueries(new HashSet<>());
-
         jobModel2 = jobModelWithoutDependents();
-        jobModel2.setSqlQueries(new HashSet<>());
 
         jobDbSetUp(ImmutableList.of(jobModel0, jobModel1, jobModel2));
 

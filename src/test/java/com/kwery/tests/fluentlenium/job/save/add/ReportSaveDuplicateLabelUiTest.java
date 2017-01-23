@@ -22,7 +22,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,6 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
 
         jobDto = jobDtoWithoutId();
 
-        jobModel.setSqlQueries(new HashSet<>());
         jobDto.setSqlQueries(new LinkedList<>());
 
         jobModel.setName(jobLabel);

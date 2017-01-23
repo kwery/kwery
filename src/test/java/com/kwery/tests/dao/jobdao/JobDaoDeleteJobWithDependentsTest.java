@@ -46,13 +46,13 @@ public class JobDaoDeleteJobWithDependentsTest extends RepoDashDaoTestBase {
         SqlQueryModel sqlQueryModel0 = sqlQueryModel();
         sqlQueryModel0.setDatasource(datasource);
         sqlQueryDbSetUp(sqlQueryModel0);
-        jobModel.setSqlQueries(ImmutableSet.of(sqlQueryModel0));
+        jobModel.setSqlQueries(ImmutableList.of(sqlQueryModel0));
         jobSqlQueryDbSetUp(jobModel);
 
         SqlQueryModel sqlQueryModel1 = sqlQueryModel();
         sqlQueryModel1.setDatasource(datasource);
         sqlQueryDbSetUp(sqlQueryModel1);
-        dependentJobModel.setSqlQueries(ImmutableSet.of(sqlQueryModel1));
+        dependentJobModel.setSqlQueries(ImmutableList.of(sqlQueryModel1));
         jobSqlQueryDbSetUp(dependentJobModel);
 
         JobExecutionModel jobExecutionModel = jobExecutionModel();
@@ -82,7 +82,7 @@ public class JobDaoDeleteJobWithDependentsTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JOB_TABLE, DbUtil.jobTable(new ArrayList<>())).build().assertTable();
         new DbTableAsserterBuilder(JOB_CHILDREN_TABLE, DbUtil.jobDependentTable(null)).build().assertTable();
         new DbTableAsserterBuilder(JOB_EMAIL_TABLE, DbUtil.jobEmailTable(null)).build().assertTable();
-        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, DbUtil.jobSqlQueryTable(null)).build().assertTable();
+        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, DbUtil.jobSqlQueryTable(null)).columnsToIgnore(JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(SQL_QUERY_TABLE, DbUtil.sqlQueryTable(new ArrayList<>())).build().assertTable();
         new DbTableAsserterBuilder(JobExecutionModel.TABLE, DbUtil.jobExecutionTable(null)).build().assertTable();
         new DbTableAsserterBuilder(SqlQueryExecutionModel.TABLE, DbUtil.sqlQueryExecutionTable(null)).build().assertTable();

@@ -1,5 +1,6 @@
 package com.kwery.tests.dao.jobexecutiondao;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
@@ -42,7 +43,7 @@ public class JobExecutionDaoQueryTest extends RepoDashDaoTestBase {
         sqlQueryDbSetUp(sqlQuery);
 
         jobModel = jobModelWithoutDependents();
-        jobModel.setSqlQueries(ImmutableSet.of(sqlQuery));
+        jobModel.setSqlQueries(ImmutableList.of(sqlQuery));
 
         jobExecutionModel = jobExecutionModel();
         jobExecutionModel.setJobModel(jobModel);

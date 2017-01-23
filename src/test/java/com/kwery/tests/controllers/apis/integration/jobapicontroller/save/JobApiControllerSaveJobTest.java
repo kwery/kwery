@@ -1,5 +1,6 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller.save;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.JobDao;
@@ -17,9 +18,11 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
 import static com.kwery.tests.util.TestUtil.jobDtoWithoutId;
@@ -62,7 +65,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         expectedJobModel.setCronExpression(jobDto.getCronExpression());
         expectedJobModel.setName(jobDto.getName());
         expectedJobModel.setEmails(emails);
-        expectedJobModel.setSqlQueries(new HashSet<>());
+        expectedJobModel.setSqlQueries(new LinkedList<>());
         expectedJobModel.setChildJobs(new HashSet<>());
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
@@ -86,6 +89,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
 
         JobModel jobModel = jobDao.getJobByName(jobDto.getName());
 
+        expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
         assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id"));
     }
 }

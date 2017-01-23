@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.HashSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,7 +67,6 @@ public class JobServiceScheduleDeschduleThreadingTest extends RepoDashTestBase {
 
     protected void scheduleDeschedule() {
         JobModel jobModel = jobModelWithoutDependents();
-        jobModel.setSqlQueries(new HashSet<>());
         jobModel.setCronExpression("* * * * *");
 
         int id = jobId++;

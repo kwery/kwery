@@ -48,10 +48,10 @@ public class JobExecutionDaoUpdateTest extends RepoDashDaoTestBase {
         sqlQueryDbSetUp(sqlQuery);
 
         jobModel = jobModelWithoutDependents();
-        jobModel.setSqlQueries(ImmutableSet.of(sqlQuery));
+        jobModel.setSqlQueries(ImmutableList.of(sqlQuery));
 
         jobModel0 = jobModelWithoutDependents();
-        jobModel0.setSqlQueries(ImmutableSet.of(sqlQuery));
+        jobModel0.setSqlQueries(ImmutableList.of(sqlQuery));
 
         jobExecutionModel = TestUtil.jobExecutionModel();
         jobExecutionModel.setJobModel(jobModel);

@@ -14,7 +14,7 @@ public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
         List<ReportListRow> rows = page.rows();
         for (int j = 0; j < rows.size(); ++j) {
             ReportListRow row = rows.get(j);
-            if (!parentJobLabel.equals(row.getLabel())) {
+            if (!parentJobName.equals(row.getLabel())) {
                 page.deleteReport(j);
                 page.waitForRows(2);
                 page.waitForDeleteSuccessMessage();
@@ -25,7 +25,7 @@ public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
         rows = page.rows();
         for (int j = 0; j < rows.size(); ++j) {
             ReportListRow row = rows.get(j);
-            if (!parentJobLabel.equals(row.getLabel())) {
+            if (!parentJobName.equals(row.getLabel())) {
                 page.deleteReport(j);
                 page.waitForRows(1);
                 page.waitForDeleteSuccessMessage();
@@ -34,7 +34,7 @@ public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
         }
 
         assertThat(page.rows(), hasSize(1));
-        assertThat(page.rows().get(0).getLabel(), is(parentJobLabel));
+        assertThat(page.rows().get(0).getLabel(), is(parentJobName));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
         List<ReportListRow> rows = page.rows();
         for (int j = 0; j < rows.size(); ++j) {
             ReportListRow row = rows.get(j);
-            if (parentJobLabel.equals(row.getLabel())) {
+            if (parentJobName.equals(row.getLabel())) {
                 page.deleteReport(j);
                 page.waitForDeleteFailureMessage();
                 break;

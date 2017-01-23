@@ -11,13 +11,10 @@ import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 
-import java.util.HashSet;
-
 import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.sqlQueryModel;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
 
 public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobServiceJobSetUpAbstractTest {
     protected JobModel dependentJobModel;
@@ -33,7 +30,6 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
     public void setUpJobServiceJobSetUpWithDependentsAbstractTest() {
         dependentJobModel = jobModelWithoutDependents();
         dependentJobModel.setCronExpression("");
-        dependentJobModel.setSqlQueries(new HashSet<>());
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryModel sqlQueryModel = sqlQueryModel(datasource);
@@ -47,23 +43,8 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
         }
 
         jobDbSetUp(dependentJobModel);
-
         sqlQueryDbSetUp(dependentJobModel.getSqlQueries());
-
-        for (SqlQueryModel sqlQueryModel : dependentJobModel.getSqlQueries()) {
-            new DbSetup(
-                    new DataSourceDestination(getDatasource()),
-                    Operations.sequenceOf(
-                            insertInto(JOB_SQL_QUERY_TABLE)
-                                    .row()
-                                    .column(ID_COLUMN, sqlQueryModel.getId())
-                                    .column(JOB_ID_FK_COLUMN, dependentJobModel.getId())
-                                    .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
-                                    .end()
-                                    .build()
-                    )
-            ).launch();
-        }
+        jobSqlQueryDbSetUp(dependentJobModel);
 
         new DbSetup(
                 new DataSourceDestination(getDatasource()),

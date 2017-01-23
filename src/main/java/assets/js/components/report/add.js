@@ -86,8 +86,11 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             }),
             $.ajax({
                 url: "/api/job/list",
-                type: "GET",
+                type: "POST",
                 contentType: "application/json",
+                data: ko.toJSON({
+                    jobLabelId: 0
+                }),
                 success: function(reports) {
                     ko.utils.arrayForEach(reports, function(jobModelHackDto){
                         var report = jobModelHackDto.jobModel;
