@@ -12,6 +12,11 @@ define(["knockout", "jquery", "text!components/action-result.html"], function (k
             return self.status() === "failure";
         }, self);
 
+        $(document).ajaxError(function(){
+            self.status("failure");
+            self.messages([ko.i18n("server.error")]);
+        });
+
         return self;
     }
     return { viewModel: viewModel, template: template };
