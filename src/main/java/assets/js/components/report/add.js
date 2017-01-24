@@ -1,5 +1,5 @@
-define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron", "waitingmodal", "jstorage"],
-    function (ko, $, template, validator, jqueryCron, waitingModal) {
+define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron", "waitingmodal", "ajaxutil", "jstorage"],
+    function (ko, $, template, validator, jqueryCron, waitingModal, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -103,48 +103,60 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         }
                     });
                 }
-            })
-        ).done(function(){
-            if (isUpdate) {
-                $.ajax({
-                    url: "/api/job/" + reportId,
-                    type: "GET",
-                    contentType: "application/json",
-                    success: function(jobModelHackDto) {
-                        var report = jobModelHackDto.jobModel;
-                        self.title(report.title);
-                        self.reportName(report.name);
-                        self.reportEmails(report.emails.join(", "));
+            }),
+            $.ajax({
+                url: "/api/job-label/list",
+                type: "GET",
+                contentType: "application/json",
+                success: function (jobLabelModelHackDtos) {
+                    buildLabelTree(jobLabelModelHackDtos);
+                    populateDisplayLabels(root, 0);
+                }
+            }),
+            (function(){
+                if (isUpdate) {
+                    return $.ajax({
+                        url: "/api/job/" + reportId,
+                        type: "GET",
+                        contentType: "application/json",
+                        success: function(jobModelHackDto) {
+                            var report = jobModelHackDto.jobModel;
+                            self.title(report.title);
+                            self.reportName(report.name);
+                            self.reportEmails(report.emails.join(", "));
 
-                        if (jobModelHackDto.parentJobModel != null) {
-                            self.scheduleOption("parentReport");
-                            self.parentReportId(jobModelHackDto.parentJobModel.id);
-                        } else {
-                            self.cronExpression(report.cronExpression);
+                            if (jobModelHackDto.parentJobModel != null) {
+                                self.scheduleOption("parentReport");
+                                self.parentReportId(jobModelHackDto.parentJobModel.id);
+                            } else {
+                                self.cronExpression(report.cronExpression);
+                            }
+
+                            $.each(report.sqlQueries, function(index, sqlQuery){
+                                var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
+                                self.queries.push(query);
+                            });
+
+                            if (jobModelHackDto.jobModel.labels.length > 0) {
+                                //Pop the empty label value since we have labels to show
+                                self.labelIds.pop();
+                            }
+
+                            $.each(jobModelHackDto.jobModel.labels, function(index, label){
+                                self.labelIds.push(new LabelId(label.id));
+                            });
+
+                            self.emptyReportNoEmailRule(jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === undefined ? false : (jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === "true") );
+
                         }
-
-                        $.each(report.sqlQueries, function(index, sqlQuery){
-                            var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
-                            self.queries.push(query);
-                        });
-
-                        if (jobModelHackDto.jobModel.labels.length > 0) {
-                            //Pop the empty label value since we have labels to show
-                            self.labelIds.pop();
-                        }
-
-                        $.each(jobModelHackDto.jobModel.labels, function(index, label){
-                            self.labelIds.push(new LabelId(label.id));
-                        });
-
-                        self.emptyReportNoEmailRule(jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === undefined ? false : (jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === "true") );
-
-                        self.refreshValidation();
-                    }
-                })
-            }
-        }).always(function(){
+                    })
+                } else {
+                    return $.when();
+                }
+            })()
+        ).always(function(){
             waitingModal.hide();
+            self.refreshValidation();
         });
 
         self.addSqlQuery = function() {
@@ -223,14 +235,11 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     report.id = reportId;
                 }
 
-                $.ajax({
+                ajaxUtil.waitingAjax({
                     url: "/api/job/save",
                     data: ko.toJSON(report),
                     type: "POST",
                     contentType: "application/json",
-                    beforeSend: function() {
-                        waitingModal.show();
-                    },
                     success: function(result) {
                         if (result.status === "success") {
                             if ($.jStorage.storageAvailable()) {
@@ -241,7 +250,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                 throw new Error("Not enough space available to store result in browser");
                             }
                         } else {
-                            waitingModal.hide();
                             self.status(result.status);
                             self.messages(result.messages);
                         }
@@ -365,16 +373,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             });
         };
 
-        //Get current labels
-        $.ajax({
-            url: "/api/job-label/list",
-            type: "GET",
-            contentType: "application/json",
-            success: function (jobLabelModelHackDtos) {
-                buildLabelTree(jobLabelModelHackDtos);
-                populateDisplayLabels(root, 0);
-            }
-        });
         //Label related - end
 
         return self;

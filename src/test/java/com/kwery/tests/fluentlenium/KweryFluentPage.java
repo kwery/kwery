@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toList;
 
 public class KweryFluentPage extends FluentPage {
     public void waitForModalDisappearance() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".waiting-modal-f").isNotDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".modal-backdrop").isNotPresent();
     }
 
     public void waitForModalAppearance() {

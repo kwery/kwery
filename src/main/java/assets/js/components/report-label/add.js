@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/report-label/add.html", "waitingmodal", "jstorage", "validator"], function (ko, $, template, waitingModal) {
+define(["knockout", "jquery", "text!components/report-label/add.html", "waitingmodal", "ajaxutil", "jstorage", "validator"], function (ko, $, template, waitingModal, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -153,7 +153,7 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                     populateDisplayLabels(root, 0);
                 }
             })
-        ).done(function(){
+        ).then(function(){
             if (isUpdate) {
                 return $.ajax({
                     url: "/api/job-label/" + self.labelId(),
@@ -169,12 +169,10 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                             }
                         }
                     }
-                }).always(function(){
-                    waitingModal.hide();
-                });
-            } else {
-                waitingModal.hide();
+                })
             }
+        }).always(function(){
+            waitingModal.hide();
             self.refreshValidation();
         });
 
@@ -183,7 +181,7 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                 disable: false
             }).on("submit", function (e) {
                 if (!e.isDefaultPrevented()) {//Valid form
-                    $.ajax({
+                    ajaxUtil.waitingAjax({
                         url: "/api/job-label/save",
                         type: "POST",
                         data: ko.toJSON({
@@ -192,9 +190,6 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                             parentLabelId: self.parentLabelOpted() ? self.parentLabelId() : 0,
                         }),
                         contentType: "application/json",
-                        beforeSend: function() {
-                            waitingModal.show();
-                        },
                         success: function(result) {
                             if (result.status === "success") {
                                 if ($.jStorage.storageAvailable()) {
@@ -205,7 +200,6 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                                     throw new Error("Not enough space available to store result in browser");
                                 }
                             } else {
-                                waitingModal.hide();
                                 self.status(result.status);
                                 self.messages(result.messages);
                             }

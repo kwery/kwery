@@ -66,14 +66,11 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                     datasource.id = params.datasourceId;
                 }
 
-                $.ajax({
+                ajaxUtil.waitingAjax({
                     url: "/api/datasource/add-datasource",
                     data: ko.toJSON(datasource),
                     type: "POST",
                     contentType: "application/json",
-                    beforeSend: function(){
-                        waitingModal.show();
-                    },
                     success: function(result) {
                         if (result.status === "success") {
                             if ($.jStorage.storageAvailable()) {
@@ -84,7 +81,6 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                                 throw new Error("Not enough space available to store result in browser");
                             }
                         } else {
-                            waitingModal.hide();
                             self.status(result.status);
                             self.messages(result.messages);
                         }
