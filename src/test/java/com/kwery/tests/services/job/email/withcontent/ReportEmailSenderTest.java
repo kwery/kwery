@@ -20,7 +20,7 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
     public void test() throws IOException {
         getInstance(ReportEmailSender.class).send(jobExecutionModel);
 
-        String expectedSubject = "Thu Dec 22 2016 21:29 - Test Report";
+        String expectedSubject = "Test Report - Thu Dec 22 2016 21:29";
 
         MailService mailService = getInstance(MailService.class);
         Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
