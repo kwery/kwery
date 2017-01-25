@@ -109,4 +109,6 @@ public class Messages {
     public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL_M = "There are reports which have label {0}";
     public static final String JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN_M = "There are labels which are nested under {0}";
     public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS_M = "Label {0} deleted successfully";
+
+    public static final String JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION_M = "{0} is not a valid cron expression";
 }
