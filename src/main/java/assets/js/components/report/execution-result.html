@@ -12,16 +12,16 @@
                     <div class="panel-title pull-left">
                         <h3 data-bind="text: label" class="panel-title text-left"></h3>
                     </div>
-                    <!-- ko if: downloadLink !== undefined -->
                         <div class="panel-title pull-right">
                             <div class="text-right">
-                                <a data-bind="attr: {href: downloadLink, title: ko.i18n('report.execution.result.download.tooltip')}">
-                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-                                </a>
+                                <!-- ko if: downloadLink !== undefined -->
+                                    <a data-bind="attr: {href: downloadLink, title: ko.i18n('report.execution.result.download.tooltip')}">
+                                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                    </a>
+                                <!-- /ko -->
                             </div>
                         </div>
                         <div class="clearfix"></div>
-                    <!-- /ko -->
                 </div>
                 <div class="panel-body">
                     <div data-bind="visible: status === 'FAILURE'">
