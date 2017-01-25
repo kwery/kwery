@@ -7,6 +7,7 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
@@ -79,6 +81,9 @@ public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
         parentJobModel.getSqlQueries().add(parentSqlQueryModel);
 
         jobSqlQueryDbSetUp(parentJobModel);
+
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
 
         ninjaServerRule.getInjector().getInstance(JobService.class).schedule(parentJobModel.getId());
 

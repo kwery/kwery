@@ -4,9 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
-import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
+import com.kwery.tests.fluentlenium.job.save.update.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
@@ -17,8 +18,8 @@ import org.junit.rules.RuleChain;
 
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static com.kwery.tests.util.TestUtil.sqlQueryModel;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -54,6 +55,9 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
 
         jobModel.getSqlQueries().add(sqlQueryModel);
         jobSqlQueryDbSetUp(jobModel);
+
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
 
         page = createPage(ReportUpdatePage.class);
         page.setReportId(jobModel.getId());

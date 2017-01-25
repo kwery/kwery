@@ -23,6 +23,8 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.queries = ko.observableArray([]);
         self.emptyReportNoEmailRule = ko.observable(false);
 
+        self.enableEmails = ko.observable(false);
+
         self.scheduleOption.subscribe(function(newVal){
             $("#parentReport").attr("data-validate", false);
             $("#cronExpression").attr("data-validate", false);
@@ -111,6 +113,15 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                 success: function (jobLabelModelHackDtos) {
                     buildLabelTree(jobLabelModelHackDtos);
                     populateDisplayLabels(root, 0);
+                }
+            }),
+            $.ajax("/api/mail/smtp-configuration", {
+                type: "GET",
+                contentType: "application/json",
+                success: function(conf) {
+                    if (conf != null) {
+                        self.enableEmails(true);
+                    }
                 }
             }),
             (function(){

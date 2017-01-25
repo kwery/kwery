@@ -7,6 +7,7 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.text.MessageFormat.format;
@@ -78,6 +80,9 @@ public class ReportSaveServerValidationUiTest extends ChromeFluentTest {
         jobDbSetUp(jobModel);
         sqlQueryDbSetUp(sqlQueryModel);
         jobSqlQueryDbSetUp(jobModel);
+
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
 
         page = createPage(ReportSavePage.class);
         page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);

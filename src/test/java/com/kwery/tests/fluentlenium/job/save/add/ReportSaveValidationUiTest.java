@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.job.save.add;
 
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField;
@@ -16,6 +17,8 @@ import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormFie
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.parentReportId;
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SELECT_VALIDATION_ERROR_MESSAGE;
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField.datasourceId;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.smtpConfiguration;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -31,6 +34,9 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpReportSaveValidationUiTest() {
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
+
         page = createPage(ReportSavePage.class);
         page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
 

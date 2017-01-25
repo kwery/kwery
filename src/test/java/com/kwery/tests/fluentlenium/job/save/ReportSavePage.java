@@ -35,7 +35,9 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
         fill(".f-report-name").with(jobForm.getName());
 
         //TODO - Tests with empty emails etc
-        fill(".f-report-emails").with(String.join(",", jobForm.getEmails()));
+        if (isEmailFieldEnabled()) {
+            fill(".f-report-emails").with(String.join(",", jobForm.getEmails()));
+        }
 
         if ($(className("parent-report-option-f")).first().isSelected()) {
             fillSelect(".f-parent-report").withText(parentJobIdToLabelMap.get(jobForm.getParentJobId()));
@@ -58,10 +60,12 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
             fillSelect(".f-sql-query" + i + " .f-datasource").withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
         }
 
-        if (jobForm.isEmptyReportNoEmailRule()) {
-            ensureEmailRuleChecked();
-        } else {
-            ensureEmailRuleUnchecked();
+        if (isEmptyReportNoEmailRuleEnabled()) {
+            if (jobForm.isEmptyReportNoEmailRule()) {
+                ensureEmailRuleChecked();
+            } else {
+                ensureEmailRuleUnchecked();
+            }
         }
 
         int i = 0;
@@ -206,5 +210,13 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
 
     public void waitForReportListPage() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#report/list"));
+    }
+
+    public boolean isEmailFieldEnabled() {
+        return findFirst(className("f-report-emails")).isEnabled();
+    }
+
+    public boolean isEmptyReportNoEmailRuleEnabled() {
+        return findFirst(className("no-email-rule-f")).isEnabled();
     }
 }
