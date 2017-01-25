@@ -87,7 +87,7 @@ public class JobApiController {
 
         List<String> errorMessages = new LinkedList<>();
 
-        if (!SchedulingPattern.validate(jobDto.getCronExpression())) {
+        if (jobDto.getParentJobId() == 0 && !SchedulingPattern.validate(jobDto.getCronExpression())) {
             String message = messages.get(JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION, context, Optional.of(json), jobDto.getCronExpression()).get();
             errorMessages.add(message);
         }
