@@ -28,6 +28,8 @@ import static junit.framework.TestCase.fail;
 import static org.junit.rules.RuleChain.outerRule;
 
 public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
+    protected boolean smtpConfigurationSave = true;
+
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -75,8 +77,10 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
 
         jobSqlQueryDbSetUp(parentJobModel);
 
-        SmtpConfiguration smtpConfiguration = smtpConfiguration();
-        smtpConfigurationDbSetUp(smtpConfiguration);
+        if (smtpConfigurationSave) {
+            SmtpConfiguration smtpConfiguration = smtpConfiguration();
+            smtpConfigurationDbSetUp(smtpConfiguration);
+        }
 
         ninjaServerRule.getInjector().getInstance(JobService.class).schedule(parentJobModel.getId());
 
@@ -94,5 +98,13 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
         ));
 
         page.waitForModalDisappearance();
+    }
+
+    public boolean isSmtpConfigurationSave() {
+        return smtpConfigurationSave;
+    }
+
+    public void setSmtpConfigurationSave(boolean smtpConfigurationSave) {
+        this.smtpConfigurationSave = smtpConfigurationSave;
     }
 }
