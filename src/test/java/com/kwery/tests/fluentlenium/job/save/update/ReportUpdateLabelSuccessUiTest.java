@@ -6,7 +6,6 @@ import com.kwery.dao.JobLabelDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.models.*;
 import com.kwery.services.job.JobService;
-import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;

@@ -7,7 +7,7 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SmtpConfiguration;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
-import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
+import com.kwery.tests.fluentlenium.job.save.update.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;

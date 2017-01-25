@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.job.save.add;
+package com.kwery.tests.fluentlenium.job.save.update;
 
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 
