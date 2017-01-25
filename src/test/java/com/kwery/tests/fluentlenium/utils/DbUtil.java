@@ -541,6 +541,23 @@ public class DbUtil {
         }
     }
 
+    public static void smtpConfigurationDbSetUp(SmtpConfiguration smtpConfiguration) {
+        new DbSetup(new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
+                                .row()
+                                .column(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
+                                .column(SmtpConfiguration.COLUMN_HOST, smtpConfiguration.getHost())
+                                .column(SmtpConfiguration.COLUMN_PORT, smtpConfiguration.getPort())
+                                .column(SmtpConfiguration.COLUMN_SSL, smtpConfiguration.isSsl())
+                                .column(SmtpConfiguration.COLUMN_USERNAME, smtpConfiguration.getUsername())
+                                .column(SmtpConfiguration.COLUMN_PASSWORD, smtpConfiguration.getPassword())
+                                .end()
+                                .build()
+                )
+        ).launch();
+    }
+
     public static int dbId() {
         return RandomUtils.nextInt(1, TestUtil.DB_START_ID + 1);
     }

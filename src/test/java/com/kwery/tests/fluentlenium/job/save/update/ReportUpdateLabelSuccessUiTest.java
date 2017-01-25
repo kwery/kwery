@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.dao.JobLabelDao;
 import com.kwery.dao.SqlQueryDao;
-import com.kwery.models.Datasource;
-import com.kwery.models.JobLabelModel;
-import com.kwery.models.JobModel;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
@@ -23,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -75,6 +73,9 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
 
         jobLabelModel2 = jobLabelModel();
         jobLabelDbSetUp(jobLabelModel2);
+
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
 
         page = createPage(ReportUpdatePage.class);
         page.setReportId(jobModel.getId());

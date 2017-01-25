@@ -86,14 +86,20 @@
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.save.emails')" class="control-label" for="emails"></label>
-                    <input data-bind="value: reportEmails" type="text" class="form-control f-report-emails" name="emails" id="emails">
+                    <input data-bind="value: reportEmails, enable: enableEmails" type="text" class="form-control f-report-emails" name="emails" id="emails">
+                    <div data-bind="visible: !enableEmails()">
+                        <a data-bind="text: ko.i18n('report.save.configure.smtp')" href="/#email/configuration"></a>
+                    </div>
                     <div class="help-block with-errors emails-form-validation-message-f"></div>
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input data-bind="checked: emptyReportNoEmailRule" class="no-email-rule-f" name="noEmailRule" type="checkbox">
+                        <input data-bind="checked: emptyReportNoEmailRule, enable: enableEmails" class="no-email-rule-f" name="noEmailRule" type="checkbox">
                         <span data-bind="text: ko.i18n('report.save.empty.report.no.email.rule')"> </span>
                     </label>
+                    <div data-bind="visible: !enableEmails()">
+                        <a data-bind="text: ko.i18n('report.save.configure.smtp')" href="/#email/configuration"></a>
+                    </div>
                 </div>
 
                 <!-- ko foreach: {data: queries, afterRender: refreshValidation} -->
