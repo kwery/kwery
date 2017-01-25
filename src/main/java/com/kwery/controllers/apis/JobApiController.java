@@ -18,6 +18,7 @@ import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.utils.KweryUtil;
 import com.kwery.views.ActionResult;
+import it.sauronsoftware.cron4j.SchedulingPattern;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -85,6 +86,11 @@ public class JobApiController {
         Result json = json();
 
         List<String> errorMessages = new LinkedList<>();
+
+        if (!SchedulingPattern.validate(jobDto.getCronExpression())) {
+            String message = messages.get(JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION, context, Optional.of(json), jobDto.getCronExpression()).get();
+            errorMessages.add(message);
+        }
 
         JobModel jobByLabel = jobDao.getJobByName(jobDto.getName());
         if (jobByLabel != null) {

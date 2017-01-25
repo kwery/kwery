@@ -15,8 +15,6 @@ import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import junit.framework.TestCase;
 import org.dozer.DozerBeanMapper;
-import org.hamcrest.collection.IsIterableContainingInAnyOrder;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,12 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_NAME_EXISTS_M;
-import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M;
+import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.text.MessageFormat.format;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
 
-public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
+public class ReportSaveServerValidationUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -100,11 +99,19 @@ public class ReportSaveDuplicateLabelUiTest extends ChromeFluentTest {
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobForm jobForm = mapper.map(jobDto, JobForm.class);
+
+        String invalidCron = "foo bar moo";
+
+        jobForm.setCronExpression(invalidCron);
         page.fillAndSubmitReportSaveForm(jobForm);
         page.waitForFailureMessageDisplay();
 
-        List<String> expectedErrorMessages = ImmutableList.of(format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel));
+        List<String> expectedErrorMessages = ImmutableList.of(
+                format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel),
+                format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel),
+                format(JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION_M, invalidCron)
+        );
 
-        Assert.assertThat(expectedErrorMessages, IsIterableContainingInAnyOrder.containsInAnyOrder(page.getErrorMessages().toArray(new String[2])));
+        assertThat(expectedErrorMessages, containsInAnyOrder(page.getErrorMessages().toArray(new String[2])));
     }
 }
