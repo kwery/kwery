@@ -46,8 +46,7 @@ public class ReportEmailSender {
     public void send(JobExecutionModel jobExecutionModel) {
         JobModel jobModel = jobExecutionModel.getJobModel();
 
-        String subject = new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(jobExecutionModel.getExecutionStart()))
-                + " - " + jobModel.getTitle();
+        String subject =jobModel.getTitle() + " - " + new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(jobExecutionModel.getExecutionStart()));
 
         try {
             List<String> emailSnippets = new LinkedList<>();
