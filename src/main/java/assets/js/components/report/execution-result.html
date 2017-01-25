@@ -30,25 +30,26 @@
                     <div data-bind="visible: status === 'KILLED'">
                         <p data-bind="text: status"></p>
                     </div>
-                    <table data-bind="visible: status === 'SUCCESS'" class="table" id="executionResultTable">
-                        <thead>
-                        <tr data-bind="foreach: header" id="resultHeader">
-                            <th data-bind="text: $data"></th>
-                        </tr>
-                        </thead>
-                        <tbody id="resultContent">
-                        <!-- ko foreach: content -->
+                    <div class="table-responsive">
+                        <table data-bind="visible: status === 'SUCCESS'" class="table" id="executionResultTable">
+                            <thead>
+                            <tr data-bind="foreach: header" id="resultHeader">
+                                <th data-bind="text: $data"></th>
+                            </tr>
+                            </thead>
+                            <tbody id="resultContent">
+                            <!-- ko foreach: content -->
                             <tr>
                                 <!-- ko foreach: $data -->
-                                    <td data-bind="text: $data"></td>
+                                <td data-bind="text: $data"></td>
                                 <!-- /ko -->
                             </tr>
-                        <!-- /ko -->
-                        </tbody>
-                    </table>
+                            <!-- /ko -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             <!-- /ko -->
-
         </div>
     </div>
 </div>
