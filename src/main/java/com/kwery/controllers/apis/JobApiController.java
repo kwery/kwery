@@ -17,6 +17,7 @@ import com.kwery.services.job.JobService;
 import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.utils.KweryUtil;
+import com.kwery.utils.ReportUtil;
 import com.kwery.views.ActionResult;
 import it.sauronsoftware.cron4j.SchedulingPattern;
 import ninja.Context;
@@ -297,7 +298,7 @@ public class JobApiController {
         } else {
             List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
             if (!jobExecutionModels.isEmpty()) {
-                for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModel.getSqlQueryExecutionModels()) {
+                for (SqlQueryExecutionModel sqlQueryExecutionModel : ReportUtil.orderedExecutions(jobExecutionModel)) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     String result = sqlQueryExecutionModel.getResult();
 

@@ -30,6 +30,7 @@ public abstract class AbstractReportEmailWithoutContentSender extends RepoDashTe
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(getEmptyReportEmailRule())));
 
         sqlQueryModel0 = new SqlQueryModel();
+        sqlQueryModel0.setId(1);
         sqlQueryModel0.setTitle("Select Authors");
         jobModel.getSqlQueries().add(sqlQueryModel0);
 
