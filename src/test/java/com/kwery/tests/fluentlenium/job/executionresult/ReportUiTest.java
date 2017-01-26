@@ -1,28 +1,29 @@
-package com.kwery.tests.controllers.apis.integration.jobapicontroller.executionresult;
+package com.kwery.tests.fluentlenium.job.executionresult;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.matchers.JsonPathMatchers;
-import com.kwery.controllers.apis.JobApiController;
 import com.kwery.models.*;
-import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.kwery.tests.util.ChromeFluentTest;
+import com.kwery.tests.util.LoginRule;
+import com.kwery.tests.util.NinjaServerRule;
 import com.kwery.tests.util.TestUtil;
-import net.minidev.json.JSONArray;
-import ninja.Router;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 
-import java.io.IOException;
-
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static com.kwery.models.SqlQueryExecutionModel.Status.*;
+import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import static org.junit.rules.RuleChain.outerRule;
 
-public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLoginApiTest {
+public class ReportUiTest extends ChromeFluentTest {
+    protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+
+    @Rule
+    public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
+
     private JobExecutionModel jobExecutionModel;
     private JobModel jobModel;
     private SqlQueryModel insertQuery;
@@ -32,6 +33,10 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
     private SqlQueryExecutionModel failedSqlQueryExecutionModel;
     private SqlQueryExecutionModel successSqlQueryExecutionModel;
     private String jsonResult;
+
+    protected ReportPage page;
+    private SqlQueryExecutionModel killedSqlQueryExecutionModel;
+    private SqlQueryModel killedQuery;
 
     @Before
     public void setUp() {
@@ -53,11 +58,7 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
         successQuery.setTitle("success query");
         DbUtil.sqlQueryDbSetUp(successQuery);
 
-        SqlQueryModel killedSqlQuery = TestUtil.sqlQueryModel(datasource);
-        killedSqlQuery.setTitle("killed query");
-        DbUtil.sqlQueryDbSetUp(killedSqlQuery);
-
-        jobModel.setSqlQueries(ImmutableList.of(insertQuery, failedQuery, successQuery, killedSqlQuery));
+        jobModel.setSqlQueries(ImmutableList.of(insertQuery, failedQuery, successQuery));
 
         DbUtil.jobSqlQueryDbSetUp(jobModel);
 
@@ -92,34 +93,42 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
         successSqlQueryExecutionModel.setResult(jsonResult);
         DbUtil.sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
 
-        SqlQueryExecutionModel killedSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
-        killedSqlQueryExecutionModel.setSqlQuery(killedSqlQuery);
-        killedSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
-        killedSqlQueryExecutionModel.setStatus(KILLED);
-        killedSqlQueryExecutionModel.setResult(null);
-        DbUtil.sqlQueryExecutionDbSetUp(killedSqlQueryExecutionModel);
+        page = createPage(ReportPage.class);
+        page.setJobId(jobModel.getId());
+        page.setExecutionId(jobExecutionModel.getExecutionId());
+        page.setExpectedReportSections(jobModel.getSqlQueries().size());
+
+        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+
+        if (!page.isRendered()) {
+            fail("Failed to render report page");
+        }
     }
 
     @Test
-    public void test() throws IOException {
-        String url = getInjector().getInstance(Router.class).getReverseRoute(JobApiController.class, "jobExecutionResult",
-                ImmutableMap.of("jobExecutionId", jobExecutionModel.getExecutionId()));
-        String response = ninjaTestBrowser.makeJsonRequest(getUrl(url));
-        assertThat(response, JsonPathMatchers.isJson());
-        assertThat(response, hasJsonPath("$.title", is(jobModel.getTitle())));
+    public void test() {
+        assertThat(page.reportHeader(), is(jobModel.getTitle()));
 
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[0].title", is(insertQuery.getTitle())));
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[0].status", is(SUCCESS.name())));
+        assertThat(page.sectionTitle(0), is(insertQuery.getTitle()));
+        assertThat(page.sectionTitle(1), is(failedQuery.getTitle()));
+        assertThat(page.sectionTitle(2), is(successQuery.getTitle()));
 
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[1].title", is(failedQuery.getTitle())));
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[1].status", is(FAILURE.name())));
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[1].errorResult", is(failedSqlQueryExecutionModel.getResult())));
+        assertThat(page.isDownloadLinkPresent(0), is(false));
+        assertThat(page.isDownloadLinkPresent(1), is(false));
+        assertThat(page.isDownloadLinkPresent(2), is(true));
 
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[2].title", is(successQuery.getTitle())));
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[2].status", is(SUCCESS.name())));
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[2].executionId", is(successSqlQueryExecutionModel.getExecutionId())));
+/*        assertThat(page.isTableDisplayed(0), is(false));
+        assertThat(page.isTableDisplayed(1), is(false));
+        assertThat(page.isTableDisplayed(2), is(true));*/
 
-        JSONArray jsonArray = JsonPath.read(response, "$.sqlQueryExecutionResultDtos[2].jsonResult");
-        assertThat(TestUtil.toJson(jsonArray), sameJSONAs(jsonResult));
+        assertThat(page.isTableEmpty(0), is(true));
+
+        assertThat(page.getContent(1), is(failedSqlQueryExecutionModel.getResult()));
+
+        assertThat(page.tableHeaders(2), is(ImmutableList.of("header0", "header1")));
+        assertThat(page.tableRows(2, 0), is(ImmutableList.of("foo", "bar")));
+        assertThat(page.tableRows(2, 1), is(ImmutableList.of("goo", "boo")));
+
+        assertThat(page.downloadReportLink(2), is(String.format(ninjaServerRule.getServerUrl() + "/api/report/csv/%s", successSqlQueryExecutionModel.getExecutionId())));
     }
 }
