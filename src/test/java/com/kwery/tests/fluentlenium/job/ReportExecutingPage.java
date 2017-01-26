@@ -62,4 +62,5 @@ public class ReportExecutingPage extends KweryFluentPage implements RepoDashPage
     public String getUrl() {
         return "/#report/executing";
     }
+
 }
