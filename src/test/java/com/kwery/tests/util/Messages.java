@@ -111,4 +111,7 @@ public class Messages {
     public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS_M = "Label {0} deleted successfully";
 
     public static final String JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION_M = "{0} is not a valid cron expression";
+
+    public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND_M = "Report not found";
 }
+
