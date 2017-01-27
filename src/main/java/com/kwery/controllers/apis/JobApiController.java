@@ -220,7 +220,7 @@ public class JobApiController {
             totalCount = jobDao.getJobsByJobLabelIds(allLabelIds).size();
         }
 
-        jobSearchFilter.setPageNo(filterDto.getPageNo());
+        jobSearchFilter.setPageNo(filterDto.getPageNumber());
         jobSearchFilter.setResultCount(filterDto.getResultCount());
 
         List<JobModel> jobs = jobDao.filterJobs(jobSearchFilter);

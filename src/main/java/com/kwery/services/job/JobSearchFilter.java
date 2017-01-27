@@ -1,11 +1,12 @@
 package com.kwery.services.job;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class JobSearchFilter {
     protected int resultCount;
     protected int pageNo;
-    protected Set<Integer> jobLabelIds;
+    protected Set<Integer> jobLabelIds = new HashSet<>();
 
     public int getResultCount() {
         return resultCount;

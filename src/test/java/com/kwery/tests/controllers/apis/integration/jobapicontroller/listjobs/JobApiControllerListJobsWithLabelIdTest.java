@@ -1,4 +1,4 @@
-package com.kwery.tests.controllers.apis.integration.jobapicontroller;
+package com.kwery.tests.controllers.apis.integration.jobapicontroller.listjobs;
 
 import com.google.common.collect.ImmutableSet;
 import com.jayway.jsonpath.Configuration;
@@ -33,7 +33,7 @@ import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class JobApiControllerListJobsTest extends AbstractPostLoginApiTest {
+public class JobApiControllerListJobsWithLabelIdTest extends AbstractPostLoginApiTest {
     private JobLabelModel jobLabelModel;
     private JobModel jobModel0;
     private JobModel jobModel1;
@@ -89,7 +89,7 @@ public class JobApiControllerListJobsTest extends AbstractPostLoginApiTest {
 
         JobListFilterDto filter = new JobListFilterDto();
         filter.setJobLabelId(jobLabelModel.getId());
-        filter.setPageNo(0);
+        filter.setPageNumber(0);
         filter.setResultCount(1);
 
         String response = ninjaTestBrowser.postJson(getUrl(url), filter);
@@ -100,7 +100,7 @@ public class JobApiControllerListJobsTest extends AbstractPostLoginApiTest {
         JobModelHackDto jobModelHackDto0 = JsonPath.parse(response).read("$.jobModelHackDtos[0]", JobModelHackDto.class);
         assertThat(jobModelHackDto0.getJobModel(), BeanMatchers.theSameBeanAs(jobMap.get(jobModelHackDto0.getJobModel().getName())));
 
-        filter.setPageNo(1);
+        filter.setPageNumber(1);
 
         response = ninjaTestBrowser.postJson(getUrl(url), filter);
         assertThat(response, isJson());
