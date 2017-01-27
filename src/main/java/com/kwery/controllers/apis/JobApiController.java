@@ -212,10 +212,12 @@ public class JobApiController {
 
         JobSearchFilter jobSearchFilter = new JobSearchFilter();
 
+        int totalCount = jobDao.getAllJobs().size();
         if (filterDto.getJobLabelId() != 0) {
             JobLabelModel label = jobLabelDao.getJobLabelModelById(filterDto.getJobLabelId());
             Set<Integer> allLabelIds = KweryUtil.allJobLabelIds(label) ;
             jobSearchFilter.setJobLabelIds(allLabelIds);
+            totalCount = jobDao.getJobsByJobLabelIds(allLabelIds).size();
         }
 
         jobSearchFilter.setPageNo(filterDto.getPageNo());
@@ -224,8 +226,11 @@ public class JobApiController {
         List<JobModel> jobs = jobDao.filterJobs(jobSearchFilter);
 
         List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
+
+        JobListDto jobListDto = new JobListDto(totalCount, jobModelHackDtos);
+
         if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(jobModelHackDtos);
+        return json().render(jobListDto);
     }
 
     @FilterWith(DashRepoSecureFilter.class)

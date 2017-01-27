@@ -18,6 +18,10 @@ public class JobModelHackDto {
         this.parentJobModel = parentJobModel;
     }
 
+    //For JSON path deserialisation in test cases
+    private JobModelHackDto() {
+    }
+
     public JobModel getJobModel() {
         return jobModel;
     }
