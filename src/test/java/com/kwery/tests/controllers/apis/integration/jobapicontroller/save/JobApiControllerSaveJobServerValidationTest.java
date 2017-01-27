@@ -63,6 +63,7 @@ public class JobApiControllerSaveJobServerValidationTest extends AbstractPostLog
         String invalidCron = "foo bar moo";
 
         JobDto jobDto = jobDtoWithoutId();
+        jobDto.setParentJobId(0);
         jobDto.setCronExpression(invalidCron);
         jobDto.setSqlQueries(new ArrayList<>(1));
         jobDto.setName(jobLabel);

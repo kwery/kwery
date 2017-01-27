@@ -70,7 +70,7 @@ public class ReportExecutingListUiTest extends ChromeFluentTest {
         page.waitForExecutingReportsList(2);
         List<JobExecutionDto> dtos = page.executions();
 
-        //Hacky fix to the problem of KO not rendering fast enough :(
+        //TODO - Hacky fix to the problem of KO not rendering fast enough :(
         TimeUnit.SECONDS.sleep(10);
 
         assertThat(dtos.get(0), theSameAs(controller.jobExecutionModelToJobExecutionDto(jobExecutionModel1))
