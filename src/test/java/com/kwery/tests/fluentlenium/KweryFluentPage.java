@@ -6,12 +6,13 @@ import org.fluentlenium.core.domain.FluentWebElement;
 import java.util.List;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 
 public class KweryFluentPage extends FluentPage {
     public void waitForModalDisappearance() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".modal-backdrop").isNotPresent();
+        await().pollingEvery(1, MILLISECONDS).atMost(TIMEOUT_SECONDS, SECONDS).until(".modal-backdrop").isNotPresent();
     }
 
     public void waitForModalAppearance() {

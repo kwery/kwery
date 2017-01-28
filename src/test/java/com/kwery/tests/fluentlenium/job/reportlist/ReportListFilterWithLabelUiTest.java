@@ -11,22 +11,21 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ReportListFilterUiTest extends AbstractReportListUiTest {
+public class ReportListFilterWithLabelUiTest extends AbstractReportListUiTest {
     @Before
     public void setUp() {
         super.setResultCount(1);
         super.setUp();
     }
 
-
     @Test
-    public void testWithNoLabelSelected() throws Exception {
+    public void testWithLabelSelected() throws Exception {
         //page 0
         page.waitForRows(1);
         page.waitForFluentField("1");
         SECONDS.sleep(5);
         asserts();
-        page.selectLabel(0);
+        page.selectLabel(1);
 
         //page 0
         page.filterReport();
@@ -43,30 +42,10 @@ public class ReportListFilterUiTest extends AbstractReportListUiTest {
         page.waitForFluentField("1");
         SECONDS.sleep(5);
         assertThat(page.isPreviousEnabled(), is(true));
-        assertThat(page.isNextEnabled(), is(true));
-        asserts();
-        page.clickNext();
-
-        //page 2
-        page.waitUntilNextIsDisabled();
-        page.waitForFluentField("1");
-        SECONDS.sleep(5);
-        assertThat(page.isPreviousEnabled(), is(true));
         assertThat(page.isNextEnabled(), is(false));
         asserts();
-        page.clickPrevious();
 
-        //page 1
-        page.waitUntilNextIsEnabled();
-        page.waitForFluentField("1");
-        SECONDS.sleep(5);
-        assertThat(page.isPreviousEnabled(), is(true));
-        assertThat(page.isNextEnabled(), is(true));
-        asserts();
         page.clickPrevious();
-
-        //page 0
-        page.waitUntilPreviousIsDisabled();
         page.waitForFluentField("1");
         page.waitForRows(1);
         SECONDS.sleep(5);

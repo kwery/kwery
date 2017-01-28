@@ -37,7 +37,7 @@
                 {url: "sql-query/{sqlQueryId}", auth: true, component: "sql-query-add"},
                 {url: "email/configuration", auth: true, component: "email-configuration"},
                 {url: "report/add", auth: true, component: "report-add"},
-                {url: "report/list", auth: true, component: "report-list"},
+                {url: "report/list/:?q:", auth: true, component: "report-list"},
                 {url: "report/executing", auth: true, component: "report-executing"},
                 {url: "report/{reportId}", auth: true, component: "report-add"},
                 {url: "report/{jobId}/execution-list/:?q:", auth: true, component: "report-execution-list"},

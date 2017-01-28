@@ -13,6 +13,7 @@ import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.*;
 import com.kwery.services.job.JobExecutionSearchFilter;
+import com.kwery.services.job.JobSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
@@ -209,15 +210,33 @@ public class JobApiController {
     public Result listJobs(JobListFilterDto filterDto) {
         if (logger.isTraceEnabled()) logger.trace("<");
 
-        List<JobModel> jobs = null;
-        if (filterDto.getJobLabelId() == 0) {
-            jobs = jobDao.getAllJobs();
-        } else {
+        JobSearchFilter jobSearchFilter = new JobSearchFilter();
+
+        int totalCount = jobDao.getAllJobs().size();
+        if (filterDto.getJobLabelId() != 0) {
             JobLabelModel label = jobLabelDao.getJobLabelModelById(filterDto.getJobLabelId());
             Set<Integer> allLabelIds = KweryUtil.allJobLabelIds(label) ;
-            jobs = jobDao.getJobsByJobLabelIds(allLabelIds);
+            jobSearchFilter.setJobLabelIds(allLabelIds);
+            totalCount = jobDao.getJobsByJobLabelIds(allLabelIds).size();
         }
 
+        jobSearchFilter.setPageNo(filterDto.getPageNumber());
+        jobSearchFilter.setResultCount(filterDto.getResultCount());
+
+        List<JobModel> jobs = jobDao.filterJobs(jobSearchFilter);
+
+        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
+
+        JobListDto jobListDto = new JobListDto(totalCount, jobModelHackDtos);
+
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(jobListDto);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result listAllJobs() {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        List<JobModel> jobs = jobDao.getAllJobs();
         List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
         if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(jobModelHackDtos);

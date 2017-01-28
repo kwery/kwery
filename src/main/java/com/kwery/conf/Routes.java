@@ -38,6 +38,7 @@ public class Routes implements ApplicationRoutes {
 
     public static final String JOB_SAVE_API = "/api/job/save";
     public static final String JOB_LIST_API = "/api/job/list";
+    public static final String JOB_LIST_ALL_API = "/api/job/list-all";
     public static final String JOB_EXECUTION_API = "/api/job/{jobId}/execution";
     public static final String JOB_EXECUTION_RESULT = "/api/job/execution/{jobExecutionId}";
     public static final String JOB_EXECUTE_API = "/api/job/{jobId}/execute";
@@ -91,6 +92,7 @@ public class Routes implements ApplicationRoutes {
 
         router.POST().route(JOB_SAVE_API).with(JobApiController.class, "saveJob");
         router.POST().route(JOB_LIST_API).with(JobApiController.class, "listJobs");
+        router.GET().route(JOB_LIST_ALL_API).with(JobApiController.class, "listAllJobs");
         router.POST().route(JOB_EXECUTION_API).with(JobApiController.class, "listJobExecutions");
         router.GET().route(JOB_EXECUTION_RESULT).with(JobApiController.class, "jobExecutionResult");
         router.POST().route(JOB_EXECUTE_API).with(JobApiController.class, "executeJob");
