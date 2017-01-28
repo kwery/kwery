@@ -21,6 +21,7 @@ import static junit.framework.TestCase.fail;
 
 public class AbstractReportListUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+    protected int resultCount;
 
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
@@ -50,7 +51,9 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         JobModel parentJob = jobModelWithoutDependents();
         parentJobName = parentJob.getName();
         jobDbSetUp(parentJob);
+        parentJob.getLabels().add(jobLabelModel);
         setSqlQueryModel(parentJob);
+        jobJobLabelDbSetUp(parentJob);
 
         JobModel childJob = jobModelWithoutDependents();
         childJob.setCronExpression("");
@@ -64,6 +67,8 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         jobService.schedule(jobModel.getId());
 
         page = createPage(ReportListPage.class);
+        page.setResultCount(getResultCount());
+
         page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
 
         if (!page.isRendered()) {
@@ -91,5 +96,13 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         row.setExecutionListLink(String.format(ninjaServerRule.getServerUrl() + "/#report/%d/execution-list", jobModel.getId()));
 
         return row;
+    }
+
+    public int getResultCount() {
+        return resultCount;
+    }
+
+    public void setResultCount(int resultCount) {
+        this.resultCount = resultCount;
     }
 }

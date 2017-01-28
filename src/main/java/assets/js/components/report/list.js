@@ -17,6 +17,33 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
             $.jStorage.deleteKey("report:messages");
         }
 
+        //Only used for testing
+        self.fluentField = ko.observable(-1);
+        var row = 0;
+        self.incrementRowCount = function(){
+            row = row + 1;
+            self.fluentField(row);
+        };
+
+        //Pagination
+        //No of results to show in the page
+        var RESULT_COUNT = 10;
+        var pageNumber = 0;
+        var resultCount = RESULT_COUNT;
+        var reportLabelId = 0;
+
+        if (params["?q"] !== undefined) {
+            resultCount = params["?q"].resultCount || RESULT_COUNT;
+            pageNumber = params["?q"].pageNumber || pageNumber;
+            reportLabelId = params["?q"].reportLabelId || reportLabelId;
+        }
+
+        self.pageNumber = ko.observable(pageNumber);
+        self.pageNumber.extend({notify: 'always'});
+        self.resultCount = ko.observable(resultCount);
+        self.totalCount = ko.observable(0);
+        self.reportLabelId = ko.observable(reportLabelId);
+
         self.reports = ko.observableArray([]);
 
         self.executeReport = function(report) {
@@ -48,8 +75,6 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                 }
             })
         };
-
-        self.reportLabelId = ko.observable(0);
 
         //Label - start
         //TODO - Duplicated code with add label page, needs to be refactored into a common code
@@ -146,9 +171,43 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
             });
         };
 
-
         //Get current labels
         //Label - end
+
+        //Pagination - start
+        self.nextStatus = ko.pureComputed(function () {
+            if (self.totalCount() <= ((self.pageNumber() + 1) * self.resultCount())) {
+                return "disabled";
+            }
+            return "";
+        });
+
+        self.previousStatus = ko.pureComputed(function(){
+            if (self.pageNumber() <= 0) {
+                return "disabled";
+            }
+            return "";
+        }, self);
+
+        self.previous = function() {
+            self.pageNumber(self.pageNumber() - 1);
+        };
+
+        self.next = function() {
+            self.pageNumber(self.pageNumber() + 1);
+        };
+
+        self.navigate = function () {
+            window.location.href = "/#report/list/?" +
+                "pageNumber=" + self.pageNumber() +
+                "&resultCount=" + self.resultCount() +
+                "&reportLabelId=" + self.reportLabelId();
+        };
+
+        self.pageNumber.subscribe(function(){
+            self.navigate();
+        });
+        //Pagination - end
 
         self.filter = function(showWaitingModal) {
             $.ajax({
@@ -156,6 +215,8 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                 type: "POST",
                 contentType: "application/json",
                 data: ko.toJSON({
+                    pageNumber: self.pageNumber(),
+                    resultCount: self.resultCount(),
                     jobLabelId: self.reportLabelId()
                 }),
                 beforeSend: function() {
@@ -163,15 +224,16 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                         waitingModal.show();
                     }
                 },
-                success: function (result) {
+                success: function (jobListDto) {
                     var reports = [];
-                    ko.utils.arrayForEach(result, function(jobModelHackDto){
+                    ko.utils.arrayForEach(jobListDto.jobModelHackDtos, function(jobModelHackDto){
                         jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
                         jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
                         reports.push(jobModelHackDto.jobModel);
                     });
 
                     self.reports(reports);
+                    self.totalCount(jobListDto.totalCount);
                 }
             }).always(function(){
                 if (showWaitingModal) {

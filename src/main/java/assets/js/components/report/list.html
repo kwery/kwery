@@ -35,7 +35,7 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody data-bind="foreach: reports" class="report-list-table-body-f">
+                <tbody data-bind="foreach: {data: reports, afterRender: incrementRowCount}" class="report-list-table-body-f">
                 <tr>
                     <td>
                         <a data-bind="attr: {href: reportLink}, text: name" class="name-f"></a>
@@ -57,4 +57,16 @@
             </table>
         </div>
     </div>
+
+    <nav>
+        <ul class="pager">
+            <li data-bind="css: previousStatus" class="previous previous-f">
+                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous"></a>
+            </li>
+            <li data-bind="css: nextStatus" class="next next-f">
+                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next"></a>
+            </li>
+        </ul>
+    </nav>
 </div>
+<input data-bind="value: fluentField" type="hidden" class="fluent-field-f">
