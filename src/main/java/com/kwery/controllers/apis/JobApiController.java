@@ -234,6 +234,15 @@ public class JobApiController {
     }
 
     @FilterWith(DashRepoSecureFilter.class)
+    public Result listAllJobs() {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        List<JobModel> jobs = jobDao.getAllJobs();
+        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(jobModelHackDtos);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
     public Result listJobExecutions(@PathParam("jobId") int jobId, JobExecutionListFilterDto filterDto, Context context) {
         if (logger.isTraceEnabled()) logger.trace("<");
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();

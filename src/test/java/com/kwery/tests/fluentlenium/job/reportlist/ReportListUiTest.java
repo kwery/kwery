@@ -3,6 +3,7 @@ package com.kwery.tests.fluentlenium.job.reportlist;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -19,6 +20,7 @@ public class ReportListUiTest extends AbstractReportListUiTest {
         //page 0
         page.waitForFluentField("1");
         page.waitUntilPreviousIsDisabled();
+        SECONDS.sleep(5);
         assertThat(page.isPreviousEnabled(), is(false));
         assertThat(page.isNextEnabled(), is(true));
         asserts();
@@ -27,6 +29,7 @@ public class ReportListUiTest extends AbstractReportListUiTest {
         page.clickNext();
         page.waitUntilPreviousIsEnabled();
         page.waitForFluentField("1");
+        SECONDS.sleep(5);
         assertThat(page.isPreviousEnabled(), is(true));
         assertThat(page.isNextEnabled(), is(true));
         asserts();
@@ -35,6 +38,7 @@ public class ReportListUiTest extends AbstractReportListUiTest {
         page.clickNext();
         page.waitUntilNextIsDisabled();
         page.waitForFluentField("1");
+        SECONDS.sleep(5);
         assertThat(page.isPreviousEnabled(), is(true));
         assertThat(page.isNextEnabled(), is(false));
         asserts();
@@ -43,6 +47,7 @@ public class ReportListUiTest extends AbstractReportListUiTest {
         page.clickPrevious();
         page.waitUntilNextIsEnabled();
         page.waitForFluentField("1");
+        SECONDS.sleep(5);
         assertThat(page.isPreviousEnabled(), is(true));
         assertThat(page.isNextEnabled(), is(true));
         asserts();
@@ -51,6 +56,7 @@ public class ReportListUiTest extends AbstractReportListUiTest {
         page.clickPrevious();
         page.waitUntilPreviousIsDisabled();
         page.waitForFluentField("1");
+        SECONDS.sleep(5);
         assertThat(page.isPreviousEnabled(), is(false));
         assertThat(page.isNextEnabled(), is(true));
         asserts();
