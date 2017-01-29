@@ -30,4 +30,9 @@ public class OnboardingShowHomeScreenUiTest extends ChromeFluentTest {
     public void test() {
         await().atMost(TIMEOUT_SECONDS).until($(".report-list-table-f")).displayed();
     }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
+    }
 }

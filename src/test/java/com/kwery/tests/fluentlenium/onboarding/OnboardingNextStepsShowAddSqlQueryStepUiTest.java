@@ -38,4 +38,9 @@ public class OnboardingNextStepsShowAddSqlQueryStepUiTest extends ChromeFluentTe
         assertThat(page.isAddDatasourceNextStepVisible(), is(false));
         assertThat(page.isAddSqlQueryNextStepVisible(), is(true));
     }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
+    }
 }

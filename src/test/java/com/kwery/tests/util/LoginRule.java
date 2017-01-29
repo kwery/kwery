@@ -12,7 +12,6 @@ import org.junit.runners.model.Statement;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static junit.framework.TestCase.fail;
-import static org.fluentlenium.utils.ReflectionUtils.newInstance;
 
 public class LoginRule implements TestRule {
     protected User loggedInUser;
@@ -39,8 +38,8 @@ public class LoginRule implements TestRule {
                         userTableUtil.insertOperation()
                 ).launch();
 
-                UserLoginPage loginPage = newInstance(UserLoginPage.class);
-                fluentTest.goTo(loginPage);
+                UserLoginPage loginPage = fluentTest.newInstance(UserLoginPage.class);
+                loginPage.go();
 
                 if (!loginPage.isRendered()) {
                     fail("Login page is not rendered");

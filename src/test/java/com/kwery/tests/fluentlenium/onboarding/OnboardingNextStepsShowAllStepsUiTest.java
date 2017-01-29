@@ -39,4 +39,9 @@ public class OnboardingNextStepsShowAllStepsUiTest extends ChromeFluentTest {
         assertThat(page.nextStepText(0), is(NEXT_STEP_ADD_DATASOURCE_M));
         assertThat(page.nextStepText(1), is(NEXT_STEP_ADD_JOB_M));
     }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
+    }
 }

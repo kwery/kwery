@@ -4,6 +4,7 @@ import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.tests.fluentlenium.security.Unauthenticated;
 import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.support.FindBy;

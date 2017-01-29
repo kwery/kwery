@@ -22,7 +22,7 @@ public class OnboardingAdminUserAddedUiTest extends ChromeFluentTest {
     @Before
     public void setUpOnboardingAdminUserAddedPageTest() throws InterruptedException {
         page = newInstance(OnboardingUserAddedPage.class);
-        goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             fail("Could not render admin user added onboarding page");
@@ -36,5 +36,10 @@ public class OnboardingAdminUserAddedUiTest extends ChromeFluentTest {
         user.setPassword(ROOT_PASSWORD);
 
         assertThat(page.containsAdminUserCreatedMessage(user), is(true));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
