@@ -21,6 +21,6 @@ public class ReportUpdatePage extends ReportSavePage {
     }
 
     public void waitForReportDisplay(String name) {
-        await().until($(className("f-report-name"))).hasAttribute("value", name);
+        await().until($(className("f-report-name"))).attribute("value", name);
     }
 }

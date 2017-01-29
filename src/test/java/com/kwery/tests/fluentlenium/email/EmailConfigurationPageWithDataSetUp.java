@@ -29,8 +29,8 @@ public class EmailConfigurationPageWithDataSetUp extends ChromeFluentTest {
         emailConfiguration = emailConfigurationDbSetUp();
         smtpConfiguration = smtpConfigurationDbSetUp();
 
-        page = createPage(EmailConfigurationPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(EmailConfigurationPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render email configuration page");

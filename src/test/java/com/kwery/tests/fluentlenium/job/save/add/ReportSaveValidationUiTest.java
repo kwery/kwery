@@ -37,8 +37,8 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
-        page = createPage(ReportSavePage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(ReportSavePage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Save report page could not be rendered");

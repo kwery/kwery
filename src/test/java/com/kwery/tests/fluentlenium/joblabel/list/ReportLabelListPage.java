@@ -18,7 +18,7 @@ public class ReportLabelListPage extends KweryFluentPage implements RepoDashPage
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".report-label-list-f tr").hasSize(getExpectedRows() + 1); //Taking into account header
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-label-list-f tr")).size(getExpectedRows() + 1); //Taking into account header
         return true;
     }
 
@@ -36,7 +36,7 @@ public class ReportLabelListPage extends KweryFluentPage implements RepoDashPage
     }
 
     public List<String> getLabels() {
-        return $(className("label-f")).stream().map(FluentWebElement::getText).collect(toList());
+        return $(className("label-f")).stream().map(FluentWebElement::text).collect(toList());
     }
 
     public void clickDelete(int index) {
@@ -44,7 +44,7 @@ public class ReportLabelListPage extends KweryFluentPage implements RepoDashPage
     }
 
     public List<String> errorMessages() {
-        return $(".f-failure-message p").stream().map(FluentWebElement::getText).collect(toList());
+        return $(".f-failure-message p").stream().map(FluentWebElement::text).collect(toList());
     }
 
     public void waitForSuccessMessage(String label) {

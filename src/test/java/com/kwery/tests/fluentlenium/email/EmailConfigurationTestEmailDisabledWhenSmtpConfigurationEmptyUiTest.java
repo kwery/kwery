@@ -28,8 +28,8 @@ public class EmailConfigurationTestEmailDisabledWhenSmtpConfigurationEmptyUiTest
     public void setUpSmtpConfigurationSaveValidationUiTest() {
         emailConfiguration = emailConfigurationDbSetUp();
 
-        page = createPage(EmailConfigurationPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(EmailConfigurationPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render email configuration page");

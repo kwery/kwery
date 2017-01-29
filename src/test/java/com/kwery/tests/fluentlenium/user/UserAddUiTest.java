@@ -22,8 +22,8 @@ public abstract class UserAddUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpAddAdminUserTest() {
-        page = createPage(UserAddPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(UserAddPage.class);
+        goTo(page);
         page.isRendered();
 
         loggedInUser = loginRule.getLoggedInUser();

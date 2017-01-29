@@ -44,10 +44,10 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
         anotherDatasource = datasource(POSTGRESQL);
         datasourceDbSetup(anotherDatasource);
 
-        page = createPage(UpdateDatasourcePage.class);
+        page = newInstance(UpdateDatasourcePage.class);
         page.setDatasourceId(mySqlDatasource.getId());
 
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render update mySqlDatasource page");

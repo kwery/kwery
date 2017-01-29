@@ -24,7 +24,7 @@ public class DatasourceListPage extends KweryFluentPage implements RepoDashPage 
 
     @Override
     public boolean isRendered() {
-        return find(id("datasourcesListTable")).first().isDisplayed();
+        return find(id("datasourcesListTable")).first().displayed();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DatasourceListPage extends KweryFluentPage implements RepoDashPage 
         List<String> headers = new ArrayList<>(COLUMNS);
 
         for (FluentWebElement header : $("#datasourcesListTable tr th")) {
-            headers.add(header.getText());
+            headers.add(header.text());
         }
 
         return headers;
@@ -47,7 +47,7 @@ public class DatasourceListPage extends KweryFluentPage implements RepoDashPage 
 
         for (FluentWebElement tr : $("#datasourcesListTableBody tr")) {
             List<String> row = new ArrayList<>(COLUMNS);
-            row.addAll(tr.find(By.tagName("td")).stream().map(FluentWebElement::getText).collect(Collectors.toList()));
+            row.addAll(tr.find(By.tagName("td")).stream().map(FluentWebElement::text).collect(Collectors.toList()));
             rows.add(row);
         }
 
@@ -55,13 +55,13 @@ public class DatasourceListPage extends KweryFluentPage implements RepoDashPage 
     }
 
     public void waitForRows(int rowCount) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until("#datasourcesListTableBody tr").hasSize(rowCount);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($("#datasourcesListTableBody tr")).size(rowCount);
     }
 
     public void delete(int row) {
         FluentList<FluentWebElement> fluentWebElements = find("#datasourcesListTableBody tr");
         FluentWebElement tr = fluentWebElements.get(row);
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-delete").isClickable();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-delete")).clickable();
         tr.find(className("f-delete")).click();
     }
 

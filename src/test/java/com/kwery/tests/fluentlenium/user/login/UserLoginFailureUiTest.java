@@ -14,8 +14,8 @@ public class UserLoginFailureUiTest extends ChromeFluentTest {
 
     @Test
     public void test() {
-        page = createPage(UserLoginPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(UserLoginPage.class);
+        goTo(page);
         if (!page.isRendered()) {
             TestCase.fail("Could not render user login page");
         }

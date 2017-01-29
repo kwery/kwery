@@ -66,12 +66,12 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
         jem3.setJobModel(jobModel);
         jobExecutionDbSetUp(jem3);
 
-        page = createPage(ReportExecutionListPage.class);
+        page = newInstance(ReportExecutionListPage.class);
 
         page.setJobId(jobModel.getId());
         page.setResultCount(getResultCount());
 
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render report execution list page");

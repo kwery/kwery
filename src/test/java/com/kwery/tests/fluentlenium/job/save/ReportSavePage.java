@@ -26,26 +26,26 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until("#saveReport").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($("#saveReport")).displayed();
         return true;
     }
 
     public void fillAndSubmitReportSaveForm(JobForm jobForm) {
-        fill(".f-report-title").with(jobForm.getTitle());
-        fill(".f-report-name").with(jobForm.getName());
+        $(".f-report-title").fill().with(jobForm.getTitle());
+        $(".f-report-name").fill().with(jobForm.getName());
 
         //TODO - Tests with empty emails etc
         if (isEmailFieldEnabled()) {
-            fill(".f-report-emails").with(String.join(",", jobForm.getEmails()));
+            $(".f-report-emails").fill().with(String.join(",", jobForm.getEmails()));
         }
 
-        if ($(className("parent-report-option-f")).first().isSelected()) {
-            fillSelect(".f-parent-report").withText(parentJobIdToLabelMap.get(jobForm.getParentJobId()));
+        if ($(className("parent-report-option-f")).first().selected()) {
+            $(".f-parent-report").fillSelect().withText(parentJobIdToLabelMap.get(jobForm.getParentJobId()));
         } else if (jobForm.isUseCronUi()) {
             chooseCronUi();
         } else {
             chooseCronExpression();
-            fill(".f-report-cron-expression").with(jobForm.getCronExpression());
+            $(".f-report-cron-expression").fill().with(jobForm.getCronExpression());
         }
 
         for (int i = 0; i < jobForm.getSqlQueries().size(); ++i) {
@@ -54,10 +54,10 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
             }
 
             SqlQueryDto dto = jobForm.getSqlQueries().get(i);
-            fill(".f-sql-query" + i + " .f-query").with(dto.getQuery());
-            fill(".f-sql-query" + i + " .f-sql-query-label").with(dto.getLabel());
-            fill(".f-sql-query" + i + " .f-sql-query-title").with(dto.getTitle());
-            fillSelect(".f-sql-query" + i + " .f-datasource").withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
+            $(".f-sql-query" + i + " .f-query").fill().with(dto.getQuery());
+            $(".f-sql-query" + i + " .f-sql-query-label").fill().with(dto.getLabel());
+            $(".f-sql-query" + i + " .f-sql-query-title").fill().with(dto.getTitle());
+            $(".f-sql-query" + i + " .f-datasource").fillSelect().withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
         }
 
         if (isEmptyReportNoEmailRuleEnabled()) {
@@ -79,35 +79,35 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void ensureEmailRuleUnchecked() {
-        if (findFirst(className("no-email-rule-f")).isSelected()) {
-            click(findFirst(className("no-email-rule-f")));
+        if (el(className("no-email-rule-f")).selected()) {
+            el(className("no-email-rule-f")).click();
         }
     }
 
     public void ensureEmailRuleChecked() {
-        if (!findFirst(className("no-email-rule-f")).isSelected()) {
-            await().atMost(TIMEOUT_SECONDS, SECONDS).until(className("no-email-rule-f")).isClickable();
-            click(findFirst(className("no-email-rule-f")));
+        if (!el(className("no-email-rule-f")).selected()) {
+            await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".no-email-rule-f")).clickable();
+            el(className("no-email-rule-f")).click();
         }
     }
 
     public void selectLabel(Integer labelId, int index) {
-        fillSelect(String.format(".select-%d-f", index)).withValue(String.valueOf(labelId));
+        $(String.format(".select-%d-f", index)).fillSelect().withValue(String.valueOf(labelId));
     }
 
     public void submitReportSaveForm() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-report-submit").isClickable();
-        click(".f-report-submit");
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-report-submit")).clickable();
+        $(".f-report-submit").click();
     }
 
     public void clickOnAddSqlQuery(int i) {
         $(className("f-add-sql-query")).click();
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-sql-query" + i).isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-sql-query" + i)).displayed();
     }
 
     public void clickOnAddLabel(int i) {
         $(className("add-label-f")).click();
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(String.format(".label-%d-f", i)).isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(String.format(".label-%d-f", i))).displayed();
     }
 
     public void clickOnRemoveSqlQuery(int i) {
@@ -123,7 +123,7 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     public void clickOnRemoveLabel(int i) {
         int count = $(className("label-f")).size();
         $(className(String.format("remove-label-%d-f", i))).click();
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".label-f").hasSize(count - 1);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-f")).size(count - 1);
     }
 
     public void waitForReportSaveSuccessMessage() {
@@ -135,8 +135,8 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
 
         for (FluentWebElement select : $(className("label-f"))) {
             for (FluentWebElement option : select.find(By.tagName("option"))) {
-                if (option.isSelected()) {
-                    labels.add(option.getText());
+                if (option.selected()) {
+                    labels.add(option.text());
                 }
             }
         }
@@ -147,7 +147,7 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     public int removeSqlQueryActionDisplayedCount() {
         int count = 0;
         for (FluentWebElement fluentWebElement : $(className("f-remove-sql-query"))) {
-            if (fluentWebElement.isDisplayed()) {
+            if (fluentWebElement.displayed()) {
                 count = count + 1;
             }
         }
@@ -161,15 +161,15 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public String validationMessage(ReportFormField field) {
-        return $(className(format("%s-form-validation-message-f", field.name()))).getText();
+        return $(className(format("%s-form-validation-message-f", field.name()))).text();
     }
 
     public String validationMessage(SqlQueryFormField field, int index) {
-        return $(format(".f-sql-query%d .%s-form-validation-message-f", index, field.name())).getText();
+        return $(format(".f-sql-query%d .%s-form-validation-message-f", index, field.name())).text();
     }
 
     public void waitForReportFormValidationMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".reportTitle-form-validation-message-f").hasText(INPUT_VALIDATION_ERROR_MESSAGE);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".reportTitle-form-validation-message-f")).text(INPUT_VALIDATION_ERROR_MESSAGE);
     }
 
     public enum ReportFormField {
@@ -201,7 +201,7 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public List<String> labelTexts(int index) {
-        return $(String.format(".select-%d-f option", index)).stream().map(option -> option.getText().trim()).collect(toList());
+        return $(String.format(".select-%d-f option", index)).stream().map(option -> option.text().trim()).collect(toList());
     }
 
     public int labelSelectCount() {
@@ -213,10 +213,10 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public boolean isEmailFieldEnabled() {
-        return findFirst(className("f-report-emails")).isEnabled();
+        return el(className("f-report-emails")).enabled();
     }
 
     public boolean isEmptyReportNoEmailRuleEnabled() {
-        return findFirst(className("no-email-rule-f")).isEnabled();
+        return el(className("no-email-rule-f")).enabled();
     }
 }

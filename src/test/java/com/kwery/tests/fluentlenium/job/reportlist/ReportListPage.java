@@ -22,7 +22,7 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".report-list-f").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-list-f")).displayed();
         return true;
     }
 
@@ -32,7 +32,7 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void waitForRows(int count) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".report-list-table-body-f tr").hasSize(count);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-list-table-body-f tr")).size(count);
     }
 
     public List<ReportListRow> rows() {
@@ -41,11 +41,11 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
         for (FluentWebElement tr : $(".report-list-table-body-f tr")) {
             ReportListRow row = new ReportListRow();
 
-            row.setLabel(tr.find(className("name-f")).first().getText());
-            row.setReportLink(tr.find(className("name-f")).getAttribute("href"));
-            row.setCronExpression(tr.find(className("cron-expression-f")).getText());
-            row.setExecutionListLink(tr.find(className("execution-link-f")).getAttribute("href"));
-            row.setExecuteNowLink(tr.find(className("execute-now-f")).getAttribute("href"));
+            row.setLabel(tr.find(className("name-f")).first().text());
+            row.setReportLink(tr.find(className("name-f")).attribute("href"));
+            row.setCronExpression(tr.find(className("cron-expression-f")).text());
+            row.setExecutionListLink(tr.find(className("execution-link-f")).attribute("href"));
+            row.setExecuteNowLink(tr.find(className("execute-now-f")).attribute("href"));
 
             rows.add(row);
         }
@@ -54,19 +54,19 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void deleteReport(int row) {
-        click($(".report-list-table-body-f tr").get(row).find(className("delete-f")));
+        ($(".report-list-table-body-f tr").get(row).find(className("delete-f"))).click();
     }
 
     public void waitForDeleteSuccessMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(REPORT_LIST_DELETE_SUCCESS_M);
+        super.waitForSuccessMessage(REPORT_LIST_DELETE_SUCCESS_M);
     }
 
     public void waitForDeleteFailureMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M);
+        super.waitForFailureMessage(JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M);
     }
 
     public void selectLabel(int index) {
-        fillSelect(String.format(".label-f")).withIndex(index);
+        $(".label-f").fillSelect().withIndex(index);
     }
 
     public void filterReport() {
@@ -74,7 +74,7 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public List<String> labelTexts() {
-        return $(".label-f option").stream().map(option -> option.getText().trim()).collect(toList());
+        return $(".label-f option").stream().map(option -> option.text().trim()).collect(toList());
     }
 
     public int getResultCount() {
@@ -87,11 +87,11 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
 
     //Pagination related - start
     public boolean isNextEnabled() {
-        return !Arrays.asList(find(className("next-f")).getAttribute("class").split(" ")).contains("disabled");
+        return !Arrays.asList(find(className("next-f")).attribute("class").split(" ")).contains("disabled");
     }
 
     public boolean isPreviousEnabled() {
-        return !Arrays.asList(find(className("previous-f")).getAttribute("class").split(" ")).contains("disabled");
+        return !Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled");
     }
 
     public void clickPrevious() {
@@ -104,30 +104,30 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
 
     public void waitUntilPreviousIsEnabled() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> !Arrays.asList(find(className("previous-f")).getAttribute("class").split(" ")).contains("disabled")
+                () -> !Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled")
         );
     }
 
     public void waitUntilPreviousIsDisabled() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> Arrays.asList(find(className("previous-f")).getAttribute("class").split(" ")).contains("disabled")
+                () -> Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled")
         );
     }
 
     public void waitUntilNextIsDisabled() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> Arrays.asList(find(className("next-f")).getAttribute("class").split(" ")).contains("disabled")
+                () -> Arrays.asList(find(className("next-f")).attribute("class").split(" ")).contains("disabled")
         );
     }
 
     public void waitUntilNextIsEnabled() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> !Arrays.asList(find(className("next-f")).getAttribute("class").split(" ")).contains("disabled")
+                () -> !Arrays.asList(find(className("next-f")).attribute("class").split(" ")).contains("disabled")
         );
     }
     //Pagination related - end
 
     public void waitForFluentField(String value) {
-        await().pollingEvery(1, MILLISECONDS).atMost(TIMEOUT_SECONDS, SECONDS).until(className("fluent-field-f")).hasAttribute("value", value);
+        await().pollingEvery(1, MILLISECONDS).atMost(TIMEOUT_SECONDS, SECONDS).until($(".fluent-field-f")).attribute("value", value);
     }
 }

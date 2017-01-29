@@ -22,8 +22,8 @@ public class AbstractReportLabelSaveUiTest extends ChromeFluentTest {
 
     @Before
     public void setUp() {
-        page = createPage(ReportLabelSavePage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(ReportLabelSavePage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render report label save page");

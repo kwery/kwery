@@ -52,8 +52,8 @@ public class UserListUiTest extends ChromeFluentTest {
                 .build()
         ).launch();
 
-        page = createPage(UserListPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(UserListPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render login page");

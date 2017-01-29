@@ -20,14 +20,14 @@ public class UserLogoutUiTest extends ChromeFluentTest {
     @Before
     public void setUpLogoutFlowTest() {
         goTo(ninjaServerRule.getServerUrl() + "/");
-        await().atMost(TIMEOUT_SECONDS).until(".f-navbar").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS).until($(".f-navbar")).displayed();
     }
 
     @Test
     public void test() {
         $(className("f-username")).click();
-        await().atMost(TIMEOUT_SECONDS).until(".f-logout").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS).until($(".f-logout")).displayed();
         $(className("f-logout")).click();
-        await().atMost(TIMEOUT_SECONDS).until(".f-next-steps").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS).until($(".f-next-steps")).displayed();
     }
 }

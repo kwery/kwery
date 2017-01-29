@@ -40,8 +40,7 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
 
         datasourceDbSetup(datasource);
 
-        page = createPage(DatasourceAddPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(DatasourceAddPage.class);
         goTo(page);
 
         if (!page.isRendered()) {

@@ -22,12 +22,12 @@ public class OnboardingNextStepsPage extends FluentPage implements RepoDashPage 
 
     @Override
     public boolean isRendered() {
-        await().atMost(30, TimeUnit.SECONDS).until(nextStepsContainer).isDisplayed();
+        await().atMost(30, TimeUnit.SECONDS).until(nextStepsContainer).displayed();
         return true;
     }
 
     public String nextStepsHeaderText() {
-        return $(className("f-next-steps-header")).getText();
+        return $(className("f-next-steps-header")).text();
     }
 
     public int nextStepsCount() {
@@ -35,14 +35,14 @@ public class OnboardingNextStepsPage extends FluentPage implements RepoDashPage 
     }
 
     public String nextStepText(int stepCount) {
-        return $(".f-next-steps ul li").get(stepCount).getText();
+        return $(".f-next-steps ul li").get(stepCount).text();
     }
 
     public boolean isAddDatasourceNextStepVisible() {
-        return $(".f-add-datasource").first().isDisplayed();
+        return $(".f-add-datasource").first().displayed();
     }
 
     public boolean isAddSqlQueryNextStepVisible() {
-        return $(".f-add-job").first().isDisplayed();
+        return $(".f-add-job").first().displayed();
     }
 }

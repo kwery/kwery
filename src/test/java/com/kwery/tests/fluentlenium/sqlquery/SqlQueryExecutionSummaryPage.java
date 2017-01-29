@@ -17,7 +17,7 @@ public class SqlQueryExecutionSummaryPage extends FluentPage implements RepoDash
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-execution-summary-table").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-execution-summary-table")).displayed();
         return true;
     }
 
@@ -30,7 +30,7 @@ public class SqlQueryExecutionSummaryPage extends FluentPage implements RepoDash
         List<String> headers = new ArrayList<>(COLUMN_COUNT);
         List<FluentWebElement> headerColumns = $(".f-execution-summary-table thead th");
         for (FluentWebElement headerColumn : headerColumns) {
-            headers.add(headerColumn.getText());
+            headers.add(headerColumn.text());
         }
 
         return headers;
@@ -47,7 +47,7 @@ public class SqlQueryExecutionSummaryPage extends FluentPage implements RepoDash
             List<FluentWebElement> columns = row.find(tagName("td"));
 
             for (FluentWebElement column : columns) {
-                resultColumns.add(column.getText());
+                resultColumns.add(column.text());
             }
 
             resultRows.add(resultColumns);
@@ -63,7 +63,7 @@ public class SqlQueryExecutionSummaryPage extends FluentPage implements RepoDash
 
         for (FluentWebElement row : rows) {
             List<FluentWebElement> columns = row.find(tagName("td"));
-            String href = columns.get(columns.size() - 1).find(tagName("a")).first().getAttribute("href");
+            String href = columns.get(columns.size() - 1).find(tagName("a")).first().attribute("href");
             hrefs.add(href);
         }
 

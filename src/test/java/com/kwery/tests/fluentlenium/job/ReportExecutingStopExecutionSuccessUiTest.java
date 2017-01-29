@@ -52,8 +52,8 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
 
         waitAtMost(TIMEOUT_SECONDS, SECONDS).until(() -> jobExecutionDao.filter(filter).size() >= 2);
 
-        page = createPage(ReportExecutingPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(ReportExecutingPage.class);
+        goTo(page);
         if (!page.isRendered()) {
             fail("Could not render executing reports page");
         }

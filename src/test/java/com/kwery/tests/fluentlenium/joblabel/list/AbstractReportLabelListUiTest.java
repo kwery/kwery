@@ -43,9 +43,9 @@ public abstract class AbstractReportLabelListUiTest extends ChromeFluentTest {
         jobModel.getLabels().add(parentJobLabelModel);
         jobJobLabelDbSetUp(jobModel);
 
-        page = createPage(ReportLabelListPage.class);
+        page = newInstance(ReportLabelListPage.class);
         page.setExpectedRows(2);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render report label list page");

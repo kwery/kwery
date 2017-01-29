@@ -21,8 +21,8 @@ public class OnboardingAdminUserAddedUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpOnboardingAdminUserAddedPageTest() throws InterruptedException {
-        page = createPage(OnboardingUserAddedPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(OnboardingUserAddedPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render admin user added onboarding page");

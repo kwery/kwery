@@ -33,14 +33,14 @@ public class ReportLabelUpdatePage extends ReportLabelSavePage {
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".label-name-f").hasAttribute("value", getReportLabel());
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-name-f")).attribute("value", getReportLabel());
         return true;
     }
 
     public int selectedParentLabelOptionIndex() {
         int i = 0;
         for (FluentWebElement option : $(".parent-label-f option")) {
-            if (option.isSelected()) {
+            if (option.selected()) {
                 return i;
             }
             i = i + 1;
@@ -52,8 +52,8 @@ public class ReportLabelUpdatePage extends ReportLabelSavePage {
     public String selectedParentLabelOptionText() {
         int i = 0;
         for (FluentWebElement option : $(".parent-label-f option")) {
-            if (option.isSelected()) {
-                return option.getText();
+            if (option.selected()) {
+                return option.text();
             }
             i = i + 1;
         }

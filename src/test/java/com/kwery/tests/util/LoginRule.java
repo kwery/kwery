@@ -5,13 +5,14 @@ import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
-import org.fluentlenium.adapter.FluentTest;
+import org.fluentlenium.adapter.junit.FluentTest;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
 import static junit.framework.TestCase.fail;
+import static org.fluentlenium.utils.ReflectionUtils.newInstance;
 
 public class LoginRule implements TestRule {
     protected User loggedInUser;
@@ -38,10 +39,9 @@ public class LoginRule implements TestRule {
                         userTableUtil.insertOperation()
                 ).launch();
 
-                UserLoginPage loginPage = fluentTest.createPage(UserLoginPage.class);
-
-                loginPage.withDefaultUrl(ninjaServerRule.getServerUrl());
+                UserLoginPage loginPage = newInstance(UserLoginPage.class);
                 fluentTest.goTo(loginPage);
+
                 if (!loginPage.isRendered()) {
                     fail("Login page is not rendered");
                 }

@@ -6,7 +6,7 @@ import org.fluentlenium.core.FluentPage;
 public class SqlQueryExecutingListPage extends FluentPage implements RepoDashPage {
     @Override
     public boolean isRendered() {
-        return $("#executingSqlQueriesTable").first().isDisplayed();
+        return $("#executingSqlQueriesTable").first().displayed();
     }
 
     @Override

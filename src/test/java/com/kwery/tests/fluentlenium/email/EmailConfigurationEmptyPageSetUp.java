@@ -18,8 +18,8 @@ public class EmailConfigurationEmptyPageSetUp extends ChromeFluentTest {
 
     @Before
     public void setUpSmtpConfigurationSaveValidationUiTest() {
-        page = createPage(EmailConfigurationPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(EmailConfigurationPage.class);
+        page.goTo(page);
 
         if (!page.isRendered()) {
             TestCase.fail("Could not render email configuration page");

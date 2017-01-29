@@ -23,10 +23,8 @@ public class UserUpdateUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpUpdateUserPageTest() {
-        page = createPage(UserUpdatePage.class);
+        page = newInstance(UserUpdatePage.class);
         page.setUserId(loginRule.getLoggedInUser().getId());
-
-        page.withDefaultUrl(ninjaServerRule.getServerUrl());
         goTo(page);
 
         if (!page.isRendered()) {

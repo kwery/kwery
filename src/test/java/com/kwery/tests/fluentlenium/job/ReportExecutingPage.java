@@ -19,7 +19,7 @@ import static org.openqa.selenium.By.tagName;
 public class ReportExecutingPage extends KweryFluentPage implements RepoDashPage {
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".executing-reports-f").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".executing-reports-f")).displayed();
         return true;
     }
 
@@ -31,8 +31,8 @@ public class ReportExecutingPage extends KweryFluentPage implements RepoDashPage
 
             JobExecutionDto dto = new JobExecutionDto();
 
-            dto.setLabel(tds.get(0).getText());
-            dto.setStart(tds.get(1).getText());
+            dto.setLabel(tds.get(0).text());
+            dto.setStart(tds.get(1).text());
 
             dtos.add(dto);
         }
@@ -41,7 +41,7 @@ public class ReportExecutingPage extends KweryFluentPage implements RepoDashPage
     }
 
     public void waitForExecutingReportsList(int expectedRowCount) {
-        await().atMost(30, SECONDS).until(".executing-reports-tbody-f  tr").hasSize(expectedRowCount);
+        await().atMost(30, SECONDS).until($(".executing-reports-tbody-f  tr")).size(expectedRowCount);
     }
 
     public void stopExecution(int row) {

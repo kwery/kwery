@@ -28,8 +28,8 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
     @Before
     public void DatasourceAddValidationUiTest() {
-        page = createPage(DatasourceAddPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(DatasourceAddPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Failed to render add datasource page");

@@ -22,8 +22,8 @@ public class ReportSaveAddAndRemoveSqlQuerySectionUiTest extends ChromeFluentTes
 
     @Before
     public void setUpReportSaveAddAndRemoveSqlQuerySectionUiTest() {
-        page = createPage(ReportSavePage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(ReportSavePage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render report save page");

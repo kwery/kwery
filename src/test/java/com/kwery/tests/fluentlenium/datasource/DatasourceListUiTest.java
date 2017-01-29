@@ -47,8 +47,8 @@ public class DatasourceListUiTest extends ChromeFluentTest {
         );
         dbSetup.launch();
 
-        page = createPage(DatasourceListPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(DatasourceListPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render list datasources page");

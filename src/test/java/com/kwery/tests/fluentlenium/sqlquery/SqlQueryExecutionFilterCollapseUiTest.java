@@ -62,10 +62,10 @@ public class SqlQueryExecutionFilterCollapseUiTest extends ChromeFluentTest {
         );
         dbSetup.launch();
 
-        page = createPage(SqlQueryExecutionListPage.class);
+        page = newInstance(SqlQueryExecutionListPage.class);
         page.setSqlQueryId(sqlQueryModel0.getId());
 
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render list SQL queries execution page");

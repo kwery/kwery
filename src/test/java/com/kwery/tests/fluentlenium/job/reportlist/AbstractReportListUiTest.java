@@ -66,10 +66,10 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         jobService.schedule(parentJob.getId());
         jobService.schedule(jobModel.getId());
 
-        page = createPage(ReportListPage.class);
+        page = newInstance(ReportListPage.class);
         page.setResultCount(getResultCount());
 
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page.goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render report list page");

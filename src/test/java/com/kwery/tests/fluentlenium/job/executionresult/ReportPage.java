@@ -18,7 +18,7 @@ public class ReportPage extends FluentPage implements RepoDashPage {
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".report-section-f").hasSize(getExpectedReportSections());
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-section-f")).size(getExpectedReportSections());
         return true;
     }
 
@@ -52,11 +52,11 @@ public class ReportPage extends FluentPage implements RepoDashPage {
     }
 
     public String reportHeader() {
-        return $(className("report-title-f")).getText();
+        return $(className("report-title-f")).text();
     }
 
     public String sectionTitle(int index) {
-        return $(className("section-title-f")).get(index).getText();
+        return $(className("section-title-f")).get(index).text();
     }
 
     public boolean isDownloadLinkPresent(int index) {
@@ -64,19 +64,19 @@ public class ReportPage extends FluentPage implements RepoDashPage {
     }
 
     public boolean isTableDisplayed(int index) {
-        return findFirst(className(String.format("table-%d-f", index))).isDisplayed();
+        return el(className(String.format("table-%d-f", index))).displayed();
     }
 
     public List<String> tableHeaders(int index) {
-        return $(String.format(".table-%d-f thead th", index)).stream().map(FluentWebElement::getText).collect(toList());
+        return $(String.format(".table-%d-f thead th", index)).stream().map(FluentWebElement::text).collect(toList());
     }
 
     public List<String> tableRows(int index, int row) {
-        return $(String.format(".table-%d-f tbody tr", index)).get(row).find("td").stream().map(FluentWebElement::getText).collect(toList());
+        return $(String.format(".table-%d-f tbody tr", index)).get(row).find("td").stream().map(FluentWebElement::text).collect(toList());
     }
 
     public String downloadReportLink(int index) {
-        return findFirst(className(String.format("download-%d-f", index))).getAttribute("href");
+        return el(className(String.format("download-%d-f", index))).attribute("href");
     }
 
     public boolean isTableEmpty(int index) {
@@ -84,6 +84,6 @@ public class ReportPage extends FluentPage implements RepoDashPage {
     }
 
     public String getContent(int index) {
-        return $(String.format(".status-%d-f p", index)).getText();
+        return $(String.format(".status-%d-f p", index)).text();
     }
 }

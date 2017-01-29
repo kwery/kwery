@@ -23,7 +23,7 @@ public class UserListPage extends KweryFluentPage implements RepoDashPage {
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".users-list-table-tbody-f").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".users-list-table-tbody-f")).displayed();
         waitForModalDisappearance();
         return true;
     }
@@ -34,14 +34,14 @@ public class UserListPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void waitForRows(int rowCount) {
-        await().atMost(30, SECONDS).until(".users-list-table-tbody-f tr").hasSize(rowCount);
+        await().atMost(30, SECONDS).until($(".users-list-table-tbody-f tr")).size(rowCount);
     }
 
     public List<String> headers() {
         List<String> headers = new ArrayList<>(COLUMNS);
 
         for (FluentWebElement th : $("#usersListTable th")) {
-            headers.add(th.getText());
+            headers.add(th.text());
         }
 
         return headers;
@@ -52,7 +52,7 @@ public class UserListPage extends KweryFluentPage implements RepoDashPage {
 
         for (FluentWebElement tr : $(".users-list-table-tbody-f tr")) {
             List<String> row = new ArrayList<>(COLUMNS);
-            row.addAll(tr.find(tagName("td")).stream().map(FluentWebElement::getText).collect(Collectors.toList()));
+            row.addAll(tr.find(tagName("td")).stream().map(FluentWebElement::text).collect(Collectors.toList()));
             rows.add(row);
         }
 

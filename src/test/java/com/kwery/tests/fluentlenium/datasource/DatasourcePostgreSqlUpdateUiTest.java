@@ -44,10 +44,10 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
         anotherDatasource = datasource(MYSQL);
         datasourceDbSetup(anotherDatasource);
 
-        page = createPage(UpdateDatasourcePage.class);
+        page = newInstance(UpdateDatasourcePage.class);
         page.setDatasourceId(postgreSqlDatasource.getId());
 
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render update mySqlDatasource page");

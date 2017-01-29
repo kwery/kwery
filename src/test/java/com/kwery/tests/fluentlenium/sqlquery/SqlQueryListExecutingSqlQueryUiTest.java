@@ -62,8 +62,8 @@ public class SqlQueryListExecutingSqlQueryUiTest extends ChromeFluentTest {
 
         dbSetup.launch();
 
-        page = createPage(SqlQueryExecutingListPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(SqlQueryExecutingListPage.class);
+        goTo(page);
         if (!page.isRendered()) {
             fail("Could not render list ongoing SQL queries page");
         }
@@ -74,19 +74,19 @@ public class SqlQueryListExecutingSqlQueryUiTest extends ChromeFluentTest {
         List<FluentWebElement> headerColumns = $("#executingSqlQueriesTable thead th");
         assertThat(headerColumns, hasSize(3));
 
-        assertThat(headerColumns.get(0).getText(), is(QUERY_M));
-        assertThat(headerColumns.get(1).getText(), is(START_M));
-        assertThat(headerColumns.get(2).getText(), is(DATASOURCE_M));
+        assertThat(headerColumns.get(0).text(), is(QUERY_M));
+        assertThat(headerColumns.get(1).text(), is(START_M));
+        assertThat(headerColumns.get(2).text(), is(DATASOURCE_M));
 
         List<FluentWebElement> columns = $("#executingSqlQueriesTable tr td");
         assertThat(columns, hasSize(6));
 
-        assertThat(columns.get(0).getText(), is(sqlQueryModel.getLabel()));
-        assertThat(columns.get(1).getText(), is("Fri Sep 30 2016 11:32"));
-        assertThat(columns.get(2).getText(), is(datasource.getLabel()));
+        assertThat(columns.get(0).text(), is(sqlQueryModel.getLabel()));
+        assertThat(columns.get(1).text(), is("Fri Sep 30 2016 11:32"));
+        assertThat(columns.get(2).text(), is(datasource.getLabel()));
 
-        assertThat(columns.get(3).getText(), is(sqlQueryModel.getLabel()));
-        assertThat(columns.get(4).getText(), is("Fri Sep 30 2016 11:34"));
-        assertThat(columns.get(5).getText(), is(datasource.getLabel()));
+        assertThat(columns.get(3).text(), is(sqlQueryModel.getLabel()));
+        assertThat(columns.get(4).text(), is("Fri Sep 30 2016 11:34"));
+        assertThat(columns.get(5).text(), is(datasource.getLabel()));
     }
 }

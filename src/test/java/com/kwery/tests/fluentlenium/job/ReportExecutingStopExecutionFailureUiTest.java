@@ -43,8 +43,8 @@ public class ReportExecutingStopExecutionFailureUiTest extends ChromeFluentTest 
         jobExecutionModel1.setStatus(ONGOING);
         jobExecutionDbSetUp(jobExecutionModel1);
 
-        page = createPage(ReportExecutingPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(ReportExecutingPage.class);
+        goTo(page);
         if (!page.isRendered()) {
             fail("Could not render executing reports page");
         }

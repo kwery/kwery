@@ -93,12 +93,12 @@ public class ReportUiTest extends ChromeFluentTest {
         successSqlQueryExecutionModel.setResult(jsonResult);
         DbUtil.sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
 
-        page = createPage(ReportPage.class);
+        page = newInstance(ReportPage.class);
         page.setJobId(jobModel.getId());
         page.setExecutionId(jobExecutionModel.getExecutionId());
         page.setExpectedReportSections(jobModel.getSqlQueries().size());
 
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Failed to render report page");

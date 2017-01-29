@@ -43,8 +43,8 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
         SqlQueryModel sqlQueryModel = sqlQueryModel(datasource1);
         sqlQueryDbSetUp(sqlQueryModel);
 
-        page = createPage(DatasourceListPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(DatasourceListPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render list datasources page");

@@ -28,6 +28,6 @@ public class OnboardingShowHomeScreenUiTest extends ChromeFluentTest {
     //TODO -  Replace with ReportListPage
     @Test
     public void test() {
-        await().atMost(TIMEOUT_SECONDS).until(".report-list-table-f").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS).until($(".report-list-table-f")).displayed();
     }
 }

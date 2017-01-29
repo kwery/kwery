@@ -24,8 +24,8 @@ public class OnboardingNextStepsShowAllStepsUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpOnboardingNextStepsShowAllPageTest() throws InterruptedException {
-        page = createPage(OnboardingNextStepsPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(OnboardingNextStepsPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render next steps page");

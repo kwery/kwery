@@ -10,8 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -25,9 +23,8 @@ public class DatasourceAddDatabaseToggleTest extends ChromeFluentTest {
 
     @Before
     public void setUpDatasourceAddDatabaseToggleTest() {
-        page = createPage(DatasourceAddPage.class);
-        page.withDefaultSearchWait(1, TimeUnit.SECONDS);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(DatasourceAddPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             TestCase.fail("Could not render add mySqlDatasource page");

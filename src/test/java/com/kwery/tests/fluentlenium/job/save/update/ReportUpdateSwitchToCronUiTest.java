@@ -93,9 +93,9 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
-        page = createPage(ReportUpdatePage.class);
+        page = newInstance(ReportUpdatePage.class);
         page.setReportId(childJobModel.getId());
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Failed to render report update page");

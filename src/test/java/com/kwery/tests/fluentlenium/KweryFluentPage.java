@@ -12,27 +12,27 @@ import static java.util.stream.Collectors.toList;
 
 public class KweryFluentPage extends FluentPage {
     public void waitForModalDisappearance() {
-        await().pollingEvery(1, MILLISECONDS).atMost(TIMEOUT_SECONDS, SECONDS).until(".modal-backdrop").isNotPresent();
+        await().pollingEvery(1, MILLISECONDS).atMost(TIMEOUT_SECONDS, SECONDS).until($(".modal-backdrop")).not().present();
     }
 
     public void waitForModalAppearance() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".waiting-modal-f").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".waiting-modal-f")).displayed();
     }
 
     public void waitForSuccessMessage(String message) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message p").hasText(message);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-success-message p")).text(message);
     }
 
     public void waitForFailureMessage(String message) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message p").hasText(message);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-failure-message p")).text(message);
     }
 
     public void waitForFailureMessageDisplay() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-failure-message").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-failure-message")).displayed();
     }
 
     public List<String> getErrorMessages() {
-        return $(".f-failure-message p").stream().map(FluentWebElement::getText).collect(toList());
+        return $(".f-failure-message p").stream().map(FluentWebElement::text).collect(toList());
     }
 
 }

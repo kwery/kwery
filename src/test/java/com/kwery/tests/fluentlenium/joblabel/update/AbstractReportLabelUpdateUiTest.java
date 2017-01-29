@@ -22,10 +22,10 @@ public abstract class AbstractReportLabelUpdateUiTest extends ChromeFluentTest {
 
     @Before
     public void setUp() {
-        page = createPage(ReportLabelUpdatePage.class);
+        page = newInstance(ReportLabelUpdatePage.class);
         page.setReportLabelId(getReportLabelId());
         page.setReportLabel(getReportLabel());
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page.goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render report label update page");

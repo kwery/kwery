@@ -26,8 +26,8 @@ public class OnboardingNextStepsShowAddSqlQueryStepUiTest extends ChromeFluentTe
     public void setUpOnboardingNextStepsShowAddSqlQueryStepUiTest() {
         datasourceDbSetup(datasource());
 
-        page = createPage(OnboardingNextStepsPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(OnboardingNextStepsPage.class);
+        goTo(page);
         if (!page.isRendered()) {
             fail("Could not render next steps page");
         }
