@@ -30,7 +30,7 @@ public class OnboardingAdminUserAddedUiTest extends ChromeFluentTest {
         user.setUsername(ROOT_USERNAME);
         user.setPassword(ROOT_PASSWORD);
 
-        page.waitForAdminUserCreatedMessage(user);
+        page.assertAdminUserCreatedMessage(user);
     }
 
     @Override

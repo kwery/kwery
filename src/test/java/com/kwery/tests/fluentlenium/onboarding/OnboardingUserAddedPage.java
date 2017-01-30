@@ -10,7 +10,7 @@ import static com.kwery.tests.util.Messages.ONBOARDING_ROOT_USER_CREATED_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static junit.framework.TestCase.fail;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 @Unauthenticated
@@ -19,15 +19,11 @@ import static org.fluentlenium.core.filter.FilterConstructor.withText;
 public class OnboardingUserAddedPage extends FluentPage {
     @Override
     public void isAt() {
-        if (!el(".welcome-f").displayed()) {
-            fail("Could not render onboarding user created page");
-        }
+        assertThat(el(".welcome-f")).isDisplayed();
     }
 
-    public void waitForAdminUserCreatedMessage(User user) {
+    public void assertAdminUserCreatedMessage(User user) {
         String userCreatedMessage = format(ONBOARDING_ROOT_USER_CREATED_M, user.getUsername(), user.getPassword());
-        if (!el(".user-added-f p", withText(userCreatedMessage)).displayed()) {
-            fail("User created message not found");
-        }
+        assertThat(el(".user-added-f p", withText(userCreatedMessage))).isDisplayed();
     }
 }
