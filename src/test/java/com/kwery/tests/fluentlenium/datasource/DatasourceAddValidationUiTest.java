@@ -4,6 +4,7 @@ import com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.FormField;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,12 +25,12 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected DatasourceAddPage page;
 
     @Before
     public void DatasourceAddValidationUiTest() {
-        page = newInstance(DatasourceAddPage.class);
-        goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             fail("Failed to render add datasource page");
@@ -91,5 +92,10 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
                 assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
             }
         }
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

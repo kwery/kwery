@@ -5,6 +5,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,6 +30,7 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Page
     protected DatasourceAddPage page;
 
     protected Datasource datasource;
@@ -40,8 +42,7 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
 
         datasourceDbSetup(datasource);
 
-        page = newInstance(DatasourceAddPage.class);
-        goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             fail("Could not render update datasource page");
@@ -65,5 +66,10 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
                         connectionFailureErrorMessage
                 )
         );
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

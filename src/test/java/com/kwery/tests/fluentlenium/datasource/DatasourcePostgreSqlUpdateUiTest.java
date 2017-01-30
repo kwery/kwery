@@ -5,6 +5,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import com.kwery.tests.util.PostgreSqlDockerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
     @Rule
     public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
 
+    @Page
     protected UpdateDatasourcePage page;
 
     protected Datasource postgreSqlDatasource;
@@ -44,10 +46,7 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
         anotherDatasource = datasource(MYSQL);
         datasourceDbSetup(anotherDatasource);
 
-        page = newInstance(UpdateDatasourcePage.class);
-        page.setDatasourceId(postgreSqlDatasource.getId());
-
-        goTo(page);
+        page.go(postgreSqlDatasource.getId());
 
         if (!page.isRendered()) {
             fail("Could not render update mySqlDatasource page");
@@ -83,9 +82,14 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
     @Test
     public void testDuplicateLabel() {
         page.waitForModalDisappearance();
-        page.fillLabel(anotherDatasource.getLabel());
         page.waitForForm(DatasourceAddPage.FormField.label, postgreSqlDatasource.getLabel());
+        page.fillLabel(anotherDatasource.getLabel());
         page.submit();
         page.waitForFailureMessage(anotherDatasource.getLabel(), anotherDatasource.getType());
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

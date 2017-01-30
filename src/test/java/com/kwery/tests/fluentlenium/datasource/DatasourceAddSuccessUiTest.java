@@ -2,6 +2,7 @@ package com.kwery.tests.fluentlenium.datasource;
 
 import com.kwery.models.Datasource;
 import com.kwery.tests.util.*;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,12 +27,12 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
     @Rule
     public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
 
+    @Page
     protected DatasourceAddPage page;
 
     @Before
     public void setUpAddDatasourceSuccessTest() {
-        page = newInstance(DatasourceAddPage.class);
-        goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             fail("Add datasource page is not rendered");
@@ -58,6 +59,11 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
         page.submitForm(datasource);
         page.waitForDatasourceListPage();
         page.waitForSuccessMessage(datasource.getLabel(), POSTGRESQL);
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
 

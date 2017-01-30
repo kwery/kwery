@@ -5,6 +5,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import junit.framework.TestCase;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertThat;
 public class DatasourceAddDatabaseToggleTest extends ChromeFluentTest {
     NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
+    @Page
     DatasourceAddPage page;
 
     @Rule
@@ -23,8 +25,7 @@ public class DatasourceAddDatabaseToggleTest extends ChromeFluentTest {
 
     @Before
     public void setUpDatasourceAddDatabaseToggleTest() {
-        page = newInstance(DatasourceAddPage.class);
-        goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             TestCase.fail("Could not render add mySqlDatasource page");
@@ -38,5 +39,10 @@ public class DatasourceAddDatabaseToggleTest extends ChromeFluentTest {
         page.waitForDatabaseFormFieldToBeVisible();
         page.selectDatasourceType(Datasource.Type.MYSQL);
         page.waitForDatabaseFormFieldToBeInvisible();
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

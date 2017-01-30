@@ -2,8 +2,10 @@ package com.kwery.tests.fluentlenium.datasource;
 
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.By;
 
 import java.util.ArrayList;
@@ -19,17 +21,14 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#datasource/list")
 public class DatasourceListPage extends KweryFluentPage implements RepoDashPage {
     public static final int COLUMNS = 5;
 
     @Override
     public boolean isRendered() {
         return find(id("datasourcesListTable")).first().displayed();
-    }
-
-    @Override
-    public String getUrl() {
-        return "/#datasource/list";
     }
 
     public List<String> headers() {

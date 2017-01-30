@@ -7,6 +7,7 @@ import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,6 +33,7 @@ public class DatasourceListUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected DatasourceListPage page;
 
     @Before
@@ -47,7 +49,6 @@ public class DatasourceListUiTest extends ChromeFluentTest {
         );
         dbSetup.launch();
 
-        page = newInstance(DatasourceListPage.class);
         goTo(page);
 
         if (!page.isRendered()) {
@@ -84,5 +85,10 @@ public class DatasourceListUiTest extends ChromeFluentTest {
         assertThat(second.get(1), is("bar.com"));
         assertThat(second.get(2), is("3307"));
         assertThat(second.get(3), is("user1"));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

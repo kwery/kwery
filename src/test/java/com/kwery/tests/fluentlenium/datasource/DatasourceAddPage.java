@@ -4,6 +4,7 @@ import com.kwery.models.Datasource;
 import com.kwery.models.Datasource.Type;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.By;
@@ -22,6 +23,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#datasource/add")
 public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
@@ -72,11 +75,6 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
         return $(".f-failure-message p").stream().map(FluentWebElement::text).collect(Collectors.toCollection(LinkedList::new));
     }
 
-    @Override
-    public String getUrl() {
-        return "/#datasource/add";
-    }
-
     public String actionLabel() {
         return find(id("create")).text();
     }
@@ -111,6 +109,6 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void waitForDatasourceListPage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#datasource/list"));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> getDriver().getCurrentUrl().equals(getBaseUrl() + "/#datasource/list"));
     }
 }
