@@ -2,6 +2,7 @@ package com.kwery.tests.fluentlenium.onboarding;
 
 import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.security.Unauthenticated;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.hook.wait.Wait;
@@ -19,7 +20,7 @@ import static org.fluentlenium.core.filter.FilterConstructor.withText;
 public class OnboardingUserAddedPage extends FluentPage {
     @Override
     public void isAt() {
-        assertThat(el(".welcome-f")).isDisplayed();
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(el(".welcome-f")).displayed();
     }
 
     public void assertAdminUserCreatedMessage(User user) {
