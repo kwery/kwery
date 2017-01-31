@@ -14,10 +14,11 @@ public class EmailConfigurationTestEmailConfigurationSuccessUiTest extends Email
         SmtpConfiguration smtpConfiguration = smtpConfigurationWithoutId();
         page.submitSmtpConfigurationForm(smtpConfiguration);
         page.waitForSaveMessage(SMTP_CONFIGURATION_ADDED_M);
+        page.waitForModalDisappearance();
 
         EmailConfiguration emailConfiguration = emailConfigurationWithoutId();
-        page.waitForModalDisappearance();
         page.submitEmailConfigurationForm(emailConfiguration);
+        page.waitForModalDisappearance();
         page.waitForSaveMessage(EMAIL_CONFIGURATION_SAVED_M);
 
         page.submitTestEmailForm("foo@goo.com");

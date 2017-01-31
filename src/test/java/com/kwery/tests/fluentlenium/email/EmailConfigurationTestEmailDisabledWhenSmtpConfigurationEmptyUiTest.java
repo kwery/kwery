@@ -4,6 +4,7 @@ import com.kwery.models.EmailConfiguration;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,6 +21,7 @@ public class EmailConfigurationTestEmailDisabledWhenSmtpConfigurationEmptyUiTest
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected EmailConfigurationPage page;
 
     protected EmailConfiguration emailConfiguration;
@@ -40,5 +42,10 @@ public class EmailConfigurationTestEmailDisabledWhenSmtpConfigurationEmptyUiTest
     public void test() {
         assertThat(page.isTestEmailConfigurationSubmitButtonDisabled(), is(true));
         assertThat(page.isTestEmailConfigurationToFieldDisabled(), is(true));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

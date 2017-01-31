@@ -4,12 +4,16 @@ import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#email/configuration")
 public class EmailConfigurationPage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String RADIO_VALIDATION_ERROR_MESSAGE = "Please select one of these options.";
@@ -84,11 +88,6 @@ public class EmailConfigurationPage extends KweryFluentPage implements RepoDashP
 
     public String testEmailToFieldValidationMessage() {
         return $(className("test-email-to-validation-message-f")).first().text();
-    }
-
-    @Override
-    public String getUrl() {
-        return "/#email/configuration";
     }
 
     public enum SmtpConfigurationFormField {

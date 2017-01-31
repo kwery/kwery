@@ -5,6 +5,7 @@ import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
@@ -19,6 +20,7 @@ public class EmailConfigurationPageWithDataSetUp extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected EmailConfigurationPage page;
 
     protected SmtpConfiguration smtpConfiguration;
@@ -29,7 +31,6 @@ public class EmailConfigurationPageWithDataSetUp extends ChromeFluentTest {
         emailConfiguration = emailConfigurationDbSetUp();
         smtpConfiguration = smtpConfigurationDbSetUp();
 
-        page = newInstance(EmailConfigurationPage.class);
         goTo(page);
 
         if (!page.isRendered()) {
@@ -37,5 +38,10 @@ public class EmailConfigurationPageWithDataSetUp extends ChromeFluentTest {
         }
 
         page.waitForModalDisappearance();
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
