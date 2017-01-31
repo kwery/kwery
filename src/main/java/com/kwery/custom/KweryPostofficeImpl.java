@@ -62,10 +62,13 @@ public class KweryPostofficeImpl implements Postoffice {
         boolean smtpSsl = smtpConfiguration.isSsl();
         String smtpUser = smtpConfiguration.getUsername();
         String smtpPassword = smtpConfiguration.getPassword();
-        boolean smtpDebug = true;
+        boolean smtpDebug = false;
 
-        commonsmailHelper.doSetServerParameter(multiPartEmail, smtpHost, smtpPort, smtpSsl,
-                smtpUser, smtpPassword, smtpDebug);
+        if (smtpConfiguration.isUseLocalSetting()) {
+            commonsmailHelper.doSetServerParameter(multiPartEmail, smtpHost, smtpPort, false, "", "", smtpDebug);
+        } else {
+            commonsmailHelper.doSetServerParameter(multiPartEmail, smtpHost, smtpPort, smtpSsl, smtpUser, smtpPassword, smtpDebug);
+        }
 
         // And send it:
         multiPartEmail.send();

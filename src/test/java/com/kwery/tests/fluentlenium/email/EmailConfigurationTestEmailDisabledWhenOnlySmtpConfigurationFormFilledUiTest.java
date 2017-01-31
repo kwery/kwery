@@ -12,6 +12,8 @@ public class EmailConfigurationTestEmailDisabledWhenOnlySmtpConfigurationFormFil
     @Test
     public void test() {
         SmtpConfiguration smtpConfiguration = TestUtil.smtpConfigurationWithoutId();
+        smtpConfiguration.setUseLocalSetting(false);
+
         page.submitSmtpConfigurationForm(smtpConfiguration);
         page.waitForSaveMessage(Messages.SMTP_CONFIGURATION_ADDED_M);
 

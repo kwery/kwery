@@ -1,0 +1,1 @@
+alter table smtp_configuration add column use_local_setting boolean;

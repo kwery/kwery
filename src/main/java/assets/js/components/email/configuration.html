@@ -8,6 +8,14 @@
         <div class="panel-body">
             <form id="saveSmtpConfigurationForm" role="form">
                 <div class="form-group">
+                    <div class="form-group">
+                        <label for="localSetting">
+                            <input data-bind="checked: useLocalSetting" type="checkbox" class="local-setting-f" id="localSetting">
+                            &nbsp;<span data-bind="text: ko.i18n('email.configuration.local.smtp')"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label data-bind="text: ko.i18n('smtp.host')" class="control-label" for="host"></label>
                     <input data-bind="value: host" minlength="1" class="form-control f-host" type="text" id="host" name="host" required>
                     <div class="help-block with-errors host-validation-message-f"></div>
@@ -22,11 +30,11 @@
                     <div>
                         <div class="radio">
                             <label>
-                                <input data-bind="checked: ssl" class="radio-inline f-ssl-true" type="radio" name="ssl" value="true" required>
+                                <input data-bind="enable: !useLocalSetting(), checked: ssl" class="radio-inline f-ssl-true" type="radio" name="ssl" id="sslTrue" value="true" required data-validate="true">
                                 True
                             </label>
                             <label>
-                                <input data-bind="checked: ssl" class="radio-inline f-ssl-false" type="radio" name="ssl" value="false" required>
+                                <input data-bind="enable: !useLocalSetting(), checked: ssl" class="radio-inline f-ssl-false" type="radio" name="ssl" id="sslFalse" value="false" required data-validate="true">
                                 False
                             </label>
                         </div>
@@ -35,12 +43,12 @@
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('user.name')" for="username"></label>
-                    <input data-bind="value: username" minlength="1" class="form-control f-smtp-username" type="text" id="username" name="username" required>
+                    <input data-bind="enable: !useLocalSetting(), value: username" minlength="1" class="form-control f-smtp-username" type="text" id="username" name="username" required data-validate="true">
                     <div class="help-block with-errors username-validation-message-f"></div>
                 </div>
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('password')" for="password"></label>
-                    <input data-bind="value: password" class="form-control f-smtp-password" type="password" id="password" name="password" required>
+                    <input data-bind="enable: !useLocalSetting(), value: password" class="form-control f-smtp-password" type="password" id="password" name="password" required data-validate="true">
                     <div class="help-block with-errors password-validation-message-f"></div>
                 </div>
                 <button type="submit" data-bind="text: ko.i18n('email.configuration.save')" class="btn btn-primary f-smtp-configuration-submit" id="create"></button>

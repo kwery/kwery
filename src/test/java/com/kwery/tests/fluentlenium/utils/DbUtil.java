@@ -312,6 +312,25 @@ public class DbUtil {
         return builder.build();
     }
 
+    public static IDataSet smtpConfigurationTable(SmtpConfiguration configuration) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(SmtpConfiguration.TABLE_SMTP_CONFIGURATION);
+
+        if (configuration != null) {
+            builder.newRow(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
+                    .with(SmtpConfiguration.COLUMN_HOST, configuration.getHost())
+                    .with(SmtpConfiguration.COLUMN_PORT, configuration.getPort())
+                    .with(SmtpConfiguration.COLUMN_SSL, configuration.isSsl())
+                    .with(SmtpConfiguration.COLUMN_USERNAME, configuration.getUsername())
+                    .with(SmtpConfiguration.COLUMN_PASSWORD, configuration.getPassword())
+                    .with(SmtpConfiguration.COLUMN_USE_LOCAL_SETTING, configuration.isUseLocalSetting())
+                    .with(SmtpConfiguration.COLUMN_ID, configuration.getId())
+                    .add();
+        }
+
+        return builder.build();
+    }
+
     public static void datasourceDbSetup(Datasource datasource) {
         DbSetup dbSetup = new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -552,6 +571,7 @@ public class DbUtil {
                                 .column(SmtpConfiguration.COLUMN_SSL, smtpConfiguration.isSsl())
                                 .column(SmtpConfiguration.COLUMN_USERNAME, smtpConfiguration.getUsername())
                                 .column(SmtpConfiguration.COLUMN_PASSWORD, smtpConfiguration.getPassword())
+                                .column(SmtpConfiguration.COLUMN_USE_LOCAL_SETTING, smtpConfiguration.isUseLocalSetting())
                                 .end()
                                 .build()
                 )

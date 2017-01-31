@@ -78,7 +78,7 @@ public class Messages {
     public static final String SMTP_CONFIGURATION_UPDATED_M = "SMTP configuration successfully updated";
     public static final String SMTP_CONFIGURATION_ALREADY_PRESENT_M = "SMTP configuration is present, cannot add another one. Please edit the existing configuration";
     public static final String EMAIL_CONFIGURATION_SAVED_M = "Email configuration saved successfully";
-    public static final String EMAIL_TEST_SUCCESS_M = "There were not errors while sending the mail, hop on to your inbox and confirm that you have received the mail";
+    public static final String EMAIL_TEST_SUCCESS_M = "Email sent successfully, hop on to your inbox and confirm that you have received the mail";
     public static final String EMAIL_TEST_FAILURE_M = "Oops, got an error while trying to send mail, please check logs";
     public static final String EMAIL_TEST_SUBJECT_M = "Test mail from Kwery";
     public static final String EMAIL_TEST_BODY_M = "Congratulations, Kwery has been successfully configured to send mails.";
