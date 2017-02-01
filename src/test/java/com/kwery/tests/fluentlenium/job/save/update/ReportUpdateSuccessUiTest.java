@@ -17,6 +17,7 @@ import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
 import org.dozer.DozerBeanMapper;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,7 +46,9 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
     String email1 = "boo@goo.com";
     String email2 = "moo@goo.com";
 
+    @Page
     ReportUpdatePage page;
+
     JobModel jobModel;
     Datasource datasource;
     JobDao jobDao;
@@ -74,9 +77,7 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
-        page = newInstance(ReportUpdatePage.class);
-        page.setReportId(jobModel.getId());
-        goTo(page);
+        page.go(jobModel.getId());
 
         if (!page.isRendered()) {
             fail("Failed to render report update page");
@@ -122,5 +123,10 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         assertThat(jobDao.getAllJobs(), hasSize(1));
         assertThat(sqlQueryDao.getAll(), hasSize(2));
         assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

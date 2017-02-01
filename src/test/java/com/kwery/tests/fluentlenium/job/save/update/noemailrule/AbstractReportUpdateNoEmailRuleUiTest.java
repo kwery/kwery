@@ -12,6 +12,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
@@ -36,6 +37,8 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
 
     private JobDao jobDao;
     private JobModel jobModel;
+
+    @Page
     protected ReportUpdatePage page;
 
     @Before
@@ -59,9 +62,7 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
-        page = newInstance(ReportUpdatePage.class);
-        page.setReportId(jobModel.getId());
-        goTo(page);
+        page.go(jobModel.getId());
 
         if (!page.isRendered()) {
             fail("Failed to render report update page");
@@ -75,5 +76,10 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
 
     public void assertNoEmailRule(boolean expected) {
         assertThat(jobDao.getJobById(jobModel.getId()).getRules().get(EMPTY_REPORT_NO_EMAIL), is(String.valueOf(expected)));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

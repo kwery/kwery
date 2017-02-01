@@ -17,6 +17,7 @@ import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
 import org.dozer.DozerBeanMapper;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,6 +43,7 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Page
     ReportUpdatePage page;
     JobModel parentJobModel;
     Datasource datasource;
@@ -93,9 +95,7 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
-        page = newInstance(ReportUpdatePage.class);
-        page.setReportId(childJobModel.getId());
-        goTo(page);
+        page.go(childJobModel.getId());
 
         if (!page.isRendered()) {
             fail("Failed to render report update page");
@@ -150,5 +150,10 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
 
         assertThat(jobDao.getAllJobs(), hasSize(2));
         assertThat(sqlQueryDao.getAll(), hasSize(2));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
