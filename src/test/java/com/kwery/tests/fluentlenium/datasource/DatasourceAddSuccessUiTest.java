@@ -8,8 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.Datasource.Type.POSTGRESQL;
+import static com.kwery.models.Datasource.Type.*;
 import static com.kwery.tests.util.Messages.CREATE_M;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -26,6 +25,9 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
 
     @Rule
     public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
+
+    @Rule
+    public RedshiftDockerRule redshiftDockerRule = new RedshiftDockerRule();
 
     @Page
     protected DatasourceAddPage page;
@@ -59,6 +61,17 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
         page.submitForm(datasource);
         page.waitForDatasourceListPage();
         page.waitForSuccessMessage(datasource.getLabel(), POSTGRESQL);
+    }
+
+    @Test
+    public void testAddRedshiftDatasource() {
+        assertThat(page.actionLabel().toLowerCase(), is(CREATE_M.toLowerCase()));
+
+        Datasource datasource = redshiftDockerRule.getRedshiftDocker().datasource();
+
+        page.submitForm(datasource);
+        page.waitForDatasourceListPage();
+        page.waitForSuccessMessage(datasource.getLabel(), REDSHIFT);
     }
 
     @Override

@@ -124,7 +124,7 @@ public class Datasource {
     }
 
     public enum Type {
-        MYSQL, POSTGRESQL
+        MYSQL, POSTGRESQL, REDSHIFT
     }
 
     @Override

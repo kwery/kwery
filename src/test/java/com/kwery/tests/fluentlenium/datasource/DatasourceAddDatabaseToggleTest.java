@@ -1,6 +1,5 @@
 package com.kwery.tests.fluentlenium.datasource;
 
-import com.kwery.models.Datasource;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -11,9 +10,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
+import static com.kwery.models.Datasource.Type.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+//TODO - Generate pairs and then toggle to cover all cases
 public class DatasourceAddDatabaseToggleTest extends ChromeFluentTest {
     NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
@@ -33,12 +34,30 @@ public class DatasourceAddDatabaseToggleTest extends ChromeFluentTest {
     }
 
     @Test
-    public void test() {
+    public void testPostgresqlToMysqlToggle() {
         assertThat(page.isDatabaseFormFieldVisible(), is(false));
-        page.selectDatasourceType(Datasource.Type.POSTGRESQL);
+        page.selectDatasourceType(POSTGRESQL);
         page.waitForDatabaseFormFieldToBeVisible();
-        page.selectDatasourceType(Datasource.Type.MYSQL);
+        page.selectDatasourceType(MYSQL);
         page.waitForDatabaseFormFieldToBeInvisible();
+    }
+
+    @Test
+    public void testRedshiftToMysqlToggle() {
+        assertThat(page.isDatabaseFormFieldVisible(), is(false));
+        page.selectDatasourceType(REDSHIFT);
+        page.waitForDatabaseFormFieldToBeVisible();
+        page.selectDatasourceType(MYSQL);
+        page.waitForDatabaseFormFieldToBeInvisible();
+    }
+
+    @Test
+    public void testPostgresqlToRedshiftToggle() {
+        assertThat(page.isDatabaseFormFieldVisible(), is(false));
+        page.selectDatasourceType(POSTGRESQL);
+        page.waitForDatabaseFormFieldToBeVisible();
+        page.selectDatasourceType(REDSHIFT);
+        assertThat(page.isDatabaseFormFieldVisible(), is(true));
     }
 
     @Override

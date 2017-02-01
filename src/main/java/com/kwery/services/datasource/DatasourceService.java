@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static com.kwery.models.Datasource.Type.*;
+
 public class DatasourceService {
     private static Logger logger = LoggerFactory.getLogger(DatasourceService.class);
 
@@ -22,9 +24,9 @@ public class DatasourceService {
     }
 
     public String connectionString(Datasource datasource) {
-        if (datasource.getType() == Datasource.Type.MYSQL) {
+        if (datasource.getType() == MYSQL) {
             return String.format("jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger", datasource.getUrl(), datasource.getPort()) ;
-        } else if (datasource.getType() == Datasource.Type.POSTGRESQL) {
+        } else if ((datasource.getType() == POSTGRESQL) || (datasource.getType() == REDSHIFT)) {
             return String.format("jdbc:postgresql://%s:%d/%s", datasource.getUrl(), datasource.getPort(), datasource.getDatabase());
         }
 
@@ -36,7 +38,7 @@ public class DatasourceService {
         datasource.setId(1);
         datasource.setLabel("postgres");
         datasource.setPort(5432);
-        datasource.setType(Datasource.Type.POSTGRESQL);
+        datasource.setType(POSTGRESQL);
         datasource.setUrl("localhost");
         datasource.setUsername("postgres");
         datasource.setPassword("root");
