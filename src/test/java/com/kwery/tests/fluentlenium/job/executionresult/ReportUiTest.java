@@ -2,17 +2,19 @@ package com.kwery.tests.fluentlenium.job.executionresult;
 
 import com.google.common.collect.ImmutableList;
 import com.kwery.models.*;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import com.kwery.tests.util.TestUtil;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -34,54 +36,53 @@ public class ReportUiTest extends ChromeFluentTest {
     private SqlQueryExecutionModel successSqlQueryExecutionModel;
     private String jsonResult;
 
+    @Page
     protected ReportPage page;
-    private SqlQueryExecutionModel killedSqlQueryExecutionModel;
-    private SqlQueryModel killedQuery;
 
     @Before
     public void setUp() {
-        jobModel = TestUtil.jobModelWithoutDependents();
-        DbUtil.jobDbSetUp(jobModel);
+        jobModel = jobModelWithoutDependents();
+        jobDbSetUp(jobModel);
 
-        Datasource datasource = TestUtil.datasource();
-        DbUtil.datasourceDbSetup(datasource);
+        Datasource datasource = datasource();
+        datasourceDbSetup(datasource);
 
-        insertQuery = TestUtil.sqlQueryModel(datasource);
+        insertQuery = sqlQueryModel(datasource);
         insertQuery.setTitle("insert query");
-        DbUtil.sqlQueryDbSetUp(insertQuery);
+        sqlQueryDbSetUp(insertQuery);
 
-        failedQuery = TestUtil.sqlQueryModel(datasource);
+        failedQuery = sqlQueryModel(datasource);
         failedQuery.setTitle("failed query");
-        DbUtil.sqlQueryDbSetUp(failedQuery);
+        sqlQueryDbSetUp(failedQuery);
 
-        successQuery = TestUtil.sqlQueryModel(datasource);
+        successQuery = sqlQueryModel(datasource);
         successQuery.setTitle("success query");
-        DbUtil.sqlQueryDbSetUp(successQuery);
+        sqlQueryDbSetUp(successQuery);
 
         jobModel.setSqlQueries(ImmutableList.of(insertQuery, failedQuery, successQuery));
 
-        DbUtil.jobSqlQueryDbSetUp(jobModel);
+        jobSqlQueryDbSetUp(jobModel);
 
-        jobExecutionModel = TestUtil.jobExecutionModel();
+        jobExecutionModel = jobExecutionModel();
         jobExecutionModel.setJobModel(jobModel);
 
-        DbUtil.jobExecutionDbSetUp(jobExecutionModel);
+        jobExecutionDbSetUp(jobExecutionModel);
 
-        failedSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
+        failedSqlQueryExecutionModel = sqlQueryExecutionModel();
         failedSqlQueryExecutionModel.setSqlQuery(failedQuery);
         failedSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         failedSqlQueryExecutionModel.setStatus(SqlQueryExecutionModel.Status.FAILURE);
         failedSqlQueryExecutionModel.setResult("foobarmoo");
-        DbUtil.sqlQueryExecutionDbSetUp(failedSqlQueryExecutionModel);
+        sqlQueryExecutionDbSetUp(failedSqlQueryExecutionModel);
 
-        insertSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
+        insertSqlQueryExecutionModel = sqlQueryExecutionModel();
         insertSqlQueryExecutionModel.setSqlQuery(insertQuery);
         insertSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         insertSqlQueryExecutionModel.setStatus(SUCCESS);
         insertSqlQueryExecutionModel.setResult(null);
-        DbUtil.sqlQueryExecutionDbSetUp(insertSqlQueryExecutionModel);
+        sqlQueryExecutionDbSetUp(insertSqlQueryExecutionModel);
 
-        successSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
+        successSqlQueryExecutionModel = sqlQueryExecutionModel();
         successSqlQueryExecutionModel.setSqlQuery(successQuery);
         successSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         successSqlQueryExecutionModel.setStatus(SUCCESS);
@@ -91,14 +92,14 @@ public class ReportUiTest extends ChromeFluentTest {
                 ImmutableList.of("goo", "boo")
         ));
         successSqlQueryExecutionModel.setResult(jsonResult);
-        DbUtil.sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
+        sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
 
         page = newInstance(ReportPage.class);
         page.setJobId(jobModel.getId());
         page.setExecutionId(jobExecutionModel.getExecutionId());
         page.setExpectedReportSections(jobModel.getSqlQueries().size());
 
-        goTo(page);
+        page.go(jobModel.getId(), jobExecutionModel.getExecutionId());
 
         if (!page.isRendered()) {
             fail("Failed to render report page");
@@ -117,10 +118,6 @@ public class ReportUiTest extends ChromeFluentTest {
         assertThat(page.isDownloadLinkPresent(1), is(false));
         assertThat(page.isDownloadLinkPresent(2), is(true));
 
-/*        assertThat(page.isTableDisplayed(0), is(false));
-        assertThat(page.isTableDisplayed(1), is(false));
-        assertThat(page.isTableDisplayed(2), is(true));*/
-
         assertThat(page.isTableEmpty(0), is(true));
 
         assertThat(page.getContent(1), is(failedSqlQueryExecutionModel.getResult()));
@@ -130,5 +127,10 @@ public class ReportUiTest extends ChromeFluentTest {
         assertThat(page.tableRows(2, 1), is(ImmutableList.of("goo", "boo")));
 
         assertThat(page.downloadReportLink(2), is(String.format(ninjaServerRule.getServerUrl() + "/api/report/csv/%s", successSqlQueryExecutionModel.getExecutionId())));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
