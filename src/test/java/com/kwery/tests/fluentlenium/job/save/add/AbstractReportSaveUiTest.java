@@ -15,6 +15,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
@@ -38,6 +39,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Page
     protected ReportSavePage page;
 
     protected JobDto jobDto;
@@ -86,7 +88,6 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
 
         jobDao = ninjaServerRule.getInjector().getInstance(JobDao.class);
 
-        page = newInstance(ReportSavePage.class);
         goTo(page);
 
         if (!page.isRendered()) {
@@ -106,5 +107,10 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
 
     public void setSmtpConfigurationSave(boolean smtpConfigurationSave) {
         this.smtpConfigurationSave = smtpConfigurationSave;
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

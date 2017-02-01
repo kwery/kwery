@@ -3,7 +3,9 @@ package com.kwery.tests.fluentlenium.job.save;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.By;
 
 import java.util.LinkedList;
@@ -17,6 +19,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.By.className;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report/add")
 public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
@@ -123,7 +127,11 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     public void clickOnRemoveLabel(int i) {
         int count = $(className("label-f")).size();
         $(className(String.format("remove-label-%d-f", i))).click();
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-f")).size(count - 1);
+        if (count > 1) {
+            await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-f")).size(count - 1);
+        } else {
+            waitForElementDisappearance(className(".label-f"));
+        }
     }
 
     public void waitForReportSaveSuccessMessage() {
@@ -153,11 +161,6 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
         }
 
         return count;
-    }
-
-    @Override
-    public String getUrl() {
-        return "/#report/add";
     }
 
     public String validationMessage(ReportFormField field) {
@@ -209,7 +212,7 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void waitForReportListPage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#report/list"));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> getDriver().getCurrentUrl().equals(getBaseUrl() + "/#report/list"));
     }
 
     public boolean isEmailFieldEnabled() {

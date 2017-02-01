@@ -16,6 +16,7 @@ import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import junit.framework.TestCase;
 import org.dozer.DozerBeanMapper;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,6 +47,7 @@ public class ReportSaveServerValidationUiTest extends ChromeFluentTest {
     protected String jobLabel = "label";
     protected String queryLabel = "label";
 
+    @Page
     protected ReportSavePage page;
 
     protected JobDto jobDto;
@@ -84,7 +86,6 @@ public class ReportSaveServerValidationUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
-        page = newInstance(ReportSavePage.class);
         goTo(page);
 
         if (!page.isRendered()) {
@@ -118,5 +119,10 @@ public class ReportSaveServerValidationUiTest extends ChromeFluentTest {
         );
 
         assertThat(expectedErrorMessages, containsInAnyOrder(page.getErrorMessages().toArray(new String[2])));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

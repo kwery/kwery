@@ -8,7 +8,6 @@ import org.junit.Test;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobLabelDbSetUp;
 import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ReportSaveLabelDisplayUiTest extends AbstractReportSaveUiTest {
@@ -38,7 +37,5 @@ public class ReportSaveLabelDisplayUiTest extends AbstractReportSaveUiTest {
         assertThat(page.labelTexts(0), containsInAnyOrder("", jobLabelModel0.getLabel(), jobLabelModel1.getLabel()));
 
         page.clickOnRemoveLabel(0);
-
-        assertThat(page.labelSelectCount(), is(0));
     }
 }

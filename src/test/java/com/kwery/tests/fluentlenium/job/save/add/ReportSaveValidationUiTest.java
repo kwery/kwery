@@ -7,6 +7,7 @@ import com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     ReportSavePage page;
 
     @Before
@@ -37,7 +39,6 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
-        page = newInstance(ReportSavePage.class);
         goTo(page);
 
         if (!page.isRendered()) {
@@ -113,5 +114,10 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
                 }
             }
         }
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

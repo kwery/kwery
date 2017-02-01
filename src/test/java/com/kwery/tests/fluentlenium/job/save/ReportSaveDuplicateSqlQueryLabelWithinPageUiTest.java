@@ -8,6 +8,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import org.dozer.DozerBeanMapper;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +32,7 @@ public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFlue
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected ReportSavePage page;
 
     protected JobDto jobDto;
@@ -43,7 +45,6 @@ public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFlue
 
         datasourceDbSetup(datasource);
 
-        page = newInstance(ReportSavePage.class);
         goTo(page);
 
         if (!page.isRendered()) {
@@ -78,5 +79,10 @@ public class ReportSaveDuplicateSqlQueryLabelWithinPageUiTest extends ChromeFlue
         page.fillAndSubmitReportSaveForm(jobForm);
 
         assertThat(page.validationMessage(queryLabel, 1), is(REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
