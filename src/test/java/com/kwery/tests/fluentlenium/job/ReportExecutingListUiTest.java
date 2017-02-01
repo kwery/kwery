@@ -8,6 +8,7 @@ import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +34,7 @@ public class ReportExecutingListUiTest extends ChromeFluentTest {
 
     protected JobApiController controller = new JobApiController(null, null, null, null, null, null, null, null, null);
 
+    @Page
     protected ReportExecutingPage page;
     protected JobExecutionModel jobExecutionModel0;
     protected JobExecutionModel jobExecutionModel1;
@@ -58,7 +60,6 @@ public class ReportExecutingListUiTest extends ChromeFluentTest {
         jobExecutionModel1.setStatus(ONGOING);
         jobExecutionDbSetUp(jobExecutionModel1);
 
-        page = newInstance(ReportExecutingPage.class);
         goTo(page);
         if (!page.isRendered()) {
             fail("Could not render executing reports page");
@@ -79,4 +80,8 @@ public class ReportExecutingListUiTest extends ChromeFluentTest {
                 .excludeProperty("end").excludeProperty("status").excludeProperty("executionId"));
     }
 
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
+    }
 }

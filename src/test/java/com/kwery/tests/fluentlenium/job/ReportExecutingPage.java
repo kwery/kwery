@@ -3,8 +3,10 @@ package com.kwery.tests.fluentlenium.job;
 import com.kwery.dtos.JobExecutionDto;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +18,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.tagName;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report/executing")
 public class ReportExecutingPage extends KweryFluentPage implements RepoDashPage {
     @Override
     public boolean isRendered() {
@@ -57,10 +61,4 @@ public class ReportExecutingPage extends KweryFluentPage implements RepoDashPage
     public void waitForStopExecutionFailureMessage() {
         super.waitForFailureMessage(REPORT_JOB_EXECUTING_STOP_FAILURE_M);
     }
-
-    @Override
-    public String getUrl() {
-        return "/#report/executing";
-    }
-
 }
