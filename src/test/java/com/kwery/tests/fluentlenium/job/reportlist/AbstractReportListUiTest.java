@@ -8,6 +8,7 @@ import com.kwery.services.job.JobService;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
@@ -26,6 +27,7 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     ReportListPage page;
 
     Map<String, ReportListRow> rowMap = new HashMap<>();
@@ -66,10 +68,7 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         jobService.schedule(parentJob.getId());
         jobService.schedule(jobModel.getId());
 
-        page = newInstance(ReportListPage.class);
-        page.setResultCount(getResultCount());
-
-        page.goTo(page);
+        page.go(getResultCount());
 
         if (!page.isRendered()) {
             fail("Could not render report list page");
@@ -104,5 +103,10 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
 
     public void setResultCount(int resultCount) {
         this.resultCount = resultCount;
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
