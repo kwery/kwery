@@ -42,6 +42,8 @@ public class KweryFluentPage extends FluentPage {
         } finally {
             getDriver().manage().timeouts().implicitlyWait(TestUtil.TIMEOUT_SECONDS, TimeUnit.SECONDS);
         }
+
+        throw new RuntimeException();
     }
 
     public void waitForModalAppearance() {

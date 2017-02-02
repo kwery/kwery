@@ -24,6 +24,7 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         String start = "Sat Jan 07 2017 05:05";
         String end = "Sat Jan 07 2017 05:40";
         page.filterResult(start, end);
+        page.waitForModalDisappearance();
         page.waitForExecutionListTableUpdate("Sat Jan 07 2017 05:30");
         List<ReportExecutionListRow> row = page.executionListTable();
         assertThat(row, hasSize(1));
@@ -34,6 +35,7 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         assertThat(page.isNextEnabled(), is(true));
 
         page.clickNext();
+        page.waitForModalDisappearance();
         page.waitUntilPreviousIsEnabled();
         row = page.executionListTable();
         assertThat(row, hasSize(1));
@@ -44,6 +46,7 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         assertThat(page.isNextEnabled(), is(false));
 
         page.clickPrevious();
+        page.waitForModalDisappearance();
         page.waitUntilPreviousIsDisabled();
         row = page.executionListTable();
         assertThat(row, hasSize(1));
@@ -54,10 +57,12 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
 
         //Clicking on filter in between pages takes you back to the first page
         page.clickNext();
+        page.waitForModalDisappearance();
         page.waitUntilPreviousIsEnabled();
         start = "Sat Jan 07 2017 06:05";
         end = "Sat Jan 07 2017 06:15";
         page.filterResult(start, end);
+        page.waitForModalDisappearance();
         page.waitForExecutionListTableUpdate("Sat Jan 07 2017 06:10");
         row = page.executionListTable();
         assertThat(row, hasSize(1));

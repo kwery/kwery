@@ -2,7 +2,9 @@ package com.kwery.tests.fluentlenium.job.executionlist;
 
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 
@@ -17,6 +19,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report/{jobId}/execution-list/?resultCount={resultCount}")
 public class ReportExecutionListPage extends KweryFluentPage implements RepoDashPage {
     protected int jobId;
     protected int resultCount;
@@ -25,11 +29,6 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".execution-list-container-f")).displayed();
         return true;
-    }
-
-    @Override
-    public String getUrl() {
-        return String.format("/#report/%d/execution-list/?resultCount=%d", getJobId(), getResultCount());
     }
 
     public void waitForRows(int rows) {
@@ -56,10 +55,6 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
 
     public void setJobId(int jobId) {
         this.jobId = jobId;
-    }
-
-    public int getResultCount() {
-        return resultCount;
     }
 
     public void setResultCount(int resultCount) {
