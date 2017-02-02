@@ -331,6 +331,22 @@ public class DbUtil {
         return builder.build();
     }
 
+    public static IDataSet domainSettingTable(DomainSetting domainSetting) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(DomainSetting.DOMAIN_SETTING_TABLE);
+
+        if (domainSetting != null) {
+            builder.newRow(DomainSetting.DOMAIN_SETTING_TABLE)
+                    .with(DomainSetting.ID_COLUMN, domainSetting.getId())
+                    .with(DomainSetting.DOMAIN_COLUMN, domainSetting.getDomain())
+                    .with(DomainSetting.SCHEME_COLUMN, domainSetting.getScheme())
+                    .with(DomainSetting.PORT_COLUMN, domainSetting.getPort())
+                    .add();
+        }
+
+        return builder.build();
+    }
+
     public static void datasourceDbSetup(Datasource datasource) {
         DbSetup dbSetup = new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -575,6 +591,19 @@ public class DbUtil {
                                 .end()
                                 .build()
                 )
+        ).launch();
+    }
+
+    public static void domainSettingDbSetUp(DomainSetting domainSetting) {
+        new DbSetup(new DataSourceDestination(getDatasource()),
+                insertInto(DomainSetting.DOMAIN_SETTING_TABLE)
+                        .row()
+                        .column(DomainSetting.ID_COLUMN, domainSetting.getId())
+                        .column(DomainSetting.DOMAIN_COLUMN, domainSetting.getDomain())
+                        .column(DomainSetting.SCHEME_COLUMN, domainSetting.getScheme())
+                        .column(DomainSetting.PORT_COLUMN, domainSetting.getPort())
+                        .end()
+                        .build()
         ).launch();
     }
 

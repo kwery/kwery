@@ -377,6 +377,20 @@ public class TestUtil {
         return m;
     }
 
+    public static DomainSetting domainSettingWithoutId() {
+        DomainSetting d = new DomainSetting();
+        d.setPort(RandomUtils.nextInt(DomainSetting.PORT_MIN, DomainSetting.PORT_MAX + 1));
+        d.setDomain(RandomStringUtils.randomAlphanumeric(DomainSetting.DOMAIN_MIN, DomainSetting.DOMAIN_MAX + 1));
+        d.setScheme(RandomStringUtils.randomAlphanumeric(DomainSetting.SCHEME_MIN, DomainSetting.SCHEME_MAX + 1));
+        return d;
+    }
+
+    public static DomainSetting domainSetting() {
+        DomainSetting d = domainSettingWithoutId();
+        d.setId(dbId());
+        return d;
+    }
+
     public static void assertJsonActionResult(String response, ActionResult expected) {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.status", is(expected.getStatus().name())));
