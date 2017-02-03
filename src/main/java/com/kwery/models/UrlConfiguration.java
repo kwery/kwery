@@ -8,9 +8,9 @@ import javax.validation.constraints.Size;
 import static javax.persistence.EnumType.STRING;
 
 @Entity
-@Table(name = UrlSetting.URL_SETTING_TABLE)
-public class UrlSetting {
-    public static final String URL_SETTING_TABLE = "url_setting";
+@Table(name = UrlConfiguration.URL_CONFIGURATION_TABLE)
+public class UrlConfiguration {
+    public static final String URL_CONFIGURATION_TABLE = "url_configuration";
     public static final String ID_COLUMN = "id";
     public static final String DOMAIN_COLUMN = "domain";
     public static final String SCHEME_COLUMN = "scheme";
@@ -73,7 +73,7 @@ public class UrlSetting {
 
     @Override
     public String toString() {
-        return "UrlSetting{" +
+        return "UrlConfiguration{" +
                 "id=" + id +
                 ", domain='" + domain + '\'' +
                 ", scheme='" + scheme + '\'' +

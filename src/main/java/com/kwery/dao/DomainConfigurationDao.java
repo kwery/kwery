@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
-import com.kwery.models.UrlSetting;
+import com.kwery.models.UrlConfiguration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,16 +13,16 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Singleton
-public class DomainSettingDao {
+public class DomainConfigurationDao {
     protected final Provider<EntityManager> entityManagerProvider;
 
     @Inject
-    public DomainSettingDao(Provider<EntityManager> entityManagerProvider) {
+    public DomainConfigurationDao(Provider<EntityManager> entityManagerProvider) {
         this.entityManagerProvider = entityManagerProvider;
     }
 
     @Transactional
-    public UrlSetting save(UrlSetting setting) {
+    public UrlConfiguration save(UrlConfiguration setting) {
         EntityManager e = entityManagerProvider.get();
 
         if (setting.getId() != null && setting.getId() > 0) {
@@ -37,12 +37,12 @@ public class DomainSettingDao {
     }
 
     @Transactional
-    public List<UrlSetting> get() {
+    public List<UrlConfiguration> get() {
         EntityManager e = entityManagerProvider.get();
         CriteriaBuilder cb = e.getCriteriaBuilder();
-        CriteriaQuery<UrlSetting> cq = cb.createQuery(UrlSetting.class);
-        Root<UrlSetting> root = cq.from(UrlSetting.class);
-        CriteriaQuery<UrlSetting> all = cq.select(root);
+        CriteriaQuery<UrlConfiguration> cq = cb.createQuery(UrlConfiguration.class);
+        Root<UrlConfiguration> root = cq.from(UrlConfiguration.class);
+        CriteriaQuery<UrlConfiguration> all = cq.select(root);
         return e.createQuery(all).getResultList();
     }
 }

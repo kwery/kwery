@@ -1,6 +1,6 @@
-package com.kwery.tests.fluentlenium.urlsetting;
+package com.kwery.tests.fluentlenium.urlconfiguration;
 
-import com.kwery.models.UrlSetting;
+import com.kwery.models.UrlConfiguration;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
@@ -12,22 +12,22 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.models.UrlSetting.URL_SETTING_TABLE;
+import static com.kwery.models.UrlConfiguration.URL_CONFIGURATION_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingDbSetUp;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingTable;
 import static com.kwery.tests.util.TestUtil.domainSettingWithoutId;
 import static org.junit.rules.RuleChain.outerRule;
 
-public class UrlSettingUpdateUiTest extends ChromeFluentTest {
+public class UrlConfigurationUpdateUiTest extends ChromeFluentTest {
     NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Page
-    protected UrlSettingSavePage page;
+    protected UrlConfigurationSavePage page;
 
-    private UrlSetting setting;
+    private UrlConfiguration setting;
 
     @Before
     public void setUp() {
@@ -41,15 +41,15 @@ public class UrlSettingUpdateUiTest extends ChromeFluentTest {
     public void test() throws Exception {
         page.clickSubmit();
         page.waitForSaveSuccessMessage();
-        new DbTableAsserterBuilder(URL_SETTING_TABLE, domainSettingTable(setting)).build().assertTable();
+        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainSettingTable(setting)).build().assertTable();
 
-        UrlSetting updated = domainSettingWithoutId();
+        UrlConfiguration updated = domainSettingWithoutId();
         updated.setId(setting.getId());
 
         page.submitForm(updated);
 
         page.waitForSaveSuccessMessage();
-        new DbTableAsserterBuilder(URL_SETTING_TABLE, domainSettingTable(updated)).build().assertTable();
+        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainSettingTable(updated)).build().assertTable();
     }
 
     @Override

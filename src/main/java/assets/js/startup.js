@@ -87,8 +87,8 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/report-label/list"
     });
 
-    ko.components.register("url-setting-save", {
-        require: "components/url-setting/save"
+    ko.components.register("url-configuration-save", {
+        require: "components/url-configuration/save"
     });
 
     ko.applyBindings({route: router.currentRoute});

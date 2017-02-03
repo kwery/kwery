@@ -2,9 +2,9 @@ package com.kwery.controllers.apis;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kwery.dao.DomainSettingDao;
+import com.kwery.dao.DomainConfigurationDao;
 import com.kwery.filters.DashRepoSecureFilter;
-import com.kwery.models.UrlSetting;
+import com.kwery.models.UrlConfiguration;
 import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterWith;
@@ -19,22 +19,22 @@ import static com.kwery.views.ActionResult.Status.success;
 import static ninja.Results.json;
 
 @Singleton
-public class UrlSettingApiController {
-    protected Logger logger = LoggerFactory.getLogger(UrlSettingApiController.class);
+public class UrlConfigurationApiController {
+    protected Logger logger = LoggerFactory.getLogger(UrlConfigurationApiController.class);
 
-    protected final DomainSettingDao domainSettingDao;
+    protected final DomainConfigurationDao domainConfigurationDao;
     protected final OverlayedNinjaProperties ninjaProperties;
 
     @Inject
-    public UrlSettingApiController(DomainSettingDao domainSettingDao, OverlayedNinjaProperties ninjaProperties) {
-        this.domainSettingDao = domainSettingDao;
+    public UrlConfigurationApiController(DomainConfigurationDao domainConfigurationDao, OverlayedNinjaProperties ninjaProperties) {
+        this.domainConfigurationDao = domainConfigurationDao;
         this.ninjaProperties = ninjaProperties;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result saveDomainSetting(UrlSetting urlSetting) {
+    public Result saveDomainSetting(UrlConfiguration urlConfiguration) {
         if (logger.isTraceEnabled()) logger.trace("<");
-        domainSettingDao.save(urlSetting);
+        domainConfigurationDao.save(urlConfiguration);
 
         if (logger.isTraceEnabled()) logger.trace(">");
 
@@ -43,14 +43,14 @@ public class UrlSettingApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result getDomainSetting(Context context) {
-        List<UrlSetting> urlSettings = domainSettingDao.get();
+        List<UrlConfiguration> urlConfigurations = domainConfigurationDao.get();
 
-        UrlSetting urlSetting = null;
+        UrlConfiguration urlConfiguration = null;
 
-        if (!urlSettings.isEmpty()) {
-            urlSetting = urlSettings.get(0);
+        if (!urlConfigurations.isEmpty()) {
+            urlConfiguration = urlConfigurations.get(0);
         }
 
-        return json().render(urlSetting);
+        return json().render(urlConfiguration);
     }
 }

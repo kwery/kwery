@@ -1,4 +1,4 @@
-define(["knockout", "jquery", "text!components/url-setting/save.html", "ajaxutil", "validator"], function (ko, $, template, ajaxUtil) {
+define(["knockout", "jquery", "text!components/url-configuration/save.html", "ajaxutil", "validator"], function (ko, $, template, ajaxUtil) {
     function viewModel() {
         var self = this;
 
@@ -11,7 +11,7 @@ define(["knockout", "jquery", "text!components/url-setting/save.html", "ajaxutil
         self.id = ko.observable();
 
         ajaxUtil.waitingAjax({
-            url: "/api/url-setting",
+            url: "/api/url-configuration",
             type: "GET",
             contentType: "application/json",
             success: function(urlSetting) {
@@ -28,10 +28,10 @@ define(["knockout", "jquery", "text!components/url-setting/save.html", "ajaxutil
             }
         });
 
-        $("#urlSettingForm").validator({disable: false}).on("submit", function (e) {
+        $("#urlConfigurationForm").validator({disable: false}).on("submit", function (e) {
             if (!e.isDefaultPrevented()) {
                 ajaxUtil.waitingAjax({
-                    url: "/api/url-setting/save",
+                    url: "/api/url-configuration/save",
                     type: "POST",
                     data: ko.toJSON({
                         scheme: self.scheme(),
@@ -43,7 +43,7 @@ define(["knockout", "jquery", "text!components/url-setting/save.html", "ajaxutil
                     success: function(actionResult) {
                         if (actionResult.status === "success") {
                             self.status(actionResult.status);
-                            self.messages([ko.i18n("url.setting.save.success")]);
+                            self.messages([ko.i18n("url.configuration.save.success")]);
                         }
                     }
                 });
