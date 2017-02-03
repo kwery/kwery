@@ -27,16 +27,18 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
     protected final JobService jobService;
     protected final ReportEmailSender reportEmailSender;
+    protected final ReportFailureAlertEmailSender reportFailureAlertEmailSender;
 
     @Inject
-    public TaskExecutorListenerImpl(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
-                                    SqlQueryExecutionDao sqlQueryExecutionDao, JobService jobService, ReportEmailSender reportEmailSender) {
+    public TaskExecutorListenerImpl(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao,
+                                    JobService jobService, ReportEmailSender reportEmailSender, ReportFailureAlertEmailSender reportFailureAlertEmailSender) {
         this.jobDao = jobDao;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.jobService = jobService;
         this.reportEmailSender = reportEmailSender;
+        this.reportFailureAlertEmailSender = reportFailureAlertEmailSender;
     }
 
     @Override
@@ -99,6 +101,12 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
                         }
                     }
                 }
+            }
+
+            //There are failures or job is killed
+            if (!jobExecutionModel.getJobModel().getFailureAlertEmails().isEmpty()
+                    && (executor.isStopped() || !hasSqlQueriesExecutedSuccessfully(jobExecutionModel))) {
+                reportFailureAlertEmailSender.send(jobExecutionModel);
             }
         } else if (task instanceof SqlQueryTask) {
             SqlQueryTask sqlQueryTask = null;

@@ -80,4 +80,7 @@ public class MessageKeys {
     public static final String JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN = "joblabelapicontroller.delete.has.children";
     public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL = "joblabelapicontroller.delete.job.has.label";
     public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS = "joblabelapicontroller.delete.success";
+
+    public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT = "report.generation.failure.alert.email.subject";
+    public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY = "report.generation.failure.alert.email.body";
 }

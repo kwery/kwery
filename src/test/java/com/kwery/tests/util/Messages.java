@@ -115,4 +115,7 @@ public class Messages {
     public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND_M = "Report not found";
 
     public static final String URL_CONFIGURATION_SAVE_SUCCESS_M = "Kwery URL saved successfully";
+
+    public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M = "Report Generation Failed";
+    public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M = "Failed Report";
 }

@@ -14,6 +14,8 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobServiceLaunchJobKilledTest extends JobServiceJobSetUpAbstractTest {
+    protected boolean mailTest = true;
+
     @Test
     public void test() throws InterruptedException {
         jobService.launch(jobModel.getId());
@@ -33,12 +35,22 @@ public class JobServiceLaunchJobKilledTest extends JobServiceJobSetUpAbstractTes
             assertSqlQueryExecutionModel(sqlQueryModel.getId(), SqlQueryExecutionModel.Status.KILLED);
         }
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, nullValue());
+        if (isMailTest()) {
+            Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
+            assertThat(mail, nullValue());
+        }
     }
 
     @Override
     protected String getQuery() {
         return "select sleep(100000)";
+    }
+
+    protected void disableMailTest() {
+        this.mailTest = false;
+    }
+
+    public boolean isMailTest() {
+        return mailTest;
     }
 }
