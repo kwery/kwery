@@ -443,7 +443,7 @@ public class JobApiController {
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toList()));
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setEmails(jobDto.getEmails());
-        jobModel.setFailureAlertEmails(jobDto.getJobAlertEmails());
+        jobModel.setFailureAlertEmails(jobDto.getFailureAlertEmails());
 
         if (jobDto.getLabelIds() != null) {
             jobModel.setLabels(jobDto.getLabelIds().stream().filter(id -> id != null && id > 0).map(jobLabelDao::getJobLabelModelById).collect(toSet()));

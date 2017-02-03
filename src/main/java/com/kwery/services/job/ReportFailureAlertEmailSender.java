@@ -62,6 +62,9 @@ public class ReportFailureAlertEmailSender {
             String text = messages.get(REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY, Optional.absent()).get();
             String body = String.format("<a href='%s'>%s</a>", url, text);
             kweryMail.setBodyHtml(body);
+        } else {
+            //Hack to send an email with empty body
+            kweryMail.setBodyHtml(" ");
         }
 
         jobExecutionModel.getJobModel().getFailureAlertEmails().forEach(kweryMail::addTo);

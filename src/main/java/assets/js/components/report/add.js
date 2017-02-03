@@ -19,6 +19,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.cronExpression = ko.observable("");
         self.parentReportId = ko.observable(0);
         self.reportEmails = ko.observable("");
+        self.failureAlertEmails = ko.observable("");
 
         self.queries = ko.observableArray([]);
         self.emptyReportNoEmailRule = ko.observable(false);
@@ -132,6 +133,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             self.title(report.title);
                             self.reportName(report.name);
                             self.reportEmails(report.emails.join(", "));
+                            self.failureAlertEmails(report.failureAlertEmails.join(", "));
 
                             if (jobModelHackDto.parentJobModel != null) {
                                 self.scheduleOption("parentReport");
@@ -214,6 +216,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     return elem !== null && elem !== "";
                 });
 
+                var failureAlertEmails = $.grep($.map(self.failureAlertEmails().split(","), $.trim), function(elem){
+                    return elem !== null && elem !== "";
+                });
+
                 //Reset parent report id in case the option chosen was cron expression
                 if (self.scheduleOption() !== "parentReport") {
                     self.parentReportId(0);
@@ -226,6 +232,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     //TODO - Updating to 0 turns into empty string
                     parentJobId: self.parentReportId() ? self.parentReportId() : 0,
                     emails: emails,
+                    failureAlertEmails: failureAlertEmails,
                     sqlQueries: queries,
                     labelIds: (function(){
                         var ids = [];

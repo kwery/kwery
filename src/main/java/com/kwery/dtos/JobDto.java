@@ -14,7 +14,7 @@ public class JobDto {
     protected List<SqlQueryDto> sqlQueries;
     protected Set<Integer> labelIds = new HashSet<>();
     protected boolean emptyReportNoEmailRule;
-    protected Set<String> jobAlertEmails = new HashSet<>();
+    protected Set<String> failureAlertEmails = new HashSet<>();
 
     public int getId() {
         return id;
@@ -88,11 +88,11 @@ public class JobDto {
         this.emptyReportNoEmailRule = emptyReportNoEmailRule;
     }
 
-    public Set<String> getJobAlertEmails() {
-        return jobAlertEmails;
+    public Set<String> getFailureAlertEmails() {
+        return failureAlertEmails;
     }
 
     public void setJobFailureAlertEmails(Set<String> jobAlertEmails) {
-        this.jobAlertEmails = jobAlertEmails;
+        this.failureAlertEmails = jobAlertEmails;
     }
 }
