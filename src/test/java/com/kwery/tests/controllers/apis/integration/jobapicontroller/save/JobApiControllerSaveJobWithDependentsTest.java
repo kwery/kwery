@@ -71,12 +71,16 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         jobDto.setCronExpression(null);
         jobDto.setEmails(emails);
 
+        Set<String> alertEmails = ImmutableSet.of("foo@cho.com", "roo@goo.com");
+        jobDto.setJobFailureAlertEmails(alertEmails);
+
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setName(jobDto.getName());
         expectedJobModel.setTitle(jobDto.getTitle());
         expectedJobModel.setEmails(emails);
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setCronExpression("");
+        expectedJobModel.setFailureAlertEmails(alertEmails);
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select * from mysql.user");

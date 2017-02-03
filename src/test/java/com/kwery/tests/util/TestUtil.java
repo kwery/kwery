@@ -247,6 +247,7 @@ public class TestUtil {
         jobDto.setEmails(new HashSet<>());
         jobDto.setSqlQueries(new ArrayList<>());
         jobDto.setLabelIds(new HashSet<>());
+        jobDto.setJobFailureAlertEmails(new HashSet<>());
         return jobDto;
     }
 

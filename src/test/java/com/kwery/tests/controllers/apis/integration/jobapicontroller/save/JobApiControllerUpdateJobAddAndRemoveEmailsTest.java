@@ -44,6 +44,7 @@ public class JobApiControllerUpdateJobAddAndRemoveEmailsTest extends AbstractPos
     public void setUp() {
         jobModel = jobModelWithoutDependents();
         jobModel.setEmails(ImmutableSet.of(email0));
+        jobModel.setFailureAlertEmails(ImmutableSet.of(email0));
 
         jobDbSetUp(jobModel);
 
@@ -70,6 +71,7 @@ public class JobApiControllerUpdateJobAddAndRemoveEmailsTest extends AbstractPos
         jobDto.setId(jobModel.getId());
         jobDto.setCronExpression(jobModel.getCronExpression());
         jobDto.setEmails(ImmutableSet.of(email1, email2));
+        jobDto.setJobFailureAlertEmails(ImmutableSet.of(email1, email2));
 
         SqlQueryDto sqlQueryDto = new SqlQueryDto();
         sqlQueryDto.setTitle(sqlQueryModel.getTitle());
@@ -86,6 +88,7 @@ public class JobApiControllerUpdateJobAddAndRemoveEmailsTest extends AbstractPos
         assertThat(response, is(isJson()));
 
         jobModel.setEmails(ImmutableSet.of(email1, email2));
+        jobModel.setFailureAlertEmails(ImmutableSet.of(email1, email2));
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
