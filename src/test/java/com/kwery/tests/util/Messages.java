@@ -113,5 +113,6 @@ public class Messages {
     public static final String JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION_M = "{0} is not a valid cron expression";
 
     public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND_M = "Report not found";
-}
 
+    public static final String URL_SETTING_SAVE_SUCCESS_M = "Kwery URL saved successfully";
+}

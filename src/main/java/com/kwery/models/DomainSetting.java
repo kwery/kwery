@@ -5,6 +5,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import static javax.persistence.EnumType.STRING;
+
 @Entity
 @Table(name = DomainSetting.DOMAIN_SETTING_TABLE)
 public class DomainSetting {
@@ -31,8 +33,8 @@ public class DomainSetting {
     protected String domain;
 
     @Column(name = SCHEME_COLUMN)
-    @Size(min = SCHEME_MIN, max = SCHEME_MAX)
-    protected String scheme;
+    @Enumerated(STRING)
+    protected Scheme scheme;
 
     @Column(name = PORT_COLUMN)
     @Min(PORT_MIN)
@@ -55,11 +57,11 @@ public class DomainSetting {
         this.domain = domain;
     }
 
-    public String getScheme() {
+    public Scheme getScheme() {
         return scheme;
     }
 
-    public void setScheme(String scheme) {
+    public void setScheme(Scheme scheme) {
         this.scheme = scheme;
     }
 
@@ -79,5 +81,9 @@ public class DomainSetting {
                 ", scheme='" + scheme + '\'' +
                 ", port=" + port +
                 '}';
+    }
+
+    public enum Scheme {
+        http, https
     }
 }

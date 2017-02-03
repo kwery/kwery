@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
+import com.kwery.models.DomainSetting.Scheme;
 import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.views.ActionResult;
@@ -381,7 +382,7 @@ public class TestUtil {
         DomainSetting d = new DomainSetting();
         d.setPort(RandomUtils.nextInt(DomainSetting.PORT_MIN, DomainSetting.PORT_MAX + 1));
         d.setDomain(RandomStringUtils.randomAlphanumeric(DomainSetting.DOMAIN_MIN, DomainSetting.DOMAIN_MAX + 1));
-        d.setScheme(RandomStringUtils.randomAlphanumeric(DomainSetting.SCHEME_MIN, DomainSetting.SCHEME_MAX + 1));
+        d.setScheme(Scheme.values()[RandomUtils.nextInt(0, 2)]);
         return d;
     }
 
