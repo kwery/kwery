@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kwery.dao.DomainSettingDao;
 import com.kwery.filters.DashRepoSecureFilter;
-import com.kwery.models.DomainSetting;
+import com.kwery.models.UrlSetting;
 import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterWith;
@@ -19,22 +19,22 @@ import static com.kwery.views.ActionResult.Status.success;
 import static ninja.Results.json;
 
 @Singleton
-public class DomainSettingApiController {
-    protected Logger logger = LoggerFactory.getLogger(DomainSettingApiController.class);
+public class UrlSettingApiController {
+    protected Logger logger = LoggerFactory.getLogger(UrlSettingApiController.class);
 
     protected final DomainSettingDao domainSettingDao;
     protected final OverlayedNinjaProperties ninjaProperties;
 
     @Inject
-    public DomainSettingApiController(DomainSettingDao domainSettingDao, OverlayedNinjaProperties ninjaProperties) {
+    public UrlSettingApiController(DomainSettingDao domainSettingDao, OverlayedNinjaProperties ninjaProperties) {
         this.domainSettingDao = domainSettingDao;
         this.ninjaProperties = ninjaProperties;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result saveDomainSetting(DomainSetting domainSetting) {
+    public Result saveDomainSetting(UrlSetting urlSetting) {
         if (logger.isTraceEnabled()) logger.trace("<");
-        domainSettingDao.save(domainSetting);
+        domainSettingDao.save(urlSetting);
 
         if (logger.isTraceEnabled()) logger.trace(">");
 
@@ -43,14 +43,14 @@ public class DomainSettingApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result getDomainSetting(Context context) {
-        List<DomainSetting> domainSettings = domainSettingDao.get();
+        List<UrlSetting> urlSettings = domainSettingDao.get();
 
-        DomainSetting domainSetting = null;
+        UrlSetting urlSetting = null;
 
-        if (!domainSettings.isEmpty()) {
-            domainSetting = domainSettings.get(0);
+        if (!urlSettings.isEmpty()) {
+            urlSetting = urlSettings.get(0);
         }
 
-        return json().render(domainSetting);
+        return json().render(urlSetting);
     }
 }

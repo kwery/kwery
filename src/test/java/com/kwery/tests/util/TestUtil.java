@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
-import com.kwery.models.DomainSetting.Scheme;
+import com.kwery.models.UrlSetting.Scheme;
 import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.views.ActionResult;
@@ -378,16 +378,16 @@ public class TestUtil {
         return m;
     }
 
-    public static DomainSetting domainSettingWithoutId() {
-        DomainSetting d = new DomainSetting();
-        d.setPort(RandomUtils.nextInt(DomainSetting.PORT_MIN, DomainSetting.PORT_MAX + 1));
-        d.setDomain(RandomStringUtils.randomAlphanumeric(DomainSetting.DOMAIN_MIN, DomainSetting.DOMAIN_MAX + 1));
+    public static UrlSetting domainSettingWithoutId() {
+        UrlSetting d = new UrlSetting();
+        d.setPort(RandomUtils.nextInt(UrlSetting.PORT_MIN, UrlSetting.PORT_MAX + 1));
+        d.setDomain(RandomStringUtils.randomAlphanumeric(UrlSetting.DOMAIN_MIN, UrlSetting.DOMAIN_MAX + 1));
         d.setScheme(Scheme.values()[RandomUtils.nextInt(0, 2)]);
         return d;
     }
 
-    public static DomainSetting domainSetting() {
-        DomainSetting d = domainSettingWithoutId();
+    public static UrlSetting domainSetting() {
+        UrlSetting d = domainSettingWithoutId();
         d.setId(dbId());
         return d;
     }

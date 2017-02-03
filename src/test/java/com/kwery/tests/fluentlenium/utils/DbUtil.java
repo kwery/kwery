@@ -331,16 +331,16 @@ public class DbUtil {
         return builder.build();
     }
 
-    public static IDataSet domainSettingTable(DomainSetting domainSetting) throws DataSetException {
+    public static IDataSet domainSettingTable(UrlSetting urlSetting) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
-        builder.ensureTableIsPresent(DomainSetting.DOMAIN_SETTING_TABLE);
+        builder.ensureTableIsPresent(UrlSetting.URL_SETTING_TABLE);
 
-        if (domainSetting != null) {
-            builder.newRow(DomainSetting.DOMAIN_SETTING_TABLE)
-                    .with(DomainSetting.ID_COLUMN, domainSetting.getId())
-                    .with(DomainSetting.DOMAIN_COLUMN, domainSetting.getDomain())
-                    .with(DomainSetting.SCHEME_COLUMN, domainSetting.getScheme())
-                    .with(DomainSetting.PORT_COLUMN, domainSetting.getPort())
+        if (urlSetting != null) {
+            builder.newRow(UrlSetting.URL_SETTING_TABLE)
+                    .with(UrlSetting.ID_COLUMN, urlSetting.getId())
+                    .with(UrlSetting.DOMAIN_COLUMN, urlSetting.getDomain())
+                    .with(UrlSetting.SCHEME_COLUMN, urlSetting.getScheme())
+                    .with(UrlSetting.PORT_COLUMN, urlSetting.getPort())
                     .add();
         }
 
@@ -594,14 +594,14 @@ public class DbUtil {
         ).launch();
     }
 
-    public static void domainSettingDbSetUp(DomainSetting domainSetting) {
+    public static void domainSettingDbSetUp(UrlSetting urlSetting) {
         new DbSetup(new DataSourceDestination(getDatasource()),
-                insertInto(DomainSetting.DOMAIN_SETTING_TABLE)
+                insertInto(UrlSetting.URL_SETTING_TABLE)
                         .row()
-                        .column(DomainSetting.ID_COLUMN, domainSetting.getId())
-                        .column(DomainSetting.DOMAIN_COLUMN, domainSetting.getDomain())
-                        .column(DomainSetting.SCHEME_COLUMN, domainSetting.getScheme())
-                        .column(DomainSetting.PORT_COLUMN, domainSetting.getPort())
+                        .column(UrlSetting.ID_COLUMN, urlSetting.getId())
+                        .column(UrlSetting.DOMAIN_COLUMN, urlSetting.getDomain())
+                        .column(UrlSetting.SCHEME_COLUMN, urlSetting.getScheme())
+                        .column(UrlSetting.PORT_COLUMN, urlSetting.getPort())
                         .end()
                         .build()
         ).launch();

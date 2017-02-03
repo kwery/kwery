@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.urlsetting;
 
-import com.kwery.models.DomainSetting;
-import com.kwery.models.DomainSetting.Scheme;
+import com.kwery.models.UrlSetting;
+import com.kwery.models.UrlSetting.Scheme;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.hook.wait.Wait;
@@ -16,8 +16,8 @@ import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
 public class UrlSettingSavePage extends KweryFluentPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String INPUT_LENGTH_VALIDATION_MIN_LENGTH_ERROR_MESSAGE = "Please lengthen this text to 4 characters or more (you are currently using %d characters)";
-    public static final String INPUT_MINIMUM_VALUE_VALIDATION_MESSAGE = String.format("Value must be greater than or equal to %d.", DomainSetting.PORT_MIN);
-    public static final String INPUT_MAXIMUM_VALUE_VALIDATION_MESSAGE = String.format("Value must be less than or equal to %d.", DomainSetting.PORT_MAX);
+    public static final String INPUT_MINIMUM_VALUE_VALIDATION_MESSAGE = String.format("Value must be greater than or equal to %d.", UrlSetting.PORT_MIN);
+    public static final String INPUT_MAXIMUM_VALUE_VALIDATION_MESSAGE = String.format("Value must be less than or equal to %d.", UrlSetting.PORT_MAX);
 
     public void waitForDefaultValues() {
         await().until($(".scheme-f")).value(Scheme.http.name());
@@ -25,16 +25,16 @@ public class UrlSettingSavePage extends KweryFluentPage {
         await().until($(".domain-f")).value("localhost");
     }
 
-    public void waitForFormValues(DomainSetting setting) {
+    public void waitForFormValues(UrlSetting setting) {
         await().until($(".scheme-f")).value(setting.getScheme().name());
         await().until($(".port-f")).value(String.valueOf(setting.getPort()));
         await().until($(".domain-f")).value(setting.getDomain());
     }
 
-    public void submitForm(DomainSetting domainSetting) {
-        $(".scheme-f").fillSelect().withText(domainSetting.getScheme().name());
-        $(".port-f").fill().with(String.valueOf(domainSetting.getPort()));
-        $(".domain-f").fill().with(domainSetting.getDomain());
+    public void submitForm(UrlSetting urlSetting) {
+        $(".scheme-f").fillSelect().withText(urlSetting.getScheme().name());
+        $(".port-f").fill().with(String.valueOf(urlSetting.getPort()));
+        $(".domain-f").fill().with(urlSetting.getDomain());
         clickSubmit();
     }
 

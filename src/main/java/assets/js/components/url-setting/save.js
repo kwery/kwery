@@ -11,7 +11,7 @@ define(["knockout", "jquery", "text!components/url-setting/save.html", "ajaxutil
         self.id = ko.observable();
 
         ajaxUtil.waitingAjax({
-            url: "/api/domain-setting",
+            url: "/api/url-setting",
             type: "GET",
             contentType: "application/json",
             success: function(urlSetting) {
@@ -31,7 +31,7 @@ define(["knockout", "jquery", "text!components/url-setting/save.html", "ajaxutil
         $("#urlSettingForm").validator({disable: false}).on("submit", function (e) {
             if (!e.isDefaultPrevented()) {
                 ajaxUtil.waitingAjax({
-                    url: "/api/domain-setting/save",
+                    url: "/api/url-setting/save",
                     type: "POST",
                     data: ko.toJSON({
                         scheme: self.scheme(),

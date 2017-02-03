@@ -53,8 +53,8 @@ public class Routes implements ApplicationRoutes {
     public static final String JOB_LABEL_GET_API = "/api/job-label/{jobLabelId}";
     public static final String JOB_LABEL_DELETE_API = "/api/job-label/delete/{jobLabelId}";
 
-    public static final String DOMAIN_SETTING_SAVE_API = "/api/domain-setting/save";
-    public static final String DOMAIN_SETTING_GET_API = "/api/domain-setting";
+    public static final String DOMAIN_SETTING_SAVE_API = "/api/url-setting/save";
+    public static final String DOMAIN_SETTING_GET_API = "/api/url-setting";
 
     public static final String MESSAGES_JS = "/messages.js";
 
@@ -111,8 +111,8 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(JOB_LABEL_GET_API).with(JobLabelApiController.class, "getJobLabelById");
         router.POST().route(JOB_LABEL_DELETE_API).with(JobLabelApiController.class, "deleteJobLabelById");
 
-        router.POST().route(DOMAIN_SETTING_SAVE_API).with(DomainSettingApiController.class, "saveDomainSetting");
-        router.GET().route(DOMAIN_SETTING_GET_API).with(DomainSettingApiController.class, "getDomainSetting");
+        router.POST().route(DOMAIN_SETTING_SAVE_API).with(UrlSettingApiController.class, "saveDomainSetting");
+        router.GET().route(DOMAIN_SETTING_GET_API).with(UrlSettingApiController.class, "getDomainSetting");
 
         router.GET().route(MESSAGES_JS).with(MessageApiController.class, "getAllMessages");
         //Api - End

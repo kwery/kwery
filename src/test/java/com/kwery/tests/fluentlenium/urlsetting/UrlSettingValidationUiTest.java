@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.urlsetting;
 
 import com.kwery.dao.DomainSettingDao;
-import com.kwery.models.DomainSetting;
+import com.kwery.models.UrlSetting;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -42,30 +42,30 @@ public class UrlSettingValidationUiTest extends ChromeFluentTest {
         page.submitEmptyForm();
         page.assertEmptyFieldValidationMessages();
 
-        DomainSetting domainSetting = domainSetting();
-        domainSetting.setDomain("a");
-        page.submitForm(domainSetting);
+        UrlSetting urlSetting = domainSetting();
+        urlSetting.setDomain("a");
+        page.submitForm(urlSetting);
 
-        page.assertMinLengthFieldValidationMessage(domainSetting.getDomain());
+        page.assertMinLengthFieldValidationMessage(urlSetting.getDomain());
 
-        domainSetting = domainSetting();
-        domainSetting.setPort(DomainSetting.PORT_MIN - 1);
+        urlSetting = domainSetting();
+        urlSetting.setPort(UrlSetting.PORT_MIN - 1);
 
-        page.submitForm(domainSetting);
+        page.submitForm(urlSetting);
         page.assertMinimumValueFieldValidationMessage();
 
-        domainSetting = domainSetting();
-        domainSetting.setPort(RandomUtils.nextInt(DomainSetting.PORT_MAX + 1, Integer.MAX_VALUE));
-        page.submitForm(domainSetting);
+        urlSetting = domainSetting();
+        urlSetting.setPort(RandomUtils.nextInt(UrlSetting.PORT_MAX + 1, Integer.MAX_VALUE));
+        page.submitForm(urlSetting);
         page.assertMaximumValueFieldValidationMessage();
 
-        domainSetting = domainSetting();
-        domainSetting.setDomain(RandomStringUtils.randomAlphanumeric(DomainSetting.DOMAIN_MAX + 1, DomainSetting.DOMAIN_MAX + 10));
-        page.submitForm(domainSetting);
+        urlSetting = domainSetting();
+        urlSetting.setDomain(RandomStringUtils.randomAlphanumeric(UrlSetting.DOMAIN_MAX + 1, UrlSetting.DOMAIN_MAX + 10));
+        page.submitForm(urlSetting);
         page.waitForSaveSuccessMessage();
 
-        DomainSetting fromDb = domainSettingDao.get().get(0);
-        assertThat(fromDb.getDomain(), is(domainSetting.getDomain().substring(0, DomainSetting.DOMAIN_MAX)));
+        UrlSetting fromDb = domainSettingDao.get().get(0);
+        assertThat(fromDb.getDomain(), is(urlSetting.getDomain().substring(0, UrlSetting.DOMAIN_MAX)));
     }
 
     @Override
