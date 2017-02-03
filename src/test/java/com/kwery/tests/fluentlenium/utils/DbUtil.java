@@ -127,6 +127,24 @@ public class DbUtil {
         return builder.build();
     }
 
+    public static IDataSet jobFailureAlertEmailTable(JobModel... ms) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE);
+
+        if (ms != null) {
+            for (JobModel m : ms) {
+                for (String s : m.getFailureAlertEmails()) {
+                    builder.newRow(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE)
+                            .with(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE_JOB_ID_FK_COLUMN, m.getId())
+                            .with(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE_EMAIL_COLUMN, s)
+                            .add();
+                }
+            }
+        }
+
+        return builder.build();
+    }
+
     public static IDataSet jobTable(List<JobModel> ms) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
         builder.ensureTableIsPresent(JOB_TABLE);
@@ -411,6 +429,21 @@ public class DbUtil {
                                 .column(JobModel.JOB_EMAIL_ID_COLUMN, dbId())
                                 .column(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
                                 .column(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, email)
+                            .end()
+                            .build()
+            ).launch();
+        }
+    }
+
+    public static void jobFailureAlertEmailDbSetUp(JobModel jobModel) {
+        for (String email : jobModel.getFailureAlertEmails()) {
+            new DbSetup(
+                    new DataSourceDestination(getDatasource()),
+                    Operations.insertInto(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE)
+                            .row()
+                            .column(JobModel.JOB_FAILURE_ALERT_EMAIL_ID_COLUMN, dbId())
+                            .column(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
+                            .column(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE_EMAIL_COLUMN, email)
                             .end()
                             .build()
             ).launch();
