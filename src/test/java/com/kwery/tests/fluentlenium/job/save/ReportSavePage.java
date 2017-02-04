@@ -43,6 +43,10 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
             $(".f-report-emails").fill().with(String.join(",", jobForm.getEmails()));
         }
 
+        if (isFailureAlertEmailFieldEnabled()) {
+            $(".failure-alert-emails-f").fill().with(String.join(",", jobForm.getFailureAlertEmails()));
+        }
+
         if ($(className("parent-report-option-f")).first().selected()) {
             $(".f-parent-report").fillSelect().withText(parentJobIdToLabelMap.get(jobForm.getParentJobId()));
         } else if (jobForm.isUseCronUi()) {
@@ -217,6 +221,10 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
 
     public boolean isEmailFieldEnabled() {
         return el(className("f-report-emails")).enabled();
+    }
+
+    public boolean isFailureAlertEmailFieldEnabled() {
+        return el(className("failure-alert-emails-f")).enabled();
     }
 
     public boolean isEmptyReportNoEmailRuleEnabled() {

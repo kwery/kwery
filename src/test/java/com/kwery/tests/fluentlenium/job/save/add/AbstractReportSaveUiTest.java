@@ -30,6 +30,7 @@ import static org.junit.rules.RuleChain.outerRule;
 
 public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
     protected boolean smtpConfigurationSave = true;
+    protected boolean urlConfigurationSave = true;
 
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
@@ -59,6 +60,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
         jobDto.setCronExpression("* * * * *");
         jobDto.setSqlQueries(new ArrayList<>(1));
         jobDto.setEmails(ImmutableSet.of("foo@bar.com", "moo@bar.com"));
+        jobDto.setJobFailureAlertEmails(ImmutableSet.of("foo@goo.com", "cho@roo.com"));
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
@@ -84,6 +86,10 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
             smtpConfigurationDbSetUp(smtpConfiguration);
         }
 
+        if (isUrlConfigurationSave()) {
+            domainSettingDbSetUp(domainSetting());
+        }
+
         ninjaServerRule.getInjector().getInstance(JobService.class).schedule(parentJobModel.getId());
 
         jobDao = ninjaServerRule.getInjector().getInstance(JobDao.class);
@@ -107,6 +113,14 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
 
     public void setSmtpConfigurationSave(boolean smtpConfigurationSave) {
         this.smtpConfigurationSave = smtpConfigurationSave;
+    }
+
+    public boolean isUrlConfigurationSave() {
+        return urlConfigurationSave;
+    }
+
+    public void setUrlConfigurationSave(boolean urlConfigurationSave) {
+        this.urlConfigurationSave = urlConfigurationSave;
     }
 
     @Override
