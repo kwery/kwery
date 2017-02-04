@@ -25,6 +25,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.emptyReportNoEmailRule = ko.observable(false);
 
         self.enableEmails = ko.observable(false);
+        self.urlConfigured = ko.observable(false);
 
         self.scheduleOption.subscribe(function(newVal){
             $("#parentReport").attr("data-validate", false);
@@ -119,6 +120,16 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                 success: function(conf) {
                     if (conf != null) {
                         self.enableEmails(true);
+                    }
+                }
+            }),
+            $.ajax({
+                url: "/api/url-configuration",
+                type: "GET",
+                contentType: "application/json",
+                success: function(urlSetting) {
+                    if (urlSetting !== null) {
+                        self.urlConfigured(true);
                     }
                 }
             }),
