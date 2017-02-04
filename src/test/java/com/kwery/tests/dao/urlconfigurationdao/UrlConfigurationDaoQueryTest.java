@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.domainSetting;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.junit.Assert.assertThat;
@@ -21,7 +21,7 @@ public class UrlConfigurationDaoQueryTest extends RepoDashDaoTestBase {
     @Before
     public void setUp() {
         urlConfiguration = domainSetting();
-        domainSettingDbSetUp(urlConfiguration);
+        domainConfigurationDbSetUp(urlConfiguration);
         domainConfigurationDao = getInstance(DomainConfigurationDao.class);
     }
 

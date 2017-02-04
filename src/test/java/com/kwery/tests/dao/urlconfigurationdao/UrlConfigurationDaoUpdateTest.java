@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.kwery.models.UrlConfiguration.URL_CONFIGURATION_TABLE;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingDbSetUp;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingTable;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationTable;
 import static com.kwery.tests.util.TestUtil.domainSetting;
 
 public class UrlConfigurationDaoUpdateTest extends RepoDashDaoTestBase {
@@ -20,7 +20,7 @@ public class UrlConfigurationDaoUpdateTest extends RepoDashDaoTestBase {
     @Before
     public void setUp() {
         urlConfiguration = domainSetting();
-        domainSettingDbSetUp(urlConfiguration);
+        domainConfigurationDbSetUp(urlConfiguration);
         domainConfigurationDao = getInstance(DomainConfigurationDao.class);
     }
 
@@ -34,6 +34,6 @@ public class UrlConfigurationDaoUpdateTest extends RepoDashDaoTestBase {
 
         domainConfigurationDao.save(updated);
 
-        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainSettingTable(expected)).build().assertTable();
+        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainConfigurationTable(expected)).build().assertTable();
     }
 }

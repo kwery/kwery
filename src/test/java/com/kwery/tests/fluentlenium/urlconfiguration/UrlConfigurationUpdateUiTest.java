@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 
 import static com.kwery.models.UrlConfiguration.URL_CONFIGURATION_TABLE;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingDbSetUp;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingTable;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationTable;
 import static com.kwery.tests.util.TestUtil.domainSettingWithoutId;
 import static org.junit.rules.RuleChain.outerRule;
 
@@ -32,7 +32,7 @@ public class UrlConfigurationUpdateUiTest extends ChromeFluentTest {
     @Before
     public void setUp() {
         setting = TestUtil.domainSetting();
-        domainSettingDbSetUp(setting);
+        domainConfigurationDbSetUp(setting);
         page.go();
         page.waitForFormValues(setting);
     }
@@ -41,7 +41,7 @@ public class UrlConfigurationUpdateUiTest extends ChromeFluentTest {
     public void test() throws Exception {
         page.clickSubmit();
         page.waitForSaveSuccessMessage();
-        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainSettingTable(setting)).build().assertTable();
+        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainConfigurationTable(setting)).build().assertTable();
 
         UrlConfiguration updated = domainSettingWithoutId();
         updated.setId(setting.getId());
@@ -49,7 +49,7 @@ public class UrlConfigurationUpdateUiTest extends ChromeFluentTest {
         page.submitForm(updated);
 
         page.waitForSaveSuccessMessage();
-        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainSettingTable(updated)).build().assertTable();
+        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainConfigurationTable(updated)).build().assertTable();
     }
 
     @Override

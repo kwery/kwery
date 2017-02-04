@@ -15,7 +15,7 @@ import org.junit.rules.RuleChain;
 
 import static com.kwery.models.UrlConfiguration.URL_CONFIGURATION_TABLE;
 import static com.kwery.models.UrlConfiguration.ID_COLUMN;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingTable;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationTable;
 import static com.kwery.tests.util.TestUtil.domainSettingWithoutId;
 import static org.junit.rules.RuleChain.outerRule;
 
@@ -44,7 +44,7 @@ public class UrlConfigurationAddSuccessUiTest extends ChromeFluentTest {
         setting.setDomain("localhost");
         setting.setPort(Ints.tryParse(page.getPort()));
 
-        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainSettingTable(setting)).columnsToIgnore(ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainConfigurationTable(setting)).columnsToIgnore(ID_COLUMN).build().assertTable();
     }
 
     @Test
@@ -52,7 +52,7 @@ public class UrlConfigurationAddSuccessUiTest extends ChromeFluentTest {
         UrlConfiguration urlConfiguration = domainSettingWithoutId();
         page.submitForm(urlConfiguration);
         page.waitForSaveSuccessMessage();
-        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainSettingTable(urlConfiguration)).columnsToIgnore(ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainConfigurationTable(urlConfiguration)).columnsToIgnore(ID_COLUMN).build().assertTable();
     }
 
     @Override

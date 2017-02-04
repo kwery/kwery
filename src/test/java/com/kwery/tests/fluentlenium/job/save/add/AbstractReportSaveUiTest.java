@@ -87,7 +87,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
         }
 
         if (isUrlConfigurationSave()) {
-            domainSettingDbSetUp(domainSetting());
+            domainConfigurationDbSetUp(domainSetting());
         }
 
         ninjaServerRule.getInjector().getInstance(JobService.class).schedule(parentJobModel.getId());

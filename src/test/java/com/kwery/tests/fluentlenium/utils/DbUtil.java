@@ -349,7 +349,7 @@ public class DbUtil {
         return builder.build();
     }
 
-    public static IDataSet domainSettingTable(UrlConfiguration urlConfiguration) throws DataSetException {
+    public static IDataSet domainConfigurationTable(UrlConfiguration urlConfiguration) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
         builder.ensureTableIsPresent(UrlConfiguration.URL_CONFIGURATION_TABLE);
 
@@ -627,7 +627,7 @@ public class DbUtil {
         ).launch();
     }
 
-    public static void domainSettingDbSetUp(UrlConfiguration urlConfiguration) {
+    public static void domainConfigurationDbSetUp(UrlConfiguration urlConfiguration) {
         new DbSetup(new DataSourceDestination(getDatasource()),
                 insertInto(UrlConfiguration.URL_CONFIGURATION_TABLE)
                         .row()

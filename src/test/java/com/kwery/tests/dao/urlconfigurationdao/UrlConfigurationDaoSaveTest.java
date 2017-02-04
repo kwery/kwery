@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import javax.persistence.PersistenceException;
 
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingTable;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationTable;
 import static com.kwery.tests.util.TestUtil.domainSettingWithoutId;
 
 public class UrlConfigurationDaoSaveTest extends RepoDashDaoTestBase {
@@ -32,7 +32,7 @@ public class UrlConfigurationDaoSaveTest extends RepoDashDaoTestBase {
 
         expected.setId(urlConfiguration.getId());
 
-        new DbTableAsserterBuilder(UrlConfiguration.URL_CONFIGURATION_TABLE, domainSettingTable(expected)).build().assertTable();
+        new DbTableAsserterBuilder(UrlConfiguration.URL_CONFIGURATION_TABLE, domainConfigurationTable(expected)).build().assertTable();
 
     }
 

@@ -9,7 +9,7 @@ import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationDbSetUp;
 import static com.kwery.tests.util.Messages.REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M;
 import static com.kwery.tests.util.TestUtil.domainSetting;
 import static org.exparity.hamcrest.beans.TheSameAs.theSameBeanAs;
@@ -21,7 +21,7 @@ public class ReportFailureAlertEmailSenderWithBodyTest extends ReportFailureAler
     @Before
     public void seUp() {
         UrlConfiguration urlConfiguration = domainSetting();
-        domainSettingDbSetUp(urlConfiguration);
+        domainConfigurationDbSetUp(urlConfiguration);
 
         super.setUp();
 

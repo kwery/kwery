@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.kwery.models.UrlConfiguration.URL_CONFIGURATION_TABLE;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingDbSetUp;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingTable;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationTable;
 import static com.kwery.tests.util.TestUtil.assertJsonActionResult;
 import static com.kwery.tests.util.TestUtil.domainSettingWithoutId;
 import static com.kwery.views.ActionResult.Status.success;
@@ -23,7 +23,7 @@ public class UrlConfigurationApiControllerUpdateTest extends AbstractPostLoginAp
     @Before
     public void setUp() {
         urlConfiguration = TestUtil.domainSetting();
-        domainSettingDbSetUp(urlConfiguration);
+        domainConfigurationDbSetUp(urlConfiguration);
     }
 
     @Test
@@ -36,6 +36,6 @@ public class UrlConfigurationApiControllerUpdateTest extends AbstractPostLoginAp
 
         assertJsonActionResult(response, new ActionResult(success, ""));
 
-        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainSettingTable(updatedUrlConfiguration)).build().assertTable();
+        new DbTableAsserterBuilder(URL_CONFIGURATION_TABLE, domainConfigurationTable(updatedUrlConfiguration)).build().assertTable();
     }
 }

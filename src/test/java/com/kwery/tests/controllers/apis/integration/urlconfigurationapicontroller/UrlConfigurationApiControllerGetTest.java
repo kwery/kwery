@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.domainSettingDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.domainSetting;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -20,7 +20,7 @@ public class UrlConfigurationApiControllerGetTest extends AbstractPostLoginApiTe
     @Before
     public void setUp() {
         urlConfiguration = domainSetting();
-        domainSettingDbSetUp(urlConfiguration);
+        domainConfigurationDbSetUp(urlConfiguration);
     }
 
     @Test
