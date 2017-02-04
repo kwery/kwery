@@ -16,6 +16,7 @@ public class ReportFailureAlertEmailSenderWithoutBodyTest extends ReportFailureA
 
         KweryMail kweryMail = getInstance(KweryMail.class);
         kweryMail.setSubject(expectedSubject());
+        kweryMail.setBodyHtml(" ");
 
         MailService mailService = getInstance(MailService.class);
         Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
