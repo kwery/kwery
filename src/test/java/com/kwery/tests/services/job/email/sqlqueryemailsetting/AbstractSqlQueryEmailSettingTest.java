@@ -2,22 +2,26 @@ package com.kwery.tests.services.job.email.sqlqueryemailsetting;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.kwery.models.JobExecutionModel;
-import com.kwery.models.JobModel;
-import com.kwery.models.SqlQueryExecutionModel;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.services.job.ReportEmailSender;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
+import org.subethamail.wiser.WiserMessage;
 
+import javax.mail.internet.MimeMessage;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertThat;
 
 public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
     @Rule
@@ -63,5 +67,36 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
         emailConfigurationDbSet(wiserRule.emailConfiguration());
 
         reportEmailSender = getInstance(ReportEmailSender.class);
+    }
+
+    public void setUp(boolean includeInEmail, boolean includeInAttachment) {
+        SqlQueryEmailSettingModel model = new SqlQueryEmailSettingModel();
+        model.setIncludeInEmailAttachment(includeInEmail);
+        model.setIncludeInEmailBody(includeInAttachment);
+        sqlQueryModel0.setSqlQueryEmailSettingModel(model);
+    }
+
+    public void assertEmail(boolean emptyBody, boolean emptyAttachment) throws Exception {
+        assertThat(wiserRule.wiser().getMessages(), hasSize(1));
+
+        WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);
+
+        MimeMessage mimeMessage = wiserMessage.getMimeMessage();
+        MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
+
+        if (emptyBody) {
+            assertThat(mimeMessageParser.getHtmlContent(), is(" "));
+        } else {
+            assertThat(mimeMessageParser.getHtmlContent(), not(" "));
+        }
+
+        assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(emptyAttachment));
+    }
+
+    public void setEmailSetting(boolean includeInBody, boolean includeInAttachment) {
+        SqlQueryEmailSettingModel model = new SqlQueryEmailSettingModel();
+        model.setIncludeInEmailBody(includeInBody);
+        model.setIncludeInEmailAttachment(includeInAttachment);
+        sqlQueryModel0.setSqlQueryEmailSettingModel(model);
     }
 }

@@ -91,6 +91,12 @@ public class ReportEmailSender {
                 KweryMail kweryMail = kweryMailProvider.get();
                 kweryMail.setSubject(subject);
                 kweryMail.setBodyHtml(String.join("", emailSnippets));
+
+                //This condition might occur due to email setting rules
+                if (kweryMail.getBodyHtml().equals("")) {
+                    kweryMail.setBodyHtml(" "); //Causes exception, hence the hack
+                }
+
                 jobModel.getEmails().forEach(kweryMail::addTo);
                 kweryMail.setAttachments(attachments);
 
