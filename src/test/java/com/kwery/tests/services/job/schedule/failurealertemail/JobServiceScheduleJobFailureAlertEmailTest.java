@@ -22,10 +22,8 @@ public class JobServiceScheduleJobFailureAlertEmailTest extends JobServiceSchedu
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         super.test();
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, notNullValue());
-        assertThat(mail.getSubject(), containsString(REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M));
+        assertReportFailureAlertEmailExists();
     }
 }

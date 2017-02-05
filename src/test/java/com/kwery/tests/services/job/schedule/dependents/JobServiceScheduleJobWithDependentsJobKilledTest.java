@@ -3,8 +3,6 @@ package com.kwery.tests.services.job.schedule.dependents;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpWithDependentsAbstractTest;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import java.util.List;
@@ -20,7 +18,7 @@ public class JobServiceScheduleJobWithDependentsJobKilledTest extends JobService
     protected boolean mailTest = true;
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         jobService.schedule(jobModel.getId());
 
         waitAtMost(130, SECONDS).until(() ->
@@ -37,8 +35,7 @@ public class JobServiceScheduleJobWithDependentsJobKilledTest extends JobService
         assertThat(getJobExecutionModels(dependentJobModel.getId(), JobExecutionModel.Status.SUCCESS), hasSize(0));
 
         if (isMailTest()) {
-            Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-            assertThat(mail, nullValue());
+            assertEmailDoesNotExists();
         }
     }
 

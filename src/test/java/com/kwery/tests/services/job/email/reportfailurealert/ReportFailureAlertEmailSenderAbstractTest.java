@@ -5,14 +5,19 @@ import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.services.job.ReportFailureAlertEmailSender;
 import com.kwery.tests.util.RepoDashTestBase;
+import com.kwery.tests.util.WiserRule;
 import org.junit.Before;
+import org.junit.Rule;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.Messages.REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M;
-import static com.kwery.tests.util.TestUtil.*;
+import static com.kwery.tests.util.TestUtil.jobExecutionModel;
+import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 
 public class ReportFailureAlertEmailSenderAbstractTest extends RepoDashTestBase {
+    @Rule
+    public WiserRule wiserRule = new WiserRule();
+
     ReportFailureAlertEmailSender emailSender;
     JobExecutionModel jobExecutionModel;
 
@@ -21,7 +26,7 @@ public class ReportFailureAlertEmailSenderAbstractTest extends RepoDashTestBase 
         JobModel jobModel = jobModelWithoutDependents();
         jobDbSetUp(jobModel);
 
-        jobModel.setFailureAlertEmails(ImmutableSet.of("foo@bar.com", "boo@goo.com"));
+        jobModel.setFailureAlertEmails(ImmutableSet.of("foo@bar.com"));
         jobFailureAlertEmailDbSetUp(jobModel);
 
         jobExecutionModel = jobExecutionModel();
@@ -30,6 +35,9 @@ public class ReportFailureAlertEmailSenderAbstractTest extends RepoDashTestBase 
         jobExecutionModel.setStatus(JobExecutionModel.Status.FAILURE);
 
         jobExecutionDbSetUp(jobExecutionModel);
+
+        smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
+        emailConfigurationDbSet(wiserRule.emailConfiguration());
 
         emailSender = getInstance(ReportFailureAlertEmailSender.class);
     }

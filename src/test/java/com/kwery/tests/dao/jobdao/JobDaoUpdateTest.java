@@ -3,13 +3,12 @@ package com.kwery.tests.dao.jobdao;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.kwery.tests.util.TestUtil;
 import org.dbunit.DatabaseUnitException;
 import org.dozer.DozerBeanMapper;
 import org.hamcrest.Matchers;
@@ -21,13 +20,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import static com.kwery.models.Datasource.*;
 import static com.kwery.models.JobModel.*;
+import static com.kwery.models.SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE;
 import static com.kwery.models.SqlQueryModel.ID_COLUMN;
 import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
 
 public class JobDaoUpdateTest extends RepoDashDaoTestBase {
     protected JobDao jobDao;
@@ -37,42 +35,23 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoUpdateTest() {
         jobModel = jobModelWithoutDependents();
+        jobDbSetUp(jobModel);
 
         datasource = datasource();
+        datasourceDbSetup(datasource);
 
         for (int i = 0; i < 2; ++i) {
             jobModel.getSqlQueries().add(sqlQueryModel(datasource));
         }
 
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                Operations.sequenceOf(
-                        insertInto(Datasource.TABLE)
-                                .columns(COLUMN_ID, COLUMN_LABEL, COLUMN_PASSWORD, COLUMN_PORT, COLUMN_TYPE, COLUMN_URL, COLUMN_USERNAME)
-                                .values(datasource.getId(), datasource.getLabel(), datasource.getPassword(), datasource.getPort(), datasource.getType(), datasource.getUrl(), datasource.getUsername())
-                                .build()
-                )
-        ).launch();
-
-        jobDbSetUp(jobModel);
-
         sqlQueryDbSetUp(jobModel.getSqlQueries());
 
-        int id = 0;
+        jobSqlQueryDbSetUp(jobModel);
+
         for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
-            new DbSetup(
-                    new DataSourceDestination(getDatasource()),
-                    Operations.sequenceOf(
-                            Operations.insertInto(JOB_SQL_QUERY_TABLE)
-                                    .row()
-                                    .column(JobModel.ID_COLUMN, ++id)
-                                    .column(JOB_ID_FK_COLUMN, jobModel.getId())
-                                    .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
-                                    .column(JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN, dbId())
-                                    .end()
-                                    .build()
-                    )
-            ).launch();
+            SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryEmailSettingModel();
+            sqlQueryModel.setSqlQueryEmailSettingModel(sqlQueryEmailSettingModel);
+            sqlQueryEmailSettingDbSetUp(sqlQueryModel);
         }
 
         jobDao = getInstance(JobDao.class);
@@ -167,5 +146,19 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                 .columnsToIgnore(JOB_SQL_QUERY_TABLE_ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN)
                 .build().assertTable();
 
+    }
+
+    @Test
+    public void testUpdateSqlQueryEmailSetting() throws Exception {
+        for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
+            SqlQueryEmailSettingModel model = TestUtil.sqlQueryEmailSettingModelWithoutId();
+            model.setId(sqlQueryModel.getSqlQueryEmailSettingModel().getId());
+            sqlQueryModel.setSqlQueryEmailSettingModel(model);
+        }
+
+        jobDao.save(jobModel);
+
+        new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE,
+                sqlQueryEmailSettingTable(jobModel.getSqlQueries().toArray(new SqlQueryModel[jobModel.getSqlQueries().size()]))).build().assertTable();
     }
 }

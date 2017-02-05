@@ -5,8 +5,9 @@ import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.tests.fluentlenium.utils.DbTableAsserter;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import org.dbunit.DatabaseUnitException;
@@ -18,11 +19,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import static com.kwery.models.JobModel.*;
+import static com.kwery.models.SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE;
 import static com.kwery.models.SqlQueryModel.ID_COLUMN;
 import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
-import static com.kwery.tests.util.TestUtil.sqlQueryModelWithoutId;
+import static com.kwery.tests.util.TestUtil.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
@@ -55,9 +56,13 @@ public class JobDaoSaveTest extends RepoDashTestBase {
         JobModel expectedJobModel = dozerBeanMapper.map(jobModel, JobModel.class);
 
         SqlQueryModel sqlQueryModel0 = sqlQueryModelWithoutId(datasource);
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel0 = sqlQueryEmailSettingModelWithoutId();
+        sqlQueryModel0.setSqlQueryEmailSettingModel(sqlQueryEmailSettingModel0);
         SqlQueryModel expectedSqlQueryModel0 = dozerBeanMapper.map(sqlQueryModel0, SqlQueryModel.class);
 
         SqlQueryModel sqlQueryModel1 = sqlQueryModelWithoutId(datasource);
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel1 = sqlQueryEmailSettingModelWithoutId();
+        sqlQueryModel1.setSqlQueryEmailSettingModel(sqlQueryEmailSettingModel1);
         SqlQueryModel expectedSqlQueryModel1 = dozerBeanMapper.map(sqlQueryModel1, SqlQueryModel.class);
 
         jobModel.setSqlQueries(ImmutableList.of(sqlQueryModel0, sqlQueryModel1));
@@ -70,8 +75,13 @@ public class JobDaoSaveTest extends RepoDashTestBase {
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(ImmutableSet.of(expectedSqlQueryModel0, expectedSqlQueryModel1)), ID_COLUMN);
 
-        new DbTableAsserter.DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(jobModel))
+        new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(jobModel))
                 .columnsToIgnore(JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN, JOB_SQL_QUERY_TABLE_ID_COLUMN).build().assertTable();
+
+        new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE, sqlQueryEmailSettingTable(expectedSqlQueryModel0))
+                .columnsToIgnore(SqlQueryEmailSettingModel.ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE, sqlQueryEmailSettingTable(expectedSqlQueryModel1))
+                .columnsToIgnore(SqlQueryEmailSettingModel.ID_COLUMN).build().assertTable();
 
         assertThat(sqlQueryModel0.getId(), greaterThan(0));
         assertThat(sqlQueryModel1.getId(), greaterThan(0));

@@ -16,14 +16,13 @@ public class JobServiceLaunchJobWithDependentsFailureTest extends JobServiceJobS
     protected boolean mailTest = true;
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         jobService.launch(jobModel.getId());
         waitAtMost(1, MINUTES).until(() -> getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() == 1);
         assertThat(getJobExecutionModels(dependentJobModel.getId()), hasSize(0));
 
         if (isMailTest()) {
-            Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-            assertThat(mail, nullValue());
+            assertEmailDoesNotExists();
         }
     }
 

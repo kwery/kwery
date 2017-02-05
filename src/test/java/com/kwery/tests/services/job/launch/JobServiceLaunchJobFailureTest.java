@@ -3,8 +3,6 @@ package com.kwery.tests.services.job.launch;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpAbstractTest;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -16,7 +14,7 @@ public class JobServiceLaunchJobFailureTest extends JobServiceJobSetUpAbstractTe
     protected boolean mailTest = true;
 
     @Test
-    public void test() throws InterruptedException {
+    public void test() throws Exception {
         jobService.launch(jobModel.getId());
 
         waitAtMost(1, MINUTES).until(() -> !getJobExecutionModels(jobModel.getId(), JobExecutionModel.Status.FAILURE).isEmpty());
@@ -27,8 +25,7 @@ public class JobServiceLaunchJobFailureTest extends JobServiceJobSetUpAbstractTe
         assertSqlQueryExecutionModel(sqlQueryId1, SqlQueryExecutionModel.Status.FAILURE);
 
         if (isMailTest()) {
-            Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-            assertThat(mail, nullValue());
+            assertEmailDoesNotExists();
         }
     }
 

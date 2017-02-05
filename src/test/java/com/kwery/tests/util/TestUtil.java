@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableMap;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
-import com.kwery.models.UrlConfiguration.Scheme;
 import com.kwery.models.SqlQueryExecutionModel.Status;
+import com.kwery.models.UrlConfiguration.Scheme;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.views.ActionResult;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -25,6 +25,7 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.models.SmtpConfiguration.*;
+import static com.kwery.models.SqlQueryEmailSettingModel.*;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
@@ -262,6 +263,20 @@ public class TestUtil {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
         return podamFactory.manufacturePojo(SqlQueryDto.class);
+    }
+
+    public static SqlQueryEmailSettingModel sqlQueryEmailSettingModel() {
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel = new SqlQueryEmailSettingModel();
+        sqlQueryEmailSettingModel.setId(dbId());
+        sqlQueryEmailSettingModel.setIncludeInEmailAttachment(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        sqlQueryEmailSettingModel.setIncludeInEmailBody(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        return sqlQueryEmailSettingModel;
+    }
+
+    public static SqlQueryEmailSettingModel sqlQueryEmailSettingModelWithoutId() {
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryEmailSettingModel();
+        sqlQueryEmailSettingModel.setId(null);
+        return sqlQueryEmailSettingModel;
     }
 
     public static EmailConfiguration emailConfigurationDbSetUp() {

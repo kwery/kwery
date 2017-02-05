@@ -1,26 +1,27 @@
 package com.kwery.tests.services.job.email.reportfailurealert;
 
-import com.kwery.services.mail.KweryMail;
-import com.kwery.services.mail.MailService;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Test;
+import org.subethamail.wiser.WiserMessage;
 
-import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
+import javax.mail.internet.MimeMessage;
+
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ReportFailureAlertEmailSenderWithoutBodyTest extends ReportFailureAlertEmailSenderAbstractTest {
     @Test
-    public void test() {
+    public void test() throws Exception {
         emailSender.send(jobExecutionModel);
 
-        KweryMail kweryMail = getInstance(KweryMail.class);
-        kweryMail.setSubject(expectedSubject());
-        kweryMail.setBodyHtml(" ");
+        assertThat(wiserRule.wiser().getMessages(), hasSize(1));
 
-        MailService mailService = getInstance(MailService.class);
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
+        WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);
 
-        assertThat(mail, theSameBeanAs(kweryMail));
+        MimeMessage mimeMessage = wiserMessage.getMimeMessage();
+        MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
+        assertThat(mimeMessageParser.getSubject(), is(expectedSubject()));
+        assertThat(mimeMessageParser.getHtmlContent(), is(" "));
     }
 }

@@ -4,8 +4,6 @@ import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpAbstractTest;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -36,8 +34,7 @@ public class JobServiceLaunchJobKilledTest extends JobServiceJobSetUpAbstractTes
         }
 
         if (isMailTest()) {
-            Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-            assertThat(mail, nullValue());
+            assertEmailDoesNotExists();
         }
     }
 

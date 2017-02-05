@@ -17,7 +17,7 @@ public class JobServiceLaunchWithDependentsKilledJobTest extends JobServiceJobSe
     protected boolean mailTest = true;
 
     @Test
-    public void test() throws InterruptedException {
+    public void test() throws Exception {
         jobService.launch(jobModel.getId());
 
         waitAtMost(1, MINUTES).until(() ->
@@ -32,8 +32,7 @@ public class JobServiceLaunchWithDependentsKilledJobTest extends JobServiceJobSe
         assertThat(getJobExecutionModels(dependentJobModel.getId()), hasSize(0));
 
         if (isMailTest()) {
-            Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-            assertThat(mail, nullValue());
+            assertEmailDoesNotExists();
         }
     }
 

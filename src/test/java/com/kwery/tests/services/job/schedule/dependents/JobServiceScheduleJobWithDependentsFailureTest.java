@@ -2,8 +2,6 @@ package com.kwery.tests.services.job.schedule.dependents;
 
 import com.kwery.models.JobExecutionModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpWithDependentsAbstractTest;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -22,8 +20,7 @@ public class JobServiceScheduleJobWithDependentsFailureTest extends JobServiceJo
         assertThat(getJobExecutionModels(dependentJobModel.getId(), JobExecutionModel.Status.SUCCESS), hasSize(0));
 
         if (mailTest) {
-            Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-            assertThat(mail, nullValue());
+            assertEmailDoesNotExists();
         }
     }
 

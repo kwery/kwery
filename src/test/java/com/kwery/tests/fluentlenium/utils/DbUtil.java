@@ -25,7 +25,10 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.kwery.models.Datasource.*;
+import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.JobModel.*;
+import static com.kwery.models.JobModel.SQL_QUERY_ID_FK_COLUMN;
+import static com.kwery.models.SqlQueryEmailSettingModel.*;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static java.util.Arrays.asList;
@@ -261,7 +264,7 @@ public class DbUtil {
 
         if (datasource != null) {
             builder.newRow(Datasource.TABLE)
-                        .with(COLUMN_ID, datasource.getId())
+                        .with(Datasource.COLUMN_ID, datasource.getId())
                         .with(COLUMN_LABEL, datasource.getLabel())
                         .with(COLUMN_PASSWORD, datasource.getPassword())
                         .with(COLUMN_PORT, datasource.getPort())
@@ -365,12 +368,32 @@ public class DbUtil {
         return builder.build();
     }
 
+    public static IDataSet sqlQueryEmailSettingTable(SqlQueryModel... sqlQueryModels) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE);
+
+        for (SqlQueryModel sqlQueryModel : sqlQueryModels) {
+            SqlQueryEmailSettingModel model = sqlQueryModel.getSqlQueryEmailSettingModel();
+            if (model != null) {
+                builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE)
+                        .with(SqlQueryEmailSettingModel.ID_COLUMN, model.getId())
+                        .with(SqlQueryEmailSettingModel.SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                        .with(SqlQueryEmailSettingModel.EMAIL_BODY_INCLUDE_COLUMN, model.getIncludeInEmailBody())
+                        .with(SqlQueryEmailSettingModel.EMAIL_ATTACHMENT_INCLUDE_COLUMN, model.getIncludeInEmailAttachment())
+                        .add();
+            }
+
+        }
+
+        return builder.build();
+    }
+
     public static void datasourceDbSetup(Datasource datasource) {
         DbSetup dbSetup = new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
                 insertInto(Datasource.TABLE)
                         .row()
-                            .column(COLUMN_ID, datasource.getId())
+                            .column(Datasource.COLUMN_ID, datasource.getId())
                             .column(COLUMN_LABEL, datasource.getLabel())
                             .column(COLUMN_PASSWORD, datasource.getPassword())
                             .column(COLUMN_PORT, datasource.getPort())
@@ -394,7 +417,7 @@ public class DbUtil {
     public static void sqlQueryDbSetUp(SqlQueryModel sqlQueryModel){
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.insertInto(SqlQueryModel.SQL_QUERY_TABLE)
+                insertInto(SqlQueryModel.SQL_QUERY_TABLE)
                         .row()
                         .column(SqlQueryModel.ID_COLUMN, sqlQueryModel.getId())
                         .column(SqlQueryModel.LABEL_COLUMN, sqlQueryModel.getLabel())
@@ -409,7 +432,7 @@ public class DbUtil {
     public static void jobDbSetUp(JobModel jobModel) {
         new DbSetup(
                 new DataSourceDestination(getDatasource()),
-                Operations.insertInto(JOB_TABLE)
+                insertInto(JOB_TABLE)
                         .row()
                         .column(JobModel.ID_COLUMN, jobModel.getId())
                         .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
@@ -424,7 +447,7 @@ public class DbUtil {
         for (String email : jobModel.getEmails()) {
             new DbSetup(
                     new DataSourceDestination(getDatasource()),
-                    Operations.insertInto(JobModel.JOB_EMAIL_TABLE)
+                    insertInto(JobModel.JOB_EMAIL_TABLE)
                             .row()
                                 .column(JobModel.JOB_EMAIL_ID_COLUMN, dbId())
                                 .column(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
@@ -439,7 +462,7 @@ public class DbUtil {
         for (String email : jobModel.getFailureAlertEmails()) {
             new DbSetup(
                     new DataSourceDestination(getDatasource()),
-                    Operations.insertInto(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE)
+                    insertInto(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE)
                             .row()
                             .column(JobModel.JOB_FAILURE_ALERT_EMAIL_ID_COLUMN, dbId())
                             .column(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
@@ -637,6 +660,40 @@ public class DbUtil {
                         .column(UrlConfiguration.PORT_COLUMN, urlConfiguration.getPort())
                         .end()
                         .build()
+        ).launch();
+    }
+
+    public static void sqlQueryEmailSettingDbSetUp(SqlQueryModel sqlQueryModel) {
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryModel.getSqlQueryEmailSettingModel();
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(SQL_QUERY_EMAIL_SETTING_TABLE)
+                                .row()
+                                .column(SqlQueryEmailSettingModel.ID_COLUMN, sqlQueryEmailSettingModel.getId())
+                                .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                                .column(EMAIL_BODY_INCLUDE_COLUMN, sqlQueryEmailSettingModel.getIncludeInEmailBody())
+                                .column(EMAIL_ATTACHMENT_INCLUDE_COLUMN, sqlQueryEmailSettingModel.getIncludeInEmailAttachment())
+                                .end()
+                                .build()
+                )
+        ).launch();
+    }
+
+    public static void emailConfigurationDbSet(EmailConfiguration e) {
+        new DbSetup(
+                new DataSourceDestination(DbUtil.getDatasource()),
+                sequenceOf(
+                        insertInto(
+                                TABLE_EMAIL_CONFIGURATION
+                        ).row()
+                                .column(EmailConfiguration.COLUMN_ID, e.getId())
+                                .column(COLUMN_FROM_EMAIL, e.getFrom())
+                                .column(COLUMN_BCC, e.getBcc())
+                                .column(COLUMN_REPLY_TO, e.getReplyTo())
+                                .end()
+                                .build()
+                )
         ).launch();
     }
 

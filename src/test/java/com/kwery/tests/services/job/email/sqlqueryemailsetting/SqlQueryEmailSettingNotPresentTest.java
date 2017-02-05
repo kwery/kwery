@@ -1,22 +1,20 @@
-package com.kwery.tests.services.job.email.withoutcontent;
+package com.kwery.tests.services.job.email.sqlqueryemailsetting;
 
-import com.kwery.services.job.ReportEmailSender;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Test;
 import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.internet.MimeMessage;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
-public class ReportEmailSenderEmptyReportEmailRuleFalseTest extends AbstractReportEmailWithoutContentSender {
+public class SqlQueryEmailSettingNotPresentTest extends AbstractSqlQueryEmailSettingTest {
     @Test
     public void test() throws Exception {
-        getInstance(ReportEmailSender.class).send(jobExecutionModel);
-
+        reportEmailSender.send(jobExecutionModel);
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));
 
         WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);
@@ -25,10 +23,5 @@ public class ReportEmailSenderEmptyReportEmailRuleFalseTest extends AbstractRepo
         MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
         assertThat(mimeMessageParser.getHtmlContent(), notNullValue());
         assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(false));
-    }
-
-    @Override
-    public boolean getEmptyReportEmailRule() {
-        return false;
     }
 }

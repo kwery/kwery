@@ -36,10 +36,14 @@ public class SqlQueryModel {
     @Size(min = 1, max = 1024)
     private String title;
 
-    @JoinColumn(name = DATASOURCE_ID_FK_COLUMN)
     @ManyToOne
+    @JoinColumn(name = DATASOURCE_ID_FK_COLUMN)
     @NotNull
     private Datasource datasource;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = ID_COLUMN, insertable = false, updatable = false)
+    private SqlQueryEmailSettingModel sqlQueryEmailSettingModel;
 
     public Integer getId() {
         return id;
@@ -79,6 +83,14 @@ public class SqlQueryModel {
 
     public void setDatasource(Datasource datasource) {
         this.datasource = datasource;
+    }
+
+    public SqlQueryEmailSettingModel getSqlQueryEmailSettingModel() {
+        return sqlQueryEmailSettingModel;
+    }
+
+    public void setSqlQueryEmailSettingModel(SqlQueryEmailSettingModel sqlQueryEmailSettingModel) {
+        this.sqlQueryEmailSettingModel = sqlQueryEmailSettingModel;
     }
 
     @Override

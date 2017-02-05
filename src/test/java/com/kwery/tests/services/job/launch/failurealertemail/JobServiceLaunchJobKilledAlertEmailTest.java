@@ -22,14 +22,8 @@ public class JobServiceLaunchJobKilledAlertEmailTest extends JobServiceLaunchJob
     }
 
     @Test
-    public void test() {
-        try {
-            super.test();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, notNullValue());
-        assertThat(mail.getSubject(), containsString(REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M));
+    public void test() throws Exception {
+        super.test();
+        assertReportFailureAlertEmailExists();
     }
 }

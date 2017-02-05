@@ -11,12 +11,15 @@ import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.util.PostgreSqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
+import com.kwery.tests.util.TestUtil;
+import com.kwery.tests.util.WiserRule;
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.subethamail.wiser.WiserMessage;
 
+import javax.mail.internet.MimeMessage;
 import java.util.List;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
@@ -24,6 +27,8 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.sqlQueryModel;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
@@ -34,6 +39,9 @@ import static org.junit.Assert.assertThat;
 public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
     @Rule
     public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
+
+    @Rule
+    public WiserRule wiserRule = new WiserRule();
 
     protected JobModel jobModel;
     protected JobExecutionDao jobExecutionDao;
@@ -75,6 +83,8 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
         sqlQueryDbSetUp(jobModel.getSqlQueries());
         jobEmailDbSetUp(jobModel);
         jobSqlQueryDbSetUp(jobModel);
+        smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
+        emailConfigurationDbSet(wiserRule.emailConfiguration());
 
         jobExecutionDao = getInstance(JobExecutionDao.class);
         jobService = getInstance(JobService.class);
@@ -172,7 +182,7 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
     }
 
     @Test
-    public void test() throws InterruptedException {
+    public void test() throws Exception {
         jobService.launch(jobModel.getId());
 
         waitAtMost(1, MINUTES).until(() -> !getJobExecutionModels(JobExecutionModel.Status.SUCCESS).isEmpty());
@@ -182,8 +192,17 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
         assertSqlQueryExecutionModel(sqlQueryId0, SqlQueryExecutionModel.Status.SUCCESS);
         assertSqlQueryExecutionModel(sqlQueryId1, SqlQueryExecutionModel.Status.SUCCESS);
 
+        assertReportEmailExists();
+    }
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, notNullValue());
+    public void assertReportEmailExists() throws Exception {
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(() -> wiserRule.wiser().getMessages().isEmpty(), is(false));
+
+        for (WiserMessage wiserMessage : wiserRule.wiser().getMessages()) {
+            MimeMessage mimeMessage = wiserMessage.getMimeMessage();
+            MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
+            assertThat(mimeMessageParser.getHtmlContent(), notNullValue());
+            assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(false));
+        }
     }
 }

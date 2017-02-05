@@ -2,24 +2,25 @@ package com.kwery.tests.services.job.email.reportfailurealert;
 
 import com.kwery.dao.DomainConfigurationDao;
 import com.kwery.models.UrlConfiguration;
-import com.kwery.services.mail.KweryMail;
-import com.kwery.services.mail.MailService;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Test;
+import org.subethamail.wiser.WiserMessage;
+
+import javax.mail.internet.MimeMessage;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationDbSetUp;
 import static com.kwery.tests.util.Messages.REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M;
 import static com.kwery.tests.util.TestUtil.domainSetting;
-import static org.exparity.hamcrest.beans.TheSameAs.theSameBeanAs;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ReportFailureAlertEmailSenderWithBodyTest extends ReportFailureAlertEmailSenderAbstractTest {
     private DomainConfigurationDao domainConfigurationDao;
 
     @Before
-    public void seUp() {
+    public void setUp() {
         UrlConfiguration urlConfiguration = domainSetting();
         domainConfigurationDbSetUp(urlConfiguration);
 
@@ -29,11 +30,8 @@ public class ReportFailureAlertEmailSenderWithBodyTest extends ReportFailureAler
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         emailSender.send(jobExecutionModel);
-
-        KweryMail kweryMail = getInstance(KweryMail.class);
-        kweryMail.setSubject(expectedSubject());
 
         UrlConfiguration urlConfiguration = domainConfigurationDao.get().get(0);
 
@@ -42,11 +40,13 @@ public class ReportFailureAlertEmailSenderWithBodyTest extends ReportFailureAler
         String body = String.format("<a href='%s/#report/%d/execution/%s'>%s</a>",
                 url, jobExecutionModel.getJobModel().getId(), jobExecutionModel.getExecutionId(), REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M);
 
-        kweryMail.setBodyHtml(body);
+        assertThat(wiserRule.wiser().getMessages(), hasSize(1));
 
-        MailService mailService = getInstance(MailService.class);
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
+        WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);
 
-        assertThat(mail, theSameBeanAs(kweryMail));
+        MimeMessage mimeMessage = wiserMessage.getMimeMessage();
+        MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
+        assertThat(mimeMessageParser.getSubject(), is(expectedSubject()));
+        assertThat(mimeMessageParser.getHtmlContent(), is(body));
     }
 }

@@ -3,8 +3,6 @@ package com.kwery.tests.services.job.schedule;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpAbstractTest;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import java.util.List;
@@ -19,7 +17,7 @@ public class JobServiceScheduleJobKilledTest extends JobServiceJobSetUpAbstractT
     protected boolean mailTest = true;
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         jobService.schedule(jobModel.getId());
 
         waitAtMost(130, SECONDS).until(() ->
@@ -39,8 +37,7 @@ public class JobServiceScheduleJobKilledTest extends JobServiceJobSetUpAbstractT
         assertSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED, 2);
 
         if (isMailTest()) {
-            Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-            assertThat(mail, nullValue());
+            assertEmailDoesNotExists();
         }
     }
 
