@@ -159,6 +159,6 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         jobDao.save(jobModel);
 
         new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE,
-                sqlQueryEmailSettingTable(jobModel.getSqlQueries().toArray(new SqlQueryModel[jobModel.getSqlQueries().size()]))).build().assertTable();
+                sqlQueryEmailSettingTable(jobModel.getSqlQueries().toArray(new SqlQueryModel[jobModel.getSqlQueries().size()]))).columnsToIgnore(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN).build().assertTable();
     }
 }

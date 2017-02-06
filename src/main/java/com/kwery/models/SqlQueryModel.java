@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import static com.kwery.models.SqlQueryEmailSettingModel.*;
+
 @Entity
 @Table(name = SqlQueryModel.SQL_QUERY_TABLE)
 public class SqlQueryModel {
@@ -41,8 +43,12 @@ public class SqlQueryModel {
     @NotNull
     private Datasource datasource;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = ID_COLUMN, insertable = false, updatable = false)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinTable(
+            name = SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE,
+            joinColumns = @JoinColumn(name = SQL_QUERY_ID_FK_COLUMN, referencedColumnName = ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = SQL_QUERY_EMAIL_SETTING_ID_FK_COLUMN, referencedColumnName = SQL_QUERY_EMAIL_SETTING_ID_COLUMN)
+    )
     private SqlQueryEmailSettingModel sqlQueryEmailSettingModel;
 
     public Integer getId() {

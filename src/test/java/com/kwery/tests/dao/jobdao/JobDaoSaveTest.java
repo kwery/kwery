@@ -78,10 +78,8 @@ public class JobDaoSaveTest extends RepoDashTestBase {
         new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(jobModel))
                 .columnsToIgnore(JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN, JOB_SQL_QUERY_TABLE_ID_COLUMN).build().assertTable();
 
-        new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE, sqlQueryEmailSettingTable(expectedSqlQueryModel0))
-                .columnsToIgnore(SqlQueryEmailSettingModel.ID_COLUMN).build().assertTable();
-        new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE, sqlQueryEmailSettingTable(expectedSqlQueryModel1))
-                .columnsToIgnore(SqlQueryEmailSettingModel.ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE, sqlQueryEmailSettingTable(expectedSqlQueryModel0, expectedSqlQueryModel1))
+                .columnsToIgnore(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_COLUMN, SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN).build().assertTable();
 
         assertThat(sqlQueryModel0.getId(), greaterThan(0));
         assertThat(sqlQueryModel1.getId(), greaterThan(0));

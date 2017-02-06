@@ -371,18 +371,25 @@ public class DbUtil {
     public static IDataSet sqlQueryEmailSettingTable(SqlQueryModel... sqlQueryModels) throws DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
         builder.ensureTableIsPresent(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE);
+        builder.ensureTableIsPresent(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE);
 
-        for (SqlQueryModel sqlQueryModel : sqlQueryModels) {
-            SqlQueryEmailSettingModel model = sqlQueryModel.getSqlQueryEmailSettingModel();
-            if (model != null) {
-                builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE)
-                        .with(SqlQueryEmailSettingModel.ID_COLUMN, model.getId())
-                        .with(SqlQueryEmailSettingModel.SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
-                        .with(SqlQueryEmailSettingModel.EMAIL_BODY_INCLUDE_COLUMN, model.getIncludeInEmailBody())
-                        .with(SqlQueryEmailSettingModel.EMAIL_ATTACHMENT_INCLUDE_COLUMN, model.getIncludeInEmailAttachment())
-                        .add();
+        if (sqlQueryModels != null) {
+            for (SqlQueryModel sqlQueryModel : sqlQueryModels) {
+                SqlQueryEmailSettingModel model = sqlQueryModel.getSqlQueryEmailSettingModel();
+                if (model != null) {
+                    builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE)
+                            .with(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_COLUMN, model.getId())
+                            .with(SqlQueryEmailSettingModel.EMAIL_BODY_INCLUDE_COLUMN, model.getIncludeInEmailBody())
+                            .with(SqlQueryEmailSettingModel.EMAIL_ATTACHMENT_INCLUDE_COLUMN, model.getIncludeInEmailAttachment())
+                            .add();
+
+                    builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE)
+                            .with(SqlQueryEmailSettingModel.SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                            .with(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_FK_COLUMN, model.getId())
+                            .add();
+                }
+
             }
-
         }
 
         return builder.build();
@@ -670,10 +677,16 @@ public class DbUtil {
                 sequenceOf(
                         insertInto(SQL_QUERY_EMAIL_SETTING_TABLE)
                                 .row()
-                                .column(SqlQueryEmailSettingModel.ID_COLUMN, sqlQueryEmailSettingModel.getId())
-                                .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                                .column(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_COLUMN, sqlQueryEmailSettingModel.getId())
                                 .column(EMAIL_BODY_INCLUDE_COLUMN, sqlQueryEmailSettingModel.getIncludeInEmailBody())
                                 .column(EMAIL_ATTACHMENT_INCLUDE_COLUMN, sqlQueryEmailSettingModel.getIncludeInEmailAttachment())
+                                .end()
+                                .build(),
+                        insertInto(SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE)
+                                .row()
+                                .column(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN, dbId())
+                                .column(SqlQueryEmailSettingModel.SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
+                                .column(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_FK_COLUMN, sqlQueryEmailSettingModel.getId())
                                 .end()
                                 .build()
                 )
