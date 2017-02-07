@@ -1,0 +1,37 @@
+<div class="container f-email-configuration">
+    <action-result params="status: status, messages: messages"></action-result>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 data-bind="text: ko.i18n('url.configuration.save.header')" class="panel-title"></h3>
+        </div>
+        <div class="panel-body">
+            <form id="urlConfigurationForm">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <select data-bind="value: scheme" class="form-control scheme-f" required>
+                            <option>http</option>
+                            <option>https</option>
+                        </select>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    ://
+                    <div class="form-group">
+                        <input data-bind="value: domain" minlength="4" maxlength="253" class="form-control domain-f" type="text" name="domain" required>
+                        <div class="help-block with-errors domain-error-f"></div>
+                    </div>
+                    :
+                    <div class="form-group">
+                        <input data-bind="value: port" type="number" min="1" max="65535" class="form-control port-f" name="port" required>
+                        <div class="help-block with-errors port-error-f"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('url.configuration.save.help')"></label>
+                </div>
+                <button type="submit" data-bind="text: ko.i18n('url.configuration.save')" class="btn btn-primary url-configuration-submit-f"></button>
+            </form>
+        </div>
+    </div>
+
+</div>

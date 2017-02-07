@@ -1,8 +1,11 @@
 package com.kwery.tests.fluentlenium.job.executionresult;
 
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import java.util.List;
 
@@ -11,7 +14,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.By.className;
 
-public class ReportPage extends FluentPage implements RepoDashPage {
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report/{jobId}/execution/{executionId}")
+public class ReportPage extends KweryFluentPage implements RepoDashPage {
     protected String executionId;
     protected int jobId;
     protected int expectedReportSections;
@@ -20,11 +25,6 @@ public class ReportPage extends FluentPage implements RepoDashPage {
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-section-f")).size(getExpectedReportSections());
         return true;
-    }
-
-    @Override
-    public String getUrl() {
-        return String.format("/#report/%d/execution/%s", getJobId(), getExecutionId());
     }
 
     public String getExecutionId() {
@@ -60,7 +60,7 @@ public class ReportPage extends FluentPage implements RepoDashPage {
     }
 
     public boolean isDownloadLinkPresent(int index) {
-        return !$(className(String.format("download-%d-f", index))).isEmpty();
+        return el(className(String.format("download-%d-f", index))).present();
     }
 
     public boolean isTableDisplayed(int index) {
@@ -80,7 +80,7 @@ public class ReportPage extends FluentPage implements RepoDashPage {
     }
 
     public boolean isTableEmpty(int index) {
-       return $(String.format("table-%d-f th", index)).isEmpty() && $(String.format("table-%d-f tr", index)).isEmpty();
+       return !el(String.format("table-%d-f th", index)).present() && !el(String.format("table-%d-f tr", index)).present();
     }
 
     public String getContent(int index) {

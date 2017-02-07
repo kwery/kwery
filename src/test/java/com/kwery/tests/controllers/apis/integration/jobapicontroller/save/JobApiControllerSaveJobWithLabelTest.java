@@ -71,6 +71,8 @@ public class JobApiControllerSaveJobWithLabelTest extends AbstractPostLoginApiTe
         ImmutableSet<String> emails = ImmutableSet.of("foo@bar.com", "goo@moo.com");
         jobDto.setEmails(emails);
         jobDto.setLabelIds(labelIds);
+        Set<String> alertEmails = ImmutableSet.of("koo@moo.com", "gro@fro.com");
+        jobDto.setJobFailureAlertEmails(alertEmails);
 
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setTitle(jobDto.getTitle());
@@ -80,6 +82,7 @@ public class JobApiControllerSaveJobWithLabelTest extends AbstractPostLoginApiTe
         expectedJobModel.setSqlQueries(new LinkedList<>());
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setLabels(labels);
+        expectedJobModel.setFailureAlertEmails(alertEmails);
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select * from mysql.user");

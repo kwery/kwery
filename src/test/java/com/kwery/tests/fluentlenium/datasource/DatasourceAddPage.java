@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.kwery.models.Datasource.Type.POSTGRESQL;
+import static com.kwery.models.Datasource.Type.REDSHIFT;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_FAILURE_M;
 import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
@@ -36,7 +37,7 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
     public void submitForm(Datasource datasource) {
         $(".type-f").fillSelect().withText(datasource.getType().name());
 
-        if (datasource.getType() == POSTGRESQL) {
+        if (datasource.getType() == POSTGRESQL || datasource.getType() == REDSHIFT) {
             waitForDatabaseFormFieldToBeVisible();
             $(".database-f").fill().with(datasource.getDatabase());
         }

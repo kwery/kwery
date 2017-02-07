@@ -2,8 +2,6 @@ package com.kwery.tests.services.job.schedule;
 
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import java.util.List;
@@ -61,7 +59,6 @@ public class JobServiceScheduleJobSqlQueryKilledJobCompletesTest extends JobServ
         assertSqlQueryExecutionModels(sqlQueryId0, SqlQueryExecutionModel.Status.KILLED, 2);
         assertSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.KILLED, 2);
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, nullValue());
+        assertEmailDoesNotExists();
     }
 }

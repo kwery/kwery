@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class JobServiceLaunchJobWithDependentsSuccessTest extends JobServiceJobSetUpWithDependentsAbstractTest {
     @Test
-    public void test() {
+    public void test() throws Exception {
         jobService.launch(jobModel.getId());
 
         waitAtMost(2, MINUTES).until(() -> getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() == 2);
@@ -24,8 +24,7 @@ public class JobServiceLaunchJobWithDependentsSuccessTest extends JobServiceJobS
         assertSqlQueryExecutionModel(sqlQueryId2, SqlQueryExecutionModel.Status.SUCCESS);
         assertSqlQueryExecutionModel(sqlQueryId3, SqlQueryExecutionModel.Status.SUCCESS);
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, notNullValue());
+        assertReportEmailExists();
     }
 
     @Override

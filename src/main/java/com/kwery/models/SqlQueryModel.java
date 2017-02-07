@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import static com.kwery.models.SqlQueryEmailSettingModel.*;
+
 @Entity
 @Table(name = SqlQueryModel.SQL_QUERY_TABLE)
 public class SqlQueryModel {
@@ -36,10 +38,18 @@ public class SqlQueryModel {
     @Size(min = 1, max = 1024)
     private String title;
 
-    @JoinColumn(name = DATASOURCE_ID_FK_COLUMN)
     @ManyToOne
+    @JoinColumn(name = DATASOURCE_ID_FK_COLUMN)
     @NotNull
     private Datasource datasource;
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinTable(
+            name = SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE,
+            joinColumns = @JoinColumn(name = SQL_QUERY_ID_FK_COLUMN, referencedColumnName = ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = SQL_QUERY_EMAIL_SETTING_ID_FK_COLUMN, referencedColumnName = SQL_QUERY_EMAIL_SETTING_ID_COLUMN)
+    )
+    private SqlQueryEmailSettingModel sqlQueryEmailSettingModel;
 
     public Integer getId() {
         return id;
@@ -79,6 +89,14 @@ public class SqlQueryModel {
 
     public void setDatasource(Datasource datasource) {
         this.datasource = datasource;
+    }
+
+    public SqlQueryEmailSettingModel getSqlQueryEmailSettingModel() {
+        return sqlQueryEmailSettingModel;
+    }
+
+    public void setSqlQueryEmailSettingModel(SqlQueryEmailSettingModel sqlQueryEmailSettingModel) {
+        this.sqlQueryEmailSettingModel = sqlQueryEmailSettingModel;
     }
 
     @Override

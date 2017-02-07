@@ -3,8 +3,6 @@ package com.kwery.tests.services.job.schedule;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpAbstractTest;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -13,8 +11,10 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobServiceScheduleJobFailureTest extends JobServiceJobSetUpAbstractTest {
+    protected boolean mailTest = true;
+
     @Test
-    public void test() {
+    public void test() throws Exception {
         jobService.schedule(jobModel.getId());
         waitAtMost(130, SECONDS).until(() -> getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() >= 2);
 
@@ -23,12 +23,21 @@ public class JobServiceScheduleJobFailureTest extends JobServiceJobSetUpAbstract
         assertSqlQueryExecutionModels(sqlQueryId0, SqlQueryExecutionModel.Status.FAILURE, 2);
         assertSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.FAILURE, 2);
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, nullValue());
+        if (this.isMailTest()) {
+            assertEmailDoesNotExists();
+        }
     }
 
     @Override
     protected String getQuery() {
         return "select * from foo";
+    }
+
+    protected void disableMailTest() {
+        this.mailTest = false;
+    }
+
+    public boolean isMailTest() {
+        return mailTest;
     }
 }

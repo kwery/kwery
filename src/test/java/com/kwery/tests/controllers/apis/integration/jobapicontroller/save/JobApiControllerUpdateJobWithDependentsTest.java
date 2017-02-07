@@ -19,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
@@ -115,6 +116,8 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         jobDto.setEmails(emails);
         jobDto.setId(childJob.getId());
         jobDto.setParentJobId(parentJobModel1.getId());
+        Set<String> alertEmails = ImmutableSet.of("foo@goo.com", "roo@cho.com");
+        jobDto.setJobFailureAlertEmails(alertEmails);
 
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setName(jobDto.getName());
@@ -123,6 +126,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         expectedJobModel.setParentJob(parentJobModel1);
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setId(jobDto.getId());
+        expectedJobModel.setFailureAlertEmails(alertEmails);
 
         expectedJobModel.setParentJob(parentJobModel1);
 

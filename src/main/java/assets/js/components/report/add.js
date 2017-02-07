@@ -19,11 +19,13 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.cronExpression = ko.observable("");
         self.parentReportId = ko.observable(0);
         self.reportEmails = ko.observable("");
+        self.failureAlertEmails = ko.observable("");
 
         self.queries = ko.observableArray([]);
         self.emptyReportNoEmailRule = ko.observable(false);
 
         self.enableEmails = ko.observable(false);
+        self.urlConfigured = ko.observable(false);
 
         self.scheduleOption.subscribe(function(newVal){
             $("#parentReport").attr("data-validate", false);
@@ -55,12 +57,15 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
         self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
-        var Query = function(query, queryTitle, queryLabel, datasourceId, id) {
+        var Query = function(query, queryTitle, queryLabel, datasourceId, id, emailSettingId, includeInBody, includeAsAttachment) {
             this.query = query;
             this.queryLabel = queryLabel;
             this.queryTitle = queryTitle;
             this.datasourceId = datasourceId;
             this.id = id;
+            this.emailSettingId = emailSettingId;
+            this.includeInBody = includeInBody;
+            this.includeAsAttachment = includeAsAttachment;
         };
 
         var Report = function(id, name) {
@@ -71,7 +76,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.reports = ko.observableArray([new Report("", ko.i18n("report.save.parent.report.id.select.default"))]);
 
         if (!isUpdate) {
-            self.queries.push(new Query());
+            var query = new Query();
+            query.includeAsAttachment = true;
+            query.includeInBody = true;
+            self.queries.push(query);
         }
 
         waitingModal.show();
@@ -121,6 +129,16 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     }
                 }
             }),
+            $.ajax({
+                url: "/api/url-configuration",
+                type: "GET",
+                contentType: "application/json",
+                success: function(urlSetting) {
+                    if (urlSetting !== null) {
+                        self.urlConfigured(true);
+                    }
+                }
+            }),
             (function(){
                 if (isUpdate) {
                     return $.ajax({
@@ -132,6 +150,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             self.title(report.title);
                             self.reportName(report.name);
                             self.reportEmails(report.emails.join(", "));
+                            self.failureAlertEmails(report.failureAlertEmails.join(", "));
 
                             if (jobModelHackDto.parentJobModel != null) {
                                 self.scheduleOption("parentReport");
@@ -140,8 +159,21 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                 self.cronExpression(report.cronExpression);
                             }
 
+
                             $.each(report.sqlQueries, function(index, sqlQuery){
-                                var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
+                                var emailSettingId = null;
+                                var includeInBody = true;
+                                var includeAsAttachment = true;
+
+                                if (sqlQuery.sqlQueryEmailSettingModel != null) {
+                                    emailSettingId = sqlQuery.sqlQueryEmailSettingModel.id;
+                                    includeInBody = sqlQuery.sqlQueryEmailSettingModel.includeInEmailBody;
+                                    includeAsAttachment = sqlQuery.sqlQueryEmailSettingModel.includeInEmailAttachment;
+                                }
+
+                                var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id,
+                                    emailSettingId, includeInBody, includeAsAttachment);
+
                                 self.queries.push(query);
                             });
 
@@ -168,7 +200,12 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         });
 
         self.addSqlQuery = function() {
-            self.queries.push(new Query());
+            var query = new Query();
+            //By default, we want the below checked
+            query.includeInBody = true;
+            query.includeAsAttachment = true;
+
+            self.queries.push(query);
         };
 
         self.removeQuery = function(query) {
@@ -206,11 +243,20 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         label: query.queryLabel,
                         title: query.queryTitle,
                         datasourceId: query.datasourceId,
-                        id: query.id
+                        id: query.id,
+                        sqlQueryEmailSetting: {
+                            id: query.emailSettingId,
+                            includeInEmailBody: query.includeInBody,
+                            includeInEmailAttachment: query.includeAsAttachment
+                        }
                     });
                 });
 
                 var emails = $.grep($.map(self.reportEmails().split(","), $.trim), function(elem){
+                    return elem !== null && elem !== "";
+                });
+
+                var failureAlertEmails = $.grep($.map(self.failureAlertEmails().split(","), $.trim), function(elem){
                     return elem !== null && elem !== "";
                 });
 
@@ -226,6 +272,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     //TODO - Updating to 0 turns into empty string
                     parentJobId: self.parentReportId() ? self.parentReportId() : 0,
                     emails: emails,
+                    failureAlertEmails: failureAlertEmails,
                     sqlQueries: queries,
                     labelIds: (function(){
                         var ids = [];

@@ -12,6 +12,8 @@ public class EmailConfigurationTestEmailConfigurationSuccessUiTest extends Email
     @Test
     public void test() {
         SmtpConfiguration smtpConfiguration = smtpConfigurationWithoutId();
+        smtpConfiguration.setUseLocalSetting(false);
+
         page.submitSmtpConfigurationForm(smtpConfiguration);
         page.waitForSaveMessage(SMTP_CONFIGURATION_ADDED_M);
         page.waitForModalDisappearance();

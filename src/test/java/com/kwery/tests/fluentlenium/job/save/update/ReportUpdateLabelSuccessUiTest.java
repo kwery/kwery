@@ -10,6 +10,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +36,9 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Page
     ReportUpdatePage page;
+
     JobModel jobModel;
     Datasource datasource;
     JobDao jobDao;
@@ -76,9 +79,7 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
-        page = newInstance(ReportUpdatePage.class);
-        page.setReportId(jobModel.getId());
-        goTo(page);
+        page.go(jobModel.getId());
 
         if (!page.isRendered()) {
             fail("Failed to render report update page");
@@ -111,5 +112,10 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
         List<Integer> savedLabels = saved.getLabels().stream().map(JobLabelModel::getId).collect(Collectors.toList());
 
         assertThat(labelIds, containsInAnyOrder(savedLabels.get(0), savedLabels.get(1)));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

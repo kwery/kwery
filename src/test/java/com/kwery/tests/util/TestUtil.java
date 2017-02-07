@@ -7,6 +7,7 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecutionModel.Status;
+import com.kwery.models.UrlConfiguration.Scheme;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.views.ActionResult;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -246,6 +247,7 @@ public class TestUtil {
         jobDto.setEmails(new HashSet<>());
         jobDto.setSqlQueries(new ArrayList<>());
         jobDto.setLabelIds(new HashSet<>());
+        jobDto.setJobFailureAlertEmails(new HashSet<>());
         return jobDto;
     }
 
@@ -253,13 +255,30 @@ public class TestUtil {
         PodamFactory podamFactory = new PodamFactoryImpl();
         SqlQueryDto sqlQueryDto = podamFactory.manufacturePojo(SqlQueryDto.class);
         sqlQueryDto.setId(0);
+        sqlQueryDto.setSqlQueryEmailSetting(null);
         return sqlQueryDto;
     }
 
     public static SqlQueryDto sqlQueryDto() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
-        return podamFactory.manufacturePojo(SqlQueryDto.class);
+        SqlQueryDto sqlQueryDto = podamFactory.manufacturePojo(SqlQueryDto.class);
+        sqlQueryDto.setSqlQueryEmailSetting(null);
+        return sqlQueryDto;
+    }
+
+    public static SqlQueryEmailSettingModel sqlQueryEmailSettingModel() {
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel = new SqlQueryEmailSettingModel();
+        sqlQueryEmailSettingModel.setId(dbId());
+        sqlQueryEmailSettingModel.setIncludeInEmailAttachment(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        sqlQueryEmailSettingModel.setIncludeInEmailBody(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        return sqlQueryEmailSettingModel;
+    }
+
+    public static SqlQueryEmailSettingModel sqlQueryEmailSettingModelWithoutId() {
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryEmailSettingModel();
+        sqlQueryEmailSettingModel.setId(null);
+        return sqlQueryEmailSettingModel;
     }
 
     public static EmailConfiguration emailConfigurationDbSetUp() {
@@ -327,6 +346,16 @@ public class TestUtil {
             sqlQueryModel.setTitle(sqlQueryDto.getTitle());
             sqlQueryModel.setQuery(sqlQueryDto.getQuery());
             sqlQueryModel.setDatasource(datasource);
+
+            if (sqlQueryDto.getSqlQueryEmailSetting() == null) {
+                SqlQueryEmailSettingModel model = new SqlQueryEmailSettingModel();
+                model.setIncludeInEmailAttachment(true);
+                model.setIncludeInEmailBody(true);
+                sqlQueryModel.setSqlQueryEmailSettingModel(model);
+            } else {
+                sqlQueryModel.setSqlQueryEmailSettingModel(sqlQueryDto.getSqlQueryEmailSetting());
+            }
+
             jobModel.getSqlQueries().add(sqlQueryModel);
         }
 
@@ -365,7 +394,7 @@ public class TestUtil {
         }
 
         for (Pair<SqlQueryModel> pair : pairs) {
-            assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id"));
+            assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id").excludeProperty("sqlQueryEmailSettingModel.id"));
         }
     }
 
@@ -375,6 +404,20 @@ public class TestUtil {
         m.setLabel(RandomStringUtils.randomAlphanumeric(JobLabelModel.LABEL_MIN_LENGTH, JobLabelModel.LABEL_MAX_LENGTH + 1));
         m.setChildLabels(new HashSet<>());
         return m;
+    }
+
+    public static UrlConfiguration domainSettingWithoutId() {
+        UrlConfiguration d = new UrlConfiguration();
+        d.setPort(RandomUtils.nextInt(UrlConfiguration.PORT_MIN, UrlConfiguration.PORT_MAX + 1));
+        d.setDomain(RandomStringUtils.randomAlphanumeric(UrlConfiguration.DOMAIN_MIN, UrlConfiguration.DOMAIN_MAX + 1));
+        d.setScheme(Scheme.values()[RandomUtils.nextInt(0, 2)]);
+        return d;
+    }
+
+    public static UrlConfiguration domainSetting() {
+        UrlConfiguration d = domainSettingWithoutId();
+        d.setId(dbId());
+        return d;
     }
 
     public static void assertJsonActionResult(String response, ActionResult expected) {

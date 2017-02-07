@@ -4,8 +4,6 @@ import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpAbstractTest;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -14,6 +12,8 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobServiceLaunchJobKilledTest extends JobServiceJobSetUpAbstractTest {
+    protected boolean mailTest = true;
+
     @Test
     public void test() throws InterruptedException {
         jobService.launch(jobModel.getId());
@@ -33,12 +33,21 @@ public class JobServiceLaunchJobKilledTest extends JobServiceJobSetUpAbstractTes
             assertSqlQueryExecutionModel(sqlQueryModel.getId(), SqlQueryExecutionModel.Status.KILLED);
         }
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, nullValue());
+        if (isMailTest()) {
+            assertEmailDoesNotExists();
+        }
     }
 
     @Override
     protected String getQuery() {
         return "select sleep(100000)";
+    }
+
+    protected void disableMailTest() {
+        this.mailTest = false;
+    }
+
+    public boolean isMailTest() {
+        return mailTest;
     }
 }

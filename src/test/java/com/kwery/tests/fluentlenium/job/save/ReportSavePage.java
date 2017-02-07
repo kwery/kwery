@@ -1,9 +1,12 @@
 package com.kwery.tests.fluentlenium.job.save;
 
 import com.kwery.dtos.SqlQueryDto;
+import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.By;
 
 import java.util.LinkedList;
@@ -17,6 +20,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.By.className;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report/add")
 public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
@@ -39,6 +44,10 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
             $(".f-report-emails").fill().with(String.join(",", jobForm.getEmails()));
         }
 
+        if (isFailureAlertEmailFieldEnabled()) {
+            $(".failure-alert-emails-f").fill().with(String.join(",", jobForm.getFailureAlertEmails()));
+        }
+
         if ($(className("parent-report-option-f")).first().selected()) {
             $(".f-parent-report").fillSelect().withText(parentJobIdToLabelMap.get(jobForm.getParentJobId()));
         } else if (jobForm.isUseCronUi()) {
@@ -58,6 +67,31 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
             $(".f-sql-query" + i + " .f-sql-query-label").fill().with(dto.getLabel());
             $(".f-sql-query" + i + " .f-sql-query-title").fill().with(dto.getTitle());
             $(".f-sql-query" + i + " .f-datasource").fillSelect().withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
+
+            if (dto.getSqlQueryEmailSetting() != null) {
+                SqlQueryEmailSettingModel model = dto.getSqlQueryEmailSetting();
+                String aCls = String.format(".f-sql-query%d .include-attachment-f", i);
+                if (model.getIncludeInEmailAttachment()) {
+                    if (!el(aCls).selected()) {
+                        el(aCls).click();
+                    }
+                } else {
+                    if (el(aCls).selected()) {
+                        el(aCls).click();
+                    }
+                }
+
+                String iCls = String.format(".f-sql-query%d .include-body-f", i);
+                if (model.getIncludeInEmailBody()) {
+                    if (!el(iCls).selected()) {
+                        el(iCls).click();
+                    }
+                } else {
+                    if (el(iCls).selected()) {
+                        el(iCls).click();
+                    }
+                }
+            }
         }
 
         if (isEmptyReportNoEmailRuleEnabled()) {
@@ -123,7 +157,11 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     public void clickOnRemoveLabel(int i) {
         int count = $(className("label-f")).size();
         $(className(String.format("remove-label-%d-f", i))).click();
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-f")).size(count - 1);
+        if (count > 1) {
+            await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-f")).size(count - 1);
+        } else {
+            waitForElementDisappearance(className(".label-f"));
+        }
     }
 
     public void waitForReportSaveSuccessMessage() {
@@ -155,17 +193,20 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
         return count;
     }
 
-    @Override
-    public String getUrl() {
-        return "/#report/add";
-    }
-
     public String validationMessage(ReportFormField field) {
         return $(className(format("%s-form-validation-message-f", field.name()))).text();
     }
 
     public String validationMessage(SqlQueryFormField field, int index) {
         return $(format(".f-sql-query%d .%s-form-validation-message-f", index, field.name())).text();
+    }
+
+    public boolean sqlQueryEmailSettingIncludeInEmailBody(int index) {
+        return el(format(".f-sql-query%d .include-body-f", index)).selected();
+    }
+
+    public boolean sqlQueryEmailSettingIncludeAsEmailAttachment(int index) {
+        return el(format(".f-sql-query%d .include-attachment-f", index)).selected();
     }
 
     public void waitForReportFormValidationMessage() {
@@ -209,11 +250,15 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void waitForReportListPage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#report/list"));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> getDriver().getCurrentUrl().equals(getBaseUrl() + "/#report/list"));
     }
 
     public boolean isEmailFieldEnabled() {
         return el(className("f-report-emails")).enabled();
+    }
+
+    public boolean isFailureAlertEmailFieldEnabled() {
+        return el(className("failure-alert-emails-f")).enabled();
     }
 
     public boolean isEmptyReportNoEmailRuleEnabled() {

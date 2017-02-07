@@ -87,7 +87,11 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/report-label/list"
     });
 
-    ko.applyBindings({ route: router.currentRoute });
+    ko.components.register("url-configuration-save", {
+        require: "components/url-configuration/save"
+    });
+
+    ko.applyBindings({route: router.currentRoute});
 
     //Attach polyglot for i18n to ko
     (function i18n(Polyglot) {

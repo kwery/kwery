@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class JobServiceScheduleJobSuccessTest extends JobServiceJobSetUpAbstractTest {
     @Test
-    public void test() throws InterruptedException {
+    public void test() throws Exception {
         jobService.schedule(jobModel.getId());
 
         waitAtMost(130, SECONDS).until(() -> getJobExecutionModels(JobExecutionModel.Status.SUCCESS).size() >= 2);
@@ -24,8 +24,7 @@ public class JobServiceScheduleJobSuccessTest extends JobServiceJobSetUpAbstract
         assertSqlQueryExecutionModels(sqlQueryId0, SqlQueryExecutionModel.Status.SUCCESS, 2);
         assertSqlQueryExecutionModels(sqlQueryId1, SqlQueryExecutionModel.Status.SUCCESS, 2);
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, notNullValue());
+        assertReportEmailExists();
     }
 
     @Override

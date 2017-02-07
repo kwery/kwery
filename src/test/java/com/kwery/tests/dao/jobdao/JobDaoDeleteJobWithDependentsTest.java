@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.kwery.models.JobModel.*;
+import static com.kwery.models.SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE;
 import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
@@ -49,11 +50,19 @@ public class JobDaoDeleteJobWithDependentsTest extends RepoDashDaoTestBase {
         jobModel.setSqlQueries(ImmutableList.of(sqlQueryModel0));
         jobSqlQueryDbSetUp(jobModel);
 
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel0 = sqlQueryEmailSettingModel();
+        sqlQueryModel0.setSqlQueryEmailSettingModel(sqlQueryEmailSettingModel0);
+        sqlQueryEmailSettingDbSetUp(sqlQueryModel0);
+
         SqlQueryModel sqlQueryModel1 = sqlQueryModel();
         sqlQueryModel1.setDatasource(datasource);
         sqlQueryDbSetUp(sqlQueryModel1);
         dependentJobModel.setSqlQueries(ImmutableList.of(sqlQueryModel1));
         jobSqlQueryDbSetUp(dependentJobModel);
+
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel1 = sqlQueryEmailSettingModel();
+        sqlQueryModel1.setSqlQueryEmailSettingModel(sqlQueryEmailSettingModel1);
+        sqlQueryEmailSettingDbSetUp(sqlQueryModel1);
 
         JobExecutionModel jobExecutionModel = jobExecutionModel();
         jobExecutionModel.setJobModel(jobModel);
@@ -86,5 +95,6 @@ public class JobDaoDeleteJobWithDependentsTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(SQL_QUERY_TABLE, DbUtil.sqlQueryTable(new ArrayList<>())).build().assertTable();
         new DbTableAsserterBuilder(JobExecutionModel.TABLE, DbUtil.jobExecutionTable(null)).build().assertTable();
         new DbTableAsserterBuilder(SqlQueryExecutionModel.TABLE, DbUtil.sqlQueryExecutionTable(null)).build().assertTable();
+        new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE, sqlQueryEmailSettingTable(null)).build().assertTable();
     }
 }

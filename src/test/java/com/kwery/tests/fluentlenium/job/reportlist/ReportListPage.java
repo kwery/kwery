@@ -2,7 +2,9 @@ package com.kwery.tests.fluentlenium.job.reportlist;
 
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -17,6 +19,8 @@ import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report/list/?resultCount={resultCount}")
 public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     protected int resultCount;
 
@@ -24,11 +28,6 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-list-f")).displayed();
         return true;
-    }
-
-    @Override
-    public String getUrl() {
-        return String.format("/#report/list/?resultCount=%d", getResultCount());
     }
 
     public void waitForRows(int count) {

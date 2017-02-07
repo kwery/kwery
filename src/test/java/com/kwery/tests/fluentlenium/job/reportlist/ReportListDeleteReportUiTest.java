@@ -16,6 +16,7 @@ public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
             ReportListRow row = rows.get(j);
             if (!parentJobName.equals(row.getLabel())) {
                 page.deleteReport(j);
+                page.waitForModalDisappearance();
                 page.waitForRows(2);
                 page.waitForDeleteSuccessMessage();
                 break;
@@ -27,6 +28,7 @@ public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
             ReportListRow row = rows.get(j);
             if (!parentJobName.equals(row.getLabel())) {
                 page.deleteReport(j);
+                page.waitForModalDisappearance();
                 page.waitForRows(1);
                 page.waitForDeleteSuccessMessage();
                 break;

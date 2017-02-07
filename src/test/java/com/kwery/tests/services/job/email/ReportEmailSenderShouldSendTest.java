@@ -1,4 +1,4 @@
-package com.kwery.tests.services.job.schedule;
+package com.kwery.tests.services.job.email;
 
 import com.google.common.collect.ImmutableMap;
 import com.kwery.models.JobModel;

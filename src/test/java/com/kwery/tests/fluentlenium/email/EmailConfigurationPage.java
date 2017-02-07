@@ -25,16 +25,40 @@ public class EmailConfigurationPage extends KweryFluentPage implements RepoDashP
     }
 
     public void submitSmtpConfigurationForm(SmtpConfiguration config) {
+        if (config.isUseLocalSetting()) {
+            clickUseLocalSetting();
+        }
+
         $(".f-host").fill().with(config.getHost());
         $(".f-port").fill().with(String.valueOf(config.getPort()));
-        $(".f-ssl-" + config.isSsl()).click();
-        $(".f-smtp-username").fill().with(config.getUsername());
-        $(".f-smtp-password").fill().with(config.getPassword());
+
+        if (!config.isUseLocalSetting()) {
+            $(".f-ssl-" + config.isSsl()).click();
+            $(".f-smtp-username").fill().with(config.getUsername());
+            $(".f-smtp-password").fill().with(config.getPassword());
+        }
+
+        clickSmtpFormSubmit();
+    }
+
+    public void clickSmtpFormSubmit() {
         $(".f-smtp-configuration-submit").click();
     }
 
+    public void clearHostField() {
+        $(".f-host").clear();
+    }
+
+    public void clearPortField() {
+        $(".f-port").clear();
+    }
+
+    public void clickUseLocalSetting() {
+        $(".local-setting-f").click();
+    }
+
     public void submitEmptySmtpConfigurationForm() {
-        $(".f-smtp-configuration-submit").click();
+        clickSmtpFormSubmit();
     }
 
     public void submitEmailConfigurationForm(EmailConfiguration emailConfiguration) {
@@ -96,5 +120,10 @@ public class EmailConfigurationPage extends KweryFluentPage implements RepoDashP
 
     public enum EmailConfigurationFormField {
         from, bcc, replyTo
+    }
+
+    public void assertLocalSmtpDefaultValues() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-host")).value("localhost");
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-port")).value("25");
     }
 }
