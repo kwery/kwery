@@ -1,27 +1,17 @@
 package com.kwery.tests.fluentlenium.joblabel.update;
 
 import com.kwery.tests.fluentlenium.joblabel.save.ReportLabelSavePage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report-label/{reportLabelId}")
 public class ReportLabelUpdatePage extends ReportLabelSavePage {
-    protected int reportLabelId;
     protected String reportLabel;
-
-    @Override
-    public String getUrl() {
-        return "/#report-label/" + getReportLabelId();
-    }
-
-    public int getReportLabelId() {
-        return reportLabelId;
-    }
-
-    public void setReportLabelId(int reportLabelId) {
-        this.reportLabelId = reportLabelId;
-    }
 
     public String getReportLabel() {
         return reportLabel;

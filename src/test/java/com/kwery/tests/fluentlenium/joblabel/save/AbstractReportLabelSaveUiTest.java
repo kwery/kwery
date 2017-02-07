@@ -4,6 +4,7 @@ import com.kwery.dao.JobLabelDao;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
@@ -17,18 +18,23 @@ public class AbstractReportLabelSaveUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     ReportLabelSavePage page;
     JobLabelDao jobLabelDao;
 
     @Before
     public void setUp() {
-        page = newInstance(ReportLabelSavePage.class);
-        goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             fail("Could not render report label save page");
         }
 
         jobLabelDao = ninjaServerRule.getInjector().getInstance(JobLabelDao.class);
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
