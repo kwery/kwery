@@ -9,10 +9,11 @@ import org.subethamail.wiser.Wiser;
 
 public class WiserRule extends ExternalResource  {
     protected Wiser wiser;
-    protected int port = StandaloneHelper.findAvailablePort(1000, 10000);
+    protected int port = 0;
 
     @Override
     public void before() {
+        port = StandaloneHelper.findAvailablePort(1000, 10000);
         wiser = new Wiser(port);
         wiser.setHostname("localhost");
         wiser.start();

@@ -10,7 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.tests.util.TestUtil.emailConfigurationDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
+import static com.kwery.tests.util.TestUtil.emailConfiguration;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -28,7 +29,8 @@ public class EmailConfigurationTestEmailDisabledWhenSmtpConfigurationEmptyUiTest
 
     @Before
     public void setUpSmtpConfigurationSaveValidationUiTest() {
-        emailConfiguration = emailConfigurationDbSetUp();
+        emailConfiguration = emailConfiguration();
+        emailConfigurationDbSet(emailConfiguration);
 
         page = newInstance(EmailConfigurationPage.class);
         goTo(page);

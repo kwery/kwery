@@ -8,10 +8,7 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.models.UrlConfiguration.Scheme;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.views.ActionResult;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -22,14 +19,9 @@ import java.util.*;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
-import static com.kwery.models.SmtpConfiguration.*;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static java.util.Collections.sort;
 import static java.util.Comparator.comparing;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
@@ -66,7 +58,7 @@ public class TestUtil {
 
     public static Datasource datasource() {
         Datasource datasource = new Datasource();
-        datasource.setId(DbUtil.dbId());
+        datasource.setId(dbId());
         datasource.setUrl(RandomStringUtils.randomAlphanumeric(1, 256));
         datasource.setPort(RandomUtils.nextInt(1, 65566));
         datasource.setUsername(RandomStringUtils.randomAlphanumeric(1, 256));
@@ -142,21 +134,22 @@ public class TestUtil {
     public static SmtpConfiguration smtpConfiguration() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         SmtpConfiguration config = podamFactory.manufacturePojo(SmtpConfiguration.class);
-        config.setId(1);
+        config.setId(dbId());
         return config;
     }
 
     public static EmailConfiguration emailConfigurationWithoutId() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        EmailConfiguration emailConfiguration = podamFactory.manufacturePojo(EmailConfiguration.class);
-        emailConfiguration.setId(null);
-        return emailConfiguration;
+        EmailConfiguration configuration = emailConfiguration();
+        configuration.setId(null);
+        return configuration;
     }
 
     public static EmailConfiguration emailConfiguration() {
-        PodamFactory podamFactory = new PodamFactoryImpl();
-        EmailConfiguration emailConfiguration = podamFactory.manufacturePojo(EmailConfiguration.class);
-        emailConfiguration.setId(1);
+        EmailConfiguration emailConfiguration = new EmailConfiguration();
+        emailConfiguration.setBcc(RandomStringUtils.randomAlphanumeric(1, 100) + "@getkwery.com");
+        emailConfiguration.setReplyTo(RandomStringUtils.randomAlphanumeric(1, 100) + "@getkwery.com");
+        emailConfiguration.setFrom(RandomStringUtils.randomAlphanumeric(1, 100) + "@getkwery.com");
+        emailConfiguration.setId(dbId());
         return emailConfiguration;
     }
 
@@ -180,7 +173,7 @@ public class TestUtil {
 
     public static SqlQueryModel sqlQueryModel() {
         SqlQueryModel sqlQueryModel = new SqlQueryModel();
-        sqlQueryModel.setId(DbUtil.dbId());
+        sqlQueryModel.setId(dbId());
         sqlQueryModel.setQuery(RandomStringUtils.randomAlphanumeric(SqlQueryModel.QUERY_MIN_LENGTH, SqlQueryModel.QUERY_MAX_LENGTH + 1));
         sqlQueryModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
         sqlQueryModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1025));
@@ -205,7 +198,7 @@ public class TestUtil {
 
     private static JobModel jobModel() {
         JobModel jobModel = new JobModel();
-        jobModel.setId(DbUtil.dbId());
+        jobModel.setId(dbId());
         jobModel.setCronExpression("* * * * *");
         jobModel.setName(RandomStringUtils.randomAlphanumeric(1, 256));
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
@@ -279,48 +272,6 @@ public class TestUtil {
         SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryEmailSettingModel();
         sqlQueryEmailSettingModel.setId(null);
         return sqlQueryEmailSettingModel;
-    }
-
-    public static EmailConfiguration emailConfigurationDbSetUp() {
-        EmailConfiguration emailConfiguration = emailConfiguration();
-
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                sequenceOf(
-                        insertInto(TABLE_EMAIL_CONFIGURATION)
-                                .row()
-                                .column(EmailConfiguration.COLUMN_ID, emailConfiguration.getId())
-                                .column(COLUMN_FROM_EMAIL, emailConfiguration.getFrom())
-                                .column(COLUMN_BCC, emailConfiguration.getBcc())
-                                .column(COLUMN_REPLY_TO, emailConfiguration.getReplyTo())
-                                .end()
-                                .build()
-                )
-        ).launch();
-
-        return emailConfiguration;
-    }
-
-    public static SmtpConfiguration smtpConfigurationDbSetUp() {
-        SmtpConfiguration smtpConfiguration = smtpConfiguration();
-
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                sequenceOf(
-                        insertInto(TABLE_SMTP_CONFIGURATION)
-                                .row()
-                                .column(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
-                                .column(COLUMN_HOST, smtpConfiguration.getHost())
-                                .column(COLUMN_PORT, smtpConfiguration.getPort())
-                                .column(COLUMN_SSL, smtpConfiguration.isSsl())
-                                .column(COLUMN_USERNAME, smtpConfiguration.getUsername())
-                                .column(COLUMN_PASSWORD, smtpConfiguration.getPassword())
-                                .end()
-                                .build()
-                )
-        ).launch();
-
-        return smtpConfiguration;
     }
 
     public static String toJson(Object object) {

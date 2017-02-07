@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.email;
 
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -9,7 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.tests.util.TestUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.smtpConfiguration;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -25,7 +27,8 @@ public class EmailConfigurationTestEmailDisabledWhenEmailConfigurationEmptyUiTes
 
     @Before
     public void setUpEmailConfigurationTestEmailDisabledWhenEmailConfigurationEmptyUiTest() {
-        smtpConfigurationDbSetUp();
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
 
         page = newInstance(EmailConfigurationPage.class);
         goTo(page);

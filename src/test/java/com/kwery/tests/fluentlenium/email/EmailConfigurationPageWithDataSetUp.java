@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.email;
 
+import com.kwery.dao.SmtpConfigurationDao;
 import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.util.ChromeFluentTest;
@@ -10,8 +11,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.tests.util.TestUtil.emailConfigurationDbSetUp;
-import static com.kwery.tests.util.TestUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.emailConfiguration;
+import static com.kwery.tests.util.TestUtil.smtpConfiguration;
 import static junit.framework.TestCase.fail;
 
 public class EmailConfigurationPageWithDataSetUp extends ChromeFluentTest {
@@ -26,16 +29,23 @@ public class EmailConfigurationPageWithDataSetUp extends ChromeFluentTest {
     protected SmtpConfiguration smtpConfiguration;
     protected EmailConfiguration emailConfiguration;
 
+    protected SmtpConfigurationDao smtpConfigurationDao;
+
     @Before
     public void setUpSmtpConfigurationSaveValidationUiTest() {
-        emailConfiguration = emailConfigurationDbSetUp();
-        smtpConfiguration = smtpConfigurationDbSetUp();
+        emailConfiguration = emailConfiguration();
+        emailConfigurationDbSet(emailConfiguration);
+
+        smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
 
         goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render email configuration page");
         }
+
+        smtpConfigurationDao = ninjaServerRule.getInjector().getInstance(SmtpConfigurationDao.class);
 
         page.waitForModalDisappearance();
     }
