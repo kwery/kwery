@@ -9,6 +9,7 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
@@ -54,6 +55,8 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
 
         sqlQueryModel = sqlQueryModel(datasource0);
         sqlQueryModel.setQuery("select User from mysql.user where User = 'root'");
+        SqlQueryEmailSettingModel emailSettingModel = sqlQueryEmailSettingModel();
+        sqlQueryModel.setSqlQueryEmailSettingModel(emailSettingModel);
         sqlQueryDbSetUp(sqlQueryModel);
 
         jobModel.getSqlQueries().add(sqlQueryModel);

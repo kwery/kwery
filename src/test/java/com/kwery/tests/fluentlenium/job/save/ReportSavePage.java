@@ -1,6 +1,7 @@
 package com.kwery.tests.fluentlenium.job.save;
 
 import com.kwery.dtos.SqlQueryDto;
+import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.annotation.PageUrl;
@@ -66,6 +67,31 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
             $(".f-sql-query" + i + " .f-sql-query-label").fill().with(dto.getLabel());
             $(".f-sql-query" + i + " .f-sql-query-title").fill().with(dto.getTitle());
             $(".f-sql-query" + i + " .f-datasource").fillSelect().withText(datasourceIdToLabelMap.get(dto.getDatasourceId()));
+
+            if (dto.getSqlQueryEmailSetting() != null) {
+                SqlQueryEmailSettingModel model = dto.getSqlQueryEmailSetting();
+                String aCls = String.format(".f-sql-query%d .include-attachment-f", i);
+                if (model.getIncludeInEmailAttachment()) {
+                    if (!el(aCls).selected()) {
+                        el(aCls).click();
+                    }
+                } else {
+                    if (el(aCls).selected()) {
+                        el(aCls).click();
+                    }
+                }
+
+                String iCls = String.format(".f-sql-query%d .include-body-f", i);
+                if (model.getIncludeInEmailBody()) {
+                    if (!el(iCls).selected()) {
+                        el(iCls).click();
+                    }
+                } else {
+                    if (el(iCls).selected()) {
+                        el(iCls).click();
+                    }
+                }
+            }
         }
 
         if (isEmptyReportNoEmailRuleEnabled()) {
@@ -173,6 +199,14 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
 
     public String validationMessage(SqlQueryFormField field, int index) {
         return $(format(".f-sql-query%d .%s-form-validation-message-f", index, field.name())).text();
+    }
+
+    public boolean sqlQueryEmailSettingIncludeInEmailBody(int index) {
+        return el(format(".f-sql-query%d .include-body-f", index)).selected();
+    }
+
+    public boolean sqlQueryEmailSettingIncludeAsEmailAttachment(int index) {
+        return el(format(".f-sql-query%d .include-attachment-f", index)).selected();
     }
 
     public void waitForReportFormValidationMessage() {

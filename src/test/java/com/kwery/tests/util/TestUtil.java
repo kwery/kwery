@@ -255,7 +255,7 @@ public class TestUtil {
         PodamFactory podamFactory = new PodamFactoryImpl();
         SqlQueryDto sqlQueryDto = podamFactory.manufacturePojo(SqlQueryDto.class);
         sqlQueryDto.setId(0);
-        sqlQueryDto.setSqlQueryEmailSettingModel(null);
+        sqlQueryDto.setSqlQueryEmailSetting(null);
         return sqlQueryDto;
     }
 
@@ -263,7 +263,7 @@ public class TestUtil {
         PodamFactory podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
         SqlQueryDto sqlQueryDto = podamFactory.manufacturePojo(SqlQueryDto.class);
-        sqlQueryDto.setSqlQueryEmailSettingModel(null);
+        sqlQueryDto.setSqlQueryEmailSetting(null);
         return sqlQueryDto;
     }
 
@@ -346,6 +346,16 @@ public class TestUtil {
             sqlQueryModel.setTitle(sqlQueryDto.getTitle());
             sqlQueryModel.setQuery(sqlQueryDto.getQuery());
             sqlQueryModel.setDatasource(datasource);
+
+            if (sqlQueryDto.getSqlQueryEmailSetting() == null) {
+                SqlQueryEmailSettingModel model = new SqlQueryEmailSettingModel();
+                model.setIncludeInEmailAttachment(true);
+                model.setIncludeInEmailBody(true);
+                sqlQueryModel.setSqlQueryEmailSettingModel(model);
+            } else {
+                sqlQueryModel.setSqlQueryEmailSettingModel(sqlQueryDto.getSqlQueryEmailSetting());
+            }
+
             jobModel.getSqlQueries().add(sqlQueryModel);
         }
 
@@ -384,7 +394,7 @@ public class TestUtil {
         }
 
         for (Pair<SqlQueryModel> pair : pairs) {
-            assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id"));
+            assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id").excludeProperty("sqlQueryEmailSettingModel.id"));
         }
     }
 

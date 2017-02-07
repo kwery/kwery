@@ -5,10 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
-import com.kwery.models.Datasource;
-import com.kwery.models.JobModel;
-import com.kwery.models.SmtpConfiguration;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
@@ -50,6 +47,8 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
     JobDao jobDao;
     JobModel parentJobModel;
 
+    protected boolean noEmailSetting = false;
+
     @Before
     public void setUp() {
         datasource = mysqlDockerRule.getMySqlDocker().datasource();
@@ -66,6 +65,11 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
             SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
             sqlQueryDto.setQuery("select * from mysql.user");
             sqlQueryDto.setDatasourceId(datasource.getId());
+
+            if (isNoEmailSetting()) {
+                SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryEmailSettingModelWithoutId();
+                sqlQueryDto.setSqlQueryEmailSetting(sqlQueryEmailSettingModel);
+            }
 
             jobDto.getSqlQueries().add(sqlQueryDto);
         }
@@ -126,5 +130,13 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
     @Override
     public String getBaseUrl() {
         return ninjaServerRule.getServerUrl();
+    }
+
+    public boolean isNoEmailSetting() {
+        return noEmailSetting;
+    }
+
+    public void setNoEmailSetting(boolean noEmailSetting) {
+        this.noEmailSetting = noEmailSetting;
     }
 }

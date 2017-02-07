@@ -8,9 +8,11 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
@@ -75,11 +77,15 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         sqlQueryDto.setQuery("select * from mysql.user");
         sqlQueryDto.setDatasourceId(datasource.getId());
 
+        SqlQueryEmailSettingModel emailSettingModel = TestUtil.sqlQueryEmailSettingModelWithoutId();
+        sqlQueryDto.setSqlQueryEmailSetting(emailSettingModel);
+
         SqlQueryModel expectedSqlQueryModel = new SqlQueryModel();
         expectedSqlQueryModel.setQuery(sqlQueryDto.getQuery());
         expectedSqlQueryModel.setLabel(sqlQueryDto.getLabel());
         expectedSqlQueryModel.setDatasource(datasource);
         expectedSqlQueryModel.setTitle(sqlQueryDto.getTitle());
+        expectedSqlQueryModel.setSqlQueryEmailSettingModel(emailSettingModel);
 
         expectedJobModel.getSqlQueries().add(expectedSqlQueryModel);
 
@@ -93,6 +99,6 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         JobModel jobModel = jobDao.getJobByName(jobDto.getName());
 
         expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
-        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id"));
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id").excludeProperty("sqlQueries.sqlQueryEmailSetting.id"));
     }
 }

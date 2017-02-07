@@ -6,10 +6,7 @@ import com.kwery.dao.JobDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
-import com.kwery.models.Datasource;
-import com.kwery.models.JobModel;
-import com.kwery.models.SmtpConfiguration;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.util.ChromeFluentTest;
@@ -71,6 +68,10 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         sqlQueryModel.setQuery("select * from mysql.user");
         sqlQueryDbSetUp(sqlQueryModel);
 
+        SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryEmailSettingModel();
+        sqlQueryModel.setSqlQueryEmailSettingModel(sqlQueryEmailSettingModel);
+        sqlQueryEmailSettingDbSetUp(sqlQueryModel);
+
         jobModel.getSqlQueries().add(sqlQueryModel);
         jobSqlQueryDbSetUp(jobModel);
 
@@ -110,6 +111,10 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
             SqlQueryDto sqlQueryDto = sqlQueryDto();
             sqlQueryDto.setQuery("select * from mysql.user");
             sqlQueryDto.setDatasourceId(datasource.getId());
+
+            SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryEmailSettingModel();
+            sqlQueryDto.setSqlQueryEmailSetting(sqlQueryEmailSettingModel);
+
             jobDto.getSqlQueries().add(sqlQueryDto);
         }
 

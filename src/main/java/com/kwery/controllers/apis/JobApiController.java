@@ -470,6 +470,7 @@ public class JobApiController {
         model.setQuery(dto.getQuery());
         model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
         model.setTitle(dto.getTitle());
+        model.setSqlQueryEmailSettingModel(dto.getSqlQueryEmailSetting());
 
         return model;
     }

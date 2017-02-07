@@ -145,7 +145,18 @@
                                        data-labelvalidation="labelvalidation" required>
                                 <div class="help-block with-errors queryLabel-form-validation-message-f"></div>
                             </div>
-
+                            <div class="checkbox">
+                                <label>
+                                    <input data-bind="checked: includeInBody" class="include-body-f" name="includeInBody" type="checkbox">
+                                    <span data-bind="text: ko.i18n('report.save.save.sql.include.in.body')"> </span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input data-bind="checked: includeAsAttachment" class="include-attachment-f" name="includeAsAttachment" type="checkbox">
+                                    <span data-bind="text: ko.i18n('report.save.save.sql.include.as.attachment')"> </span>
+                                </label>
+                            </div>
                             <div>
                                 <a data-bind="click: $parent.removeQuery, visible: $parent.queries().length > 1, attr:{title: ko.i18n('report.save.save.sql.query.remove.help')}" class="f-remove-sql-query">
                                     <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>

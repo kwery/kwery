@@ -57,12 +57,15 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
         self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
-        var Query = function(query, queryTitle, queryLabel, datasourceId, id) {
+        var Query = function(query, queryTitle, queryLabel, datasourceId, id, emailSettingId, includeInBody, includeAsAttachment) {
             this.query = query;
             this.queryLabel = queryLabel;
             this.queryTitle = queryTitle;
             this.datasourceId = datasourceId;
             this.id = id;
+            this.emailSettingId = emailSettingId;
+            this.includeInBody = includeInBody;
+            this.includeAsAttachment = includeAsAttachment;
         };
 
         var Report = function(id, name) {
@@ -73,7 +76,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.reports = ko.observableArray([new Report("", ko.i18n("report.save.parent.report.id.select.default"))]);
 
         if (!isUpdate) {
-            self.queries.push(new Query());
+            var query = new Query();
+            query.includeAsAttachment = true;
+            query.includeInBody = true;
+            self.queries.push(query);
         }
 
         waitingModal.show();
@@ -153,8 +159,21 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                 self.cronExpression(report.cronExpression);
                             }
 
+
                             $.each(report.sqlQueries, function(index, sqlQuery){
-                                var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
+                                var emailSettingId = null;
+                                var includeInBody = true;
+                                var includeAsAttachment = true;
+
+                                if (sqlQuery.sqlQueryEmailSettingModel != null) {
+                                    emailSettingId = sqlQuery.sqlQueryEmailSettingModel.id;
+                                    includeInBody = sqlQuery.sqlQueryEmailSettingModel.includeInEmailBody;
+                                    includeAsAttachment = sqlQuery.sqlQueryEmailSettingModel.includeInEmailAttachment;
+                                }
+
+                                var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id,
+                                    emailSettingId, includeInBody, includeAsAttachment);
+
                                 self.queries.push(query);
                             });
 
@@ -181,7 +200,12 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         });
 
         self.addSqlQuery = function() {
-            self.queries.push(new Query());
+            var query = new Query();
+            //By default, we want the below checked
+            query.includeInBody = true;
+            query.includeAsAttachment = true;
+
+            self.queries.push(query);
         };
 
         self.removeQuery = function(query) {
@@ -219,7 +243,12 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         label: query.queryLabel,
                         title: query.queryTitle,
                         datasourceId: query.datasourceId,
-                        id: query.id
+                        id: query.id,
+                        sqlQueryEmailSetting: {
+                            id: query.emailSettingId,
+                            includeInEmailBody: query.includeInBody,
+                            includeInEmailAttachment: query.includeAsAttachment
+                        }
                     });
                 });
 
