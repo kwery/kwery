@@ -3,6 +3,7 @@ package com.kwery.tests.fluentlenium.user;
 import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.support.FindBy;
@@ -13,17 +14,14 @@ import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#user/add")
 public class UserAddPage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
 
     @Wait(timeout = TIMEOUT_SECONDS, timeUnit = SECONDS)
     @FindBy(className = "add-user-form-f")
     protected FluentWebElement createAdminUserForm;
-
-    @Override
-    public String getUrl() {
-        return "/#user/add";
-    }
 
     public void submitForm(String... inputs) {
         $("input").fill().with(inputs);
@@ -56,6 +54,6 @@ public class UserAddPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void waitForUserListPage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#user/list"));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> getDriver().getCurrentUrl().equals(getBaseUrl() + "/#user/list"));
     }
 }

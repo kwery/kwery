@@ -30,4 +30,9 @@ public class UserLogoutUiTest extends ChromeFluentTest {
         $(className("f-logout")).click();
         await().atMost(TIMEOUT_SECONDS).until($(".f-next-steps")).displayed();
     }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
+    }
 }

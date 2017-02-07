@@ -2,8 +2,10 @@ package com.kwery.tests.fluentlenium.user;
 
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,6 +20,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.tagName;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#user/list")
 public class UserListPage extends KweryFluentPage implements RepoDashPage {
     public static final int COLUMNS = 2;
 
@@ -26,11 +30,6 @@ public class UserListPage extends KweryFluentPage implements RepoDashPage {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".users-list-table-tbody-f")).displayed();
         waitForModalDisappearance();
         return true;
-    }
-
-    @Override
-    public String getUrl() {
-        return "/#user/list";
     }
 
     public void waitForRows(int rowCount) {

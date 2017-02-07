@@ -4,6 +4,7 @@ import com.kwery.models.User;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,13 +20,12 @@ public class UserUpdateUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(loginRule);
 
+    @Page
     protected UserUpdatePage page;
 
     @Before
     public void setUpUpdateUserPageTest() {
-        page = newInstance(UserUpdatePage.class);
-        page.setUserId(loginRule.getLoggedInUser().getId());
-        goTo(page);
+        page.go(loginRule.getLoggedInUser().getId());
 
         if (!page.isRendered()) {
             failed("Could not render update user page");
@@ -40,5 +40,10 @@ public class UserUpdateUiTest extends ChromeFluentTest {
         page.updateForm("foo");
         page.waitForUserListPage();
         page.waitForSuccessMessage(user.getUsername());
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

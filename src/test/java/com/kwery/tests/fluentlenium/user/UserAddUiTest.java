@@ -4,6 +4,7 @@ import com.kwery.models.User;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
@@ -16,16 +17,20 @@ public abstract class UserAddUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(loginRule);
 
+    @Page
     protected UserAddPage page;
 
     protected User loggedInUser;
 
     @Before
     public void setUpAddAdminUserTest() {
-        page = newInstance(UserAddPage.class);
-        goTo(page);
+        page.go();
         page.isRendered();
-
         loggedInUser = loginRule.getLoggedInUser();
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
