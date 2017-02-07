@@ -1,9 +1,9 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
 import com.kwery.models.SqlQueryExecutionModel.Status;
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.tests.util.TestUtil;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
 
@@ -17,13 +17,14 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
-public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPage {
+public class SqlQueryExecutionListPage extends KweryFluentPage implements RepoDashPage {
     public static final int RESULT_TABLE_COLUMN_COUNT = 3;
 
     protected int sqlQueryId;
 
     @Override
     public boolean isRendered() {
+        waitForModalDisappearance();
         await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until($("#executionListTableBody")).displayed();
         return $("#executionListTableBody").first().displayed();
     }

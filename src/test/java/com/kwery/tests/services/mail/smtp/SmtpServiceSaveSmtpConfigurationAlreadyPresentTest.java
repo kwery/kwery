@@ -8,7 +8,7 @@ import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationTable;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.smtpConfiguration;
 
 public class SmtpServiceSaveSmtpConfigurationAlreadyPresentTest extends RepoDashDaoTestBase {
@@ -18,7 +18,7 @@ public class SmtpServiceSaveSmtpConfigurationAlreadyPresentTest extends RepoDash
     @Before
     public void setUpSmtpServiceSaveSmtpConfigurationAlreadyPresentTest() throws Exception {
         smtpConfiguration = smtpConfiguration();
-        smtpConfigurationTable(smtpConfiguration);
+        smtpConfigurationDbSetUp(smtpConfiguration);
         smtpService = getInstance(SmtpService.class);
     }
 

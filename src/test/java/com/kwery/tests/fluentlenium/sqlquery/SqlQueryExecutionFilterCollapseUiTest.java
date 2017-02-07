@@ -101,4 +101,9 @@ public class SqlQueryExecutionFilterCollapseUiTest extends ChromeFluentTest {
         page.clickPrevious();
         assertThat(page.isFilterCollapsed(), is(true));
     }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
+    }
 }

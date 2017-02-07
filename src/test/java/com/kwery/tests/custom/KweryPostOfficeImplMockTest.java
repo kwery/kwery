@@ -19,9 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KweryPostOfficeImplMockTest {
@@ -81,7 +79,7 @@ public class KweryPostOfficeImplMockTest {
         assertThat(smtpConfiguration.isSsl(), is(smtpConfiguration.isSsl()));
         assertThat(smtpConfiguration.getUsername(), is(smtpConfiguration.getUsername()));
         assertThat(smtpConfiguration.getPassword(), is(smtpConfiguration.getPassword()));
-        assertThat(debug.getValue(), is(true));
+        assertThat(debug.getValue(), is(false));
 
         assertThat(mail.getFrom(), is(emailConfiguration.getFrom()));
         assertThat(mail.getBccs(), containsInAnyOrder(emailConfiguration.getBcc()));
