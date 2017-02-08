@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.kwery.models.JobModel.*;
+import static com.kwery.models.JobRuleModel.*;
 import static com.kwery.models.SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE;
 import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
@@ -96,5 +97,8 @@ public class JobDaoDeleteJobWithDependentsTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JobExecutionModel.TABLE, DbUtil.jobExecutionTable(null)).build().assertTable();
         new DbTableAsserterBuilder(SqlQueryExecutionModel.TABLE, DbUtil.sqlQueryExecutionTable(null)).build().assertTable();
         new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE, sqlQueryEmailSettingTable(null)).build().assertTable();
+
+        new DbTableAsserterBuilder(JobRuleModel.JOB_RULE_TABLE, fooTable(null)).columnsToIgnore(JOB_RULE_ID_COLUMN).build().assertTable();
+        new DbTableAsserterBuilder(JOB_JOB_RULE_TABLE, fooTable(null)).columnsToIgnore(JOB_JOB_RULE_ID_COLUMN).build().assertTable();
     }
 }

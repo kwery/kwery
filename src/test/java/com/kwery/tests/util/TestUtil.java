@@ -207,6 +207,7 @@ public class TestUtil {
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setParentJob(null);
         jobModel.setLabels(new HashSet<>());
+        jobModel.setJobRuleModel(null);
         return jobModel;
     }
 
@@ -272,6 +273,20 @@ public class TestUtil {
         SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryEmailSettingModel();
         sqlQueryEmailSettingModel.setId(null);
         return sqlQueryEmailSettingModel;
+    }
+
+    public static JobRuleModel jobRuleModel() {
+        JobRuleModel jobRuleModel = new JobRuleModel();
+        jobRuleModel.setId(dbId());
+        jobRuleModel.setSequentialSqlQueryExecution(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        jobRuleModel.setStopExecutionOnSqlQueryFailure(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        return jobRuleModel;
+    }
+
+    public static JobRuleModel jobRuleModelWithoutId() {
+        JobRuleModel jobRuleModel = jobRuleModel();
+        jobRuleModel.setId(null);
+        return jobRuleModel;
     }
 
     public static String toJson(Object object) {
@@ -342,10 +357,11 @@ public class TestUtil {
 
         for (int i = 0; i < pairs.size(); i++) {
             pairs.get(i).setSecond(expectedSqlQueryModels.get(i));
-        }
 
-        for (Pair<SqlQueryModel> pair : pairs) {
-            assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id").excludeProperty("sqlQueryEmailSettingModel.id"));
+
+            for (Pair<SqlQueryModel> pair : pairs) {
+                assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id").excludeProperty("sqlQueryEmailSettingModel.id"));
+            }
         }
     }
 
