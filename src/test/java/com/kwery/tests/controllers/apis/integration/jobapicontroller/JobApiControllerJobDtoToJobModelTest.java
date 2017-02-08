@@ -9,10 +9,7 @@ import com.kwery.dao.JobDao;
 import com.kwery.dao.JobLabelDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
-import com.kwery.models.Datasource;
-import com.kwery.models.JobLabelModel;
-import com.kwery.models.JobModel;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.ninja_squad.dbsetup.DbSetup;
@@ -86,6 +83,9 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
 
         jobDto.setSqlQueries(new ArrayList<>(2));
 
+        JobRuleModel jobRuleModel = jobRuleModelWithoutId();
+        jobDto.setJobRuleModel(jobRuleModel);
+
         JobModel jobModel = new JobModel();
         jobModel.setName(jobDto.getName());
         jobModel.setTitle(jobDto.getTitle());
@@ -94,6 +94,8 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setEmails(emails);
         jobModel.setFailureAlertEmails(failureAlertEmails);
         jobModel.setLabels(jobLabelModels);
+
+        jobModel.setJobRuleModel(jobRuleModel);
 
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
@@ -123,6 +125,9 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobDto.setSqlQueries(new ArrayList<>(2));
         jobDto.setLabelIds(jobLabelIds);
 
+        JobRuleModel jobRuleModel = jobRuleModel();
+        jobDto.setJobRuleModel(jobRuleModel);
+
         JobModel jobModel = new JobModel();
         jobModel.setName(jobDto.getName());
         jobModel.setCronExpression(jobDto.getCronExpression());
@@ -134,6 +139,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setFailureAlertEmails(failureAlertEmails);
         jobModel.setLabels(jobLabelModels);
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
+        jobModel.setJobRuleModel(jobRuleModel);
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDto();

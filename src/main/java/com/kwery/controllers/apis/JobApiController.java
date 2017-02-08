@@ -444,6 +444,7 @@ public class JobApiController {
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setEmails(jobDto.getEmails());
         jobModel.setFailureAlertEmails(jobDto.getFailureAlertEmails());
+        jobModel.setJobRuleModel(jobDto.getJobRuleModel());
 
         if (jobDto.getLabelIds() != null) {
             jobModel.setLabels(jobDto.getLabelIds().stream().filter(id -> id != null && id > 0).map(jobLabelDao::getJobLabelModelById).collect(toSet()));

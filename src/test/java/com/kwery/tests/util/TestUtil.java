@@ -230,6 +230,7 @@ public class TestUtil {
 
     public static JobDto jobDtoWithoutId() {
         JobDto jobDto = jobDto();
+        jobDto.setJobRuleModel(null);
         jobDto.setId(0);
         return jobDto;
     }
@@ -242,6 +243,7 @@ public class TestUtil {
         jobDto.setSqlQueries(new ArrayList<>());
         jobDto.setLabelIds(new HashSet<>());
         jobDto.setJobFailureAlertEmails(new HashSet<>());
+        jobDto.setJobRuleModel(null);
         return jobDto;
     }
 
