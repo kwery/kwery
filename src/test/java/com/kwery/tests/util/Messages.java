@@ -118,4 +118,6 @@ public class Messages {
 
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M = "Report Generation Failed";
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M = "Failed Report";
+
+    public static final String REPORT_JOB_EXECUTION_DELETE_M = "Report execution deleted successfully";
 }

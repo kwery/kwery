@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.kwery.tests.util.Messages.REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_END_M;
-import static com.kwery.tests.util.Messages.REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_START_M;
+import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
@@ -136,5 +135,17 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
         actions.click();
         actions.sendKeys(Keys.ESCAPE);
         actions.build().perform();
+    }
+
+    public void deleteExecution(int index) {
+        el(String.format(".execution-list-row-%d-f .delete-report-execution-f", index)).click();
+    }
+
+    public void waitForDeleteSuccessMessage() {
+        waitForSuccessMessage(REPORT_JOB_EXECUTION_DELETE_M);
+    }
+
+    public void waitForRowDelete(int index) {
+        waitForElementDisappearance(className(String.format(".execution-list-row-%d-f", index)));
     }
 }
