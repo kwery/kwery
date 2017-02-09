@@ -281,7 +281,13 @@ public class TestUtil {
         JobRuleModel jobRuleModel = new JobRuleModel();
         jobRuleModel.setId(dbId());
         jobRuleModel.setSequentialSqlQueryExecution(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
-        jobRuleModel.setStopExecutionOnSqlQueryFailure(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+
+        if (!jobRuleModel.isSequentialSqlQueryExecution()) {
+            jobRuleModel.setStopExecutionOnSqlQueryFailure(false);
+        } else {
+            jobRuleModel.setStopExecutionOnSqlQueryFailure(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        }
+
         return jobRuleModel;
     }
 
@@ -307,6 +313,7 @@ public class TestUtil {
         jobModel.setEmails(jobDto.getEmails());
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setChildJobs(new HashSet<>());
+        jobModel.setJobRuleModel(jobDto.getJobRuleModel());
 
         for (SqlQueryDto sqlQueryDto : jobDto.getSqlQueries()) {
             SqlQueryModel sqlQueryModel = new SqlQueryModel();
@@ -343,7 +350,7 @@ public class TestUtil {
             expectedJobModel.setParentJob(parentJobModel);
         }
 
-        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries"));
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries").excludeProperty("jobRuleModel.id"));
 
         List<SqlQueryModel> expectedSqlQueryModels = toList(expectedJobModel.getSqlQueries());
         sort(expectedSqlQueryModels, comparing(SqlQueryModel::getLabel));
@@ -359,11 +366,10 @@ public class TestUtil {
 
         for (int i = 0; i < pairs.size(); i++) {
             pairs.get(i).setSecond(expectedSqlQueryModels.get(i));
+        }
 
-
-            for (Pair<SqlQueryModel> pair : pairs) {
-                assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id").excludeProperty("sqlQueryEmailSettingModel.id"));
-            }
+        for (Pair<SqlQueryModel> pair : pairs) {
+            assertThat(pair.getFirst(), theSameBeanAs(pair.getSecond()).excludeProperty("id").excludeProperty("sqlQueryEmailSettingModel.id"));
         }
     }
 
