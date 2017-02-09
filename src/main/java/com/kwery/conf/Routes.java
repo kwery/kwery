@@ -43,6 +43,7 @@ public class Routes implements ApplicationRoutes {
     public static final String JOB_EXECUTION_RESULT = "/api/job/execution/{jobExecutionId}";
     public static final String JOB_EXECUTE_API = "/api/job/{jobId}/execute";
     public static final String JOB_DELETE_API = "/api/job/{jobId}/delete";
+    public static final String JOB_EXECUTION_DELETE_API = "/api/job/execution/{jobExecutionId}/delete";
     public static final String JOB_GET_API = "/api/job/{jobId}";
     public static final String JOB_LIST_EXECUTING_API = "/api/job/executing";
     public static final String JOB_EXECUTION_STOP_API = "/api/job/execution/stop/{jobExecutionId}";
@@ -100,6 +101,7 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(JOB_EXECUTION_RESULT).with(JobApiController.class, "jobExecutionResult");
         router.POST().route(JOB_EXECUTE_API).with(JobApiController.class, "executeJob");
         router.POST().route(JOB_DELETE_API).with(JobApiController.class, "deleteJob");
+        router.POST().route(JOB_EXECUTION_DELETE_API).with(JobApiController.class, "deleteJobExecution");
         router.GET().route(JOB_LIST_EXECUTING_API).with(JobApiController.class, "listExecutingJobs");
         router.GET().route(JOB_GET_API).with(JobApiController.class, "getJob");
         router.POST().route(JOB_EXECUTION_STOP_API).with(JobApiController.class, "stopJobExecution");
