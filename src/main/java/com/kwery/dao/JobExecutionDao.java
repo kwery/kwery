@@ -194,4 +194,14 @@ public class JobExecutionDao {
 
         return jobExecutions;
     }
+
+    @Transactional
+    public void deleteJobExecutions(List<Integer> jobExecutionIds) {
+        EntityManager m = entityManagerProvider.get();
+        CriteriaBuilder criteriaBuilder  = m.getCriteriaBuilder();
+        CriteriaDelete<JobExecutionModel> query = criteriaBuilder.createCriteriaDelete(JobExecutionModel.class);
+        Root<JobExecutionModel> root = query.from(JobExecutionModel.class);
+        query.where(root.get("id").in(jobExecutionIds));
+        m.createQuery(query).executeUpdate();
+    }
 }
