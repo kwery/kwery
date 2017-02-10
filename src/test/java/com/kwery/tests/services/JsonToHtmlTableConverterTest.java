@@ -26,7 +26,7 @@ public class JsonToHtmlTableConverterTest {
 
         String expectedHtmlTable = Joiner.on("").join(
                 ImmutableList.of(
-                        "<table style='border: 1px solid black; width: 100%;'>",
+                        "<table style='border: 1px solid black; table-layout: auto;'>",
                             "<tr style='border: 1px solid black;'>",
                                 "<th style='border: 1px solid black;'>", "header0", "</th>",
                                 "<th style='border: 1px solid black;'>", "header1", "</th>",
@@ -54,7 +54,7 @@ public class JsonToHtmlTableConverterTest {
 
         String expectedHtmlTable = Joiner.on("").join(
                 ImmutableList.of(
-                        "<table style='border: 1px solid black; width: 100%;'>",
+                        "<table style='border: 1px solid black; table-layout: auto;'>",
                         "<tr style='border: 1px solid black;'>",
                         "<th style='border: 1px solid black;'>", "header0", "</th>",
                         "<th style='border: 1px solid black;'>", "header1", "</th>",
@@ -76,7 +76,7 @@ public class JsonToHtmlTableConverterTest {
 
         String expectedHtmlTable = Joiner.on("").join(
                 ImmutableList.of(
-                        "<table style='border: 1px solid black; width: 100%;'>",
+                        "<table style='border: 1px solid black; table-layout: auto;'>",
                         "</table>"
                 )
         );

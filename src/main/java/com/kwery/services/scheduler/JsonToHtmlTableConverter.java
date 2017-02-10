@@ -32,7 +32,7 @@ public class JsonToHtmlTableConverter {
         List<List<String>> table = objectMapper.readValue(json, typeReference);
 
         List<String> htmlTableParts = new LinkedList<>();
-        htmlTableParts.add("<table style='border: 1px solid black; width: 100%;'>");
+        htmlTableParts.add("<table style='border: 1px solid black; table-layout: auto;'>");
 
         //Has headers?
         if (!table.isEmpty()) {
