@@ -1,9 +1,9 @@
 package com.kwery.tests.fluentlenium.sqlquery;
 
 import com.kwery.models.SqlQueryExecutionModel.Status;
+import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.tests.util.TestUtil;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.By;
 
@@ -17,15 +17,16 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
-public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPage {
+public class SqlQueryExecutionListPage extends KweryFluentPage implements RepoDashPage {
     public static final int RESULT_TABLE_COLUMN_COUNT = 3;
 
     protected int sqlQueryId;
 
     @Override
     public boolean isRendered() {
-        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until("#executionListTableBody").isDisplayed();
-        return $("#executionListTableBody").first().isDisplayed();
+        waitForModalDisappearance();
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until($("#executionListTableBody")).displayed();
+        return $("#executionListTableBody").first().displayed();
     }
 
     @Override
@@ -37,7 +38,7 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
         List<String> headers = new ArrayList<>(RESULT_TABLE_COLUMN_COUNT);
         List<FluentWebElement> headerColumns = $("#executionListTable thead th");
         for (FluentWebElement headerColumn : headerColumns) {
-            headers.add(headerColumn.getText());
+            headers.add(headerColumn.text());
         }
 
         return headers;
@@ -54,7 +55,7 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
             List<FluentWebElement> columns = row.find(By.tagName("td"));
 
             for (FluentWebElement column : columns) {
-                resultColumns.add(column.getText());
+                resultColumns.add(column.text());
             }
 
             resultRows.add(resultColumns);
@@ -64,7 +65,7 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
     }
 
     public String sqlQuery() {
-        return find(className("f-sql-query")).getText();
+        return find(className("f-sql-query")).text();
     }
 
     public void fillStatus(Status... statuses) {
@@ -75,11 +76,11 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
 
     public void clickFilter() {
         $(className("f-collapse")).click();
-        await().atMost(30, SECONDS).until("#collapseOne").isDisplayed();
+        await().atMost(30, SECONDS).until($("#collapseOne")).displayed();
     }
 
     public boolean isFilterCollapsed() {
-        return !$(id("collapseOne")).first().isDisplayed();
+        return !$(id("collapseOne")).first().displayed();
     }
 
     public boolean isFilterOpen() {
@@ -87,23 +88,23 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
     }
 
     public void fillExecutionStartStart(String date) {
-        fill("#executionStartStart").with(date);
+        $("#executionStartStart").fill().with(date);
     }
 
     public void fillExecutionStartEnd(String date) {
-        fill("#executionStartEnd").with(date);
+        $("#executionStartEnd").fill().with(date);
     }
 
     public void fillExecutionEndStart(String date) {
-        fill("#executionEndStart").with(date);
+        $("#executionEndStart").fill().with(date);
     }
 
     public void fillExecutionEndEnd(String date) {
-        fill("#executionEndEnd").with(date);
+        $("#executionEndEnd").fill().with(date);
     }
 
     public void fillResultCount(int resultCount) {
-       fill("#resultCount").with(String.valueOf(resultCount));
+       $("#resultCount").fill().with(String.valueOf(resultCount));
     }
 
     public void clickPrevious() {
@@ -119,31 +120,31 @@ public class SqlQueryExecutionListPage extends FluentPage implements RepoDashPag
     }
 
     public void waitForFilterResult(int expectedRowCount) {
-        await().atMost(30, SECONDS).until("#executionListTableBody tr").hasSize(expectedRowCount);
+        await().atMost(30, SECONDS).until($("#executionListTableBody tr")).size(expectedRowCount);
     }
 
     public void waitForStatus(Status status) {
-        await().atMost(30, SECONDS).until(".status").hasText(status.name());
+        await().atMost(30, SECONDS).until($(".status")).text(status.name());
     }
 
     public boolean isNextEnabled() {
-        return !Arrays.asList(find(className("f-next")).getAttribute("class").split(" ")).contains("disabled");
+        return !Arrays.asList(find(className("f-next")).attribute("class").split(" ")).contains("disabled");
     }
 
     public boolean isPreviousEnabled() {
-        return !Arrays.asList(find(className("f-previous")).getAttribute("class").split(" ")).contains("disabled");
+        return !Arrays.asList(find(className("f-previous")).attribute("class").split(" ")).contains("disabled");
     }
 
     public String statusLink(int position) {
-        return find(className("status-link")).get(position).getAttribute("href");
+        return find(className("status-link")).get(position).attribute("href");
     }
 
     public boolean isStatusText(int position) {
-        return find(className("status")).get(position).find(By.tagName("span")).first().isDisplayed();
+        return find(className("status")).get(position).find(By.tagName("span")).first().displayed();
     }
 
     public boolean isStatusLink(int position) {
-        return find(className("status")).get(position).find(By.tagName("a")).first().isDisplayed();
+        return find(className("status")).get(position).find(By.tagName("a")).first().displayed();
     }
 
     public int getSqlQueryId() {

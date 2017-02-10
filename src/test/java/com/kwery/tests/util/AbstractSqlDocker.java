@@ -9,8 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.Datasource.Type.POSTGRESQL;
+import static com.kwery.models.Datasource.Type.*;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.awaitility.Awaitility.waitAtMost;
 
@@ -68,11 +67,16 @@ public abstract class AbstractSqlDocker {
         if (getType() == POSTGRESQL) {
             label = POSTGRESQL.name();
         }
+
+        if (getType() == REDSHIFT) {
+            label = REDSHIFT.name();
+        }
+
         datasource.setLabel(label);
 
         datasource.setType(getType());
 
-        if (getType() == POSTGRESQL) {
+        if (getType() == POSTGRESQL || getType() == REDSHIFT) {
             datasource.setDatabase("postgres");
         }
 

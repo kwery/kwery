@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_REPORT_NAME_EXISTS_M;
-import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M;
+import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static com.kwery.views.ActionResult.Status.failure;
 import static java.text.MessageFormat.format;
@@ -29,7 +28,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
-public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostLoginApiTest {
+public class JobApiControllerSaveJobServerValidationTest extends AbstractPostLoginApiTest {
     protected JobDao jobDao;
     protected JobModel jobModel;
     protected Datasource datasource;
@@ -61,8 +60,11 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
     public void test() throws JSONException {
         String url = getInjector().getInstance(Router.class).getReverseRoute(JobApiController.class, "saveJob");
 
+        String invalidCron = "foo bar moo";
+
         JobDto jobDto = jobDtoWithoutId();
-        jobDto.setCronExpression("* * * * *");
+        jobDto.setParentJobId(0);
+        jobDto.setCronExpression(invalidCron);
         jobDto.setSqlQueries(new ArrayList<>(1));
         jobDto.setName(jobLabel);
 
@@ -80,7 +82,11 @@ public class JobApiControllerSaveJobWithDuplicateLabelTest extends AbstractPostL
 
         ActionResult actionResult = new ActionResult();
         actionResult.setStatus(ActionResult.Status.failure);
-        actionResult.setMessages(ImmutableList.of(format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel), format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel)));
+        actionResult.setMessages(ImmutableList.of(
+                format(JOBAPICONTROLLER_REPORT_NAME_EXISTS_M, jobLabel),
+                format(JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M, queryLabel),
+                format(JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION_M, invalidCron)
+        ));
 
         assertEquals(toJson(actionResult), response, false);
     }

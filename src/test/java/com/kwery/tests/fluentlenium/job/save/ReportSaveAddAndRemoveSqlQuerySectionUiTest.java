@@ -3,6 +3,7 @@ package com.kwery.tests.fluentlenium.job.save;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,12 +19,12 @@ public class ReportSaveAddAndRemoveSqlQuerySectionUiTest extends ChromeFluentTes
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     ReportSavePage page;
 
     @Before
     public void setUpReportSaveAddAndRemoveSqlQuerySectionUiTest() {
-        page = createPage(ReportSavePage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render report save page");
@@ -38,5 +39,10 @@ public class ReportSaveAddAndRemoveSqlQuerySectionUiTest extends ChromeFluentTes
         assertThat("All SQL query add sections have remove action", page.removeSqlQueryActionDisplayedCount(), is(2));
         page.clickOnRemoveSqlQuery(1);
         assertThat("All SQL query add sections have remove action", page.removeSqlQueryActionDisplayedCount(), is(0));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

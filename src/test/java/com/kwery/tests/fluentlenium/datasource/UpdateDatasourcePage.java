@@ -1,7 +1,9 @@
 package com.kwery.tests.fluentlenium.datasource;
 
 import com.kwery.models.Datasource.Type;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -13,48 +15,35 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.name;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#datasource/{datasourceId}")
 public class UpdateDatasourcePage extends DatasourceAddPage {
     public static final int FIELDS = 5;
 
-    protected int datasourceId;
-
-    @Override
-    public String getUrl() {
-        return "/#datasource/" + getDatasourceId();
-    }
-
     public void waitForForm(FormField field, String value) {
-        await().atMost(30, SECONDS).until(name(field.name())).with("value").startsWith(value);
+        await().atMost(30, SECONDS).until($(name(field.name()))).attribute("value").startsWith(value);
     }
 
     public void waitForSuccessMessage(String label, Type type) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-success-message").hasText(MessageFormat.format(DATASOURCE_UPDATE_SUCCESS_M, type.name(), label));
+        super.waitForSuccessMessage(MessageFormat.format(DATASOURCE_UPDATE_SUCCESS_M, type.name(), label));
     }
 
     public List<String> formFields() {
         List<String> fields = new ArrayList<>(FIELDS);
 
         for (FluentWebElement input : $("#addDatasourceForm input")) {
-            fields.add(input.getValue());
+            fields.add(input.value());
         }
 
         return fields;
     }
 
     public void fillLabel(String label) {
-        fill("#label").with(label);
+        $("#label").fill().with(label);
     }
 
     public void submit() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".save-datasource-f").isClickable();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".save-datasource-f")).clickable();
         find(className("save-datasource-f")).click();
-    }
-
-    public int getDatasourceId() {
-        return datasourceId;
-    }
-
-    public void setDatasourceId(int datasourceId) {
-        this.datasourceId = datasourceId;
     }
 }

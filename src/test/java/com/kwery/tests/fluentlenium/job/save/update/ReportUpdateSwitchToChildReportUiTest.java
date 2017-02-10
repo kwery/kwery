@@ -8,15 +8,16 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
-import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
 import org.dozer.DozerBeanMapper;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
@@ -41,7 +43,9 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Page
     ReportUpdatePage page;
+
     JobModel parentJobModel;
     Datasource datasource;
     JobDao jobDao;
@@ -86,9 +90,10 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
         jobSqlQueryDbSetUp(childJobModel);
         //Child Job setup - end
 
-        page = createPage(ReportUpdatePage.class);
-        page.setReportId(childJobModel.getId());
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
+
+        page.go(childJobModel.getId());
 
         if (!page.isRendered()) {
             fail("Failed to render report update page");
@@ -145,5 +150,10 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
 
         assertThat(jobDao.getAllJobs(), hasSize(2));
         assertThat(sqlQueryDao.getAll(), hasSize(2));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

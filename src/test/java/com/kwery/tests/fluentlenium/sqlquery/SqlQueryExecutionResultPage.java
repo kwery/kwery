@@ -17,8 +17,8 @@ public class SqlQueryExecutionResultPage extends FluentPage implements RepoDashP
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).until("#executionResultTable").isDisplayed();
-        return find(By.id("executionResultTable")).first().isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).until($("#executionResultTable")).displayed();
+        return find(By.id("executionResultTable")).first().displayed();
     }
 
     @Override
@@ -27,14 +27,14 @@ public class SqlQueryExecutionResultPage extends FluentPage implements RepoDashP
     }
 
     public void waitForResultHeader(int headerCount) {
-        await().atMost(30, TimeUnit.SECONDS).until("#resultHeader th").hasSize(headerCount);
+        await().atMost(30, TimeUnit.SECONDS).until($("#resultHeader th")).size(headerCount);
     }
 
     public List<String> resultHeader() {
         List<String> headers = new LinkedList<>();
 
         for (FluentWebElement header : $("#resultHeader th")) {
-            headers.add(header.getText());
+            headers.add(header.text());
         }
 
         return headers;
@@ -46,7 +46,7 @@ public class SqlQueryExecutionResultPage extends FluentPage implements RepoDashP
         for (FluentWebElement row : $("#resultContent tr")) {
             List<String> content = new LinkedList<>();
             for (FluentWebElement td : row.find(By.tagName("td"))) {
-                content.add(td.getText());
+                content.add(td.text());
             }
 
             container.add(content);

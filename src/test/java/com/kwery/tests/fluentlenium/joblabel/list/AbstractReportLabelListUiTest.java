@@ -6,6 +6,7 @@ import com.kwery.models.JobModel;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
@@ -22,6 +23,7 @@ public abstract class AbstractReportLabelListUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     ReportLabelListPage page;
     JobLabelDao jobLabelDao;
 
@@ -43,14 +45,18 @@ public abstract class AbstractReportLabelListUiTest extends ChromeFluentTest {
         jobModel.getLabels().add(parentJobLabelModel);
         jobJobLabelDbSetUp(jobModel);
 
-        page = createPage(ReportLabelListPage.class);
         page.setExpectedRows(2);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             fail("Could not render report label list page");
         }
 
         jobLabelDao = ninjaServerRule.getInjector().getInstance(JobLabelDao.class);
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

@@ -6,6 +6,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
+import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.KweryMailAttachment;
@@ -14,6 +15,7 @@ import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.JsonToHtmlTableConverter;
 import com.kwery.services.scheduler.JsonToHtmlTableConverterFactory;
+import com.kwery.utils.ReportUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +48,7 @@ public class ReportEmailSender {
     public void send(JobExecutionModel jobExecutionModel) {
         JobModel jobModel = jobExecutionModel.getJobModel();
 
-        String subject = new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(jobExecutionModel.getExecutionStart()))
-                + " - " + jobModel.getTitle();
+        String subject = jobModel.getTitle() + " - " + new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(jobExecutionModel.getExecutionStart()));
 
         try {
             List<String> emailSnippets = new LinkedList<>();
@@ -56,32 +57,46 @@ public class ReportEmailSender {
 
             boolean emptyResult = false;
 
-            for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModel.getSqlQueryExecutionModels()) {
-                emailSnippets.add("<h1>" + sqlQueryExecutionModel.getSqlQuery().getTitle() + "</h1>");
+            //Done so that report sections in the mail are ordered in the same order as sql queries in report
+            for (SqlQueryExecutionModel sqlQueryExecutionModel : ReportUtil.orderedExecutions(jobExecutionModel)) {
+                //If this is null, we include in both email and attachments
+                SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryExecutionModel.getSqlQuery().getSqlQueryEmailSettingModel();
+                if (sqlQueryEmailSettingModel == null || sqlQueryEmailSettingModel.getIncludeInEmailBody()) {
+                    emailSnippets.add("<h1>" + sqlQueryExecutionModel.getSqlQuery().getTitle() + "</h1>");
 
-                if (sqlQueryExecutionModel.getResult() == null) {
-                    emailSnippets.add("<div></div>");
-                } else {
-                    JsonToHtmlTableConverter jsonToHtmlTableConverter = jsonToHtmlTableConverterFactory.create(sqlQueryExecutionModel.getResult());
-                    emailSnippets.add(jsonToHtmlTableConverter.convert());
-                    emptyResult = emptyResult || jsonToHtmlTableConverter.isHasContent();
+                    if (sqlQueryExecutionModel.getResult() == null) {
+                        emailSnippets.add("<div></div>");
+                    } else {
+                        JsonToHtmlTableConverter jsonToHtmlTableConverter = jsonToHtmlTableConverterFactory.create(sqlQueryExecutionModel.getResult());
+                        emailSnippets.add(jsonToHtmlTableConverter.convert());
+                        emptyResult = emptyResult || jsonToHtmlTableConverter.isHasContent();
+                    }
                 }
 
-                //We do not want to send out attachments if the execution did not yield in any result, happens in case of insert queries
-                if (sqlQueryExecutionModel.getResult() != null) {
-                    KweryMailAttachment attachment = new KweryMailAttachmentImpl();
-                    attachment.setName(fileName(sqlQueryExecutionModel.getSqlQuery().getTitle(),
-                            sqlQueryExecutionModel.getJobExecutionModel().getExecutionStart()));
-                    attachment.setContent(jsonToCsvConverter.convert(sqlQueryExecutionModel.getResult()));
-                    attachment.setDescription("");
-                    attachments.add(attachment);
+                if (sqlQueryEmailSettingModel == null || sqlQueryEmailSettingModel.getIncludeInEmailAttachment()) {
+                    //We do not want to send out attachments if the execution did not yield in any result, happens in case of insert queries
+                    if (sqlQueryExecutionModel.getResult() != null) {
+                        KweryMailAttachment attachment = new KweryMailAttachmentImpl();
+                        attachment.setName(fileName(sqlQueryExecutionModel.getSqlQuery().getTitle(),
+                                sqlQueryExecutionModel.getJobExecutionModel().getExecutionStart()));
+                        attachment.setContent(jsonToCsvConverter.convert(sqlQueryExecutionModel.getResult()));
+                        attachment.setDescription("");
+                        attachments.add(attachment);
+                    }
                 }
             }
 
+            //For now do not bother about include in email and attachments while evaluation rules
             if (shouldSend(emptyResult, jobModel)) {
                 KweryMail kweryMail = kweryMailProvider.get();
                 kweryMail.setSubject(subject);
                 kweryMail.setBodyHtml(String.join("", emailSnippets));
+
+                //This condition might occur due to email setting rules
+                if (kweryMail.getBodyHtml().equals("")) {
+                    kweryMail.setBodyHtml(" "); //Causes exception, hence the hack
+                }
+
                 jobModel.getEmails().forEach(kweryMail::addTo);
                 kweryMail.setAttachments(attachments);
 

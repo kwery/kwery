@@ -2,12 +2,9 @@ package com.kwery.tests.fluentlenium.job.executionlist;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.interactions.Actions;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
-import static org.openqa.selenium.By.className;
 
 public class ReportExecutionListFilterValidationUiTest extends AbstractReportExecutionListUiTest {
     @Before
@@ -45,8 +42,11 @@ public class ReportExecutionListFilterValidationUiTest extends AbstractReportExe
         page.waitForStartValidationErrorRemoval();
         page.waitForEndValidationErrorRemoval();
 
+        page.removeCalendarDropDown();
+
         //Fixing validation results in correct result
-        page.filterResult("Sat Jan 07 2017 04:00", "Sat Jan 07 2017 22:00");
-        page.waitForRows(4);
+        page.filterResult("Sat Jan 07 2017 04:00", "Sat Jan 07 2017 05:45");
+        page.waitForModalDisappearance();
+        page.waitForRows(2);
     }
 }

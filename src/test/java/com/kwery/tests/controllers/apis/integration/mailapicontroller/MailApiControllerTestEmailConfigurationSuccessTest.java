@@ -2,45 +2,40 @@ package com.kwery.tests.controllers.apis.integration.mailapicontroller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kwery.controllers.apis.MailApiController;
-import com.kwery.custom.KweryPostofficeImpl;
 import com.kwery.models.EmailConfiguration;
-import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.kwery.tests.util.WiserRule;
 import ninja.Router;
-import ninja.postoffice.Mail;
-import ninja.postoffice.Postoffice;
-import ninja.postoffice.mock.PostofficeMockImpl;
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.subethamail.wiser.WiserMessage;
 
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
-import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
-import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
-import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
-import static com.kwery.models.SmtpConfiguration.COLUMN_HOST;
-import static com.kwery.models.SmtpConfiguration.COLUMN_PASSWORD;
-import static com.kwery.models.SmtpConfiguration.COLUMN_PORT;
-import static com.kwery.models.SmtpConfiguration.COLUMN_SSL;
-import static com.kwery.models.SmtpConfiguration.COLUMN_USERNAME;
-import static com.kwery.models.SmtpConfiguration.TABLE_SMTP_CONFIGURATION;
-import static com.kwery.tests.util.Messages.EMAIL_TEST_BODY_M;
-import static com.kwery.tests.util.Messages.EMAIL_TEST_SUBJECT_M;
-import static com.kwery.tests.util.Messages.EMAIL_TEST_SUCCESS_M;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
+import static com.kwery.tests.util.Messages.*;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.kwery.views.ActionResult.Status.success;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class MailApiControllerTestEmailConfigurationSuccessTest extends AbstractPostLoginApiTest {
+    @Rule
+    public WiserRule wiserRule = new WiserRule();
+
     protected EmailConfiguration emailConfiguration;
 
     @Before
@@ -49,44 +44,14 @@ public class MailApiControllerTestEmailConfigurationSuccessTest extends Abstract
         emailConfiguration.setReplyTo("reply-to@getkwery.com");
         emailConfiguration.setFrom("kwery@getkwery.com");
         emailConfiguration.setBcc("secret@getkwery.com");
+        emailConfiguration.setId(dbId());
+        emailConfigurationDbSet(emailConfiguration);
 
-        SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
-        smtpConfiguration.setHost("mail.getkwery.com");
-        smtpConfiguration.setPort(456);
-        smtpConfiguration.setSsl(true);
-        smtpConfiguration.setUsername("username");
-        smtpConfiguration.setPassword("password");
-
-        new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                sequenceOf(
-                        insertInto(
-                                TABLE_EMAIL_CONFIGURATION
-                        ).row()
-                                .column(EmailConfiguration.COLUMN_ID, 1)
-                                .column(COLUMN_FROM_EMAIL, emailConfiguration.getFrom())
-                                .column(COLUMN_BCC, emailConfiguration.getBcc())
-                                .column(COLUMN_REPLY_TO, emailConfiguration.getReplyTo())
-                                .end()
-                                .build(),
-                        insertInto(
-                                TABLE_SMTP_CONFIGURATION
-                        ).row()
-                                .column(SmtpConfiguration.COLUMN_ID, 1)
-                                .column(COLUMN_HOST, smtpConfiguration.getHost())
-                                .column(COLUMN_PORT, smtpConfiguration.getPort())
-                                .column(COLUMN_SSL, smtpConfiguration.isSsl())
-                                .column(COLUMN_USERNAME, smtpConfiguration.getUsername())
-                                .column(COLUMN_PASSWORD, smtpConfiguration.getPassword())
-                                .end()
-                                .build()
-                )
-
-        ).launch();
+        DbUtil.smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         String toEmail = "to@getkwery.com";
 
         String url = getInjector().getInstance(Router.class).getReverseRoute(MailApiController.class, "testEmailConfiguration",
@@ -98,10 +63,22 @@ public class MailApiControllerTestEmailConfigurationSuccessTest extends Abstract
         assertThat(response, hasJsonPath("$.status", is(success.name())));
         assertThat(response, hasJsonPath("$.messages[0]", is(EMAIL_TEST_SUCCESS_M)));
 
-        Mail mail = ((PostofficeMockImpl)getInjector().getInstance(Postoffice.class)).getLastSentMail();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
 
-        assertThat(mail.getSubject(), is(EMAIL_TEST_SUBJECT_M));
-        assertThat(mail.getBodyText(), is(EMAIL_TEST_BODY_M));
-        assertThat(mail.getTos(), containsInAnyOrder(toEmail));
+        List<String> toAddresses = new ArrayList<>(2);
+
+        for (WiserMessage wiserMessage : wiserRule.wiser().getMessages()) {
+            MimeMessage mimeMessage = wiserMessage.getMimeMessage();
+            MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
+            assertThat(mimeMessageParser.getPlainContent(), is(EMAIL_TEST_BODY_M));
+            assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(true));
+            assertThat(mimeMessageParser.getSubject(), is(EMAIL_TEST_SUBJECT_M));
+            assertThat(mimeMessageParser.getFrom(), is(emailConfiguration.getFrom()));
+            assertThat(mimeMessageParser.getReplyTo(), is(emailConfiguration.getReplyTo()));
+            assertThat(mimeMessageParser.getTo(), containsInAnyOrder(new InternetAddress(toEmail)));
+            toAddresses.add(wiserMessage.getEnvelopeReceiver());
+        }
+
+        assertThat(toAddresses, containsInAnyOrder(toEmail, emailConfiguration.getBcc()));
     }
 }

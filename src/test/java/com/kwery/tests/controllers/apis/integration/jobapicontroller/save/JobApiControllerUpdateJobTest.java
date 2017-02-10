@@ -9,6 +9,7 @@ import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
@@ -19,6 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -53,6 +55,8 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
 
         sqlQueryModel = sqlQueryModel(datasource0);
         sqlQueryModel.setQuery("select User from mysql.user where User = 'root'");
+        SqlQueryEmailSettingModel emailSettingModel = sqlQueryEmailSettingModel();
+        sqlQueryModel.setSqlQueryEmailSettingModel(emailSettingModel);
         sqlQueryDbSetUp(sqlQueryModel);
 
         jobModel.getSqlQueries().add(sqlQueryModel);
@@ -81,6 +85,8 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         jobDto.setEmails(emails);
         jobDto.setId(jobModel.getId());
         jobDto.setParentJobId(0);
+        Set<String> alertEmails = ImmutableSet.of("foo@goo.com", "cho@cro.com");
+        jobDto.setJobFailureAlertEmails(alertEmails);
 
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setTitle(jobDto.getTitle());
@@ -88,6 +94,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         expectedJobModel.setEmails(emails);
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setCronExpression(jobDto.getCronExpression());
+        expectedJobModel.setFailureAlertEmails(alertEmails);
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select User from mysql.user where User = 'root'");

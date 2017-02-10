@@ -15,12 +15,14 @@ public class ReportLabelListDeleteUiTest extends AbstractReportLabelListUiTest {
     public void test() {
         page.waitForModalDisappearance();
         page.clickDelete(0);
+        page.waitForModalDisappearance();
         page.waitForFailureMessageDisplay();
         assertThat(page.errorMessages(), containsInAnyOrder(
                 MessageFormat.format(JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL_M, parentJobLabelModel.getLabel()),
                 MessageFormat.format(JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN_M, parentJobLabelModel.getLabel())
         ));
         page.clickDelete(1);
+        page.waitForModalDisappearance();
         page.waitForSuccessMessage(jobLabelModel.getLabel());
         assertThat(page.getLabels(), hasSize(1));
         assertThat(page.getLabels(), containsInAnyOrder(parentJobLabelModel.getLabel()));

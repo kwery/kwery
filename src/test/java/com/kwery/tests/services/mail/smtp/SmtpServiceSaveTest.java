@@ -1,41 +1,23 @@
 package com.kwery.tests.services.mail.smtp;
 
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.services.mail.smtp.MultipleSmtpConfigurationFoundException;
-import com.kwery.services.mail.smtp.SmtpConfigurationAlreadyPresentException;
 import com.kwery.services.mail.smtp.SmtpService;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashTestBase;
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.builder.DataSetBuilder;
+import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
-import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
+import static com.kwery.models.SmtpConfiguration.TABLE_SMTP_CONFIGURATION;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationTable;
+import static com.kwery.tests.util.TestUtil.smtpConfigurationWithoutId;
 
 public class SmtpServiceSaveTest extends RepoDashTestBase {
     @Test
-    public void test() throws DatabaseUnitException, SmtpConfigurationAlreadyPresentException, MultipleSmtpConfigurationFoundException, SQLException, IOException {
-        SmtpConfiguration details = new SmtpConfiguration();
-        details.setHost("foo.com");
-        details.setPort(465);
-        details.setSsl(true);
-        details.setUsername("username");
-        details.setPassword("password");
-
+    public void test() throws Exception {
+        SmtpConfiguration details = smtpConfigurationWithoutId();
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        SmtpConfiguration expected = mapper.map(details, SmtpConfiguration.class);
         getInstance(SmtpService.class).save(details);
-
-        DataSetBuilder builder = new DataSetBuilder();
-
-        builder.newRow(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
-                .with(SmtpConfiguration.COLUMN_HOST, details.getHost())
-                .with(SmtpConfiguration.COLUMN_PORT, details.getPort())
-                .with(SmtpConfiguration.COLUMN_SSL, details.isSsl())
-                .with(SmtpConfiguration.COLUMN_USERNAME, details.getUsername())
-                .with(SmtpConfiguration.COLUMN_PASSWORD, details.getPassword())
-                .add();
-
-        assertDbState(SmtpConfiguration.TABLE_SMTP_CONFIGURATION, builder.build(), SmtpConfiguration.COLUMN_ID);
+        new DbTableAsserterBuilder(TABLE_SMTP_CONFIGURATION, smtpConfigurationTable(expected)).columnsToIgnore(SmtpConfiguration.COLUMN_ID).build().assertTable();
     }
 }

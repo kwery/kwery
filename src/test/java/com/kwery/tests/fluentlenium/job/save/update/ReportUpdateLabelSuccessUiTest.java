@@ -4,16 +4,13 @@ import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.dao.JobLabelDao;
 import com.kwery.dao.SqlQueryDao;
-import com.kwery.models.Datasource;
-import com.kwery.models.JobLabelModel;
-import com.kwery.models.JobModel;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.services.job.JobService;
-import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -38,7 +36,9 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Page
     ReportUpdatePage page;
+
     JobModel jobModel;
     Datasource datasource;
     JobDao jobDao;
@@ -76,9 +76,10 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
         jobLabelModel2 = jobLabelModel();
         jobLabelDbSetUp(jobLabelModel2);
 
-        page = createPage(ReportUpdatePage.class);
-        page.setReportId(jobModel.getId());
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
+
+        page.go(jobModel.getId());
 
         if (!page.isRendered()) {
             fail("Failed to render report update page");
@@ -111,5 +112,10 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
         List<Integer> savedLabels = saved.getLabels().stream().map(JobLabelModel::getId).collect(Collectors.toList());
 
         assertThat(labelIds, containsInAnyOrder(savedLabels.get(0), savedLabels.get(1)));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

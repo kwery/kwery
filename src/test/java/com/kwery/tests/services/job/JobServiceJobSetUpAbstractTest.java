@@ -11,15 +11,22 @@ import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
+import com.kwery.tests.util.WiserRule;
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
+import org.subethamail.wiser.WiserMessage;
 
+import javax.mail.internet.MimeMessage;
 import java.util.List;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static com.kwery.tests.util.TestUtil.sqlQueryModel;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.Messages.REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M;
+import static com.kwery.tests.util.TestUtil.*;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -29,6 +36,9 @@ import static org.junit.Assert.assertThat;
 public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
+    @Rule
+    public WiserRule wiserRule = new WiserRule();
 
     protected JobModel jobModel;
     protected JobExecutionDao jobExecutionDao;
@@ -70,6 +80,9 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         sqlQueryDbSetUp(jobModel.getSqlQueries());
         jobEmailDbSetUp(jobModel);
         jobSqlQueryDbSetUp(jobModel);
+
+        smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
+        emailConfigurationDbSet(wiserRule.emailConfiguration());
 
         jobExecutionDao = getInstance(JobExecutionDao.class);
         jobService = getInstance(JobService.class);
@@ -184,4 +197,31 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     }
 
     protected abstract String getQuery();
+
+    public void assertReportEmailExists() throws Exception {
+        assertThat(wiserRule.wiser().getMessages().isEmpty(), is(false));
+
+        for (WiserMessage wiserMessage : wiserRule.wiser().getMessages()) {
+            MimeMessage mimeMessage = wiserMessage.getMimeMessage();
+            MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
+            assertThat(mimeMessageParser.getHtmlContent(), notNullValue());
+            assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(false));
+        }
+    }
+
+    public void assertEmailDoesNotExists() {
+        assertThat(wiserRule.wiser().getMessages().isEmpty(), is(true));
+    }
+
+    public void assertReportFailureAlertEmailExists() throws Exception {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
+
+        for (WiserMessage wiserMessage : wiserRule.wiser().getMessages()) {
+            MimeMessage mimeMessage = wiserMessage.getMimeMessage();
+            MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
+            assertThat(mimeMessageParser.getHtmlContent(), notNullValue());
+            assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(true));
+            assertThat(mimeMessageParser.getSubject(), containsString(REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M));
+        }
+    }
 }

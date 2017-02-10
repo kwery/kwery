@@ -1,54 +1,54 @@
-<div class="container">
+<div class="container report-f">
     <action-result params="status: status, messages: messages">
     </action-result>
 
     <div data-bind="visible: showReport" class="panel panel-default">
         <div class="panel-heading">
-            <h3 data-bind="text: title" class="panel-title"></h3>
+            <h3 data-bind="text: title" class="panel-title report-title-f"></h3>
         </div>
         <div class="panel-body">
             <!-- ko foreach: sqlQueryExecutionResults -->
-                <div class="panel-heading">
-                    <div class="panel-title pull-left">
-                        <h3 data-bind="text: label" class="panel-title text-left"></h3>
-                    </div>
-                    <!-- ko if: downloadLink !== undefined -->
+                <div class="report-section-f">
+                    <div class="panel-heading">
+                        <div class="panel-title pull-left">
+                            <h3 data-bind="text: label" class="panel-title text-left section-title-f"></h3>
+                        </div>
                         <div class="panel-title pull-right">
                             <div class="text-right">
-                                <a data-bind="attr: {href: downloadLink, title: ko.i18n('report.execution.result.download.tooltip')}">
+                                <!-- ko if: downloadLink !== undefined -->
+                                <a data-bind="attr: {href: downloadLink, title: ko.i18n('report.execution.result.download.tooltip')}, css: 'download-' + $index() + '-f' ">
                                     <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                                 </a>
+                                <!-- /ko -->
                             </div>
                         </div>
                         <div class="clearfix"></div>
-                    <!-- /ko -->
-                </div>
-                <div class="panel-body">
-                    <div data-bind="visible: status === 'FAILURE'">
-                        <p data-bind="text: content"></p>
                     </div>
-                    <div data-bind="visible: status === 'KILLED'">
-                        <p data-bind="text: status"></p>
-                    </div>
-                    <table data-bind="visible: status === 'SUCCESS'" class="table" id="executionResultTable">
-                        <thead>
-                        <tr data-bind="foreach: header" id="resultHeader">
-                            <th data-bind="text: $data"></th>
-                        </tr>
-                        </thead>
-                        <tbody id="resultContent">
-                        <!-- ko foreach: content -->
-                            <tr>
-                                <!-- ko foreach: $data -->
+                    <div class="panel-body">
+                        <div data-bind="visible: status === 'FAILURE', css: 'status-' + $index() + '-f'">
+                            <p data-bind="text: content"></p>
+                        </div>
+                        <div class="table-responsive">
+                            <table data-bind="visible: status === 'SUCCESS', css: 'table-' + $index() + '-f'" class="table" id="executionResultTable">
+                                <thead>
+                                <tr data-bind="foreach: header" id="resultHeader">
+                                    <th data-bind="text: $data"></th>
+                                </tr>
+                                </thead>
+                                <tbody id="resultContent">
+                                <!-- ko foreach: content -->
+                                <tr>
+                                    <!-- ko foreach: $data -->
                                     <td data-bind="text: $data"></td>
+                                    <!-- /ko -->
+                                </tr>
                                 <!-- /ko -->
-                            </tr>
-                        <!-- /ko -->
-                        </tbody>
-                    </table>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             <!-- /ko -->
-
         </div>
     </div>
 </div>

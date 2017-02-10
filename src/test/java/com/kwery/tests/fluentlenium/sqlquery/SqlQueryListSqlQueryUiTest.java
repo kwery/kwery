@@ -46,8 +46,7 @@ public class SqlQueryListSqlQueryUiTest extends ChromeFluentTest {
         sqlQueryModel1.setId(2);
         sqlQueryDbSetUp(sqlQueryModel1);
 
-        page = createPage(SqlQueryListPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl());
+        page = newInstance(SqlQueryListPage.class);
         goTo(page);
 
         if (!page.isRendered()) {

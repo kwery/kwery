@@ -68,8 +68,7 @@ public class SqlQueryExecutionSummaryUiTest extends ChromeFluentTest {
         );
         dbSetup.launch();
 
-        page = createPage(SqlQueryExecutionSummaryPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl());
+        page = newInstance(SqlQueryExecutionSummaryPage.class);
         goTo(page);
 
         if (!page.isRendered()) {
@@ -95,3 +94,4 @@ public class SqlQueryExecutionSummaryUiTest extends ChromeFluentTest {
         assertThat(page.getReportLinks().get(0), containsString( String.format("/#sql-query/%d/execution/thik-3456-lkdsjkfkl-lskjdfkl", sqlQueryModel.getId())));
     }
 }
+

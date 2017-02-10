@@ -4,21 +4,23 @@ import com.google.common.collect.ImmutableMap;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
-import com.kwery.tests.fluentlenium.job.save.add.ReportUpdatePage;
+import com.kwery.tests.fluentlenium.job.save.update.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
 
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static com.kwery.tests.util.TestUtil.sqlQueryModel;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -35,6 +37,8 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
 
     private JobDao jobDao;
     private JobModel jobModel;
+
+    @Page
     protected ReportUpdatePage page;
 
     @Before
@@ -55,9 +59,10 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
         jobModel.getSqlQueries().add(sqlQueryModel);
         jobSqlQueryDbSetUp(jobModel);
 
-        page = createPage(ReportUpdatePage.class);
-        page.setReportId(jobModel.getId());
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
+
+        page.go(jobModel.getId());
 
         if (!page.isRendered()) {
             fail("Failed to render report update page");
@@ -71,5 +76,10 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
 
     public void assertNoEmailRule(boolean expected) {
         assertThat(jobDao.getJobById(jobModel.getId()).getRules().get(EMPTY_REPORT_NO_EMAIL), is(String.valueOf(expected)));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

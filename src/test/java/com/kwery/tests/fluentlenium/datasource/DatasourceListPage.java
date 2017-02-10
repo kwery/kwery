@@ -2,8 +2,10 @@ package com.kwery.tests.fluentlenium.datasource;
 
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.By;
 
 import java.util.ArrayList;
@@ -19,24 +21,21 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#datasource/list")
 public class DatasourceListPage extends KweryFluentPage implements RepoDashPage {
     public static final int COLUMNS = 5;
 
     @Override
     public boolean isRendered() {
-        return find(id("datasourcesListTable")).first().isDisplayed();
-    }
-
-    @Override
-    public String getUrl() {
-        return "/#datasource/list";
+        return find(id("datasourcesListTable")).first().displayed();
     }
 
     public List<String> headers() {
         List<String> headers = new ArrayList<>(COLUMNS);
 
         for (FluentWebElement header : $("#datasourcesListTable tr th")) {
-            headers.add(header.getText());
+            headers.add(header.text());
         }
 
         return headers;
@@ -47,7 +46,7 @@ public class DatasourceListPage extends KweryFluentPage implements RepoDashPage 
 
         for (FluentWebElement tr : $("#datasourcesListTableBody tr")) {
             List<String> row = new ArrayList<>(COLUMNS);
-            row.addAll(tr.find(By.tagName("td")).stream().map(FluentWebElement::getText).collect(Collectors.toList()));
+            row.addAll(tr.find(By.tagName("td")).stream().map(FluentWebElement::text).collect(Collectors.toList()));
             rows.add(row);
         }
 
@@ -55,13 +54,13 @@ public class DatasourceListPage extends KweryFluentPage implements RepoDashPage 
     }
 
     public void waitForRows(int rowCount) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until("#datasourcesListTableBody tr").hasSize(rowCount);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($("#datasourcesListTableBody tr")).size(rowCount);
     }
 
     public void delete(int row) {
         FluentList<FluentWebElement> fluentWebElements = find("#datasourcesListTableBody tr");
         FluentWebElement tr = fluentWebElements.get(row);
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".f-delete").isClickable();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-delete")).clickable();
         tr.find(className("f-delete")).click();
     }
 

@@ -1,27 +1,17 @@
 package com.kwery.tests.fluentlenium.joblabel.update;
 
 import com.kwery.tests.fluentlenium.joblabel.save.ReportLabelSavePage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report-label/{reportLabelId}")
 public class ReportLabelUpdatePage extends ReportLabelSavePage {
-    protected int reportLabelId;
     protected String reportLabel;
-
-    @Override
-    public String getUrl() {
-        return "/#report-label/" + getReportLabelId();
-    }
-
-    public int getReportLabelId() {
-        return reportLabelId;
-    }
-
-    public void setReportLabelId(int reportLabelId) {
-        this.reportLabelId = reportLabelId;
-    }
 
     public String getReportLabel() {
         return reportLabel;
@@ -33,14 +23,14 @@ public class ReportLabelUpdatePage extends ReportLabelSavePage {
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".label-name-f").hasAttribute("value", getReportLabel());
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-name-f")).attribute("value", getReportLabel());
         return true;
     }
 
     public int selectedParentLabelOptionIndex() {
         int i = 0;
         for (FluentWebElement option : $(".parent-label-f option")) {
-            if (option.isSelected()) {
+            if (option.selected()) {
                 return i;
             }
             i = i + 1;
@@ -52,8 +42,8 @@ public class ReportLabelUpdatePage extends ReportLabelSavePage {
     public String selectedParentLabelOptionText() {
         int i = 0;
         for (FluentWebElement option : $(".parent-label-f option")) {
-            if (option.isSelected()) {
-                return option.getText();
+            if (option.selected()) {
+                return option.text();
             }
             i = i + 1;
         }

@@ -1,11 +1,13 @@
 package com.kwery.tests.fluentlenium.job.save.add;
 
+import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,6 +18,8 @@ import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormFie
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.parentReportId;
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SELECT_VALIDATION_ERROR_MESSAGE;
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField.datasourceId;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.smtpConfiguration;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -27,12 +31,15 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     ReportSavePage page;
 
     @Before
     public void setUpReportSaveValidationUiTest() {
-        page = createPage(ReportSavePage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        SmtpConfiguration smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
+
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Save report page could not be rendered");
@@ -107,5 +114,10 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
                 }
             }
         }
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

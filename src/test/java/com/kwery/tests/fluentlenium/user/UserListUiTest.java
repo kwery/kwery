@@ -8,6 +8,7 @@ import com.kwery.tests.util.NinjaServerRule;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class UserListUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(loginRule);
 
+    @Page
     protected UserListPage page;
 
     protected User user1;
@@ -52,8 +54,7 @@ public class UserListUiTest extends ChromeFluentTest {
                 .build()
         ).launch();
 
-        page = createPage(UserListPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             fail("Could not render login page");
@@ -81,5 +82,10 @@ public class UserListUiTest extends ChromeFluentTest {
 
         List<String> secondRow = rows.get(1);
         assertThat(secondRow.get(0), is(user1.getUsername()));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

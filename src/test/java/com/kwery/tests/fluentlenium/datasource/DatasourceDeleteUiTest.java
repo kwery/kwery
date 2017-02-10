@@ -5,6 +5,7 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,6 +28,7 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected DatasourceListPage page;
 
     protected Datasource datasource0;
@@ -43,8 +45,7 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
         SqlQueryModel sqlQueryModel = sqlQueryModel(datasource1);
         sqlQueryDbSetUp(sqlQueryModel);
 
-        page = createPage(DatasourceListPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page.go();
 
         if (!page.isRendered()) {
             fail("Could not render list datasources page");
@@ -65,11 +66,15 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
     public void testDeleteDatasourceWithSqlQuery() {
         page.delete(1);
         page.waitForDeleteFailureSqlQueryMessage();
-        page.waitForModalDisappearance();
         List<List<String>> rows = page.rows();
         assertThat(rows, hasSize(2));
         assertThat(rows.get(0).get(0), is(datasource0.getLabel()));
         assertThat(rows.get(1).get(0), is(datasource1.getLabel()));
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }
 

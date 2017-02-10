@@ -1,5 +1,5 @@
-define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron", "waitingmodal", "jstorage"],
-    function (ko, $, template, validator, jqueryCron, waitingModal) {
+define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron", "waitingmodal", "ajaxutil", "jstorage"],
+    function (ko, $, template, validator, jqueryCron, waitingModal, ajaxUtil) {
     function viewModel(params) {
         var self = this;
 
@@ -19,9 +19,13 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.cronExpression = ko.observable("");
         self.parentReportId = ko.observable(0);
         self.reportEmails = ko.observable("");
+        self.failureAlertEmails = ko.observable("");
 
         self.queries = ko.observableArray([]);
         self.emptyReportNoEmailRule = ko.observable(false);
+
+        self.enableEmails = ko.observable(false);
+        self.urlConfigured = ko.observable(false);
 
         self.scheduleOption.subscribe(function(newVal){
             $("#parentReport").attr("data-validate", false);
@@ -53,12 +57,15 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
         self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
-        var Query = function(query, queryTitle, queryLabel, datasourceId, id) {
+        var Query = function(query, queryTitle, queryLabel, datasourceId, id, emailSettingId, includeInBody, includeAsAttachment) {
             this.query = query;
             this.queryLabel = queryLabel;
             this.queryTitle = queryTitle;
             this.datasourceId = datasourceId;
             this.id = id;
+            this.emailSettingId = emailSettingId;
+            this.includeInBody = includeInBody;
+            this.includeAsAttachment = includeAsAttachment;
         };
 
         var Report = function(id, name) {
@@ -69,7 +76,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.reports = ko.observableArray([new Report("", ko.i18n("report.save.parent.report.id.select.default"))]);
 
         if (!isUpdate) {
-            self.queries.push(new Query());
+            var query = new Query();
+            query.includeAsAttachment = true;
+            query.includeInBody = true;
+            self.queries.push(query);
         }
 
         waitingModal.show();
@@ -85,12 +95,9 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                 }
             }),
             $.ajax({
-                url: "/api/job/list",
-                type: "POST",
+                url: "/api/job/list-all",
+                type: "GET",
                 contentType: "application/json",
-                data: ko.toJSON({
-                    jobLabelId: 0
-                }),
                 success: function(reports) {
                     ko.utils.arrayForEach(reports, function(jobModelHackDto){
                         var report = jobModelHackDto.jobModel;
@@ -103,52 +110,102 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         }
                     });
                 }
-            })
-        ).done(function(){
-            if (isUpdate) {
-                $.ajax({
-                    url: "/api/job/" + reportId,
-                    type: "GET",
-                    contentType: "application/json",
-                    success: function(jobModelHackDto) {
-                        var report = jobModelHackDto.jobModel;
-                        self.title(report.title);
-                        self.reportName(report.name);
-                        self.reportEmails(report.emails.join(", "));
-
-                        if (jobModelHackDto.parentJobModel != null) {
-                            self.scheduleOption("parentReport");
-                            self.parentReportId(jobModelHackDto.parentJobModel.id);
-                        } else {
-                            self.cronExpression(report.cronExpression);
-                        }
-
-                        $.each(report.sqlQueries, function(index, sqlQuery){
-                            var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id);
-                            self.queries.push(query);
-                        });
-
-                        if (jobModelHackDto.jobModel.labels.length > 0) {
-                            //Pop the empty label value since we have labels to show
-                            self.labelIds.pop();
-                        }
-
-                        $.each(jobModelHackDto.jobModel.labels, function(index, label){
-                            self.labelIds.push(new LabelId(label.id));
-                        });
-
-                        self.emptyReportNoEmailRule(jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === undefined ? false : (jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === "true") );
-
-                        self.refreshValidation();
+            }),
+            $.ajax({
+                url: "/api/job-label/list",
+                type: "GET",
+                contentType: "application/json",
+                success: function (jobLabelModelHackDtos) {
+                    buildLabelTree(jobLabelModelHackDtos);
+                    populateDisplayLabels(root, 0);
+                }
+            }),
+            $.ajax("/api/mail/smtp-configuration", {
+                type: "GET",
+                contentType: "application/json",
+                success: function(conf) {
+                    if (conf != null) {
+                        self.enableEmails(true);
                     }
-                })
-            }
-        }).always(function(){
+                }
+            }),
+            $.ajax({
+                url: "/api/url-configuration",
+                type: "GET",
+                contentType: "application/json",
+                success: function(urlSetting) {
+                    if (urlSetting !== null) {
+                        self.urlConfigured(true);
+                    }
+                }
+            }),
+            (function(){
+                if (isUpdate) {
+                    return $.ajax({
+                        url: "/api/job/" + reportId,
+                        type: "GET",
+                        contentType: "application/json",
+                        success: function(jobModelHackDto) {
+                            var report = jobModelHackDto.jobModel;
+                            self.title(report.title);
+                            self.reportName(report.name);
+                            self.reportEmails(report.emails.join(", "));
+                            self.failureAlertEmails(report.failureAlertEmails.join(", "));
+
+                            if (jobModelHackDto.parentJobModel != null) {
+                                self.scheduleOption("parentReport");
+                                self.parentReportId(jobModelHackDto.parentJobModel.id);
+                            } else {
+                                self.cronExpression(report.cronExpression);
+                            }
+
+
+                            $.each(report.sqlQueries, function(index, sqlQuery){
+                                var emailSettingId = null;
+                                var includeInBody = true;
+                                var includeAsAttachment = true;
+
+                                if (sqlQuery.sqlQueryEmailSettingModel != null) {
+                                    emailSettingId = sqlQuery.sqlQueryEmailSettingModel.id;
+                                    includeInBody = sqlQuery.sqlQueryEmailSettingModel.includeInEmailBody;
+                                    includeAsAttachment = sqlQuery.sqlQueryEmailSettingModel.includeInEmailAttachment;
+                                }
+
+                                var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id,
+                                    emailSettingId, includeInBody, includeAsAttachment);
+
+                                self.queries.push(query);
+                            });
+
+                            if (jobModelHackDto.jobModel.labels.length > 0) {
+                                //Pop the empty label value since we have labels to show
+                                self.labelIds.pop();
+                            }
+
+                            $.each(jobModelHackDto.jobModel.labels, function(index, label){
+                                self.labelIds.push(new LabelId(label.id));
+                            });
+
+                            self.emptyReportNoEmailRule(jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === undefined ? false : (jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === "true") );
+
+                        }
+                    })
+                } else {
+                    return $.when();
+                }
+            })()
+        ).always(function(){
             waitingModal.hide();
+            self.refreshValidation();
         });
 
         self.addSqlQuery = function() {
-            self.queries.push(new Query());
+            var query = new Query();
+            //By default, we want the below checked
+            query.includeInBody = true;
+            query.includeAsAttachment = true;
+
+            self.queries.push(query);
         };
 
         self.removeQuery = function(query) {
@@ -186,11 +243,20 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         label: query.queryLabel,
                         title: query.queryTitle,
                         datasourceId: query.datasourceId,
-                        id: query.id
+                        id: query.id,
+                        sqlQueryEmailSetting: {
+                            id: query.emailSettingId,
+                            includeInEmailBody: query.includeInBody,
+                            includeInEmailAttachment: query.includeAsAttachment
+                        }
                     });
                 });
 
                 var emails = $.grep($.map(self.reportEmails().split(","), $.trim), function(elem){
+                    return elem !== null && elem !== "";
+                });
+
+                var failureAlertEmails = $.grep($.map(self.failureAlertEmails().split(","), $.trim), function(elem){
                     return elem !== null && elem !== "";
                 });
 
@@ -206,6 +272,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     //TODO - Updating to 0 turns into empty string
                     parentJobId: self.parentReportId() ? self.parentReportId() : 0,
                     emails: emails,
+                    failureAlertEmails: failureAlertEmails,
                     sqlQueries: queries,
                     labelIds: (function(){
                         var ids = [];
@@ -223,14 +290,11 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     report.id = reportId;
                 }
 
-                $.ajax({
+                ajaxUtil.waitingAjax({
                     url: "/api/job/save",
                     data: ko.toJSON(report),
                     type: "POST",
                     contentType: "application/json",
-                    beforeSend: function() {
-                        waitingModal.show();
-                    },
                     success: function(result) {
                         if (result.status === "success") {
                             if ($.jStorage.storageAvailable()) {
@@ -241,7 +305,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                 throw new Error("Not enough space available to store result in browser");
                             }
                         } else {
-                            waitingModal.hide();
                             self.status(result.status);
                             self.messages(result.messages);
                         }
@@ -365,16 +428,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             });
         };
 
-        //Get current labels
-        $.ajax({
-            url: "/api/job-label/list",
-            type: "GET",
-            contentType: "application/json",
-            success: function (jobLabelModelHackDtos) {
-                buildLabelTree(jobLabelModelHackDtos);
-                populateDisplayLabels(root, 0);
-            }
-        });
         //Label related - end
 
         return self;

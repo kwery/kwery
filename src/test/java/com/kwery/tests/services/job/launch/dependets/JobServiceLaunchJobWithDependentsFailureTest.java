@@ -13,18 +13,29 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobServiceLaunchJobWithDependentsFailureTest extends JobServiceJobSetUpWithDependentsAbstractTest {
+    protected boolean mailTest = true;
+
     @Test
-    public void test() {
+    public void test() throws Exception {
         jobService.launch(jobModel.getId());
         waitAtMost(1, MINUTES).until(() -> getJobExecutionModels(JobExecutionModel.Status.FAILURE).size() == 1);
         assertThat(getJobExecutionModels(dependentJobModel.getId()), hasSize(0));
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, nullValue());
+        if (isMailTest()) {
+            assertEmailDoesNotExists();
+        }
     }
 
     @Override
     protected String getQuery() {
         return "select * from foo";
+    }
+
+    protected void disableMailTest() {
+        this.mailTest = false;
+    }
+
+    public boolean isMailTest() {
+        return mailTest;
     }
 }

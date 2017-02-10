@@ -2,7 +2,9 @@ package com.kwery.tests.fluentlenium.joblabel.save;
 
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
+import org.fluentlenium.core.hook.wait.Wait;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
@@ -13,19 +15,16 @@ import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.By.className;
 
+@Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
+@PageUrl("/#report-label/add")
 public class ReportLabelSavePage extends KweryFluentPage implements RepoDashPage {
     public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
     public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
 
     @Override
     public boolean isRendered() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".label-form-f").isDisplayed();
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-form-f")).displayed();
         return true;
-    }
-
-    @Override
-    public String getUrl() {
-        return "/#report-label/add";
     }
 
     public void fillForm(String label, Integer parentLabelIndex) {
@@ -42,11 +41,11 @@ public class ReportLabelSavePage extends KweryFluentPage implements RepoDashPage
     }
 
     public void parentLabel(Integer parentLabelIndex) {
-        findFirst(className("parent-label-f")).fillSelect().withIndex(parentLabelIndex);
+        el(className("parent-label-f")).fillSelect().withIndex(parentLabelIndex);
     }
 
     public void fillName(String label) {
-        fill(".label-name-f").with(label);
+        $(".label-name-f").fill().with(label);
     }
 
     public void optParentLabel() {
@@ -63,36 +62,36 @@ public class ReportLabelSavePage extends KweryFluentPage implements RepoDashPage
     }
 
     public void waitForLabelNameValidationError() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".name-error-f").hasText(INPUT_VALIDATION_ERROR_MESSAGE);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".name-error-f")).text(INPUT_VALIDATION_ERROR_MESSAGE);
     }
 
     public void waitForLabelNameValidationErrorRemoval() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".name-error-f").hasText("");
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".name-error-f")).text("");
     }
 
     public void waitForParentLabelValidationError() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".parent-error-f").hasText(SELECT_VALIDATION_ERROR_MESSAGE);
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".parent-error-f")).text(SELECT_VALIDATION_ERROR_MESSAGE);
     }
 
     public void waitForParentLabelValidationErrorRemoval() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(".parent-error-f").hasText("");
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".parent-error-f")).text("");
     }
 
     public String parentLabelText(int index) {
-        return $(className(String.format("parent-label-%d-f", index))).getText();
+        return $(className(String.format("parent-label-%d-f", index))).text();
     }
 
     public List<String> parentLabelTexts() {
         List<String> labels = new LinkedList<>();
 
         for (FluentWebElement option : $(".parent-label-f option")) {
-            labels.add(option.getText());
+            labels.add(option.text());
         }
 
         return labels;
     }
 
     public void waitForJobLabelListPage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> url().equals("/#report-label/list"));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> getDriver().getCurrentUrl().equals(getBaseUrl() + "/#report-label/list"));
     }
 }

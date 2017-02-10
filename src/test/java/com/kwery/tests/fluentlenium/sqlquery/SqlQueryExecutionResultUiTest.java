@@ -68,8 +68,8 @@ public class SqlQueryExecutionResultUiTest extends ChromeFluentTest {
         );
         dbSetup.launch();
 
-        page = createPage(SqlQueryExecutionResultPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page = newInstance(SqlQueryExecutionResultPage.class);
+        goTo(page);
 
         if (!page.isRendered()) {
             fail("Could not render list SQL queries execution page");
@@ -97,3 +97,4 @@ public class SqlQueryExecutionResultUiTest extends ChromeFluentTest {
         assertThat(secondRow.get(1), is("dude"));
     }
 }
+

@@ -9,14 +9,21 @@ import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
+import com.kwery.tests.util.WiserRule;
 import org.junit.Before;
+import org.junit.Rule;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 
 public abstract class AbstractReportEmailWithoutContentSender extends RepoDashTestBase {
+    @Rule
+    public WiserRule wiserRule = new WiserRule();
+
     SqlQueryModel sqlQueryModel0;
     JobExecutionModel jobExecutionModel;
     SqlQueryExecutionModel sqlQueryExecutionModel0;
@@ -26,10 +33,11 @@ public abstract class AbstractReportEmailWithoutContentSender extends RepoDashTe
         JobModel jobModel = new JobModel();
         jobModel.setTitle("Test Report");
         jobModel.setSqlQueries(new LinkedList<>());
-        jobModel.setEmails(ImmutableSet.of("foo@bar.com", "moo@goo.com"));
+        jobModel.setEmails(ImmutableSet.of("foo@bar.com"));
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(getEmptyReportEmailRule())));
 
         sqlQueryModel0 = new SqlQueryModel();
+        sqlQueryModel0.setId(1);
         sqlQueryModel0.setTitle("Select Authors");
         jobModel.getSqlQueries().add(sqlQueryModel0);
 
@@ -49,6 +57,9 @@ public abstract class AbstractReportEmailWithoutContentSender extends RepoDashTe
         sqlQueryExecutionModel0.setJobExecutionModel(jobExecutionModel);
 
         jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel0);
+
+        smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
+        emailConfigurationDbSet(wiserRule.emailConfiguration());
     }
 
     public abstract boolean getEmptyReportEmailRule();

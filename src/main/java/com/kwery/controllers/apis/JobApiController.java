@@ -13,11 +13,14 @@ import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.*;
 import com.kwery.services.job.JobExecutionSearchFilter;
+import com.kwery.services.job.JobSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.utils.KweryUtil;
+import com.kwery.utils.ReportUtil;
 import com.kwery.views.ActionResult;
+import it.sauronsoftware.cron4j.SchedulingPattern;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -85,6 +88,11 @@ public class JobApiController {
         Result json = json();
 
         List<String> errorMessages = new LinkedList<>();
+
+        if (jobDto.getParentJobId() == 0 && !SchedulingPattern.validate(jobDto.getCronExpression())) {
+            String message = messages.get(JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION, context, Optional.of(json), jobDto.getCronExpression()).get();
+            errorMessages.add(message);
+        }
 
         JobModel jobByLabel = jobDao.getJobByName(jobDto.getName());
         if (jobByLabel != null) {
@@ -202,15 +210,33 @@ public class JobApiController {
     public Result listJobs(JobListFilterDto filterDto) {
         if (logger.isTraceEnabled()) logger.trace("<");
 
-        List<JobModel> jobs = null;
-        if (filterDto.getJobLabelId() == 0) {
-            jobs = jobDao.getAllJobs();
-        } else {
+        JobSearchFilter jobSearchFilter = new JobSearchFilter();
+
+        int totalCount = jobDao.getAllJobs().size();
+        if (filterDto.getJobLabelId() != 0) {
             JobLabelModel label = jobLabelDao.getJobLabelModelById(filterDto.getJobLabelId());
             Set<Integer> allLabelIds = KweryUtil.allJobLabelIds(label) ;
-            jobs = jobDao.getJobsByJobLabelIds(allLabelIds);
+            jobSearchFilter.setJobLabelIds(allLabelIds);
+            totalCount = jobDao.getJobsByJobLabelIds(allLabelIds).size();
         }
 
+        jobSearchFilter.setPageNo(filterDto.getPageNumber());
+        jobSearchFilter.setResultCount(filterDto.getResultCount());
+
+        List<JobModel> jobs = jobDao.filterJobs(jobSearchFilter);
+
+        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
+
+        JobListDto jobListDto = new JobListDto(totalCount, jobModelHackDtos);
+
+        if (logger.isTraceEnabled()) logger.trace(">");
+        return json().render(jobListDto);
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result listAllJobs() {
+        if (logger.isTraceEnabled()) logger.trace("<");
+        List<JobModel> jobs = jobDao.getAllJobs();
         List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
         if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(jobModelHackDtos);
@@ -291,7 +317,7 @@ public class JobApiController {
         } else {
             List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
             if (!jobExecutionModels.isEmpty()) {
-                for (SqlQueryExecutionModel sqlQueryExecutionModel : jobExecutionModel.getSqlQueryExecutionModels()) {
+                for (SqlQueryExecutionModel sqlQueryExecutionModel : ReportUtil.orderedExecutions(jobExecutionModel)) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     String result = sqlQueryExecutionModel.getResult();
 
@@ -417,6 +443,7 @@ public class JobApiController {
         jobModel.setSqlQueries(jobDto.getSqlQueries().stream().map(this::sqlQueryDtoToSqlQueryModel).collect(toList()));
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setEmails(jobDto.getEmails());
+        jobModel.setFailureAlertEmails(jobDto.getFailureAlertEmails());
 
         if (jobDto.getLabelIds() != null) {
             jobModel.setLabels(jobDto.getLabelIds().stream().filter(id -> id != null && id > 0).map(jobLabelDao::getJobLabelModelById).collect(toSet()));
@@ -443,6 +470,7 @@ public class JobApiController {
         model.setQuery(dto.getQuery());
         model.setDatasource(datasourceDao.getById(dto.getDatasourceId()));
         model.setTitle(dto.getTitle());
+        model.setSqlQueryEmailSettingModel(dto.getSqlQueryEmailSetting());
 
         return model;
     }

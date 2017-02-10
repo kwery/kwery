@@ -101,6 +101,8 @@ public class JobApiControllerUpdateJobWithLabelTest extends AbstractPostLoginApi
         jobDto.setId(jobModel.getId());
         jobDto.setParentJobId(0);
         jobDto.setLabelIds(ImmutableSet.of(jobLabelModel1.getId(), jobLabelModel2.getId()));
+        Set<String> alertEmails = ImmutableSet.of("foo@goo.com", "roo@moo.com");
+        jobDto.setJobFailureAlertEmails(alertEmails);
 
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setTitle(jobDto.getTitle());
@@ -109,6 +111,7 @@ public class JobApiControllerUpdateJobWithLabelTest extends AbstractPostLoginApi
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setCronExpression(jobDto.getCronExpression());
         expectedJobModel.setLabels(ImmutableSet.of(jobLabelModel1, jobLabelModel2));
+        expectedJobModel.setFailureAlertEmails(alertEmails);
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
         sqlQueryDto.setQuery("select User from mysql.user where User = 'root'");

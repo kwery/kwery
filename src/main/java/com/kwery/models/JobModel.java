@@ -45,6 +45,11 @@ public class JobModel {
     public static final String JOB_RULE_TABLE_VALUE_COLUMN = "value";
     public static final String JOB_RULE_JOB_ID_FK_COLUMN = "job_id_fk";
 
+    public static final String JOB_FAILURE_ALERT_EMAIL_TABLE = "job_failure_alert_email";
+    public static final String JOB_FAILURE_ALERT_EMAIL_ID_COLUMN = "id";
+    public static final String JOB_FAILURE_ALERT_EMAIL_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
+    public static final String JOB_FAILURE_ALERT_EMAIL_TABLE_EMAIL_COLUMN = "email";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = ID_COLUMN)
@@ -105,6 +110,14 @@ public class JobModel {
     )
     @Column(name = JOB_EMAIL_TABLE_EMAIL_COLUMN)
     protected Set<String> emails;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = JOB_FAILURE_ALERT_EMAIL_TABLE,
+            joinColumns = @JoinColumn(name = JOB_FAILURE_ALERT_EMAIL_TABLE_JOB_ID_FK_COLUMN)
+    )
+    @Column(name = JOB_FAILURE_ALERT_EMAIL_TABLE_EMAIL_COLUMN)
+    protected Set<String> failureAlertEmails = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name= JOB_RULE_TABLE_NAME_COLUMN)
@@ -183,6 +196,14 @@ public class JobModel {
 
     public void setEmails(Set<String> recipientEmails) {
         this.emails = recipientEmails;
+    }
+
+    public Set<String> getFailureAlertEmails() {
+        return failureAlertEmails;
+    }
+
+    public void setFailureAlertEmails(Set<String> failureAlertEmails) {
+        this.failureAlertEmails = failureAlertEmails;
     }
 
     public Map<Rules, String> getRules() {

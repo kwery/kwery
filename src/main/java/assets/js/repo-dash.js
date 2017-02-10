@@ -37,14 +37,15 @@
                 {url: "sql-query/{sqlQueryId}", auth: true, component: "sql-query-add"},
                 {url: "email/configuration", auth: true, component: "email-configuration"},
                 {url: "report/add", auth: true, component: "report-add"},
-                {url: "report/list", auth: true, component: "report-list"},
+                {url: "report/list/:?q:", auth: true, component: "report-list"},
                 {url: "report/executing", auth: true, component: "report-executing"},
                 {url: "report/{reportId}", auth: true, component: "report-add"},
                 {url: "report/{jobId}/execution-list/:?q:", auth: true, component: "report-execution-list"},
                 {url: "report/{jobId}/execution/{jobExecutionId}", auth: true, component: "report-execution-result"},
                 {url: "report-label/list", auth: true, component: "report-label-list"},
                 {url: "report-label/add", auth: true, component: "report-label-add"},
-                {url: "report-label/{reportLabelId}", auth: true, component: "report-label-add"}
+                {url: "report-label/{reportLabelId}", auth: true, component: "report-label-add"},
+                {url: "url-configuration/save", auth: true, component: "url-configuration-save"}
             ];
 
             var componentMapping = {

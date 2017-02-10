@@ -5,6 +5,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Page
     protected UpdateDatasourcePage page;
 
     protected Datasource mySqlDatasource;
@@ -44,10 +46,7 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
         anotherDatasource = datasource(POSTGRESQL);
         datasourceDbSetup(anotherDatasource);
 
-        page = createPage(UpdateDatasourcePage.class);
-        page.setDatasourceId(mySqlDatasource.getId());
-
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page.go(mySqlDatasource.getId());
 
         if (!page.isRendered()) {
             fail("Could not render update mySqlDatasource page");
@@ -82,5 +81,10 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
         page.fillLabel(anotherDatasource.getLabel());
         page.submit();
         page.waitForFailureMessage(anotherDatasource.getLabel(), anotherDatasource.getType());
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

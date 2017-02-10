@@ -17,6 +17,7 @@ public class SmtpConfiguration {
     public static final String COLUMN_SSL = "ssl";
     public static final String COLUMN_USERNAME = "username";
     public static final String COLUMN_PASSWORD = "password";
+    public static final String COLUMN_USE_LOCAL_SETTING = "use_local_setting";
 
     @Column(name = COLUMN_ID)
     @Id
@@ -37,6 +38,9 @@ public class SmtpConfiguration {
 
     @Column(name = COLUMN_PASSWORD)
     public String password;
+
+    @Column(name = COLUMN_USE_LOCAL_SETTING)
+    protected boolean useLocalSetting;
 
     public Integer getId() {
         return id;
@@ -86,6 +90,14 @@ public class SmtpConfiguration {
         this.password = password;
     }
 
+    public boolean isUseLocalSetting() {
+        return useLocalSetting;
+    }
+
+    public void setUseLocalSetting(boolean useLocalSetting) {
+        this.useLocalSetting = useLocalSetting;
+    }
+
     @Override
     public String toString() {
         return "SmtpConfiguration{" +
@@ -95,6 +107,7 @@ public class SmtpConfiguration {
                 ", ssl=" + ssl +
                 ", username='" + username + '\'' +
                 ", password='" + "X" + '\'' +
+                ", useLocalSetting=" + useLocalSetting +
                 '}';
     }
 }

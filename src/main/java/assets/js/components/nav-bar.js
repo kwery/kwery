@@ -16,7 +16,7 @@ define(["knockout", "jquery", "repo-dash", "text!components/nav-bar.html"], func
             contentType: "application/json",
             success: function(result) {
                 self.username(result.username);
-                self.url("/#user/update/" + result.id);
+                self.url("/#user/" + result.id);
             }
         });
 

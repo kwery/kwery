@@ -6,6 +6,7 @@ import com.kwery.models.JobModel;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
 
@@ -27,6 +28,7 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected ReportExecutionListPage page;
     protected JobModel jobModel;
     protected JobExecutionModel jem0;
@@ -66,16 +68,13 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
         jem3.setJobModel(jobModel);
         jobExecutionDbSetUp(jem3);
 
-        page = createPage(ReportExecutionListPage.class);
-
-        page.setJobId(jobModel.getId());
-        page.setResultCount(getResultCount());
-
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        page.go(jobModel.getId(), getResultCount());
 
         if (!page.isRendered()) {
             fail("Could not render report execution list page");
         }
+
+        page.waitForModalDisappearance();
     }
 
     protected long toEpoch(String date) throws ParseException {
@@ -88,5 +87,10 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
 
     public void setResultCount(int resultCount) {
         this.resultCount = resultCount;
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

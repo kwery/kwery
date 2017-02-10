@@ -1,4 +1,4 @@
-package com.kwery.tests.fluentlenium.job;
+package com.kwery.tests.fluentlenium.job.executing;
 
 import com.google.common.collect.ImmutableList;
 import com.kwery.dao.JobExecutionDao;
@@ -12,6 +12,7 @@ import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +34,7 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected ReportExecutingPage page;
     private Datasource datasource;
 
@@ -52,8 +54,7 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
 
         waitAtMost(TIMEOUT_SECONDS, SECONDS).until(() -> jobExecutionDao.filter(filter).size() >= 2);
 
-        page = createPage(ReportExecutingPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
         if (!page.isRendered()) {
             fail("Could not render executing reports page");
         }
@@ -84,5 +85,10 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
         page.stopExecution(0);
         page.waitForStopExecutionSuccessMessage();
         page.waitForExecutingReportsList(1);
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

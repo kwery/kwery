@@ -38,6 +38,7 @@ public class Routes implements ApplicationRoutes {
 
     public static final String JOB_SAVE_API = "/api/job/save";
     public static final String JOB_LIST_API = "/api/job/list";
+    public static final String JOB_LIST_ALL_API = "/api/job/list-all";
     public static final String JOB_EXECUTION_API = "/api/job/{jobId}/execution";
     public static final String JOB_EXECUTION_RESULT = "/api/job/execution/{jobExecutionId}";
     public static final String JOB_EXECUTE_API = "/api/job/{jobId}/execute";
@@ -51,6 +52,9 @@ public class Routes implements ApplicationRoutes {
     public static final String JOB_LABEL_LIST_API = "/api/job-label/list";
     public static final String JOB_LABEL_GET_API = "/api/job-label/{jobLabelId}";
     public static final String JOB_LABEL_DELETE_API = "/api/job-label/delete/{jobLabelId}";
+
+    public static final String DOMAIN_SETTING_SAVE_API = "/api/url-configuration/save";
+    public static final String DOMAIN_SETTING_GET_API = "/api/url-configuration";
 
     public static final String MESSAGES_JS = "/messages.js";
 
@@ -91,6 +95,7 @@ public class Routes implements ApplicationRoutes {
 
         router.POST().route(JOB_SAVE_API).with(JobApiController.class, "saveJob");
         router.POST().route(JOB_LIST_API).with(JobApiController.class, "listJobs");
+        router.GET().route(JOB_LIST_ALL_API).with(JobApiController.class, "listAllJobs");
         router.POST().route(JOB_EXECUTION_API).with(JobApiController.class, "listJobExecutions");
         router.GET().route(JOB_EXECUTION_RESULT).with(JobApiController.class, "jobExecutionResult");
         router.POST().route(JOB_EXECUTE_API).with(JobApiController.class, "executeJob");
@@ -105,6 +110,9 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(JOB_LABEL_LIST_API).with(JobLabelApiController.class, "getAllJobLabels");
         router.GET().route(JOB_LABEL_GET_API).with(JobLabelApiController.class, "getJobLabelById");
         router.POST().route(JOB_LABEL_DELETE_API).with(JobLabelApiController.class, "deleteJobLabelById");
+
+        router.POST().route(DOMAIN_SETTING_SAVE_API).with(UrlConfigurationApiController.class, "saveDomainSetting");
+        router.GET().route(DOMAIN_SETTING_GET_API).with(UrlConfigurationApiController.class, "getDomainSetting");
 
         router.GET().route(MESSAGES_JS).with(MessageApiController.class, "getAllMessages");
         //Api - End

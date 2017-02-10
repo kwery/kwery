@@ -33,7 +33,6 @@ public class JobServiceLaunchJobWithDependentsSqlQueryKilledTest extends JobServ
 
         assertThat(getJobExecutionModels(dependentJobModel.getId()), hasSize(0));
 
-        Mail mail = ((PostofficeMockImpl) mailService.getPostoffice()).getLastSentMail();
-        assertThat(mail, nullValue());
+        assertEmailDoesNotExists();
     }
 }

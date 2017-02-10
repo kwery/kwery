@@ -4,47 +4,21 @@ import com.kwery.models.SmtpConfiguration;
 import com.kwery.services.mail.smtp.MultipleSmtpConfigurationFoundException;
 import com.kwery.services.mail.smtp.SmtpConfigurationAlreadyPresentException;
 import com.kwery.services.mail.smtp.SmtpService;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.smtpConfiguration;
 
 public class SmtpServiceSaveSmtpConfigurationAlreadyPresentTest extends RepoDashDaoTestBase {
     protected SmtpService smtpService;
     protected SmtpConfiguration smtpConfiguration;
 
     @Before
-    public void setUpSmtpServiceSaveSmtpConfigurationAlreadyPresentTest() {
-        smtpConfiguration = new SmtpConfiguration();
-        smtpConfiguration.setId(1);
-        smtpConfiguration.setHost("foo.com");
-        smtpConfiguration.setPort(465);
-        smtpConfiguration.setSsl(true);
-        smtpConfiguration.setUsername("username");
-        smtpConfiguration.setPassword("password");
-
-        DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.sequenceOf(
-                        insertInto(SmtpConfiguration.TABLE_SMTP_CONFIGURATION)
-                                .row()
-                                .column(SmtpConfiguration.COLUMN_ID, smtpConfiguration.getId())
-                                .column(SmtpConfiguration.COLUMN_HOST, smtpConfiguration.getHost())
-                                .column(SmtpConfiguration.COLUMN_PORT, smtpConfiguration.getPort())
-                                .column(SmtpConfiguration.COLUMN_SSL, smtpConfiguration.isSsl())
-                                .column(SmtpConfiguration.COLUMN_USERNAME, smtpConfiguration.getUsername())
-                                .column(SmtpConfiguration.COLUMN_PASSWORD, smtpConfiguration.getPassword())
-                                .end()
-                                .build()
-                )
-        );
-
-        dbSetup.launch();
-
+    public void setUpSmtpServiceSaveSmtpConfigurationAlreadyPresentTest() throws Exception {
+        smtpConfiguration = smtpConfiguration();
+        smtpConfigurationDbSetUp(smtpConfiguration);
         smtpService = getInstance(SmtpService.class);
     }
 

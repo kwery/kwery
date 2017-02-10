@@ -47,6 +47,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
     private JobLabelDao jobLabelDao;
     private Set<Integer> jobLabelIds;
     private ImmutableSet<JobLabelModel> jobLabelModels;
+    protected final Set<String> failureAlertEmails = ImmutableSet.of("goo@cho.com", "loo@poo.com");
 
     @Before
     public void setUpJobApiControllerJobDtoToJobModelTest() {
@@ -80,6 +81,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
     public void testWithoutId() {
         JobDto jobDto = jobDtoWithoutId();
         jobDto.setEmails(emails);
+        jobDto.setJobFailureAlertEmails(failureAlertEmails);
         jobDto.setLabelIds(jobLabelIds);
 
         jobDto.setSqlQueries(new ArrayList<>(2));
@@ -90,6 +92,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setCronExpression(jobDto.getCronExpression());
         jobModel.setId(null);
         jobModel.setEmails(emails);
+        jobModel.setFailureAlertEmails(failureAlertEmails);
         jobModel.setLabels(jobLabelModels);
 
         jobModel.setSqlQueries(new LinkedList<>());
@@ -116,6 +119,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
     public void testWithId() {
         JobDto jobDto = TestUtil.jobDto();
         jobDto.setEmails(emails);
+        jobDto.setJobFailureAlertEmails(failureAlertEmails);
         jobDto.setSqlQueries(new ArrayList<>(2));
         jobDto.setLabelIds(jobLabelIds);
 
@@ -127,6 +131,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setId(jobDto.getId());
         jobModel.setEmails(emails);
+        jobModel.setFailureAlertEmails(failureAlertEmails);
         jobModel.setLabels(jobLabelModels);
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 

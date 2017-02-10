@@ -1,10 +1,11 @@
-package com.kwery.tests.fluentlenium.job;
+package com.kwery.tests.fluentlenium.job.executing;
 
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,6 +25,7 @@ public class ReportExecutingStopExecutionFailureUiTest extends ChromeFluentTest 
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
+    @Page
     protected ReportExecutingPage page;
 
     @Before
@@ -43,8 +45,7 @@ public class ReportExecutingStopExecutionFailureUiTest extends ChromeFluentTest 
         jobExecutionModel1.setStatus(ONGOING);
         jobExecutionDbSetUp(jobExecutionModel1);
 
-        page = createPage(ReportExecutingPage.class);
-        page.withDefaultUrl(ninjaServerRule.getServerUrl()).goTo(page);
+        goTo(page);
         if (!page.isRendered()) {
             fail("Could not render executing reports page");
         }
@@ -58,5 +59,10 @@ public class ReportExecutingStopExecutionFailureUiTest extends ChromeFluentTest 
         page.stopExecution(0);
         page.waitForStopExecutionFailureMessage();
         page.waitForExecutingReportsList(2);
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
     }
 }

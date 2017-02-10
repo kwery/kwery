@@ -132,7 +132,6 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
                 if (self.executionStartStart() !== "" || self.executionStartEnd() !== "") {
                     //Reset pagination on filter click
                     self.pageNumber(0);
-                    self.updateExecutions();
                 }
             }
             return false;

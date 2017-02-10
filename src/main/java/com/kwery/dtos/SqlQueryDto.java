@@ -1,5 +1,7 @@
 package com.kwery.dtos;
 
+import com.kwery.models.SqlQueryEmailSettingModel;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -22,6 +24,8 @@ public class SqlQueryDto {
     @NotNull
     @Size(min = 1, max = 1024)
     private String title;
+
+    protected SqlQueryEmailSettingModel sqlQueryEmailSetting;
 
     public int getId() {
         return id;
@@ -61,5 +65,13 @@ public class SqlQueryDto {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public SqlQueryEmailSettingModel getSqlQueryEmailSetting() {
+        return sqlQueryEmailSetting;
+    }
+
+    public void setSqlQueryEmailSetting(SqlQueryEmailSettingModel sqlQueryEmailSetting) {
+        this.sqlQueryEmailSetting = sqlQueryEmailSetting;
     }
 }

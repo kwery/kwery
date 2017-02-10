@@ -69,6 +69,7 @@ public class MessageKeys {
     public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND = "jobapicontroller.report.not.found";
     public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS = "jobapicontroller.report.name.exists";
     public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS = "jobapicontroller.sql.query.label.exists";
+    public static final String JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION = "joblabelapicontroller.invalid.cron.expression";
 
     public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_SQL_STATE = "datasourceapicontroller.connection.error.sql.state";
     public static final String DATASOURCEAPICONTROLLER_CONNECTION_ERROR_ERROR_CODE = "datasourceapicontroller.connection.error.error.code";
@@ -79,4 +80,7 @@ public class MessageKeys {
     public static final String JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN = "joblabelapicontroller.delete.has.children";
     public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL = "joblabelapicontroller.delete.job.has.label";
     public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS = "joblabelapicontroller.delete.success";
+
+    public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT = "report.generation.failure.alert.email.subject";
+    public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY = "report.generation.failure.alert.email.body";
 }

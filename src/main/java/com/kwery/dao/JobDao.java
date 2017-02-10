@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobModel;
+import com.kwery.services.job.JobSearchFilter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -76,6 +77,26 @@ public class JobDao {
         Root<JobModel> rootEntry = cq.from(JobModel.class);
         CriteriaQuery<JobModel> all = cq.select(rootEntry);
         TypedQuery<JobModel> allQuery = e.createQuery(all);
+        return allQuery.getResultList();
+    }
+
+    @Transactional
+    public List<JobModel> filterJobs(JobSearchFilter filter) {
+        EntityManager m = entityManagerProvider.get();
+
+        CriteriaBuilder cb = m.getCriteriaBuilder();
+        CriteriaQuery<JobModel> cq = cb.createQuery(JobModel.class);
+        Root<JobModel> jobModel = cq.from(JobModel.class);
+
+        if (!filter.getJobLabelIds().isEmpty()) {
+            Expression<Collection<Integer>> ids = jobModel.join("labels").get("id");
+            cq.where(ids.in(filter.getJobLabelIds()));
+        }
+
+        TypedQuery<JobModel> allQuery = m.createQuery(cq)
+                .setMaxResults(filter.getResultCount())
+                .setFirstResult(filter.getPageNo() * filter.getResultCount());
+
         return allQuery.getResultList();
     }
 

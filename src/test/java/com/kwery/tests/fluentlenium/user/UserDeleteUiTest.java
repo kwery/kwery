@@ -27,4 +27,9 @@ public class UserDeleteUiTest extends UserListUiTest {
        assertThat(rows.get(0).get(0), is(loginRule.getLoggedInUser().getUsername()));
        assertThat(rows.get(1).get(0), is(user1.getUsername()));
    }
+
+    @Override
+    public String getBaseUrl() {
+        return ninjaServerRule.getServerUrl();
+    }
 }

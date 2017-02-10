@@ -78,7 +78,7 @@ public class Messages {
     public static final String SMTP_CONFIGURATION_UPDATED_M = "SMTP configuration successfully updated";
     public static final String SMTP_CONFIGURATION_ALREADY_PRESENT_M = "SMTP configuration is present, cannot add another one. Please edit the existing configuration";
     public static final String EMAIL_CONFIGURATION_SAVED_M = "Email configuration saved successfully";
-    public static final String EMAIL_TEST_SUCCESS_M = "There were not errors while sending the mail, hop on to your inbox and confirm that you have received the mail";
+    public static final String EMAIL_TEST_SUCCESS_M = "Email sent successfully, hop on to your inbox and confirm that you have received the mail";
     public static final String EMAIL_TEST_FAILURE_M = "Oops, got an error while trying to send mail, please check logs";
     public static final String EMAIL_TEST_SUBJECT_M = "Test mail from Kwery";
     public static final String EMAIL_TEST_BODY_M = "Congratulations, Kwery has been successfully configured to send mails.";
@@ -109,4 +109,13 @@ public class Messages {
     public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL_M = "There are reports which have label {0}";
     public static final String JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN_M = "There are labels which are nested under {0}";
     public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS_M = "Label {0} deleted successfully";
+
+    public static final String JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION_M = "{0} is not a valid cron expression";
+
+    public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND_M = "Report not found";
+
+    public static final String URL_CONFIGURATION_SAVE_SUCCESS_M = "Kwery URL saved successfully";
+
+    public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M = "Report Generation Failed";
+    public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M = "Failed Report";
 }
