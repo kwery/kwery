@@ -37,7 +37,7 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void fillAndSubmitReportSaveForm(JobForm jobForm) {
-        fillAndSubmitReportSaveForm(jobForm);
+        fillReportSaveForm(jobForm);
         submitReportSaveForm();
     }
 
