@@ -40,7 +40,7 @@ public class ResultMigrator {
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
     }
 
-    @Start(order = 10)
+    @Start(order = 20)
     public void migrate() {
         logger.info("Migration of results from Derby to file system - start");
         try {
