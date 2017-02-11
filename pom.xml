@@ -63,10 +63,9 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
-                    <contextPath>/</contextPath>
                     <stopKey>stop</stopKey>
                     <stopPort>8889</stopPort>
-                    <scanIntervalSeconds>1</scanIntervalSeconds>
+                    <scanIntervalSeconds>0</scanIntervalSeconds>
                     <reload>automatic</reload>
                     <scanTargetPatterns>
                         <scanTargetPattern>
@@ -77,6 +76,7 @@
                             <excludes>
                                 <exclude>**/*.ftl.html</exclude>
                                 <exclude>assets/**</exclude>
+                                <exclude>kwery-files/**</exclude>
                             </excludes>
                         </scanTargetPattern>
                     </scanTargetPatterns>
