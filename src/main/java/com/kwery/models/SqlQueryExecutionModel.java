@@ -3,6 +3,7 @@ package com.kwery.models;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -18,6 +19,9 @@ public class SqlQueryExecutionModel {
     public static final String COLUMN_RESULT = "result";
     public static final String COLUMN_QUERY_RUN_ID_FK = "sql_query_id_fk";
     public static final String COLUMN_JOB_EXECUTION_ID_FK = "job_execution_id_fk";
+    public static final String COLUMN_RESULT_FILE_NAME = "result_file_name";
+
+    public static final int COLUMN_RESULT_FILE_NAME_LENGTH = 36;
 
     @Column(name = COLUMN_ID)
     @Id
@@ -40,6 +44,10 @@ public class SqlQueryExecutionModel {
     @Column(name = COLUMN_RESULT)
     @Type(type = "text")
     private String result;
+
+    @Column(name = COLUMN_RESULT_FILE_NAME)
+    @Size(min = COLUMN_RESULT_FILE_NAME_LENGTH, max = COLUMN_RESULT_FILE_NAME_LENGTH)
+    private String resultFileName;
 
     @JoinColumn(name = COLUMN_QUERY_RUN_ID_FK)
     @ManyToOne
@@ -95,6 +103,14 @@ public class SqlQueryExecutionModel {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public String getResultFileName() {
+        return resultFileName;
+    }
+
+    public void setResultFileName(String resultFileName) {
+        this.resultFileName = resultFileName;
     }
 
     public SqlQueryModel getSqlQuery() {

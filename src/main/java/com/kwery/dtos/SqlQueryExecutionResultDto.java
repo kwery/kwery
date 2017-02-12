@@ -6,7 +6,7 @@ import java.util.List;
 
 public class SqlQueryExecutionResultDto {
     protected String title;
-    protected List<List<?>> jsonResult;
+    protected List<String[]> jsonResult;
     protected SqlQueryExecutionModel.Status status;
     protected String errorResult;
     protected String executionId;
@@ -19,11 +19,11 @@ public class SqlQueryExecutionResultDto {
         this.title = title;
     }
 
-    public List<List<?>> getJsonResult() {
+    public List<String[]> getJsonResult() {
         return jsonResult;
     }
 
-    public void setJsonResult(List<List<?>> jsonResult) {
+    public void setJsonResult(List<String[]> jsonResult) {
         this.jsonResult = jsonResult;
     }
 

@@ -4,61 +4,61 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kwery.dao.KweryVersionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
+import com.kwery.models.KweryVersionModel;
 import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.services.kweryversion.KweryVersionUpdater;
 import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.utils.KweryDirectory;
-import com.kwery.utils.KweryDirectoryFactory;
 import ninja.lifecycle.Start;
+import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.kwery.utils.ServiceStartUpOrderConstant.RESULT_MIGRATION_ORDER;
+
 @Singleton
 public class ResultMigrator {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected JsonToCsvConverter jsonToCsvConverter;
-    protected KweryDirectoryFactory kweryDirectoryFactory;
-    protected SqlQueryExecutionDao sqlQueryExecutionDao;
+    protected final JsonToCsvConverter jsonToCsvConverter;
+    protected final KweryDirectory kweryDirectory;
+    protected final SqlQueryExecutionDao sqlQueryExecutionDao;
+    protected final KweryVersionDao kweryVersionDao;
+    protected final NinjaProperties ninjaProperties;
 
     @Inject
-    public ResultMigrator(JsonToCsvConverter jsonToCsvConverter, KweryDirectoryFactory kweryDirectoryFactory, SqlQueryExecutionDao sqlQueryExecutionDao) {
+    public ResultMigrator(JsonToCsvConverter jsonToCsvConverter, KweryDirectory kweryDirectory,
+                          SqlQueryExecutionDao sqlQueryExecutionDao, KweryVersionDao kweryVersionDao, NinjaProperties ninjaProperties) {
         this.jsonToCsvConverter = jsonToCsvConverter;
-        this.kweryDirectoryFactory = kweryDirectoryFactory;
+        this.kweryDirectory = kweryDirectory;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
+        this.kweryVersionDao = kweryVersionDao;
+        this.ninjaProperties = ninjaProperties;
     }
 
-    @Start(order = 20)
+    @Start(order = RESULT_MIGRATION_ORDER)
     public void migrate() {
-        logger.info("Migration of results from Derby to file system - start");
-        try {
-            //http://stackoverflow.com/questions/320542/how-to-get-the-path-of-a-running-jar-file
-            //Get the directory from which the jar file running Kwery was started
-            Path path = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-            File base = new File(path.toFile(), "kwery-files");
+        if (ninjaProperties.isTest()) {
+            logger.info("Mode is test, hence skipping result migration from Derby to FS");
+            return;
+        }
 
-            logger.info("Creating base directory {} to stores result files", base);
+        KweryVersionModel kweryVersionModel = kweryVersionDao.get();
 
-            if (!base.mkdir()) {
-                logger.error("Could not create base directory {} to store files", base);
-                logger.error("Kwery shutting down");
-                System.exit(-1);
-            }
-
-            KweryDirectory kweryDirectory = kweryDirectoryFactory.create(base);
-            kweryDirectory.createDirectories();
+        if (kweryVersionModel.getVersion().equals(KweryVersionUpdater.RELEASE_SNAPSHOT_1_5_1)) {
+            logger.info("Migration of results from Derby to file system - start");
 
             SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
             filter.setStatuses(ImmutableList.of(SqlQueryExecutionModel.Status.SUCCESS));
@@ -89,9 +89,10 @@ public class ResultMigrator {
                                 logger.error("Shutting down Kwery");
                                 System.exit(-1);
                             }
-                            logger.info("Updating result to null");
+                            logger.info("Updating model");
                             model.setResult(null);
-                            logger.info("Updated result to null successfully");
+                            model.setResultFileName(resultFile.getName());
+                            logger.info("Updated model successfully");
                             sqlQueryExecutionDao.save(model);
                         } catch (IOException e) {
                             logger.error("Exception while converting json to csv for SQL query execution id {}", model.getId(), e);
@@ -99,7 +100,7 @@ public class ResultMigrator {
                             System.exit(-1);
                         }
                     } else {
-                        logger.info("Result is empty for sql query execution {} with sql query id {} job id {} that started on {} and ended on {} - end",
+                        logger.info("Result is empty for sql query execution {} with sql query id {} job id {} that started on {} and ended on {}",
                                 model.getId(), model.getSqlQuery().getId(), model.getJobExecutionModel().getJobModel().getId(),
                                 new Date(model.getJobExecutionModel().getExecutionStart()), new Date(model.getJobExecutionModel().getExecutionEnd()));
                     }
@@ -110,11 +111,9 @@ public class ResultMigrator {
                 }
                 filter.setPageNumber(filter.getPageNumber() + 1);
             } while (!models.isEmpty());
-        } catch (URISyntaxException e) {
-            logger.error("Exception while determining the base directory to store query results", e);
-            logger.error("Shutting down Kwery");
-            System.exit(-1);
+            logger.info("Migration of results from Derby to file system - end");
+        } else {
+            logger.info("Skipping result migration since Kwery is running at version - " + KweryVersionUpdater.RELEASE_SNAPSHOT_1_5_1);
         }
-        logger.info("Migration of results from Derby to file system - end");
     }
 }

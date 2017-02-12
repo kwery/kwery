@@ -1,5 +1,6 @@
 package com.kwery.tests.util;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -14,8 +15,15 @@ import org.apache.commons.lang3.RandomUtils;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.*;
 
+import static au.com.bytecode.opencsv.CSVParser.DEFAULT_ESCAPE_CHARACTER;
+import static au.com.bytecode.opencsv.CSVWriter.DEFAULT_QUOTE_CHARACTER;
+import static au.com.bytecode.opencsv.CSVWriter.DEFAULT_SEPARATOR;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.Datasource.Type.MYSQL;
@@ -403,6 +411,15 @@ public class TestUtil {
             for (String message : expected.getMessages()) {
                 assertThat(response, hasJsonPath("$.messages", hasItem(message)));
             }
+        }
+    }
+
+    public static void writeCsv(List<String[]> data, File file) throws Exception {
+        try (FileWriter fileWriter = new FileWriter(file, true);
+             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+             PrintWriter printWriter = new PrintWriter(bufferedWriter);
+             CSVWriter csvWriter = new CSVWriter(printWriter, DEFAULT_SEPARATOR, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER, System.lineSeparator())) {
+            csvWriter.writeAll(data);
         }
     }
 }

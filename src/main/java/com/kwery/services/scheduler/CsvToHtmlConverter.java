@@ -1,23 +1,24 @@
 package com.kwery.services.scheduler;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import au.com.bytecode.opencsv.CSVReader;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JsonToHtmlTableConverter {
-    protected final String json;
+public class CsvToHtmlConverter {
+    protected final File csvFile;
 
     @Inject
-    public JsonToHtmlTableConverter(@Assisted String json) {
-        this.json = json;
+    public CsvToHtmlConverter(@Assisted File csvFile) {
+        this.csvFile = csvFile;
     }
 
     protected boolean hasContent = false;
@@ -26,19 +27,23 @@ public class JsonToHtmlTableConverter {
 
     public String convert() throws IOException {
         isConvertCalled = true;
-        //TODO - Is there a better way to do this, probably use some XML processing library or is it an overkill?
-        ObjectMapper objectMapper = new ObjectMapper();
-        TypeReference<List<List<String>>> typeReference = new TypeReference<List<List<String>>>() {};
-        List<List<String>> table = objectMapper.readValue(json, typeReference);
+
+        FileReader fileReader = new FileReader(csvFile);
+        CSVReader csvReader = new CSVReader(fileReader);
+        List<String[]> lines = csvReader.readAll();
+
+        if (lines.size() > 1) {
+            hasContent = true;
+        }
 
         List<String> htmlTableParts = new LinkedList<>();
         htmlTableParts.add("<table style='border: 1px solid black; table-layout: auto;'>");
 
         //Has headers?
-        if (!table.isEmpty()) {
-            List<String> headers = table.get(0);
+        if (!lines.isEmpty()) {
+            String[] headers = lines.get(0);
 
-            List<String> ths = new ArrayList<>(headers.size());
+            List<String> ths = new ArrayList<>(headers.length);
 
             htmlTableParts.add("<tr style='border: 1px solid black;'>");
 
@@ -53,19 +58,19 @@ public class JsonToHtmlTableConverter {
 
             //Has data?
 
-            if (table.size() > 1) {
-                this.hasContent = true;
+            if (lines.size() > 1) {
                 //Skip headers
-                for (int i = 1; i < table.size(); ++i) {
+                for (int i = 1; i < lines.size(); ++i) {
                     htmlTableParts.add("<tr style='border: 1px solid black;'>");
 
-                    List<String> row = table.get(i);
-                    List<String> tds = new ArrayList<>(row.size());
+                    String[] row = lines.get(i);
 
+                    List<String> tds = new ArrayList<>(row.length);
                     for (String s : row) {
                         tds.add("<td style='border: 1px solid black;'>" + s + "</td>");
                     }
-                    htmlTableParts.add(Joiner.on("").join(tds));
+
+                    htmlTableParts.add(String.join("", tds));
 
                     htmlTableParts.add("</tr>");
                 }

@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -15,7 +16,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 public class SqlQueryEmailSettingTrueTest extends AbstractSqlQueryEmailSettingTest {
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         super.setUp();
         SqlQueryEmailSettingModel model = new SqlQueryEmailSettingModel();
         model.setIncludeInEmailAttachment(true);

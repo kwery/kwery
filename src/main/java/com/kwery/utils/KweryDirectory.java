@@ -1,7 +1,9 @@
 package com.kwery.utils;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.io.Files;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import org.apache.commons.codec.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +18,7 @@ public class KweryDirectory {
     protected File root;
 
     @Inject
-    public KweryDirectory(@Assisted  File root) {
+    public KweryDirectory(File root) {
         this.root = root;
     }
 
@@ -108,6 +110,16 @@ public class KweryDirectory {
 
     public File getFile(String fileName) {
         return new File(getDirectory(fileName), fileName);
+    }
+
+    @VisibleForTesting
+    public String getContent(String fileName) {
+        File file = getFile(fileName);
+        try {
+            return Files.toString(file, Charsets.UTF_8).trim(); //To remove the new line at the end
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void main(String[] args) throws IOException {

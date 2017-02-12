@@ -12,9 +12,9 @@ import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.KweryMailAttachment;
 import com.kwery.services.mail.KweryMailAttachmentImpl;
 import com.kwery.services.mail.MailService;
-import com.kwery.services.scheduler.JsonToCsvConverter;
-import com.kwery.services.scheduler.JsonToHtmlTableConverter;
-import com.kwery.services.scheduler.JsonToHtmlTableConverterFactory;
+import com.kwery.services.scheduler.CsvToHtmlConverter;
+import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
+import com.kwery.utils.KweryDirectory;
 import com.kwery.utils.ReportUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +31,17 @@ import static com.kwery.utils.KweryUtil.fileName;
 public class ReportEmailSender {
     protected Logger logger = LoggerFactory.getLogger(ReportEmailSender.class);
 
-    protected final JsonToHtmlTableConverterFactory jsonToHtmlTableConverterFactory;
-    protected final JsonToCsvConverter jsonToCsvConverter;
+    protected CsvToHtmlConverterFactory csvToHtmlConverterFactory;
     protected final Provider<KweryMail> kweryMailProvider;
     protected final MailService mailService;
+    protected final KweryDirectory kweryDirectory;
 
     @Inject
-    public ReportEmailSender(JsonToHtmlTableConverterFactory jsonToHtmlTableConverterFactory, JsonToCsvConverter jsonToCsvConverter,
-                             Provider<KweryMail> kweryMailProvider, MailService mailService) {
-        this.jsonToHtmlTableConverterFactory = jsonToHtmlTableConverterFactory;
-        this.jsonToCsvConverter = jsonToCsvConverter;
+    public ReportEmailSender(CsvToHtmlConverterFactory csvToHtmlConverterFactory, Provider<KweryMail> kweryMailProvider, MailService mailService, KweryDirectory kweryDirectory) {
         this.kweryMailProvider = kweryMailProvider;
         this.mailService = mailService;
+        this.kweryDirectory = kweryDirectory;
+        this.csvToHtmlConverterFactory = csvToHtmlConverterFactory;
     }
 
     public void send(JobExecutionModel jobExecutionModel) {
@@ -64,29 +63,29 @@ public class ReportEmailSender {
                 if (sqlQueryEmailSettingModel == null || sqlQueryEmailSettingModel.getIncludeInEmailBody()) {
                     emailSnippets.add("<h1>" + sqlQueryExecutionModel.getSqlQuery().getTitle() + "</h1>");
 
-                    if (sqlQueryExecutionModel.getResult() == null) {
+                    if (sqlQueryExecutionModel.getResultFileName() == null) {
                         emailSnippets.add("<div></div>");
                     } else {
-                        JsonToHtmlTableConverter jsonToHtmlTableConverter = jsonToHtmlTableConverterFactory.create(sqlQueryExecutionModel.getResult());
-                        emailSnippets.add(jsonToHtmlTableConverter.convert());
-                        emptyResult = emptyResult || jsonToHtmlTableConverter.isHasContent();
+                        CsvToHtmlConverter csvToHtmlConverter = csvToHtmlConverterFactory.create(kweryDirectory.getFile(sqlQueryExecutionModel.getResultFileName()));
+                        emailSnippets.add(csvToHtmlConverter.convert());
+                        emptyResult = emptyResult || csvToHtmlConverter.isHasContent();
                     }
                 }
 
                 if (sqlQueryEmailSettingModel == null || sqlQueryEmailSettingModel.getIncludeInEmailAttachment()) {
-                    //We do not want to send out attachments if the execution did not yield in any result, happens in case of insert queries
-                    if (sqlQueryExecutionModel.getResult() != null) {
+                    //Insert queries do not have an output
+                    if (!isInsertQuery(sqlQueryExecutionModel)) {
                         KweryMailAttachment attachment = new KweryMailAttachmentImpl();
                         attachment.setName(fileName(sqlQueryExecutionModel.getSqlQuery().getTitle(),
                                 sqlQueryExecutionModel.getJobExecutionModel().getExecutionStart()));
-                        attachment.setContent(jsonToCsvConverter.convert(sqlQueryExecutionModel.getResult()));
+                        attachment.setFile(kweryDirectory.getFile(sqlQueryExecutionModel.getResultFileName()));
                         attachment.setDescription("");
                         attachments.add(attachment);
                     }
                 }
             }
 
-            //For now do not bother about include in email and attachments while evaluation rules
+            //For now do not bother about include in email and attachments while evaluating rules
             if (shouldSend(emptyResult, jobModel)) {
                 KweryMail kweryMail = kweryMailProvider.get();
                 kweryMail.setSubject(subject);
@@ -110,6 +109,10 @@ public class ReportEmailSender {
         } catch (IOException e) {
             logger.error("Exception while trying to convert result to html for job id {} and execution id {}", jobModel.getId(), jobExecutionModel.getId(), e);
         }
+    }
+
+    private boolean isInsertQuery(SqlQueryExecutionModel sqlQueryExecutionModel) {
+        return sqlQueryExecutionModel.getSqlQuery().getQuery().trim().toLowerCase().startsWith("insert");
     }
 
     @VisibleForTesting

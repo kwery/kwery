@@ -1,8 +1,10 @@
 package com.kwery.services.mail;
 
+import java.io.File;
+
 public interface KweryMailAttachment {
-     String getContent();
-     void setContent(String getContent);
+     File getFile();
+     void setFile(File file);
      String getName();
      void setName(String name);
      String getDescription();

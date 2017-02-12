@@ -11,11 +11,14 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.datasource.DatasourceService;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
+import com.kwery.utils.KweryDirectory;
 import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,6 +39,7 @@ public class SqlQueryTask extends Task {
     private final PreparedStatementExecutorFactory preparedStatementExecutorFactory;
     private final CountDownLatch latch;
     private final String jobExecutionId;
+    protected final KweryDirectory kweryDirectory;
 
     @Inject
     public SqlQueryTask(SqlQueryDao sqlQueryDao,
@@ -43,6 +47,7 @@ public class SqlQueryTask extends Task {
                         DatasourceService datasourceService,
                         PreparedStatementExecutorFactory preparedStatementExecutorFactory,
                         ResultSetProcessorFactory resultSetProcessorFactory,
+                        KweryDirectory kweryDirectory,
                         @Assisted int sqlQueryModelId,
                         @Assisted String jobExecutionId,
                         @Assisted CountDownLatch latch
@@ -55,6 +60,7 @@ public class SqlQueryTask extends Task {
         this.sqlQueryModelId = sqlQueryModelId;
         this.latch = latch;
         this.jobExecutionId = jobExecutionId;
+        this.kweryDirectory = kweryDirectory;
     }
 
     @Override
@@ -88,9 +94,10 @@ public class SqlQueryTask extends Task {
                 Future<ResultSet> queryFuture = preparedStatementExecutorFactory.create(p).executeSelect();
 
                 try (ResultSet rs = queryFuture.get()) {
-                    String result = resultSetProcessorFactory.create(rs).process();
+                    File file = kweryDirectory.createFile();
+                    resultSetProcessorFactory.create(rs, file).write();
                     SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
-                    sqlQueryExecution.setResult(result);
+                    sqlQueryExecution.setResultFileName(file.getName());
                     sqlQueryExecutionDao.save(sqlQueryExecution);
                 } catch (JsonProcessingException e) {
                     logger.error("JSON processing exception while processing result of query {} running on datasource {}", query, datasource.getLabel(), e);
@@ -105,9 +112,10 @@ public class SqlQueryTask extends Task {
                     logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", query, datasource.getLabel(), e);
                     updateFailure(context, e);
                     throw new RuntimeException(e);
+                } catch (IOException e) {
+                    logger.error("Exception while trying to write result set of query {} running on datasource {} to file", query, datasource.getLabel(), e);
                 }
             }
-
         } catch (SQLException e) {
             logger.error("Exception while running query {} on datasource {}", query, datasource.getLabel(), e);
             throw new RuntimeException(e);

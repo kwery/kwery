@@ -13,6 +13,7 @@ import com.kwery.tests.util.PostgreSqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
+import com.kwery.utils.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,6 +55,7 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
     protected int sqlQueryId1;
 
     protected MailService mailService;
+    private KweryDirectory kweryDirectory;
 
     @Before
     public void setUpJobServiceJobSetUpAbstractTest() {
@@ -90,6 +92,7 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
         jobService = getInstance(JobService.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
         mailService = getInstance(MailService.class);
+        kweryDirectory = getInstance(KweryDirectory.class);
     }
 
     protected void assertJobExecutionModel(JobExecutionModel.Status status, int jobId) {
@@ -137,7 +140,8 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
         assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
 
         if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-            assertThat(sqlQueryExecution.getResult(), is("[[\"table_name\"],[\"pg_depend\"]]"));
+            String expected = String.join(System.lineSeparator(), "\"table_name\"", "\"pg_depend\"");
+            assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(expected));
         } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
             assertThat(sqlQueryExecution.getResult(), is("No database selected"));
         } else {

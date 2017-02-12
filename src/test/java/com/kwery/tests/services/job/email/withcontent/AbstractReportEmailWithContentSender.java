@@ -1,21 +1,26 @@
 package com.kwery.tests.services.job.email.withcontent;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
+import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
+import com.kwery.utils.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -37,28 +42,31 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
     JobExecutionModel jobExecutionModel;
     SqlQueryExecutionModel sqlQueryExecutionModel0;
     SqlQueryExecutionModel sqlQueryExecutionModel1;
+    CsvToHtmlConverterFactory csvToHtmlConverterFactory;
+    KweryDirectory kweryDirectory;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         JobModel jobModel = new JobModel();
         jobModel.setTitle("Test Report");
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(ImmutableSet.of("foo@bar.com"));
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(getEmptyReportEmailRule())));
 
-        sqlQueryModel0 = new SqlQueryModel();
+        sqlQueryModel0 = TestUtil.sqlQueryModel();
         sqlQueryModel0.setId(1);
         sqlQueryModel0.setTitle("Select Authors");
         jobModel.getSqlQueries().add(sqlQueryModel0);
 
-        sqlQueryModel1 = new SqlQueryModel();
+        sqlQueryModel1 = TestUtil.sqlQueryModel();
         sqlQueryModel1.setId(2);
         sqlQueryModel1.setTitle("Select Books");
         jobModel.getSqlQueries().add(sqlQueryModel1);
 
-        sqlQueryModel2 = new SqlQueryModel();
+        sqlQueryModel2 = TestUtil.sqlQueryModel();
         sqlQueryModel2.setId(3);
         sqlQueryModel2.setTitle("Insert Books");
+        sqlQueryModel2.setQuery("insert into foo");
         jobModel.getSqlQueries().add(sqlQueryModel2);
 
         jobExecutionModel = new JobExecutionModel();
@@ -70,11 +78,12 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
 
         sqlQueryExecutionModel0 = new SqlQueryExecutionModel();
         sqlQueryExecutionModel0.setId(1);
-        sqlQueryExecutionModel0.setResult(TestUtil.toJson(ImmutableList.of(
-                ImmutableList.of("author"),
-                ImmutableList.of("peter thiel")
-                )
-        ));
+
+        kweryDirectory = getInstance(KweryDirectory.class);
+        File file0 = kweryDirectory.createFile();
+        String csv = String.join(System.lineSeparator(), "author", "peter thiel") + System.lineSeparator();
+        Files.write(Paths.get(file0.getPath()), csv.getBytes(), StandardOpenOption.APPEND);
+        sqlQueryExecutionModel0.setResultFileName(file0.getName());
         sqlQueryExecutionModel0.setSqlQuery(sqlQueryModel0);
         sqlQueryExecutionModel0.setJobExecutionModel(jobExecutionModel);
 
@@ -82,11 +91,12 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
 
         sqlQueryExecutionModel1 = new SqlQueryExecutionModel();
         sqlQueryExecutionModel1.setId(2);
-        sqlQueryExecutionModel1.setResult(TestUtil.toJson(ImmutableList.of(
-                ImmutableList.of("book"),
-                ImmutableList.of("zero to one")
-                )
-        ));
+
+        File file1 = kweryDirectory.createFile();
+        csv = String.join(System.lineSeparator(), "book", "zero to one") + System.lineSeparator();
+        Files.write(Paths.get(file0.getPath()), csv.getBytes(), StandardOpenOption.APPEND);
+
+        sqlQueryExecutionModel1.setResultFileName(file1.getName());
         sqlQueryExecutionModel1.setSqlQuery(sqlQueryModel1);
         sqlQueryExecutionModel1.setJobExecutionModel(jobExecutionModel);
 
@@ -96,6 +106,8 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
         sqlQueryExecutionModel2.setId(3);
         sqlQueryExecutionModel2.setSqlQuery(sqlQueryModel2);
         jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel2);
+
+        csvToHtmlConverterFactory = getInstance(CsvToHtmlConverterFactory.class);
 
         smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
         emailConfigurationDbSet(wiserRule.emailConfiguration());

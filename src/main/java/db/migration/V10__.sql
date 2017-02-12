@@ -3,3 +3,5 @@ create table kwery_version (
   version varchar(50) not null,
   primary key (id)
 );
+
+alter table sql_query_execution add column result_file_name varchar(36);

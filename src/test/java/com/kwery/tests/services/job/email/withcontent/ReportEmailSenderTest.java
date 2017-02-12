@@ -1,8 +1,7 @@
 package com.kwery.tests.services.job.email.withcontent;
 
 import com.kwery.services.job.ReportEmailSender;
-import com.kwery.services.scheduler.JsonToHtmlTableConverter;
-import com.kwery.services.scheduler.JsonToHtmlTableConverterFactory;
+import com.kwery.services.scheduler.CsvToHtmlConverter;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Test;
 import org.subethamail.wiser.WiserMessage;
@@ -26,12 +25,11 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
 
         expectedBody.add("<h1>" + sqlQueryModel0.getTitle() + "</h1>");
 
-        JsonToHtmlTableConverterFactory jsonToHtmlTableConverterFactory = getInstance(JsonToHtmlTableConverterFactory.class);
-        JsonToHtmlTableConverter converter0 = jsonToHtmlTableConverterFactory.create(sqlQueryExecutionModel0.getResult());
+        CsvToHtmlConverter converter0 = csvToHtmlConverterFactory.create(kweryDirectory.getFile(sqlQueryExecutionModel0.getResultFileName()));
         expectedBody.add(converter0.convert());
 
         expectedBody.add("<h1>" + sqlQueryModel1.getTitle() + "</h1>");
-        JsonToHtmlTableConverter converter1 = jsonToHtmlTableConverterFactory.create(sqlQueryExecutionModel1.getResult());
+        CsvToHtmlConverter converter1 = csvToHtmlConverterFactory.create(kweryDirectory.getFile(sqlQueryExecutionModel1.getResultFileName()));
         expectedBody.add(converter1.convert());
 
         expectedBody.add("<h1>" + sqlQueryModel2.getTitle() + "</h1>");

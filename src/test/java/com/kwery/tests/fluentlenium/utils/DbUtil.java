@@ -251,6 +251,7 @@ public class DbUtil {
                     .with(SqlQueryExecutionModel.COLUMN_STATUS, model.getStatus())
                     .with(SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK, model.getSqlQuery().getId())
                     .with(SqlQueryExecutionModel.COLUMN_JOB_EXECUTION_ID_FK, model.getJobExecutionModel().getId())
+                    .with(SqlQueryExecutionModel.COLUMN_RESULT_FILE_NAME, model.getResultFileName())
                     .add();
         }
 
@@ -581,6 +582,7 @@ public class DbUtil {
                                 .column(SqlQueryExecutionModel.COLUMN_STATUS, model.getStatus())
                                 .column(SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK, model.getSqlQuery().getId())
                                 .column(SqlQueryExecutionModel.COLUMN_JOB_EXECUTION_ID_FK, model.getJobExecutionModel().getId())
+                                .column(SqlQueryExecutionModel.COLUMN_RESULT_FILE_NAME, model.getResultFileName())
                                 .end()
                                 .build()
                 )
