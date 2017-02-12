@@ -124,7 +124,7 @@ public class TestUtil {
         SqlQueryExecutionModel e = new SqlQueryExecutionModel();
         e.setExecutionStart(1l);
         e.setExecutionEnd(2l);
-        e.setResult("result");
+        e.setExecutionError("result");
         e.setStatus(status);
         e.setExecutionId("ksjdfjld");
         return e;

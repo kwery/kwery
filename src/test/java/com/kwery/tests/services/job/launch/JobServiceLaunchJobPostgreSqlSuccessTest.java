@@ -143,9 +143,9 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
             String expected = String.join(System.lineSeparator(), "\"table_name\"", "\"pg_depend\"");
             assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(expected));
         } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
-            assertThat(sqlQueryExecution.getResult(), is("No database selected"));
+            assertThat(sqlQueryExecution.getExecutionError(), is("No database selected"));
         } else {
-            assertThat(sqlQueryExecution.getResult(), nullValue());
+            assertThat(sqlQueryExecution.getExecutionError(), nullValue());
         }
     }
 

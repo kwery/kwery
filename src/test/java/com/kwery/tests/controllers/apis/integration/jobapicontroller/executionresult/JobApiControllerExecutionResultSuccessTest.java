@@ -70,14 +70,14 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
         failedSqlQueryExecutionModel.setSqlQuery(failedQuery);
         failedSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         failedSqlQueryExecutionModel.setStatus(SqlQueryExecutionModel.Status.FAILURE);
-        failedSqlQueryExecutionModel.setResult("foobarmoo");
+        failedSqlQueryExecutionModel.setExecutionError("foobarmoo");
         DbUtil.sqlQueryExecutionDbSetUp(failedSqlQueryExecutionModel);
 
         insertSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
         insertSqlQueryExecutionModel.setSqlQuery(insertQuery);
         insertSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         insertSqlQueryExecutionModel.setStatus(SUCCESS);
-        insertSqlQueryExecutionModel.setResult(null);
+        insertSqlQueryExecutionModel.setExecutionError(null);
         DbUtil.sqlQueryExecutionDbSetUp(insertSqlQueryExecutionModel);
 
         successSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
@@ -89,14 +89,14 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
                 ImmutableList.of("foo", "bar"),
                 ImmutableList.of("goo", "boo")
         ));
-        successSqlQueryExecutionModel.setResult(jsonResult);
+        successSqlQueryExecutionModel.setExecutionError(jsonResult);
         DbUtil.sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
 
         SqlQueryExecutionModel killedSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
         killedSqlQueryExecutionModel.setSqlQuery(killedSqlQuery);
         killedSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         killedSqlQueryExecutionModel.setStatus(KILLED);
-        killedSqlQueryExecutionModel.setResult(null);
+        killedSqlQueryExecutionModel.setExecutionError(null);
         DbUtil.sqlQueryExecutionDbSetUp(killedSqlQueryExecutionModel);
     }
 
@@ -113,7 +113,7 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
 
         assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[1].title", is(failedQuery.getTitle())));
         assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[1].status", is(FAILURE.name())));
-        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[1].errorResult", is(failedSqlQueryExecutionModel.getResult())));
+        assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[1].errorResult", is(failedSqlQueryExecutionModel.getExecutionError())));
 
         assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[2].title", is(successQuery.getTitle())));
         assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[2].status", is(SUCCESS.name())));

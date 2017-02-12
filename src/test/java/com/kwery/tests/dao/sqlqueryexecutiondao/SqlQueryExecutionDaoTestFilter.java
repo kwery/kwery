@@ -112,7 +112,7 @@ public class SqlQueryExecutionDaoTestFilter extends RepoDashDaoTestBase {
         execution.setStatus(SUCCESS);
         execution.setExecutionStart(1475158740747l);
         execution.setExecutionEnd(1475159940797l);
-        execution.setResult("result");
+        execution.setExecutionError("result");
 
         SqlQueryExecutionModel fromDb = sqlQueryExecutions.get(0);
 

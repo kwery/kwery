@@ -124,7 +124,7 @@ public class SqlQueryTask extends Task {
 
     private void updateFailure(TaskExecutionContext context, ExecutionException e) {
         SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
-        sqlQueryExecution.setResult(e.getCause().getLocalizedMessage());
+        sqlQueryExecution.setExecutionError(e.getCause().getLocalizedMessage());
         sqlQueryExecutionDao.save(sqlQueryExecution);
     }
 

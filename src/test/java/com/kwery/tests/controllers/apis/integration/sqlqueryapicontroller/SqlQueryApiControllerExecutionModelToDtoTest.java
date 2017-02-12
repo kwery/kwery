@@ -31,7 +31,7 @@ public class SqlQueryApiControllerExecutionModelToDtoTest {
         sqlQueryExecution.setExecutionEnd(1475215453445l);
         sqlQueryExecution.setExecutionId("executionId");
         sqlQueryExecution.setStatus(SUCCESS);
-        sqlQueryExecution.setResult("success");
+        sqlQueryExecution.setExecutionError("success");
 
         SqlQueryApiController controller = new SqlQueryApiController();
         SqlQueryExecutionDto dto = controller.from(sqlQueryExecution);

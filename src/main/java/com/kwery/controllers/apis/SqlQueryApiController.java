@@ -142,7 +142,7 @@ public class SqlQueryApiController {
             //TODO - Generic type
             ObjectMapper objectMapper = new ObjectMapper();
             jsonResult = objectMapper.readValue(
-                    sqlQueryExecution.getResult(),
+                    sqlQueryExecution.getExecutionError(),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
             );
         }
@@ -197,7 +197,7 @@ public class SqlQueryApiController {
         dto.setSqlQueryId(model.getSqlQuery().getId());
         dto.setSqlQueryExecutionId(model.getExecutionId());
         dto.setStatus(model.getStatus().name());
-        dto.setResult(model.getResult());
+        dto.setResult(model.getExecutionError());
 
         return dto;
     }

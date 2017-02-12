@@ -74,7 +74,7 @@ public class ResultMigrator {
                             model.getId(), model.getSqlQuery().getId(), model.getJobExecutionModel().getJobModel().getId(),
                             new Date(model.getJobExecutionModel().getExecutionStart()), new Date(model.getJobExecutionModel().getExecutionEnd()));
 
-                    String jsonResult = model.getResult();
+                    String jsonResult = model.getExecutionError();
 
                     if (!"".equals(Strings.nullToEmpty(jsonResult))) {
                         try {
@@ -90,7 +90,7 @@ public class ResultMigrator {
                                 System.exit(-1);
                             }
                             logger.info("Updating model");
-                            model.setResult(null);
+                            model.setExecutionError(null);
                             model.setResultFileName(resultFile.getName());
                             logger.info("Updated model successfully");
                             sqlQueryExecutionDao.save(model);

@@ -72,14 +72,14 @@ public class ReportUiTest extends ChromeFluentTest {
         failedSqlQueryExecutionModel.setSqlQuery(failedQuery);
         failedSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         failedSqlQueryExecutionModel.setStatus(SqlQueryExecutionModel.Status.FAILURE);
-        failedSqlQueryExecutionModel.setResult("foobarmoo");
+        failedSqlQueryExecutionModel.setExecutionError("foobarmoo");
         sqlQueryExecutionDbSetUp(failedSqlQueryExecutionModel);
 
         insertSqlQueryExecutionModel = sqlQueryExecutionModel();
         insertSqlQueryExecutionModel.setSqlQuery(insertQuery);
         insertSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         insertSqlQueryExecutionModel.setStatus(SUCCESS);
-        insertSqlQueryExecutionModel.setResult(null);
+        insertSqlQueryExecutionModel.setExecutionError(null);
         sqlQueryExecutionDbSetUp(insertSqlQueryExecutionModel);
 
         successSqlQueryExecutionModel = sqlQueryExecutionModel();
@@ -91,7 +91,7 @@ public class ReportUiTest extends ChromeFluentTest {
                 ImmutableList.of("foo", "bar"),
                 ImmutableList.of("goo", "boo")
         ));
-        successSqlQueryExecutionModel.setResult(jsonResult);
+        successSqlQueryExecutionModel.setExecutionError(jsonResult);
         sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
 
         page = newInstance(ReportPage.class);
@@ -120,7 +120,7 @@ public class ReportUiTest extends ChromeFluentTest {
 
         assertThat(page.isTableEmpty(0), is(true));
 
-        assertThat(page.getContent(1), is(failedSqlQueryExecutionModel.getResult()));
+        assertThat(page.getContent(1), is(failedSqlQueryExecutionModel.getExecutionError()));
 
         assertThat(page.tableHeaders(2), is(ImmutableList.of("header0", "header1")));
         assertThat(page.tableRows(2, 0), is(ImmutableList.of("foo", "bar")));

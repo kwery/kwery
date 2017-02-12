@@ -43,7 +43,7 @@ public class SqlQueryExecutionModel {
 
     @Column(name = COLUMN_EXECUTION_ERROR)
     @Type(type = "text")
-    private String result;
+    private String executionError;
 
     @Column(name = COLUMN_RESULT_FILE_NAME)
     @Size(min = COLUMN_RESULT_FILE_NAME_LENGTH, max = COLUMN_RESULT_FILE_NAME_LENGTH)
@@ -97,12 +97,12 @@ public class SqlQueryExecutionModel {
         this.status = status;
     }
 
-    public String getResult() {
-        return result;
+    public String getExecutionError() {
+        return executionError;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setExecutionError(String executionError) {
+        this.executionError = executionError;
     }
 
     public String getResultFileName() {

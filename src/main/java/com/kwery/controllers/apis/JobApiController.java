@@ -349,7 +349,7 @@ public class JobApiController {
                         SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
                         dto.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
                         dto.setStatus(sqlQueryExecutionModel.getStatus());
-                        dto.setErrorResult(sqlQueryExecutionModel.getResult());
+                        dto.setErrorResult(sqlQueryExecutionModel.getExecutionError());
                         sqlQueryExecutionResultDtos.add(dto);
                     }
                 }
