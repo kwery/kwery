@@ -5,3 +5,5 @@ create table kwery_version (
 );
 
 alter table sql_query_execution add column result_file_name varchar(36);
+
+rename column sql_query_execution.result to execution_error;

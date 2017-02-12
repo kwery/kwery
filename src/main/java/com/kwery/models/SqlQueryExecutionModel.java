@@ -16,7 +16,7 @@ public class SqlQueryExecutionModel {
     public static final String COLUMN_EXECUTION_START = "execution_start";
     public static final String COLUMN_EXECUTION_END = "execution_end";
     public static final String COLUMN_STATUS = "status";
-    public static final String COLUMN_RESULT = "result";
+    public static final String COLUMN_EXECUTION_ERROR = "execution_error";
     public static final String COLUMN_QUERY_RUN_ID_FK = "sql_query_id_fk";
     public static final String COLUMN_JOB_EXECUTION_ID_FK = "job_execution_id_fk";
     public static final String COLUMN_RESULT_FILE_NAME = "result_file_name";
@@ -41,7 +41,7 @@ public class SqlQueryExecutionModel {
     @Enumerated(STRING)
     private Status status;
 
-    @Column(name = COLUMN_RESULT)
+    @Column(name = COLUMN_EXECUTION_ERROR)
     @Type(type = "text")
     private String result;
 
