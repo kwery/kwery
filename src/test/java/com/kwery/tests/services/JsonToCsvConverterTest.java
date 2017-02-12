@@ -2,6 +2,7 @@ package com.kwery.tests.services;
 
 import com.google.common.collect.ImmutableList;
 import com.kwery.services.scheduler.JsonToCsvConverter;
+import com.kwery.utils.CsvWriterFactoryImpl;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class JsonToCsvConverterTest {
                 )
         );
 
-        String csv = new JsonToCsvConverter().convert(json);
+        String csv = new JsonToCsvConverter(new CsvWriterFactoryImpl()).convert(json);
 
         String expected = "\"c0\",\"c1\"\n\"v0\",\"v1\"\n";
 

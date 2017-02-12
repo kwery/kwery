@@ -7,6 +7,7 @@ import com.kwery.services.datasource.DatasourceService;
 import com.kwery.services.scheduler.ResultSetToCsvWriter;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
+import com.kwery.utils.CsvWriterFactoryImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class ResultSetToCsvWriterTest extends RepoDashTestBase {
         PreparedStatement p = connection.prepareStatement(sql);
         ResultSet resultSet = p.executeQuery();
         File file = temporaryFolder.newFile();
-        ResultSetToCsvWriter resultSetToCsvWriter = new ResultSetToCsvWriter(resultSet, file);
+        ResultSetToCsvWriter resultSetToCsvWriter = new ResultSetToCsvWriter(new CsvWriterFactoryImpl(), resultSet, file);
         resultSetToCsvWriter.write();
 
         String expected = String.join(System.lineSeparator(), ImmutableList.of("\"User\",\"max_questions\"", "\"root\",\"0\"")) + System.lineSeparator();

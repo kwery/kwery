@@ -9,6 +9,7 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.models.UrlConfiguration.Scheme;
+import com.kwery.utils.CsvWriterFactoryImpl;
 import com.kwery.views.ActionResult;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -21,9 +22,6 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.*;
 
-import static au.com.bytecode.opencsv.CSVParser.DEFAULT_ESCAPE_CHARACTER;
-import static au.com.bytecode.opencsv.CSVWriter.DEFAULT_QUOTE_CHARACTER;
-import static au.com.bytecode.opencsv.CSVWriter.DEFAULT_SEPARATOR;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.Datasource.Type.MYSQL;
@@ -418,7 +416,8 @@ public class TestUtil {
         try (FileWriter fileWriter = new FileWriter(file, true);
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
              PrintWriter printWriter = new PrintWriter(bufferedWriter);
-             CSVWriter csvWriter = new CSVWriter(printWriter, DEFAULT_SEPARATOR, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER, System.lineSeparator())) {
+             CSVWriter csvWriter = new CsvWriterFactoryImpl().create(printWriter)
+        ) {
             csvWriter.writeAll(data);
         }
     }

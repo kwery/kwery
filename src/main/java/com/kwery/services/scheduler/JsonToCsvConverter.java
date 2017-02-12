@@ -3,24 +3,31 @@ package com.kwery.services.scheduler;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.kwery.utils.CsvWriterFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static au.com.bytecode.opencsv.CSVWriter.*;
-
 @Singleton
 public class JsonToCsvConverter {
+    private CsvWriterFactory csvWriterFactory;
+
+    @Inject
+    public JsonToCsvConverter(CsvWriterFactory csvWriterFactory) {
+        this.csvWriterFactory = csvWriterFactory;
+    }
+
     public String convert(String json) throws IOException {
         StringWriter stringWriter = new StringWriter();
         ObjectMapper objectMapper = new ObjectMapper();
         TypeReference<List<List<?>>> typeReference = new TypeReference<List<List<?>>>() {};
         List<List<String>> table = objectMapper.readValue(json, typeReference);
 
-        try (CSVWriter csvWriter = new CSVWriter(stringWriter, DEFAULT_SEPARATOR, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER, System.lineSeparator())) {
+        try (CSVWriter csvWriter = csvWriterFactory.create(stringWriter)) {
             for (List<String> rows : table) {
                 csvWriter.writeNext(rows.toArray(new String[rows.size()]));
             }

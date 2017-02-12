@@ -16,7 +16,7 @@ import com.kwery.services.migration.ResultMigrator;
 import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.utils.*;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
@@ -44,6 +44,8 @@ public class Module extends AbstractModule {
         bind(ResultMigrator.class);
         bind(KweryVersionUpdater.class);
         bind((KweryDirectoryChecker.class));
+        bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
+        bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);
     }
 
     @Provides

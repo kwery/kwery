@@ -17,6 +17,7 @@ import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import com.kwery.utils.CsvReaderFactory;
 import com.kwery.utils.KweryDirectory;
 import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
@@ -62,10 +63,12 @@ public class JobApiController {
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
     protected final JobLabelDao jobLabelDao;
     protected final KweryDirectory kweryDirectory;
+    protected final CsvReaderFactory csvReaderFactory;
 
     @Inject
     public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
-                            SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao, KweryDirectory kweryDirectory, Messages messages) {
+                            SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao, KweryDirectory kweryDirectory, Messages messages,
+                            CsvReaderFactory csvReaderFactory) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
         this.jobService = jobService;
@@ -75,6 +78,7 @@ public class JobApiController {
         this.jobLabelDao = jobLabelDao;
         this.kweryDirectory = kweryDirectory;
         this.messages = messages;
+        this.csvReaderFactory = csvReaderFactory;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -337,7 +341,7 @@ public class JobApiController {
                             if (logger.isTraceEnabled()) logger.trace("Result file - " + resultFile);
 
                             try (FileReader reader = new FileReader(resultFile);
-                                 CSVReader csvReader = new CSVReader(reader)) {
+                                 CSVReader csvReader = csvReaderFactory.create(reader)) {
                                 dto.setJsonResult(csvReader.readAll());
                             }
                         }

@@ -71,7 +71,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         jobLabelDao = getInstance(JobLabelDao.class);
 
         jobApiController = new JobApiController(datasourceDao, getInstance(JobDao.class), null, null, null,
-                null, jobLabelDao, null, null);
+                null, jobLabelDao, null, null, null);
     }
 
     @Test
