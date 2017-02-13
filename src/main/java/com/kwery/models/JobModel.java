@@ -126,6 +126,14 @@ public class JobModel {
     @MapKeyEnumerated(STRING)
     protected Map<Rules, String> rules = new HashMap<>();
 
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinTable(
+            name = JobRuleModel.JOB_JOB_RULE_TABLE,
+            joinColumns = @JoinColumn(name = JobRuleModel.JOB_ID_FK_COLUMN, referencedColumnName = ID_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = JobRuleModel.JOB_RULE_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
+    )
+    protected JobRuleModel jobRuleModel;
+
     public Integer getId() {
         return id;
     }
@@ -216,5 +224,13 @@ public class JobModel {
 
     public enum Rules {
         EMPTY_REPORT_NO_EMAIL
+    }
+
+    public JobRuleModel getJobRuleModel() {
+        return jobRuleModel;
+    }
+
+    public void setJobRuleModel(JobRuleModel jobRuleModel) {
+        this.jobRuleModel = jobRuleModel;
     }
 }

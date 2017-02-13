@@ -5,10 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
-import com.kwery.models.Datasource;
-import com.kwery.models.JobModel;
-import com.kwery.models.SmtpConfiguration;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
@@ -28,7 +25,6 @@ import java.util.Map;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
@@ -64,6 +60,9 @@ public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
         jobDto.setCronExpression("* * * * *");
         jobDto.setSqlQueries(new ArrayList<>(1));
         jobDto.setEmails(ImmutableSet.of("foo@bar.com", "moo@bar.com"));
+
+        JobRuleModel jobRuleModel = jobRuleModelWithoutId();
+        jobDto.setJobRuleModel(jobRuleModel);
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();

@@ -1,5 +1,7 @@
 package com.kwery.dtos;
 
+import com.kwery.models.JobRuleModel;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +17,7 @@ public class JobDto {
     protected Set<Integer> labelIds = new HashSet<>();
     protected boolean emptyReportNoEmailRule;
     protected Set<String> failureAlertEmails = new HashSet<>();
+    protected JobRuleModel jobRuleModel;
 
     public int getId() {
         return id;
@@ -94,5 +97,13 @@ public class JobDto {
 
     public void setJobFailureAlertEmails(Set<String> jobAlertEmails) {
         this.failureAlertEmails = jobAlertEmails;
+    }
+
+    public JobRuleModel getJobRuleModel() {
+        return jobRuleModel;
+    }
+
+    public void setJobRuleModel(JobRuleModel jobRuleModel) {
+        this.jobRuleModel = jobRuleModel;
     }
 }

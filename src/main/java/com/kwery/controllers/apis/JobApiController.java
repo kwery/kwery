@@ -428,6 +428,12 @@ public class JobApiController {
         }
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result deleteJobExecution(@PathParam("jobExecutionId") Integer jobExecutionModelId) {
+        jobExecutionDao.deleteJobExecutions(ImmutableList.of(jobExecutionModelId));
+        return json().render(new ActionResult(success, ""));
+    }
+
     @VisibleForTesting
     public JobModel jobDtoToJobModel(JobDto jobDto) {
         JobModel jobModel = new JobModel();
@@ -444,6 +450,7 @@ public class JobApiController {
         jobModel.setTitle(jobDto.getTitle());
         jobModel.setEmails(jobDto.getEmails());
         jobModel.setFailureAlertEmails(jobDto.getFailureAlertEmails());
+        jobModel.setJobRuleModel(jobDto.getJobRuleModel());
 
         if (jobDto.getLabelIds() != null) {
             jobModel.setLabels(jobDto.getLabelIds().stream().filter(id -> id != null && id > 0).map(jobLabelDao::getJobLabelModelById).collect(toSet()));
@@ -478,6 +485,7 @@ public class JobApiController {
     @VisibleForTesting
     public JobExecutionDto jobExecutionModelToJobExecutionDto(JobExecutionModel model) {
         JobExecutionDto jobExecutionDto = new JobExecutionDto();
+        jobExecutionDto.setId(model.getId());
         jobExecutionDto.setStart(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(model.getExecutionStart()));
 
         if (model.getStatus() == JobExecutionModel.Status.ONGOING) {

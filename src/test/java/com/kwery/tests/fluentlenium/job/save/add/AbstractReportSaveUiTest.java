@@ -20,7 +20,6 @@ import org.junit.rules.RuleChain;
 import java.util.ArrayList;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.junit.rules.RuleChain.outerRule;
@@ -45,7 +44,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
     protected Datasource datasource;
 
     JobDao jobDao;
-    JobModel parentJobModel;
+    protected JobModel parentJobModel;
 
     protected boolean noEmailSetting = false;
 
@@ -60,6 +59,9 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
         jobDto.setSqlQueries(new ArrayList<>(1));
         jobDto.setEmails(ImmutableSet.of("foo@bar.com", "moo@bar.com"));
         jobDto.setJobFailureAlertEmails(ImmutableSet.of("foo@goo.com", "cho@roo.com"));
+
+        JobRuleModel jobRuleModel = jobRuleModelWithoutId();
+        jobDto.setJobRuleModel(jobRuleModel);
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();

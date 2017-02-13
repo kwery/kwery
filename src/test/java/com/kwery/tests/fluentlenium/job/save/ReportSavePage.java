@@ -4,6 +4,7 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
@@ -36,6 +37,11 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void fillAndSubmitReportSaveForm(JobForm jobForm) {
+        fillReportSaveForm(jobForm);
+        submitReportSaveForm();
+    }
+
+    public void fillReportSaveForm(JobForm jobForm) {
         $(".f-report-title").fill().with(jobForm.getTitle());
         $(".f-report-name").fill().with(jobForm.getName());
 
@@ -109,7 +115,13 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
             i = i + 1;
         }
 
-        submitReportSaveForm();
+        if (jobForm.getJobRuleModel() != null) {
+            setSequentialSqlQueryExecution(jobForm.getJobRuleModel().isSequentialSqlQueryExecution());
+            if (jobForm.getJobRuleModel().isSequentialSqlQueryExecution()) {
+                awaitUntilIsStopExecutionOnSqlQueryDisplayed();
+                setStopExecutionOnSqlQueryFailure(jobForm.getJobRuleModel().isStopExecutionOnSqlQueryFailure());
+            }
+        }
     }
 
     public void ensureEmailRuleUnchecked() {
@@ -263,5 +275,49 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
 
     public boolean isEmptyReportNoEmailRuleEnabled() {
         return el(className("no-email-rule-f")).enabled();
+    }
+
+    public boolean isSequentialSqlQueryExecution() {
+        return el(className("sequential-sql-query-execution-f")).selected();
+    }
+
+    public boolean isStopExecutionOnSqlQueryFailure() {
+        return el(className("stop-execution-on-sql-query-failure-f")).selected();
+    }
+
+    public boolean isStopExecutionOnSqlQueryDisplayed() {
+        return el(className("stop-execution-on-sql-query-failure-f")).displayed();
+    }
+
+    public void awaitUntilIsStopExecutionOnSqlQueryDisplayed() {
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(el(className("stop-execution-on-sql-query-failure-f"))).displayed();
+    }
+
+    public void awaitUntilIsStopExecutionOnSqlQueryNotDisplayed() {
+        await().atMost(TestUtil.TIMEOUT_SECONDS, SECONDS).until(el(className("stop-execution-on-sql-query-failure-f"))).not().displayed();
+    }
+
+    public void setSequentialSqlQueryExecution(boolean checked) {
+        if (checked) {
+            if (!isSequentialSqlQueryExecution()) {
+                el(className("sequential-sql-query-execution-f")).click();
+            }
+        } else {
+            if (isSequentialSqlQueryExecution()) {
+                el(className("sequential-sql-query-execution-f")).click();
+            }
+        }
+    }
+
+    public void setStopExecutionOnSqlQueryFailure(boolean checked) {
+        if (checked) {
+            if (!isStopExecutionOnSqlQueryFailure()) {
+                el(className("stop-execution-on-sql-query-failure-f")).click();
+            }
+        } else {
+            if (isStopExecutionOnSqlQueryFailure()) {
+                el(className("stop-execution-on-sql-query-failure-f")).click();
+            }
+        }
     }
 }

@@ -151,6 +151,25 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
             $("#filterForm").validator("validate");
         });
 
+        self.deleteReportExecution = function(jobExecution) {
+            ajaxUtil.waitingAjax({
+                url: "/api/job/execution/" + jobExecution.id + "/delete",
+                type: "POST",
+                data: {},
+                contentType: "application/json",
+                success: function(actionResult) {
+                    if (actionResult.status === "success") {
+                        self.executions.remove(jobExecution);
+                        self.status(actionResult.status);
+                        self.messages([ko.i18n("report.job.execution.delete")]);
+                    } else {
+                        self.status("failure");
+                        self.messages([ko.i18n("server.error")]);
+                    }
+                }
+            });
+        };
+
         self.executions = ko.observableArray();
         self.updateExecutions = function() {
             ajaxUtil.waitingAjax({

@@ -6,12 +6,10 @@ import com.kwery.dao.JobDao;
 import com.kwery.dao.SqlQueryDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
-import com.kwery.models.Datasource;
-import com.kwery.models.JobModel;
-import com.kwery.models.SmtpConfiguration;
-import com.kwery.models.SqlQueryModel;
+import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.MysqlDockerRule;
@@ -27,7 +25,6 @@ import java.util.Map;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
@@ -45,6 +42,7 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
 
     @Page
     ReportUpdatePage page;
+
     JobModel parentJobModel;
     Datasource datasource;
     JobDao jobDao;
@@ -90,6 +88,10 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
 
         childJobModel.getSqlQueries().add(childSqlQueryModel);
         jobSqlQueryDbSetUp(childJobModel);
+
+        JobRuleModel jobRuleModel = jobRuleModel();
+        childJobModel.setJobRuleModel(jobRuleModel);
+        DbUtil.jobRuleDbSetUp(childJobModel);
         //Child Job setup - end
 
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
@@ -113,6 +115,7 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
         JobDto jobDto = jobDto();
         jobDto.setCronExpression("* * * * *");
         jobDto.setEmails(ImmutableSet.of("grx@bar.com", "brx@boo.com"));
+        jobDto.setJobRuleModel(childJobModel.getJobRuleModel());
 
         SqlQueryDto sqlQueryDto = sqlQueryDto();
         sqlQueryDto.setDatasourceId(datasource.getId());

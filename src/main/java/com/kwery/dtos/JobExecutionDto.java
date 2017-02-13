@@ -1,11 +1,20 @@
 package com.kwery.dtos;
 
 public class JobExecutionDto {
+    protected int id;
     private String start;
     protected String end;
     protected String status;
     protected String executionId;
     protected String label;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getStart() {
         return start;
@@ -46,4 +55,5 @@ public class JobExecutionDto {
     public void setLabel(String label) {
         this.label = label;
     }
+
 }

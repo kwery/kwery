@@ -382,7 +382,6 @@ public class DbUtil {
                             .with(SqlQueryEmailSettingModel.EMAIL_BODY_INCLUDE_COLUMN, model.getIncludeInEmailBody())
                             .with(SqlQueryEmailSettingModel.EMAIL_ATTACHMENT_INCLUDE_COLUMN, model.getIncludeInEmailAttachment())
                             .add();
-
                     builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE)
                             .with(SqlQueryEmailSettingModel.SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
                             .with(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_FK_COLUMN, model.getId())
@@ -687,6 +686,54 @@ public class DbUtil {
                                 .column(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN, dbId())
                                 .column(SqlQueryEmailSettingModel.SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
                                 .column(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_FK_COLUMN, sqlQueryEmailSettingModel.getId())
+                                .end()
+                                .build()
+                )
+        ).launch();
+    }
+
+    public static IDataSet fooTable(JobModel... jobModels) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(JobRuleModel.JOB_RULE_TABLE);
+        builder.ensureTableIsPresent(JobRuleModel.JOB_JOB_RULE_TABLE);
+
+        if (jobModels != null) {
+            for (JobModel jobModel : jobModels) {
+                JobRuleModel model = jobModel.getJobRuleModel();
+                if (model != null) {
+                    builder.newRow(JobRuleModel.JOB_RULE_TABLE)
+                            .with(JobRuleModel.JOB_RULE_ID_COLUMN, model.getId())
+                            .with(JobRuleModel.SEQUENTIAL_SQL_QUERY_EXECUTION_COLUMN, model.isSequentialSqlQueryExecution())
+                            .with(JobRuleModel.STOP_EXECUTION_ON_SQL_QUERY_FAILURE_COLUMN, model.isStopExecutionOnSqlQueryFailure())
+                            .add();
+                    builder.newRow(JobRuleModel.JOB_JOB_RULE_TABLE)
+                            .with(JobRuleModel.JOB_ID_FK_COLUMN, jobModel.getId())
+                            .with(JobRuleModel.JOB_RULE_ID_FK_COLUMN, model.getId())
+                            .add();
+                }
+            }
+        }
+
+        return builder.build();
+    }
+
+    public static void fooDbSetUp(JobModel jobModel) {
+        JobRuleModel jobRuleModel = jobModel.getJobRuleModel();
+        new DbSetup(
+                new DataSourceDestination(getDatasource()),
+                sequenceOf(
+                        insertInto(JobRuleModel.JOB_RULE_TABLE)
+                                .row()
+                                .column(JobRuleModel.JOB_RULE_ID_COLUMN, jobRuleModel.getId())
+                                .column(JobRuleModel.SEQUENTIAL_SQL_QUERY_EXECUTION_COLUMN, jobRuleModel.isSequentialSqlQueryExecution())
+                                .column(JobRuleModel.STOP_EXECUTION_ON_SQL_QUERY_FAILURE_COLUMN, jobRuleModel.isStopExecutionOnSqlQueryFailure())
+                                .end()
+                                .build(),
+                        insertInto(JobRuleModel.JOB_JOB_RULE_TABLE)
+                                .row()
+                                .column(JobRuleModel.JOB_JOB_RULE_ID_COLUMN, dbId())
+                                .column(JobRuleModel.JOB_ID_FK_COLUMN, jobModel.getId())
+                                .column(JobRuleModel.JOB_RULE_ID_FK_COLUMN, jobRuleModel.getId())
                                 .end()
                                 .build()
                 )

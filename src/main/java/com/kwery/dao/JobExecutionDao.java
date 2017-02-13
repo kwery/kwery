@@ -194,4 +194,13 @@ public class JobExecutionDao {
 
         return jobExecutions;
     }
+
+    @Transactional
+    public void deleteJobExecutions(List<Integer> jobExecutionIds) {
+        EntityManager m = entityManagerProvider.get();
+
+        for (Integer jobExecutionId : jobExecutionIds) {
+            m.remove(m.find(JobExecutionModel.class, jobExecutionId));
+        }
+    }
 }

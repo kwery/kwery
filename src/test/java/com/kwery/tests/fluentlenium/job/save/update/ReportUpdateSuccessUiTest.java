@@ -9,10 +9,7 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
-import com.kwery.tests.util.ChromeFluentTest;
-import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
-import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.*;
 import org.dozer.DozerBeanMapper;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
@@ -24,7 +21,6 @@ import java.util.Map;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertThat;
@@ -56,6 +52,11 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         jobModel = jobModelWithoutDependents();
         jobModel.setCronExpression("* * * * *");
         jobDbSetUp(jobModel);
+
+        JobRuleModel jobRuleModel = jobRuleModel();
+        jobModel.setJobRuleModel(jobRuleModel);
+
+        jobRuleDbSetUp(jobModel);
 
         jobModel.setEmails(ImmutableSet.of(email0));
         jobEmailDbSetUp(jobModel);
@@ -106,6 +107,10 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         JobDto jobDto = jobDto();
         jobDto.setCronExpression("* * * * *");
         jobDto.setEmails(ImmutableSet.of(email1, email2));
+
+        JobRuleModel jobRuleModel = TestUtil.jobRuleModelWithoutId();
+        jobRuleModel.setId(jobModel.getId());
+        jobDto.setJobRuleModel(jobRuleModel);
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDto();

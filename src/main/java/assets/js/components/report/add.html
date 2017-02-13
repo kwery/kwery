@@ -167,6 +167,21 @@
 
                 <!-- /ko -->
 
+                <div class="checkbox">
+                    <label>
+                        <input data-bind="checked: sequentialSqlQueryExecution" class="sequential-sql-query-execution-f" name="sequentialSqlQueryExecution" type="checkbox">
+                        <span data-bind="text: ko.i18n('report.save.sequential.sql.query.execution')"> </span>
+                    </label>
+                </div>
+
+                <div data-bind="visible: showStopExecutionOnSqlQueryFailure" class="checkbox">
+                    <label>
+                        <input data-bind="checked: stopExecutionOnSqlQueryFailure" class="stop-execution-on-sql-query-failure-f"
+                               name="stopExecutionOnSqlQueryFailure" type="checkbox">
+                        <span data-bind="text: ko.i18n('report.save.sequential.sql.query.execution.abort.failure')"> </span>
+                    </label>
+                </div>
+
                 <div>
                     <a data-bind="click: addSqlQuery, attr:{title: ko.i18n('report.save.save.sql.query.add.another.help')}" class="f-add-sql-query">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>

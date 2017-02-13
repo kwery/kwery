@@ -207,6 +207,7 @@ public class TestUtil {
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setParentJob(null);
         jobModel.setLabels(new HashSet<>());
+        jobModel.setJobRuleModel(null);
         return jobModel;
     }
 
@@ -229,6 +230,7 @@ public class TestUtil {
 
     public static JobDto jobDtoWithoutId() {
         JobDto jobDto = jobDto();
+        jobDto.setJobRuleModel(null);
         jobDto.setId(0);
         return jobDto;
     }
@@ -241,6 +243,7 @@ public class TestUtil {
         jobDto.setSqlQueries(new ArrayList<>());
         jobDto.setLabelIds(new HashSet<>());
         jobDto.setJobFailureAlertEmails(new HashSet<>());
+        jobDto.setJobRuleModel(null);
         return jobDto;
     }
 
@@ -274,6 +277,26 @@ public class TestUtil {
         return sqlQueryEmailSettingModel;
     }
 
+    public static JobRuleModel jobRuleModel() {
+        JobRuleModel jobRuleModel = new JobRuleModel();
+        jobRuleModel.setId(dbId());
+        jobRuleModel.setSequentialSqlQueryExecution(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+
+        if (!jobRuleModel.isSequentialSqlQueryExecution()) {
+            jobRuleModel.setStopExecutionOnSqlQueryFailure(false);
+        } else {
+            jobRuleModel.setStopExecutionOnSqlQueryFailure(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        }
+
+        return jobRuleModel;
+    }
+
+    public static JobRuleModel jobRuleModelWithoutId() {
+        JobRuleModel jobRuleModel = jobRuleModel();
+        jobRuleModel.setId(null);
+        return jobRuleModel;
+    }
+
     public static String toJson(Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);
@@ -290,6 +313,7 @@ public class TestUtil {
         jobModel.setEmails(jobDto.getEmails());
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setChildJobs(new HashSet<>());
+        jobModel.setJobRuleModel(jobDto.getJobRuleModel());
 
         for (SqlQueryDto sqlQueryDto : jobDto.getSqlQueries()) {
             SqlQueryModel sqlQueryModel = new SqlQueryModel();
@@ -326,7 +350,7 @@ public class TestUtil {
             expectedJobModel.setParentJob(parentJobModel);
         }
 
-        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries"));
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries").excludeProperty("jobRuleModel.id"));
 
         List<SqlQueryModel> expectedSqlQueryModels = toList(expectedJobModel.getSqlQueries());
         sort(expectedSqlQueryModels, comparing(SqlQueryModel::getLabel));

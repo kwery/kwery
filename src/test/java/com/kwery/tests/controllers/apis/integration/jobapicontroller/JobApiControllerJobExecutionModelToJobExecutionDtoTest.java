@@ -21,6 +21,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
     @Test
     public void testSuccess() {
         JobExecutionModel jobExecutionModel = new JobExecutionModel();
+        jobExecutionModel.setId(1);
         jobExecutionModel.setExecutionStart(1481024793933l);
         jobExecutionModel.setExecutionEnd(1581024803933l);
 
@@ -33,6 +34,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
 
         JobExecutionDto dto = jobApiController .jobExecutionModelToJobExecutionDto(jobExecutionModel);
 
+        assertThat(dto.getId(), is(jobExecutionModel.getId()));
         assertThat(dto.getStatus(), is(SUCCESS.name()));
         assertThat(dto.getStart(), is("Tue Dec 06 2016 17:16"));
         assertThat(dto.getEnd(), is("Fri Feb 07 2020 03:03"));
@@ -43,6 +45,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
     @Test
     public void testFailure() {
         JobExecutionModel jobExecutionModel = new JobExecutionModel();
+        jobExecutionModel.setId(1);
         jobExecutionModel.setExecutionStart(1481024793933l);
         jobExecutionModel.setExecutionEnd(1581024803933l);
 
@@ -55,6 +58,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
 
         JobExecutionDto dto = jobApiController.jobExecutionModelToJobExecutionDto(jobExecutionModel);
 
+        assertThat(dto.getId(), is(jobExecutionModel.getId()));
         assertThat(dto.getStatus(), is(FAILURE.name()));
         assertThat(dto.getStart(), is("Tue Dec 06 2016 17:16"));
         assertThat(dto.getEnd(), is("Fri Feb 07 2020 03:03"));
@@ -65,6 +69,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
     @Test
     public void testOngoing() {
         JobExecutionModel jobExecutionModel = new JobExecutionModel();
+        jobExecutionModel.setId(1);
         jobExecutionModel.setExecutionStart(1481024793933l);
         jobExecutionModel.setExecutionEnd(1581024803933l);
 
@@ -77,6 +82,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
 
         JobExecutionDto dto = jobApiController.jobExecutionModelToJobExecutionDto(jobExecutionModel);
 
+        assertThat(dto.getId(), is(jobExecutionModel.getId()));
         assertThat(dto.getStatus(), is(ONGOING.name()));
         assertThat(dto.getStart(), is("Tue Dec 06 2016 17:16"));
         assertThat(dto.getEnd(), is(""));
@@ -87,6 +93,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
     @Test
     public void testKilled() {
         JobExecutionModel jobExecutionModel = new JobExecutionModel();
+        jobExecutionModel.setId(1);
         jobExecutionModel.setExecutionStart(1481024793933l);
         jobExecutionModel.setExecutionEnd(1581024803933l);
 
@@ -99,6 +106,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
 
         JobExecutionDto dto = jobApiController.jobExecutionModelToJobExecutionDto(jobExecutionModel);
 
+        assertThat(dto.getId(), is(jobExecutionModel.getId()));
         assertThat(dto.getStatus(), is(KILLED.name()));
         assertThat(dto.getStart(), is("Tue Dec 06 2016 17:16"));
         assertThat(dto.getEnd(), is("Fri Feb 07 2020 03:03"));

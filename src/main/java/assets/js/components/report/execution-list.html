@@ -50,10 +50,11 @@
                     <th data-bind="text: ko.i18n('report.job.execution.start')"></th>
                     <th data-bind="text: ko.i18n('report.job.execution.end')"></th>
                     <th data-bind="text: ko.i18n('report.job.execution.status')"></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody data-bind="foreach: executions" id="executionListTableBody">
-                <tr>
+                <tr data-bind="css: 'execution-list-row-' + $index() + '-f'">
                     <td data-bind="text: start" class="execution-start-f"></td>
                     <td data-bind="text: end" class="execution-end-f"></td>
                     <td>
@@ -63,6 +64,12 @@
                         <!-- ko if: status !== 'SUCCESS' && status !== 'FAILURE' -->
                             <span data-bind="text: status" class="execution-status-f"></span>
                         <!-- /ko -->
+                    </td>
+                    <td>
+                        <button data-bind="click: $parent.deleteReportExecution, attr:{title: ko.i18n('report.job.execution.delete.tooltip')}"
+                                type="button" class="btn btn-default delete-report-execution-f">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
                     </td>
                 </tr>
                 </tbody>

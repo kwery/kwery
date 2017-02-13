@@ -7,6 +7,7 @@ import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
+import com.kwery.models.JobRuleModel;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +65,10 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
         jobModel.getLabels().add(jobLabelModel);
 
         jobJobLabelDbSetUp(jobModel);
+
+        JobRuleModel jobRuleModel = jobRuleModel();
+        jobModel.setJobRuleModel(jobRuleModel);
+        fooDbSetUp(jobModel);
 
         jobDao = getInstance(JobDao.class);
     }

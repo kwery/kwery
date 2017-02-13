@@ -27,6 +27,14 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.enableEmails = ko.observable(false);
         self.urlConfigured = ko.observable(false);
 
+        self.jobRuleModelId = ko.observable();
+        self.sequentialSqlQueryExecution = ko.observable(false);
+        self.stopExecutionOnSqlQueryFailure = ko.observable(true);
+
+        self.showStopExecutionOnSqlQueryFailure = ko.computed(function(){
+            return self.sequentialSqlQueryExecution();
+        }, this);
+
         self.scheduleOption.subscribe(function(newVal){
             $("#parentReport").attr("data-validate", false);
             $("#cronExpression").attr("data-validate", false);
@@ -159,6 +167,11 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                 self.cronExpression(report.cronExpression);
                             }
 
+                            if (report.jobRuleModel != null) {
+                                self.jobRuleModelId(report.jobRuleModel.id);
+                                self.sequentialSqlQueryExecution(report.jobRuleModel.sequentialSqlQueryExecution);
+                                self.stopExecutionOnSqlQueryFailure(report.jobRuleModel.stopExecutionOnSqlQueryFailure);
+                            }
 
                             $.each(report.sqlQueries, function(index, sqlQuery){
                                 var emailSettingId = null;
@@ -283,7 +296,13 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         });
                         return ids;
                     })(),
-                    emptyReportNoEmailRule: self.emptyReportNoEmailRule()
+                    emptyReportNoEmailRule: self.emptyReportNoEmailRule(),
+                    jobRuleModel: {
+                        id: self.jobRuleModelId(),
+                        sequentialSqlQueryExecution: self.sequentialSqlQueryExecution(),
+                        stopExecutionOnSqlQueryFailure: self.sequentialSqlQueryExecution() === true ? self.stopExecutionOnSqlQueryFailure() : false //This can have a value only when sequential
+                        //execution is enabled
+                    }
                 };
 
                 if (isUpdate) {
