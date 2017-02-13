@@ -10,6 +10,7 @@ public class SqlQueryExecutionResultDto {
     protected SqlQueryExecutionModel.Status status;
     protected String errorResult;
     protected String executionId;
+    protected String warning;
 
     public String getTitle() {
         return title;
@@ -49,5 +50,13 @@ public class SqlQueryExecutionResultDto {
 
     public void setExecutionId(String executionId) {
         this.executionId = executionId;
+    }
+
+    public String getWarning() {
+        return warning;
+    }
+
+    public void setWarning(String warning) {
+        this.warning = warning;
     }
 }

@@ -23,6 +23,9 @@ import java.util.LinkedList;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -68,6 +71,7 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
         sqlQueryExecutionModel0.setResultFileName(file.getName());
         sqlQueryExecutionModel0.setSqlQuery(sqlQueryModel0);
         sqlQueryExecutionModel0.setJobExecutionModel(jobExecutionModel);
+        sqlQueryExecutionModel0.setStatus(SqlQueryExecutionModel.Status.SUCCESS);
 
         jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel0);
 
@@ -85,6 +89,8 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
     }
 
     public void assertEmail(boolean emptyBody, boolean emptyAttachment) throws Exception {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
+
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));
 
         WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);

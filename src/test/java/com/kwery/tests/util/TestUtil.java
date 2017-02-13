@@ -3,7 +3,9 @@ package com.kwery.tests.util;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.CharStreams;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
@@ -16,10 +18,12 @@ import org.apache.commons.lang3.RandomUtils;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import javax.activation.DataSource;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -420,5 +424,67 @@ public class TestUtil {
         ) {
             csvWriter.writeAll(data);
         }
+    }
+
+    public static void writeCsvOfLines(long lineCount, File file) throws Exception {
+        try (FileWriter fileWriter = new FileWriter(file, true);
+             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+             PrintWriter printWriter = new PrintWriter(bufferedWriter);
+             CSVWriter csvWriter = new CsvWriterFactoryImpl().create(printWriter)
+        ) {
+
+            for (long i = 0; i < lineCount; ++i) {
+                csvWriter.writeNext(new String[]{RandomStringUtils.randomAlphabetic(1, 10)});
+            }
+        }
+    }
+
+    public static void writeCsvOfSize(long sizeInBytes, File file) throws Exception {
+        do {
+            try (FileWriter fileWriter = new FileWriter(file, true);
+                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                 PrintWriter printWriter = new PrintWriter(bufferedWriter);
+                 CSVWriter csvWriter = new CsvWriterFactoryImpl().create(printWriter)
+            ) {
+                for (long i = 0; i < 10000; ++i) { //Randomly chosen number
+                    csvWriter.writeNext(new String[]{
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10),
+                            RandomStringUtils.randomAlphabetic(1, 10)
+                    });
+                }
+
+            }
+        } while (file.length() < sizeInBytes);
+    }
+
+    //http://stackoverflow.com/questions/245251/create-file-with-given-size-in-java
+    public static void writeFileOfSize(long sizeInBytes, File file) throws IOException {
+        RandomAccessFile f = new RandomAccessFile(file.getPath(), "rw");
+        f.setLength(sizeInBytes);
+    }
+
+    public static void main(String[] args) throws Exception {
+        File file = new File("/tmp/foo");
+        file.createNewFile();
+        writeFileOfSize(15100000, file);
+    }
+
+    public static String toString(DataSource dataSource) throws IOException {
+        try (InputStream inputStream = dataSource.getInputStream()) {
+            return CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
+        }
+    }
+
+    public static String toString(File file) throws IOException {
+        Path path = Paths.get(file.toURI());
+        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
     }
 }

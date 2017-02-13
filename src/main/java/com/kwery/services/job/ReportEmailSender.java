@@ -1,6 +1,7 @@
 package com.kwery.services.job;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -15,16 +16,21 @@ import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.CsvToHtmlConverter;
 import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.utils.KweryDirectory;
+import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
+import ninja.i18n.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.kwery.controllers.MessageKeys.JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING;
+import static com.kwery.controllers.MessageKeys.REPORTEMAILSENDER_ATTACHMENT_SKIPPED;
 import static com.kwery.utils.KweryUtil.fileName;
 
 @Singleton
@@ -35,13 +41,16 @@ public class ReportEmailSender {
     protected final Provider<KweryMail> kweryMailProvider;
     protected final MailService mailService;
     protected final KweryDirectory kweryDirectory;
+    protected final Messages messages;
 
     @Inject
-    public ReportEmailSender(CsvToHtmlConverterFactory csvToHtmlConverterFactory, Provider<KweryMail> kweryMailProvider, MailService mailService, KweryDirectory kweryDirectory) {
+    public ReportEmailSender(CsvToHtmlConverterFactory csvToHtmlConverterFactory, Provider<KweryMail> kweryMailProvider,
+                             MailService mailService, KweryDirectory kweryDirectory, Messages messages) {
         this.kweryMailProvider = kweryMailProvider;
         this.mailService = mailService;
         this.kweryDirectory = kweryDirectory;
         this.csvToHtmlConverterFactory = csvToHtmlConverterFactory;
+        this.messages = messages;
     }
 
     public void send(JobExecutionModel jobExecutionModel) {
@@ -56,6 +65,8 @@ public class ReportEmailSender {
 
             boolean emptyResult = false;
 
+            boolean attachmentSkipped = false;
+
             //Done so that report sections in the mail are ordered in the same order as sql queries in report
             for (SqlQueryExecutionModel sqlQueryExecutionModel : ReportUtil.orderedExecutions(jobExecutionModel)) {
                 //If this is null, we include in both email and attachments
@@ -66,23 +77,40 @@ public class ReportEmailSender {
                     if (sqlQueryExecutionModel.getResultFileName() == null) {
                         emailSnippets.add("<div></div>");
                     } else {
-                        CsvToHtmlConverter csvToHtmlConverter = csvToHtmlConverterFactory.create(kweryDirectory.getFile(sqlQueryExecutionModel.getResultFileName()));
-                        emailSnippets.add(csvToHtmlConverter.convert());
-                        emptyResult = emptyResult || csvToHtmlConverter.isHasContent();
+                        File resultFile = kweryDirectory.getFile(sqlQueryExecutionModel.getResultFileName());
+
+                        if (KweryUtil.isFileWithinLimits(resultFile)) {
+                            CsvToHtmlConverter csvToHtmlConverter = csvToHtmlConverterFactory.create(resultFile);
+                            emailSnippets.add(csvToHtmlConverter.convert());
+                            emptyResult = emptyResult || csvToHtmlConverter.isHasContent();
+                        } else {
+                            String message = messages.get(JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING, Optional.absent()).get();
+                            emailSnippets.add(String.format("<p>%s</p>", message));
+                        }
                     }
                 }
 
                 if (sqlQueryEmailSettingModel == null || sqlQueryEmailSettingModel.getIncludeInEmailAttachment()) {
                     //Insert queries do not have an output
-                    if (!isInsertQuery(sqlQueryExecutionModel)) {
-                        KweryMailAttachment attachment = new KweryMailAttachmentImpl();
-                        attachment.setName(fileName(sqlQueryExecutionModel.getSqlQuery().getTitle(),
-                                sqlQueryExecutionModel.getJobExecutionModel().getExecutionStart()));
-                        attachment.setFile(kweryDirectory.getFile(sqlQueryExecutionModel.getResultFileName()));
-                        attachment.setDescription("");
-                        attachments.add(attachment);
+                    if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.SUCCESS && !isInsertQuery(sqlQueryExecutionModel)) {
+                        File resultFile = kweryDirectory.getFile(sqlQueryExecutionModel.getResultFileName());
+                        if (KweryUtil.canFileBeAttached(resultFile)) {
+                            KweryMailAttachment attachment = new KweryMailAttachmentImpl();
+                            attachment.setName(fileName(sqlQueryExecutionModel.getSqlQuery().getTitle(),
+                                    sqlQueryExecutionModel.getJobExecutionModel().getExecutionStart()));
+                            attachment.setFile(kweryDirectory.getFile(sqlQueryExecutionModel.getResultFileName()));
+                            attachment.setDescription("");
+                            attachments.add(attachment);
+                        } else {
+                            attachmentSkipped = true;
+                        }
                     }
                 }
+            }
+
+            if (attachmentSkipped) {
+                String message = messages.get(REPORTEMAILSENDER_ATTACHMENT_SKIPPED, Optional.absent()).get();
+                emailSnippets.add(String.format("<p style='color:red'>%s</p>", message));
             }
 
             //For now do not bother about include in email and attachments while evaluating rules

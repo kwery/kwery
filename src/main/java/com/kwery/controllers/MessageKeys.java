@@ -83,4 +83,7 @@ public class MessageKeys {
 
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT = "report.generation.failure.alert.email.subject";
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY = "report.generation.failure.alert.email.body";
+
+    public static final String JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING = "jobapicontroller.report.content.large.warning";
+    public static final String REPORTEMAILSENDER_ATTACHMENT_SKIPPED = "reportemailsender.attachment.skipped";
 }

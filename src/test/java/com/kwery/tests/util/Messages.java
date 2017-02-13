@@ -120,4 +120,8 @@ public class Messages {
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M = "Failed Report";
 
     public static final String REPORT_JOB_EXECUTION_DELETE_M = "Report execution deleted successfully";
+
+    public static final String JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING_M = "Report content too large to display, please download and view";
+
+    public static final String REPORTEMAILSENDER_ATTACHMENT_SKIPPED_M = "P.S. Some attachments were not sent as the files were too large";
 }

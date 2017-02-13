@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import com.kwery.controllers.MessageKeys;
 import com.kwery.dao.*;
 import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
@@ -320,7 +321,6 @@ public class JobApiController {
             List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
             if (!jobExecutionModels.isEmpty()) {
                 for (SqlQueryExecutionModel sqlQueryExecutionModel : ReportUtil.orderedExecutions(jobExecutionModel)) {
-
                     if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.SUCCESS) {
                         if (isInsertQuery(sqlQueryExecutionModel)) {
                             SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
@@ -337,12 +337,16 @@ public class JobApiController {
 
                             String resultFileName = sqlQueryExecutionModel.getResultFileName();
                             File resultFile = kweryDirectory.getFile(resultFileName);
-
                             if (logger.isTraceEnabled()) logger.trace("Result file - " + resultFile);
 
-                            try (FileReader reader = new FileReader(resultFile);
-                                 CSVReader csvReader = csvReaderFactory.create(reader)) {
-                                dto.setJsonResult(csvReader.readAll());
+                            if (KweryUtil.isFileWithinLimits(resultFile)) {
+                                try (FileReader reader = new FileReader(resultFile);
+                                     CSVReader csvReader = csvReaderFactory.create(reader)) {
+                                    dto.setJsonResult(csvReader.readAll());
+                                }
+                            } else {
+                                String message = messages.get(MessageKeys.JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING, context, Optional.of(json)).get();
+                                dto.setWarning(message);
                             }
                         }
                     } else if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.FAILURE) {

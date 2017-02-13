@@ -55,7 +55,6 @@ public abstract class AbstractReportEmailWithoutContentSender extends RepoDashTe
         sqlQueryExecutionModel0 = TestUtil.sqlQueryExecutionModel();
         sqlQueryExecutionModel0.setId(1);
 
-
         KweryDirectory kweryDirectory = getInstance(KweryDirectory.class);
         File file = kweryDirectory.createFile();
 
@@ -67,6 +66,8 @@ public abstract class AbstractReportEmailWithoutContentSender extends RepoDashTe
 
         sqlQueryExecutionModel0.setSqlQuery(sqlQueryModel0);
         sqlQueryExecutionModel0.setJobExecutionModel(jobExecutionModel);
+
+        sqlQueryExecutionModel0.setStatus(SqlQueryExecutionModel.Status.SUCCESS);
 
         jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel0);
 

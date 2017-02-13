@@ -9,6 +9,9 @@ import org.subethamail.wiser.WiserMessage;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -28,6 +31,8 @@ public class SqlQueryEmailSettingTrueTest extends AbstractSqlQueryEmailSettingTe
     @Test
     public void test() throws Exception {
         reportEmailSender.send(jobExecutionModel);
+
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));
 
         WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);

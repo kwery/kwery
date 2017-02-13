@@ -36,18 +36,29 @@ define(["knockout", "jquery", "text!components/report/execution-result.html", "a
 
                     ko.utils.arrayForEach(result.sqlQueryExecutionResultDtos, function(executionResult){
                         if (executionResult.status === 'SUCCESS') {
-                            if (executionResult.jsonResult !== null) { //Not an insert query
+                            if (executionResult.warning != null) {
+                                var downloadLink = "/api/report/csv/" + executionResult.executionId;
+                                self.sqlQueryExecutionResults.push(
+                                    new SqlQueryExecutionResult(executionResult.title, "WARNING", [], executionResult.warning, downloadLink)
+                                );
+                            } else if (executionResult.jsonResult !== null) { //Not an insert query
                                 var header = executionResult.jsonResult[0];
                                 var content = executionResult.jsonResult.slice(1, executionResult.jsonResult.length);
                                 var downloadLink = "/api/report/csv/" + executionResult.executionId;
-                                self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content, downloadLink));
+                                self.sqlQueryExecutionResults.push(
+                                    new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content, downloadLink)
+                                );
                             } else { //Insert query
                                 var header = [];
                                 var content = [];
-                                self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content));
+                                self.sqlQueryExecutionResults.push(
+                                    new SqlQueryExecutionResult(executionResult.title, executionResult.status, header, content)
+                                );
                             }
                         } else if (executionResult.status === 'FAILURE') {
-                            self.sqlQueryExecutionResults.push(new SqlQueryExecutionResult(executionResult.title, executionResult.status, "", executionResult.errorResult));
+                            self.sqlQueryExecutionResults.push(
+                                new SqlQueryExecutionResult(executionResult.title, executionResult.status, "", executionResult.errorResult)
+                            );
                         }
                     });
                 }

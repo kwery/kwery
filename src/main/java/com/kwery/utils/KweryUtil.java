@@ -2,6 +2,7 @@ package com.kwery.utils;
 
 import com.kwery.models.JobLabelModel;
 
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,5 +28,28 @@ public class KweryUtil {
             }
             return ids;
         }
+    }
+
+    public static boolean fileHasLinesLesserThan(File file, int limit) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
+            int lines = 0;
+            while (reader.readLine() != null) {
+                lines = lines + 1;
+                if (lines >= limit) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean isFileWithinLimits(File file) throws IOException {
+        return ((file.length() < KweryConstant.SQL_QUERY_RESULT_DISPLAY_SIZE_LIMIT)
+                && (KweryUtil.fileHasLinesLesserThan(file, KweryConstant.SQL_QUERY_RESULT_DISPLAY_ROW_LIMIT)));
+    }
+
+    public static boolean canFileBeAttached(File resultFile) {
+        return resultFile.length() < KweryConstant.SQL_QUERY_RESULT_ATTACHMENT_SIZE_LIMIT;
     }
 }
