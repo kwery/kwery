@@ -26,7 +26,10 @@ import java.util.LinkedList;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.kwery.tests.util.TestUtil.sqlQueryModel;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -92,7 +95,10 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
 
         kweryDirectory = getInstance(KweryDirectory.class);
         File file0 = kweryDirectory.createFile();
-        TestUtil.writeCsv(ImmutableList.of(new String[]{"author", "peter thiel"}), file0);
+        TestUtil.writeCsv(ImmutableList.of(
+                new String[]{"author"},
+                new String[]{"peter thiel"}
+        ), file0);
         sqlQueryExecutionModel0.setResultFileName(file0.getName());
         sqlQueryExecutionModel0.setSqlQuery(sqlQueryModel0);
         sqlQueryExecutionModel0.setJobExecutionModel(jobExecutionModel);
@@ -104,7 +110,10 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
         sqlQueryExecutionModel1.setId(2);
 
         File file1 = kweryDirectory.createFile();
-        TestUtil.writeCsv(ImmutableList.of(new String[]{"book", "zero to one"}), file1);
+        TestUtil.writeCsv(ImmutableList.of(
+                new String[]{"book"},
+                new String[]{"zero to one"}
+        ), file1);
 
         sqlQueryExecutionModel1.setResultFileName(file1.getName());
         sqlQueryExecutionModel1.setSqlQuery(sqlQueryModel1);
@@ -135,6 +144,8 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
     }
 
     public void assertMailPresent() throws Exception {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
+
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));
 
         WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);

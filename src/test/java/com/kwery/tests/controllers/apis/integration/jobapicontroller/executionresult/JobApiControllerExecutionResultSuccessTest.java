@@ -9,11 +9,13 @@ import com.kwery.models.*;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.TestUtil;
+import com.kwery.utils.KweryDirectory;
 import net.minidev.json.JSONArray;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -34,7 +36,7 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
     private String jsonResult;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         jobModel = TestUtil.jobModelWithoutDependents();
         DbUtil.jobDbSetUp(jobModel);
 
@@ -43,6 +45,7 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
 
         insertQuery = TestUtil.sqlQueryModel(datasource);
         insertQuery.setTitle("insert query");
+        insertQuery.setQuery("insert into foo");
         DbUtil.sqlQueryDbSetUp(insertQuery);
 
         failedQuery = TestUtil.sqlQueryModel(datasource);
@@ -84,12 +87,19 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
         successSqlQueryExecutionModel.setSqlQuery(successQuery);
         successSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         successSqlQueryExecutionModel.setStatus(SUCCESS);
-        jsonResult = TestUtil.toJson(ImmutableList.of(
-                ImmutableList.of("header0", "header1"),
-                ImmutableList.of("foo", "bar"),
-                ImmutableList.of("goo", "boo")
-        ));
-        successSqlQueryExecutionModel.setExecutionError(jsonResult);
+
+        KweryDirectory kweryDirectory = getInjector().getInstance(KweryDirectory.class);
+        File csv = kweryDirectory.createFile();
+        ImmutableList<String[]> resultCsv = ImmutableList.of(
+                new String[]{"header0", "header1"},
+                new String[]{"foo", "bar"},
+                new String[]{"goo", "boo"}
+        );
+        TestUtil.writeCsv(resultCsv, csv);
+        successSqlQueryExecutionModel.setResultFileName(csv.getName());
+
+        jsonResult = TestUtil.toJson(resultCsv);
+
         DbUtil.sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
 
         SqlQueryExecutionModel killedSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
