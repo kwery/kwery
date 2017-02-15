@@ -1,6 +1,7 @@
 package com.kwery.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
@@ -27,9 +28,11 @@ public class JobExecutionModel {
     private String executionId;
 
     @Column(name = COLUMN_EXECUTION_START)
+    @Min(value = 0)
     private Long executionStart;
 
     @Column(name = COLUMN_EXECUTION_END)
+    @Min(value = 0)
     private Long executionEnd;
 
     @Column(name = COLUMN_STATUS)

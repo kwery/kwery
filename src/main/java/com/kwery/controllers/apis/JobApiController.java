@@ -23,6 +23,7 @@ import com.kwery.utils.KweryDirectory;
 import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
 import com.kwery.views.ActionResult;
+import it.sauronsoftware.cron4j.Predictor;
 import it.sauronsoftware.cron4j.SchedulingPattern;
 import ninja.Context;
 import ninja.FilterWith;
@@ -228,12 +229,39 @@ public class JobApiController {
 
         List<JobModel> jobs = jobDao.filterJobs(jobSearchFilter);
 
-        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(jobModel -> new JobModelHackDto(jobModel, jobModel.getParentJob())).collect(toList());
+        List<JobModelHackDto> jobModelHackDtos = new ArrayList<>(jobs.size());
+
+        for (JobModel job : jobs) {
+            jobModelHackDtos.add(toJobModelHackDto(job));
+        }
 
         JobListDto jobListDto = new JobListDto(totalCount, jobModelHackDtos);
 
         if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(jobListDto);
+    }
+
+    @VisibleForTesting
+    public JobModelHackDto toJobModelHackDto(JobModel job) {
+        JobModelHackDto dto = new JobModelHackDto(job, job.getParentJob());
+
+        if (!"".equals(job.getCronExpression())) {
+            //TODO - Instantiate through Guice
+            Predictor predictor = new Predictor(job.getCronExpression());
+            dto.setNextExecution(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(predictor.nextMatchingDate()));
+        }
+
+        JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
+        filter.setJobId(job.getId());
+        filter.setPageNumber(0);
+        filter.setResultCount(1);
+        List<JobExecutionModel> executions = jobExecutionDao.filter(filter);
+
+        if (!executions.isEmpty()) {
+            long start = executions.get(0).getExecutionStart();
+            dto.setLastExecution(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(new Date(start)));
+        }
+        return dto;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -506,5 +534,11 @@ public class JobApiController {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public static void main(String[] args) {
+        long now = System.currentTimeMillis();
+        System.out.println("Now - " + now);
+        System.out.println("Date - " + new Date(now));
     }
 }

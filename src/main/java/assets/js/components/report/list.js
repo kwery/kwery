@@ -42,7 +42,9 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
         self.pageNumber.extend({notify: 'always'});
         self.resultCount = ko.observable(resultCount);
         self.totalCount = ko.observable(0);
-        self.reportLabelId = ko.observable(reportLabelId);
+        //If the value is set here, post the ajax call which populates the values, the selected option is not retained
+        //Hence, this value is set in the ajax callback
+        self.reportLabelId = ko.observable();
 
         self.reports = ko.observableArray([]);
 
@@ -209,7 +211,8 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
         });
         //Pagination - end
 
-        self.filter = function(showWaitingModal) {
+        waitingModal.show();
+        $.when(
             $.ajax({
                 url: "/api/job/list",
                 type: "POST",
@@ -217,34 +220,24 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                 data: ko.toJSON({
                     pageNumber: self.pageNumber(),
                     resultCount: self.resultCount(),
-                    jobLabelId: self.reportLabelId()
+                    //Observable is intentionally not used here as it is set later
+                    jobLabelId: reportLabelId
                 }),
-                beforeSend: function() {
-                    if (showWaitingModal) {
-                        waitingModal.show();
-                    }
-                },
                 success: function (jobListDto) {
                     var reports = [];
                     ko.utils.arrayForEach(jobListDto.jobModelHackDtos, function(jobModelHackDto){
                         jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
                         jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
+                        jobModelHackDto.jobModel.lastExecution = jobModelHackDto.lastExecution;
+                        jobModelHackDto.jobModel.nextExecution = jobModelHackDto.nextExecution;
+
                         reports.push(jobModelHackDto.jobModel);
                     });
 
                     self.reports(reports);
                     self.totalCount(jobListDto.totalCount);
                 }
-            }).always(function(){
-                if (showWaitingModal) {
-                    waitingModal.hide();
-                }
-            });
-        };
-
-        waitingModal.show();
-        $.when(
-            self.filter(false),
+            }),
             $.ajax({
                 url: "/api/job-label/list",
                 type: "GET",
@@ -252,6 +245,14 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                 success: function (jobLabelModelHackDtos) {
                     buildLabelTree(jobLabelModelHackDtos);
                     populateDisplayLabels(root, 0);
+
+                    self.reportLabelId(reportLabelId);
+
+                    //This subscription is intentionally done here after setting the value above to avoid filter being called when the selected value is set
+                    self.reportLabelId.subscribe(function(reportId){
+                        //If a filter is used, we should go to page 0 and start fresh
+                        self.pageNumber(0);
+                    });
                 }
             })
         ).always(function(){

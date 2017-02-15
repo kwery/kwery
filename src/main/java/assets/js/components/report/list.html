@@ -1,72 +1,125 @@
 <div class="container report-list-f">
     <action-result params="status: status, messages: messages"></action-result>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="panel-title pull-left">
-                <h3 data-bind="text: ko.i18n('report.list.header')" class="panel-title text-left"></h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('report.list.header')"></strong></span>
             </div>
-            <panel-add-link params="url: '/#report/add', tooltipMessageKey: 'report.list.add.report.tooltip'"></panel-add-link>
-        </div>
-        <div class="panel-body">
-            <form data-bind="submit: function(){filter(true)}">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 data-bind="text: ko.i18n('report.list.filter.header')" class="panel-title"></h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label data-bind="text: ko.i18n('report.list.filter.label')" class="control-label"></label>
-                            <div class="form-inline">
-                                <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: displayLabels, value: reportLabelId">
-                                    <option data-bind="html: formattedLabel, value: id"></option>
-                                </select>
-                            </div>
-                        </div>
-                        <button data-bind="text: ko.i18n('report.list.filter.filter')" type="submit" class="btn btn-primary report-filter-f"></button>
-                    </div>
+            <div class="col-md-3">
+                <div class="form-inline">
+                    <label data-bind="text: ko.i18n('report.list.filter.label')" class="text-muted"></label>
+                    <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: displayLabels, value: reportLabelId">
+                        <option data-bind="html: formattedLabel, value: id"></option>
+                    </select>
                 </div>
-            </form>
-
-            <table class="table report-list-table-f">
-                <thead>
-                    <tr>
-                        <th data-bind="text: ko.i18n('report.list.name')"></th>
-                        <th data-bind="text: ko.i18n('report.list.cron.expression')"></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody data-bind="foreach: {data: reports, afterRender: incrementRowCount}" class="report-list-table-body-f">
-                <tr>
-                    <td>
-                        <a data-bind="attr: {href: reportLink}, text: name" class="name-f"></a>
-                    </td>
-                    <td data-bind="text: cronExpression" class="cron-expression-f"></td>
-                    <td>
-                        <a data-bind="attr: {href: executionLink, title: ko.i18n('report.list.execution.tooltip')}" class="execution-link-f">
-                            <span class="glyphicon glyphicon-th-list"></span>
-                        </a>
-                        <a data-bind="click: $parent.executeReport, attr: {title: ko.i18n('report.list.execute.now.tooltip')}" class="execute-now-f">
-                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-                        </a>
-                        <a data-bind="click: $parent.deleteReport, attr: {title: ko.i18n('report.list.delete.tooltip')}" class="delete-f">
-                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                        </a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            </div>
+            <div class="col-md-1">
+                <div class="pull-left">
+                    <a data-bind="attr: {title: ko.i18n('report.list.add.report.tooltip')}" href="/#report/add" class="btn-circle btn-primary btn-xl edit-f">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-
-    <nav>
-        <ul class="pager">
-            <li data-bind="css: previousStatus" class="previous previous-f">
-                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous"></a>
-            </li>
-            <li data-bind="css: nextStatus" class="next next-f">
-                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next"></a>
-            </li>
-        </ul>
-    </nav>
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p data-bind="text: ko.i18n('report.list.grid.title')" class="text-muted"></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p data-bind="text: ko.i18n('report.list.grid.last.execution')" class="text-muted"></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p data-bind="text: ko.i18n('report.list.grid.next.execution')" class="text-muted"></p>
+                        </div>
+                        <div class="col-md-2">
+                            <p data-bind="text: ko.i18n('report.list.grid.actions')"  class="text-muted"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <hr>
+                </div>
+            </div>
+            <!-- ko foreach: reports -->
+            <div data-bind="css: 'report-list-' + $index() +'-f'" class="row report-list-f">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4 title-f">
+                            <p data-bind="text: title"></p>
+                        </div>
+                        <div class="col-md-3 last-execution-f">
+                            <p data-bind="text: lastExecution"></p>
+                        </div>
+                        <div class="col-md-3 next-execution-f">
+                            <p data-bind="text: nextExecution"></p>
+                        </div>
+                        <div class="col-md-2">
+                            <ul class="list-inline">
+                                <li>
+                                    <a data-bind="attr: {href: executionLink, title: ko.i18n('report.list.actions.execution.tooltip')}"
+                                       class="btn btn-default btn-xs execution-link-f">
+                                        <span class="glyphicon glyphicon-th-list"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-bind="click: $parent.executeReport, attr: {title: ko.i18n('report.list.actions.execute.now.tooltip')}" class="btn btn-default btn-xs
+                                    execute-now-f">
+                                        <span class="glyphicon glyphicon-play"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-bind="attr: {href: reportLink, title: ko.i18n('report.list.actions.edit.tooltip')}" class="btn btn-default btn-xs edit-f">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-bind="click: $parent.deleteReport, attr: {title: ko.i18n('report.list.actions.delete.tooltip')}" class="btn btn-default btn-xs delete-f">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <span class="h4">
+                                <span data-bind="text: name" class="label label-success name-f"></span>
+                            </span>
+                            <!-- ko foreach: labels -->
+                                <span data-bind="text: label" class="label label-warning label-f"></span>
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <hr>
+                </div>
+            </div>
+            <!-- /ko -->
+            <div class="row">
+                <div class="col-md-12">
+                    <nav>
+                        <ul class="pager pagination-f">
+                            <li data-bind="css: previousStatus" class="previous previous-f">
+                                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous" class="btn"></a>
+                            </li>
+                            <li data-bind="css: nextStatus" class="next next-f">
+                                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next" class="btn"></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<input data-bind="value: fluentField" type="hidden" class="fluent-field-f">

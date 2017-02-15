@@ -1,57 +1,53 @@
 package com.kwery.tests.fluentlenium.job.reportlist;
 
+import com.kwery.models.JobModel;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
+    @Before
+    public void setUp() {
+        this.setResultCount(3);
+        super.setUp();
+    }
+
     @Test
     public void test() {
-        List<ReportListRow> rows = page.rows();
-        for (int j = 0; j < rows.size(); ++j) {
-            ReportListRow row = rows.get(j);
-            if (!parentJobName.equals(row.getLabel())) {
-                page.deleteReport(j);
-                page.waitForModalDisappearance();
-                page.waitForRows(2);
-                page.waitForDeleteSuccessMessage();
-                break;
-            }
-        }
+        page.waitForModalDisappearance();
+        page.deleteReport(getRow(jobModel));
+        page.waitForModalDisappearance();
+        page.assertDeleteSuccessMessage();
 
-        rows = page.rows();
-        for (int j = 0; j < rows.size(); ++j) {
-            ReportListRow row = rows.get(j);
-            if (!parentJobName.equals(row.getLabel())) {
-                page.deleteReport(j);
-                page.waitForModalDisappearance();
-                page.waitForRows(1);
-                page.waitForDeleteSuccessMessage();
-                break;
-            }
-        }
+        List<JobModel> modified = removeJobModel(jobModel);
+        page.assertReportList(modified.size());
 
-        assertThat(page.rows(), hasSize(1));
-        assertThat(page.rows().get(0).getLabel(), is(parentJobName));
+        for (int i = 0; i < modified.size(); ++i) {
+            page.assertReportListRow(i, toReportRowMap(modified.get(i)));
+        }
     }
 
     @Test
     public void testDeleteParentReport() {
-        List<ReportListRow> rows = page.rows();
-        for (int j = 0; j < rows.size(); ++j) {
-            ReportListRow row = rows.get(j);
-            if (parentJobName.equals(row.getLabel())) {
-                page.deleteReport(j);
-                page.waitForModalDisappearance();
-                page.waitForDeleteFailureMessage();
-                break;
+        page.waitForModalDisappearance();
+        page.deleteReport(getRow(parentJob));
+        page.waitForModalDisappearance();
+        page.assertDeleteFailureMessage();
+        page.assertReportList(jobModels.size());
+
+        for (int i = 0; i < jobModels.size(); ++i) {
+            page.assertReportListRow(i, toReportRowMap(jobModels.get(i)));
+        }
+    }
+
+    private int getRow(JobModel jobModel) {
+        for (int i = 0; i < jobModels.size(); ++i) {
+            if (jobModel.getName().equals(jobModels.get(i).getName())) {
+                return i;
             }
         }
 
-        assertThat(page.rows(), hasSize(3));
+        return -1;
     }
 }

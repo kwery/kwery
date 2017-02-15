@@ -8,6 +8,8 @@ import com.kwery.models.JobModel;
 public class JobModelHackDto {
     private JobModel jobModel;
     private JobModel parentJobModel;
+    private String lastExecution = "";
+    private String nextExecution = "";
 
     public JobModelHackDto(JobModel jobModel) {
         this.jobModel = jobModel;
@@ -36,5 +38,21 @@ public class JobModelHackDto {
 
     public void setParentJobModel(JobModel parentJobModel) {
         this.parentJobModel = parentJobModel;
+    }
+
+    public String getLastExecution() {
+        return lastExecution;
+    }
+
+    public void setLastExecution(String lastExecution) {
+        this.lastExecution = lastExecution;
+    }
+
+    public String getNextExecution() {
+        return nextExecution;
+    }
+
+    public void setNextExecution(String nextExecution) {
+        this.nextExecution = nextExecution;
     }
 }

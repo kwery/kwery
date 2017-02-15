@@ -1,8 +1,8 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller.listjobs;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
@@ -11,6 +11,7 @@ import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dtos.JobListFilterDto;
 import com.kwery.dtos.JobModelHackDto;
+import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import ninja.Router;
@@ -18,25 +19,25 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDependentDbSetUp;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
+import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
+import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class JobApiControllerListJobsTest extends AbstractPostLoginApiTest {
     JobModel jobModel;
     JobModel dependentJobModel;
-
-    Map<String, JobModel> jobMap = new HashMap<>(2);
+    private JobApiController jobApiController;
+    private List<JobModel> models;
 
     @Before
     public void setUpJobApiControllerGetAllJobsTest() {
@@ -51,8 +52,26 @@ public class JobApiControllerListJobsTest extends AbstractPostLoginApiTest {
 
         dependentJobModel.setParentJob(jobModel);
 
-        jobMap.put(jobModel.getName(), jobModel);
-        jobMap.put(dependentJobModel.getName(), dependentJobModel);
+        models = Lists.newArrayList(jobModel, dependentJobModel);
+        models.sort(Comparator.comparing(JobModel::getId));
+
+        JobLabelModel jobLabelModel0 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel0);
+
+        JobLabelModel jobLabelModel1 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel1);
+
+        JobLabelModel jobLabelModel2 = jobLabelModel();
+        jobLabelDbSetUp(jobLabelModel2);
+
+        jobModel.getLabels().add(jobLabelModel0);
+        jobModel.getLabels().add(jobLabelModel1);
+
+        jobJobLabelDbSetUp(jobModel);
+
+        dependentJobModel.getLabels().add(jobLabelModel2);
+
+        jobJobLabelDbSetUp(dependentJobModel);
 
         //For JSON deserialisation
         Configuration.setDefaults(new Configuration.Defaults() {
@@ -74,6 +93,8 @@ public class JobApiControllerListJobsTest extends AbstractPostLoginApiTest {
                 return EnumSet.noneOf(Option.class);
             }
         });
+
+        jobApiController = getInjector().getInstance(JobApiController.class);
     }
 
     @Test
@@ -84,24 +105,32 @@ public class JobApiControllerListJobsTest extends AbstractPostLoginApiTest {
         filter.setPageNumber(0);
         filter.setResultCount(1);
 
-        asserts(ninjaTestBrowser.postJson(getUrl(url), filter));
+        assertResponse(ninjaTestBrowser.postJson(getUrl(url), filter), jobApiController.toJobModelHackDto(models.get(0)));
 
         filter.setPageNumber(1);
 
-        asserts(ninjaTestBrowser.postJson(getUrl(url), filter));
+        assertResponse(ninjaTestBrowser.postJson(getUrl(url), filter), jobApiController.toJobModelHackDto(models.get(1)));
     }
 
-    public void asserts(String response) {
+    public void assertResponse(String response, JobModelHackDto dto) {
         assertThat(response, isJson());
         assertThat(response, hasJsonPath("$.jobModelHackDtos.length()", is(1)));
         assertThat(response, hasJsonPath("$.totalCount", is(2)));
 
-        JobModelHackDto jobModelHackDto = JsonPath.parse(response).read("$.jobModelHackDtos[0]", JobModelHackDto.class);
-        JobModel expectedJobModel = jobMap.remove(jobModelHackDto.getJobModel().getName());
+        assertJobModel(response, dto);
+    }
 
-        assertThat(jobModelHackDto, theSameBeanAs(new JobModelHackDto(expectedJobModel, expectedJobModel.getParentJob()))
-                .excludePath("JobModelHackDto.JobModel.ChildJobs.ParentJob")
-                .excludePath("JobModelHackDto.ParentJobModel.ChildJobs")
-                .excludePath("JobModelHackDto.JobModel.ParentJob"));
+    public void assertJobModel(String response, JobModelHackDto dto) {
+        assertThat(response, isJson(allOf(
+                withJsonPath("$.jobModelHackDtos[0].jobModel.title", is(dto.getJobModel().getTitle())),
+                withJsonPath("$.jobModelHackDtos[0].lastExecution", is(dto.getLastExecution())),
+                withJsonPath("$.jobModelHackDtos[0].nextExecution", is(dto.getNextExecution())),
+                withJsonPath("$.jobModelHackDtos[0].jobModel.id", is(dto.getJobModel().getId())),
+                withJsonPath("$.jobModelHackDtos[0].jobModel.name", is(dto.getJobModel().getName()))
+        )));
+
+        for (JobLabelModel jobLabelModel : dto.getJobModel().getLabels()) {
+            assertThat(response, hasJsonPath("$.jobModelHackDtos[0].jobModel.labels[*].label", hasItem(jobLabelModel.getLabel())));
+        }
     }
 }
