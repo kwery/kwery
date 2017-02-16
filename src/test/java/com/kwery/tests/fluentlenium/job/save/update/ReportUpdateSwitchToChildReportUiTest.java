@@ -110,7 +110,7 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
     @Test
     public void test() {
         JobDto jobDto = jobDto();
-        jobDto.setCronExpression(null);
+        jobDto.setCronExpression("");
         jobDto.setParentJobId(parentJobModel.getId());
         jobDto.setEmails(ImmutableSet.of("grx@bar.com", "brx@boo.com"));
 
