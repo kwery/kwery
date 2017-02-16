@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.datasource;
 
+import com.google.common.collect.Lists;
 import com.kwery.models.Datasource;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.ChromeFluentTest;
@@ -11,16 +12,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.sqlQueryDbSetUp;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static com.kwery.tests.util.TestUtil.sqlQueryModel;
-import static junit.framework.TestCase.fail;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 public class DatasourceDeleteUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
@@ -33,6 +31,8 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
 
     protected Datasource datasource0;
     protected Datasource datasource1;
+    private List<Datasource> datasources;
+    private SqlQueryModel sqlQueryModel;
 
     @Before
     public void setUpDeleteDatasourcePageTest() {
@@ -42,34 +42,56 @@ public class DatasourceDeleteUiTest extends ChromeFluentTest {
         datasource1 = datasource();
         datasourceDbSetup(datasource1);
 
-        SqlQueryModel sqlQueryModel = sqlQueryModel(datasource1);
+        sqlQueryModel = sqlQueryModel(datasource1);
         sqlQueryDbSetUp(sqlQueryModel);
 
-        page.go();
+        datasources = Lists.newArrayList(datasource0, datasource1);
+        datasources.sort(Comparator.comparing(Datasource::getId));
 
-        if (!page.isRendered()) {
-            fail("Could not render list datasources page");
-        }
+        page.go();
+        page.waitForModalDisappearance();
     }
 
     @Test
     public void testSuccess() {
-        page.delete(0);
+        Datasource toDeleteDatasource = null;
+        for (int i = 0; i < datasources.size(); ++i) {
+            toDeleteDatasource = datasources.get(i);
+            if (!sqlQueryModel.getDatasource().getId().equals(toDeleteDatasource.getId())) {
+                page.delete(i);
+                break;
+            }
+        }
+
         page.waitForModalDisappearance();
-        page.waitForDeleteSuccessMessage(datasource0.getLabel());
-        List<List<String>> rows = page.rows();
-        assertThat(rows, hasSize(1));
-        assertThat(rows.get(0).get(0), is(datasource1.getLabel()));
+        page.assertDeleteSuccessMessage(toDeleteDatasource.getLabel());
+
+        for (Datasource datasource : datasources) {
+            if (!datasource.getId().equals(toDeleteDatasource.getId())) {
+                page.assertDatasourceList(0, page.toMap(datasource));
+                break;
+            }
+        }
+
     }
 
     @Test
     public void testDeleteDatasourceWithSqlQuery() {
-        page.delete(1);
-        page.waitForDeleteFailureSqlQueryMessage();
-        List<List<String>> rows = page.rows();
-        assertThat(rows, hasSize(2));
-        assertThat(rows.get(0).get(0), is(datasource0.getLabel()));
-        assertThat(rows.get(1).get(0), is(datasource1.getLabel()));
+        Datasource toDeleteDatasource = null;
+        for (int i = 0; i < datasources.size(); ++i) {
+            toDeleteDatasource = datasources.get(i);
+            if (sqlQueryModel.getDatasource().getId().equals(toDeleteDatasource.getId())) {
+                page.delete(i);
+                break;
+            }
+        }
+
+        page.waitForModalDisappearance();
+        page.assertDeleteFailureMessage(toDeleteDatasource.getLabel());
+
+        for (int i = 0; i < datasources.size(); ++i) {
+            page.assertDatasourceList(i, page.toMap(datasources.get(i)));
+        }
     }
 
     @Override

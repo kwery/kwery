@@ -69,7 +69,7 @@ public class DatasourceDao {
     @Transactional
     public List<Datasource> getAll() {
         EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT d FROM Datasource d").getResultList();
+        return m.createQuery("SELECT d FROM Datasource d order by d.id asc").getResultList();
     }
 
     @Transactional
