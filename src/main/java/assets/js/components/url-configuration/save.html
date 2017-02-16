@@ -1,10 +1,17 @@
 <div class="container f-email-configuration">
     <action-result params="status: status, messages: messages"></action-result>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('url.configuration.save.header')" class="panel-title"></h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('url.configuration.save.header')"></strong></span>
+            </div>
         </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
         <div class="panel-body">
             <form id="urlConfigurationForm">
                 <div class="form-inline">
@@ -27,9 +34,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('url.configuration.save.help')"></label>
+                    <label data-bind="text: ko.i18n('url.configuration.save.help')" class="text-muted"></label>
                 </div>
-                <button type="submit" data-bind="text: ko.i18n('url.configuration.save')" class="btn btn-primary url-configuration-submit-f"></button>
+                <button type="submit" data-bind="text: ko.i18n('url.configuration.save')" class="btn btn-primary btn-lg url-configuration-submit-f"></button>
             </form>
         </div>
     </div>

@@ -34,6 +34,7 @@ public class UrlConfigurationUpdateUiTest extends ChromeFluentTest {
         setting = TestUtil.domainSetting();
         domainConfigurationDbSetUp(setting);
         page.go();
+        page.waitForModalDisappearance();
         page.waitForFormValues(setting);
     }
 
