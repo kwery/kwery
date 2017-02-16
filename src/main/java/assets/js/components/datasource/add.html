@@ -1,13 +1,20 @@
 <div class="container">
     <action-result params="status: status, messages: messages"></action-result>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: title" class="panel-title"></h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('datasource.add.header')"></strong></span>
+            </div>
         </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
         <div class="panel-body">
             <form id="addDatasourceForm">
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('datasource.add.type')"></label>
+                    <label data-bind="text: ko.i18n('datasource.add.type')" class="text-muted"></label>
                     <!-- ko template: {afterRender: refreshValidation} -->
                     <select class="form-control type-f" name="type"
                             data-bind="options: datasourceTypes, optionsText: 'label', optionsValue: 'value', value: datasourceType" required></select>
@@ -15,36 +22,36 @@
                     <!-- /ko -->
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('url')" for="url"></label>
+                    <label data-bind="text: ko.i18n('datasource.add.host')" class="text-muted" for="url"></label>
                     <input data-bind="value: url" minlength="1" class="form-control url-f" type="text" id="url" name="url" required>
                     <div class="help-block with-errors url-error-f"></div>
                 </div>
-                <div data-bind="visible: showDatabase" class="form-group">
+                <div data-bind="visible: showDatabase" class="form-group text-muted">
                     <label data-bind="text: ko.i18n('database')" for="database"></label>
                     <input data-bind="value: database" minlength="1" class="form-control database-f" type="text" id="database" name="database" required>
                     <div class="help-block with-errors database-error-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('port')" for="port"></label>
+                    <label data-bind="text: ko.i18n('port')" for="port" class="text-muted"></label>
                     <input data-bind="value: port" class="form-control port-f" type="text" id="port" name="port" required>
                     <div class="help-block with-errors port-error-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('user.name')" for="username"></label>
+                    <label data-bind="text: ko.i18n('user.name')" for="username" class="text-muted"></label>
                     <input data-bind="value: username" minlength="1" class="form-control username-f" type="text" id="username" name="username" required>
                     <div class="help-block with-errors username-error-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('password')" for="password"></label>
+                    <label data-bind="text: ko.i18n('password')" for="password" class="text-muted"></label>
                     <input data-bind="value: password" class="form-control password-f" type="password" id="password" name="password">
                     <div class="help-block with-errors password-error-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('label')" for="label"></label>
+                    <label data-bind="text: ko.i18n('label')" for="label" class="text-muted"></label>
                     <input data-bind="value: label" minlength="1" required class="form-control label-f" type="text" id="label" name="label">
                     <div class="help-block with-errors label-error-f"></div>
                 </div>
-                <button data-bind="text: actionLabel" type="submit" class="btn btn-primary save-datasource-f" id="create"></button>
+                <button data-bind="text: ko.i18n('datasource.add.save')" type="submit" class="btn btn-lg btn-primary save-datasource-f" id="create"></button>
             </form>
         </div>
     </div>

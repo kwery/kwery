@@ -16,7 +16,6 @@ import java.util.List;
 import static com.kwery.models.Datasource.Type.POSTGRESQL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
-import static com.kwery.tests.util.Messages.UPDATE_M;
 import static com.kwery.tests.util.TestUtil.datasource;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
@@ -64,8 +63,6 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
         assertThat(fields.get(3), is(mySqlDatasource.getUsername()));
         assertThat(fields.get(4), is(mySqlDatasource.getPassword()));
         assertThat(fields.get(5), is(mySqlDatasource.getLabel()));
-
-        assertThat(page.actionLabel().toLowerCase(), is(UPDATE_M.toLowerCase()));
 
         String newLabel = "newLabel";
         page.fillLabel(newLabel);

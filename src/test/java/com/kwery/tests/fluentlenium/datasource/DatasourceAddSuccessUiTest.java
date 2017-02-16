@@ -9,9 +9,6 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 
 import static com.kwery.models.Datasource.Type.*;
-import static com.kwery.tests.util.Messages.CREATE_M;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
@@ -43,8 +40,6 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
 
     @Test
     public void testAddMySqlDatasource() {
-        assertThat(page.actionLabel().toLowerCase(), is(CREATE_M.toLowerCase()));
-
         Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
 
         page.submitForm(datasource);
@@ -54,8 +49,6 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
 
     @Test
     public void testAddPostgreSqlDatasource() {
-        assertThat(page.actionLabel().toLowerCase(), is(CREATE_M.toLowerCase()));
-
         Datasource datasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
 
         page.submitForm(datasource);
@@ -65,8 +58,6 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
 
     @Test
     public void testAddRedshiftDatasource() {
-        assertThat(page.actionLabel().toLowerCase(), is(CREATE_M.toLowerCase()));
-
         Datasource datasource = redshiftDockerRule.getRedshiftDocker().datasource();
 
         page.submitForm(datasource);
