@@ -44,7 +44,6 @@ import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.utils.KweryUtil.fileName;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static ninja.Result.SC_200_OK;
@@ -204,7 +203,6 @@ public class JobApiController {
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(JobExecutionModel.Status.ONGOING));
         List<JobExecutionModel> jobExecutionModels = jobExecutionDao.filter(filter);
-        jobExecutionModels.sort(comparing(JobExecutionModel::getExecutionStart)); ;
         List<JobExecutionDto> dtos = jobExecutionModels.stream().map(this::jobExecutionModelToJobExecutionDto).collect(toList());
         if (logger.isTraceEnabled()) logger.trace(">");
         return json().render(dtos);
