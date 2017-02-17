@@ -2,22 +2,32 @@
     <action-result params="status: status,
                 messages: messages">
     </action-result>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('login.title')" class="panel-title"></h3>
+
+    <h1 class="text-center"><b>Kwery</b></h1>
+    <br>
+
+    <div class="row">
+        <div class="col-md-4">
         </div>
-        <div class="panel-body">
-            <form data-bind="submit: submit" id="loginForm">
-                <div class="form-group">
-                    <label data-bind="text: ko.i18n('user.name')" for="username" class="username-f"></label>
-                    <input data-bind="value: username, attr: {placeholder: ko.i18n('user.name')}" class="form-control" name="username" id="username">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form data-bind="submit: submit" id="loginForm">
+                        <h3 data-bind="text: ko.i18n('login.title')" class="text-muted"></h3>
+
+                        <div class="form-group">
+                            <input data-bind="value: username, attr: {placeholder: ko.i18n('user.name')}" class="form-control" name="username" id="username">
+                        </div>
+                        <div class="form-group">
+                            <input  data-bind="value: password, attr: {placeholder: ko.i18n('password')}" type="password" class="form-control" id="password">
+                        </div>
+                        <button data-bind="text: ko.i18n('login')" type="submit" class="btn btn-lg btn-primary" id="login"></button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label data-bind="text: ko.i18n('password')" for="password"></label>
-                    <input  data-bind="value: password, attr: {placeholder: ko.i18n('password')}" type="password" class="form-control" id="password">
-                </div>
-                <button data-bind="text: ko.i18n('login')" type="submit" class="btn btn-primary" id="login"></button>
-            </form>
+            </div>
+        </div>
+        <div class="col-md-4">
         </div>
     </div>
+
 </div>
