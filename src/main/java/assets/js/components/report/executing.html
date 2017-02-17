@@ -20,15 +20,11 @@
                     <p data-bind="text: ko.i18n('report.job.executing.start')"></p>
                 </div>
                 <div class="col-md-4 text-muted">
-                    <p class="text-muted">Actions</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <hr>
+                    <p data-bind="text: ko.i18n('report.job.executing.actions')"></p>
                 </div>
             </div>
             <!-- ko foreach: executions -->
+            <hr>
             <div data-bind="css: 'executing-reports-list-' + $index() +'-f'" class="row">
                 <div class="col-md-4">
                     <p data-bind="text: label" class="name-f"></p>

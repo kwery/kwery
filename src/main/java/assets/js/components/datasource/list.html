@@ -31,12 +31,8 @@
                     <p data-bind="text: ko.i18n('datasource.list.grid.actions')"></p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <hr>
-                </div>
-            </div>
             <!-- ko foreach: datasources -->
+            <hr>
             <div data-bind="css: 'datasource-list-' + $index() +'-f'" class="row">
                 <div class="col-md-3">
                     <p data-bind="text: url" class="host-f"></p>

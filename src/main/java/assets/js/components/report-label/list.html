@@ -26,13 +26,8 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <hr>
-                </div>
-            </div>
-
             <!--ko foreach:displayLabels -->
+            <hr>
             <div data-bind="css: 'report-label-list-' + $index() +'-f'" class="row">
                 <div class="col-md-9">
                     <p data-bind="html: formattedLabel" class="label-f"></p>
