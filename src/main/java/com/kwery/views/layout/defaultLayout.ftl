@@ -33,25 +33,20 @@
             <link href="/assets/css/jquery-ui.theme.css" rel="stylesheet">
 
             <style type="text/css">
-/*                #navbar {
+                #navbar {
                     background: white !important;
                 }
 
                 .navbar-default {
                     background: white !important;
-                }*/
+                }
 
                 .panel-heading {
-/*                    background: #ffe169 !important;*/
                     background: #f4f9fb !important;
                 }
 
                 body {
-                    background: #FBF9F8 !important;
-
-                }
-
-                body {
+                    background: #f0f4f5 !important;
                     font-family: 'Roboto', sans-serif !important;
                 }
 
@@ -59,22 +54,14 @@
                     background: white !important;
                 }
 
-                .top-buffer {
-                    margin-top:20px;
-                }
-
-                hr.double {
-                    border-top: 3px double #8c8b8b;
-                }
-
-                hr.dotted {
-                    border-top: 1px dashed #8c8b8b;
-                }
-
                 .modal {
                     position: fixed;
                     top: 50% !important;
                     left: 50%;
+                }
+
+                .kwery-color {
+                    color: #1f3a93;
                 }
 
             </style>

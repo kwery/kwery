@@ -43,13 +43,9 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <hr>
-                </div>
-            </div>
             <!-- ko foreach: reports -->
             <div data-bind="css: 'report-list-' + $index() +'-f'" class="row report-list-f">
+                <hr>
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-4 title-f">
@@ -100,26 +96,22 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <hr>
-                </div>
-            </div>
             <!-- /ko -->
-            <div class="row">
-                <div class="col-md-12">
-                    <nav>
-                        <ul class="pager pagination-f">
-                            <li data-bind="css: previousStatus" class="previous previous-f">
-                                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous" class="btn"></a>
-                            </li>
-                            <li data-bind="css: nextStatus" class="next next-f">
-                                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next" class="btn"></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <nav>
+                <ul class="pager pagination-f">
+                    <li data-bind="css: previousStatus" class="previous previous-f">
+                        <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous" class="btn"></a>
+                    </li>
+                    <li data-bind="css: nextStatus" class="next next-f">
+                        <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next" class="btn"></a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

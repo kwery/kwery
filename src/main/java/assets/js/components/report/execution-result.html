@@ -10,60 +10,65 @@
                 </div>
             </div>
         </div>
+        <br>
 
         <!-- ko foreach: sqlQueryExecutionResults -->
-            <hr>
-            <div class="container report-section-f">
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul class="list-inline">
-                            <li>
-                                <span class="h3 title-f"><strong data-bind="text: label" class="section-title-f"></strong></span>
-                            </li>
-                            <!-- ko if: downloadLink !== undefined -->
-                            <li>
-                                <a data-bind="attr: {href: downloadLink, title: ko.i18n('report.execution.result.download.tooltip')}, css: 'download-' + $index() + '-f' ">
-                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-                                </a>
-                            </li>
-                            <!-- /ko -->
-                        </ul>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <br>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div data-bind="visible: status === 'WARNING', css: 'warning-' + $index() + '-f'">
-                            <p data-bind="text: content" class="text-warning"></p>
-                        </div>
-                        <div data-bind="visible: status === 'FAILURE', css: 'failure-' + $index() + '-f'">
-                            <p data-bind="text: content" class="text-danger"></p>
-                        </div>
-                        <div class="table-responsive">
-                            <table data-bind="visible: status === 'SUCCESS', css: 'table-' + $index() + '-f'" class="table" id="executionResultTable">
-                                <thead>
-                                <tr data-bind="foreach: header" id="resultHeader">
-                                    <th data-bind="text: $data" class="text-muted"></th>
-                                </tr>
-                                </thead>
-                                <tbody id="resultContent">
-                                <!-- ko foreach: content -->
-                                <tr>
-                                    <!-- ko foreach: $data -->
-                                    <td data-bind="text: $data"></td>
-                                    <!-- /ko -->
-                                </tr>
+        <br>
+        <div class="report-section-f">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="list-inline">
+                                <li>
+                                    <span class="h3 title-f"><strong data-bind="text: label" class="section-title-f"></strong></span>
+                                </li>
+                                <!-- ko if: downloadLink !== undefined -->
+                                <li>
+                                    <a data-bind="attr: {href: downloadLink, title: ko.i18n('report.execution.result.download.tooltip')}, css: 'download-' + $index() + '-f' ">
+                                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                    </a>
+                                </li>
                                 <!-- /ko -->
-                                </tbody>
-                            </table>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div data-bind="visible: status === 'WARNING', css: 'warning-' + $index() + '-f'">
+                                <p data-bind="text: content" class="text-warning"></p>
+                            </div>
+                            <div data-bind="visible: status === 'FAILURE', css: 'failure-' + $index() + '-f'">
+                                <p data-bind="text: content" class="text-danger"></p>
+                            </div>
+                            <div class="table-responsive">
+                                <table data-bind="visible: status === 'SUCCESS', css: 'table-' + $index() + '-f'" class="table" id="executionResultTable">
+                                    <thead>
+                                    <tr data-bind="foreach: header" id="resultHeader">
+                                        <th data-bind="text: $data" class="text-muted"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="resultContent">
+                                    <!-- ko foreach: content -->
+                                    <tr>
+                                        <!-- ko foreach: $data -->
+                                        <td data-bind="text: $data"></td>
+                                        <!-- /ko -->
+                                    </tr>
+                                    <!-- /ko -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
         <!-- /ko -->
     </div>
 </div>
