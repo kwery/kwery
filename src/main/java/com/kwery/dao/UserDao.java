@@ -80,7 +80,7 @@ public class UserDao {
     @Transactional
     public List<User> list() {
         EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT u FROM User u").getResultList();
+        return m.createQuery("SELECT u FROM User u order by u.id").getResultList();
     }
 
     @Transactional
