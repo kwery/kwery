@@ -190,6 +190,16 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
                     } else {
                         ko.utils.arrayForEach(result.jobExecutionDtos, function(jobExecutionDto){
                             jobExecutionDto.executionResultLink = "/#report/" + params.jobId + "/execution/" + jobExecutionDto.executionId;
+
+                            if (jobExecutionDto.status === 'SUCCESS') {
+                             jobExecutionDto.css = "text-success";
+                            } else if (jobExecutionDto.status === 'FAILURE') {
+                                jobExecutionDto.css = "text-danger";
+                            } else if (jobExecutionDto.status === 'ONGOING') {
+                                jobExecutionDto.css = "text-warning";
+                            } else if (jobExecutionDto.status === 'KILLED') {
+                                jobExecutionDto.css = "text-warning";
+                            }
                         });
                         self.executions(result.jobExecutionDtos);
                         self.totalCount(result.totalCount);

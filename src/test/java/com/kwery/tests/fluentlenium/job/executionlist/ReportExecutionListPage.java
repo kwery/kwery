@@ -2,19 +2,22 @@ package com.kwery.tests.fluentlenium.job.executionlist;
 
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
+import com.kwery.tests.fluentlenium.job.reportlist.ActionResultComponent;
 import org.fluentlenium.core.annotation.PageUrl;
-import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
+import org.fluentlenium.core.hook.wait.WaitHook;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
 
+import static com.kwery.tests.fluentlenium.job.executionlist.ReportExecutionListPage.ReportExecution.*;
 import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.*;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
@@ -23,6 +26,7 @@ import static org.openqa.selenium.By.id;
 public class ReportExecutionListPage extends KweryFluentPage implements RepoDashPage {
     protected int jobId;
     protected int resultCount;
+    protected ActionResultComponent actionResultComponent;
 
     @Override
     public boolean isRendered() {
@@ -32,20 +36,6 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
 
     public void waitForRows(int rows) {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".execution-list-table-f tr")).size(rows + 1); //Accommodate headers
-    }
-
-    public List<ReportExecutionListRow> executionListTable() {
-        List<ReportExecutionListRow> rows = new LinkedList<>();
-        for (FluentWebElement trs : $(".execution-list-table-f tbody tr")) {
-            rows.add(new ReportExecutionListRow(
-                            trs.find(className("execution-start-f")).text(),
-                            trs.find(className("execution-end-f")).text(),
-                            trs.find(className("execution-status-f")).text(),
-                            trs.find(className("execution-status-f")).attribute("href")
-                    )
-            );
-        }
-        return rows;
     }
 
     public int getJobId() {
@@ -99,17 +89,11 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
     }
 
     public void fillEnd(String endDate) {
-        $(".filter-end-f").fill().with(endDate);
+        $(".filter-end-f").withHook(WaitHook.class).fill().with(endDate);
     }
 
     public void fillStart(String startDate) {
-        $(".filter-start-f").fill().with(startDate);
-    }
-
-    public void waitForExecutionListTableUpdate(String firstRowStartDate) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> executionListTable().get(0).getStart().equals(firstRowStartDate)
-        );
+        $(".filter-start-f").withHook(WaitHook.class).fill().with(startDate);
     }
 
     public void waitForStartValidationError() {
@@ -137,15 +121,35 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
         actions.build().perform();
     }
 
-    public void deleteExecution(int index) {
-        el(String.format(".execution-list-row-%d-f .delete-report-execution-f", index)).click();
+    public void deleteExecution(int row) {
+        el("div", withClass().contains(String.format("report-execution-list-%d-f", row))).el("button.delete-f").withHook(WaitHook.class).click();
     }
 
-    public void waitForDeleteSuccessMessage() {
-        waitForSuccessMessage(REPORT_JOB_EXECUTION_DELETE_M);
+    public void assertDeleteSuccessMessage() {
+        actionResultComponent.assertSuccessMessage(REPORT_JOB_EXECUTION_DELETE_M);
     }
 
-    public void waitForRowDelete(int index) {
-        waitForElementDisappearance(className(String.format(".execution-list-row-%d-f", index)));
+    public enum ReportExecution {
+        start, end, status, reportLink
+    }
+
+    public void assertRows(int count) {
+        assertThat(el(".execution-list-container-f",
+                withPredicate(fluentWebElement -> fluentWebElement.$(".report-execution-list-row-f").size() == count))).isDisplayed();
+    }
+
+    public void assertReportExecutionList(int row, Map<ReportExecution, ?> map) {
+        assertThat(el(String.format(".report-execution-list-%d-f .start-f", row), withText(String.valueOf(map.get(start))))).isDisplayed();
+        assertThat(el(String.format(".report-execution-list-%d-f .end-f", row), withText(String.valueOf(map.get(end))))).isDisplayed();
+        assertThat(el(String.format(".report-execution-list-%d-f .status-f", row), withText(String.valueOf(map.get(status))))).isDisplayed();
+
+        if (map.containsKey(reportLink)) {
+            assertThat(el(String.format(".report-execution-list-%d-f .report-link-f", row), with("href").contains(String.valueOf(map.get(reportLink)))))
+                    .isDisplayed();
+        } else {
+            assertThat(el(String.format(".report-execution-list-%d-f", row),
+                    withPredicate(fluentWebElement -> fluentWebElement.$(".actions-f").size() == 1))).isDisplayed();
+            assertThat(el(String.format(".report-execution-list-%d-f button", row), withClass().contains("delete-f"))).isDisplayed();
+        }
     }
 }

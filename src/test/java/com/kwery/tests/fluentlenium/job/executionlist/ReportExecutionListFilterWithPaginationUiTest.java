@@ -3,11 +3,6 @@ package com.kwery.tests.fluentlenium.job.executionlist;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
-import static com.kwery.models.JobExecutionModel.Status.*;
-import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -25,11 +20,9 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         String end = "Sat Jan 07 2017 05:40";
         page.filterResult(start, end);
         page.waitForModalDisappearance();
-        page.waitForExecutionListTableUpdate("Sat Jan 07 2017 05:30");
-        List<ReportExecutionListRow> row = page.executionListTable();
-        assertThat(row, hasSize(1));
-        assertThat(row.get(0), theSameBeanAs(new ReportExecutionListRow("Sat Jan 07 2017 05:30", "Sat Jan 07 2017 05:40", FAILURE.name(),
-                ninjaServerRule.getServerUrl() + String.format("/#report/%d/execution/%s", jobModel.getId(), jem1.getExecutionId()))));
+
+        page.assertReportExecutionList(0, toMap(controller.jobExecutionModelToJobExecutionDto(jem1), jobModel));
+        page.assertRows(1);
 
         assertThat(page.isPreviousEnabled(), is(false));
         assertThat(page.isNextEnabled(), is(true));
@@ -37,10 +30,9 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         page.clickNext();
         page.waitForModalDisappearance();
         page.waitUntilPreviousIsEnabled();
-        row = page.executionListTable();
-        assertThat(row, hasSize(1));
-        assertThat(row.get(0), theSameBeanAs(new ReportExecutionListRow("Sat Jan 07 2017 05:10", "Sat Jan 07 2017 05:20", SUCCESS.name(),
-                ninjaServerRule.getServerUrl() + String.format("/#report/%d/execution/%s", jobModel.getId(), jem0.getExecutionId()))));
+
+        page.assertReportExecutionList(0, toMap(controller.jobExecutionModelToJobExecutionDto(jem0), jobModel));
+        page.assertRows(1);
 
         assertThat(page.isPreviousEnabled(), is(true));
         assertThat(page.isNextEnabled(), is(false));
@@ -48,10 +40,9 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         page.clickPrevious();
         page.waitForModalDisappearance();
         page.waitUntilPreviousIsDisabled();
-        row = page.executionListTable();
-        assertThat(row, hasSize(1));
-        assertThat(row.get(0), theSameBeanAs(new ReportExecutionListRow("Sat Jan 07 2017 05:30", "Sat Jan 07 2017 05:40", FAILURE.name(),
-                ninjaServerRule.getServerUrl() + String.format("/#report/%d/execution/%s", jobModel.getId(), jem1.getExecutionId()))));
+
+        page.assertReportExecutionList(0, toMap(controller.jobExecutionModelToJobExecutionDto(jem1), jobModel));
+        page.assertRows(1);
 
         assertThat(page.isNextEnabled(), is(true));
 
@@ -59,14 +50,15 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         page.clickNext();
         page.waitForModalDisappearance();
         page.waitUntilPreviousIsEnabled();
+
         start = "Sat Jan 07 2017 06:05";
         end = "Sat Jan 07 2017 06:15";
         page.filterResult(start, end);
         page.waitForModalDisappearance();
-        page.waitForExecutionListTableUpdate("Sat Jan 07 2017 06:10");
-        row = page.executionListTable();
-        assertThat(row, hasSize(1));
-        assertThat(row.get(0), theSameBeanAs(new ReportExecutionListRow("Sat Jan 07 2017 06:10", "", ONGOING.name(), null)));
+
+        page.assertReportExecutionList(0, toMap(controller.jobExecutionModelToJobExecutionDto(jem3), jobModel));
+        page.assertRows(1);
+
         assertThat(page.isPreviousEnabled(), is(false));
         assertThat(page.isNextEnabled(), is(false)); //Only one result in the range
     }
