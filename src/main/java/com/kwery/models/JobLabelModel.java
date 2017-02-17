@@ -29,6 +29,7 @@ public class JobLabelModel {
     protected String label;
 
     @OneToMany(mappedBy = "parentLabel", fetch = FetchType.EAGER)
+    @OrderBy
     protected Set<JobLabelModel> childLabels;
 
     @JsonIgnore /*To prevent stack overflow error while serializing this into JSON*/

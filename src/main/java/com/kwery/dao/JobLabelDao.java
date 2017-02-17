@@ -8,8 +8,10 @@ import com.kwery.models.JobModel;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.Collection;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class JobLabelDao {
@@ -59,7 +61,10 @@ public class JobLabelDao {
         CriteriaBuilder cb = e.getCriteriaBuilder();
         CriteriaQuery<JobLabelModel> cq = cb.createQuery(JobLabelModel.class);
         Root<JobLabelModel> rootEntry = cq.from(JobLabelModel.class);
+
         CriteriaQuery<JobLabelModel> all = cq.select(rootEntry);
+        all.orderBy(cb.asc(rootEntry.get("id")));
+
         TypedQuery<JobLabelModel> allQuery = e.createQuery(all);
         return allQuery.getResultList();
     }
