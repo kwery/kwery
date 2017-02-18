@@ -136,7 +136,7 @@ public class JobApiController {
                 jobModel.getChildJobs().addAll(jobFromDb.getChildJobs());
                 if (jobDto.getParentJobId() > 0) {
                     //They are mutually exclusive
-                    jobModel.setCronExpression("");
+                    jobModel.setCronExpression(null);
                 }
 
                 //Deschedule if it was a scheduled job earlier
@@ -243,7 +243,7 @@ public class JobApiController {
     public JobModelHackDto toJobModelHackDto(JobModel job) {
         JobModelHackDto dto = new JobModelHackDto(job, job.getParentJob());
 
-        if (!"".equals(job.getCronExpression())) {
+        if (!"".equals(Strings.nullToEmpty(job.getCronExpression()))) {
             //TODO - Instantiate through Guice
             Predictor predictor = new Predictor(job.getCronExpression());
             dto.setNextExecution(new SimpleDateFormat(DISPLAY_DATE_FORMAT).format(predictor.nextMatchingDate()));
