@@ -395,20 +395,6 @@ public class DbUtil {
         return builder.build();
     }
 
-    public static IDataSet kweryVersionTable(KweryVersionModel kweryVersionModel) throws DataSetException {
-        DataSetBuilder builder = new DataSetBuilder();
-        builder.ensureTableIsPresent(KweryVersionModel.KWERY_VERSION_MODEL_TABLE);
-
-        if (kweryVersionModel != null) {
-            builder.newRow(KweryVersionModel.KWERY_VERSION_MODEL_TABLE)
-                    .with(KweryVersionModel.ID_COLUMN, kweryVersionModel.getId())
-                    .with(KweryVersionModel.VERSION_COLUMN, kweryVersionModel.getVersion())
-                    .add();
-        }
-
-        return builder.build();
-    }
-
     public static void datasourceDbSetup(Datasource datasource) {
         DbSetup dbSetup = new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
@@ -771,20 +757,6 @@ public class DbUtil {
                                 .build()
                 )
         ).launch();
-    }
-
-    public static void kweryVersionDbSetup(KweryVersionModel kweryVersionModel) {
-        DbSetup dbSetup = new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                insertInto(KweryVersionModel.KWERY_VERSION_MODEL_TABLE)
-                        .row()
-                        .column(KweryVersionModel.ID_COLUMN, kweryVersionModel.getId())
-                        .column(KweryVersionModel.VERSION_COLUMN, kweryVersionModel.getVersion())
-                        .end()
-                        .build()
-        );
-
-        dbSetup.launch();
     }
 
     public static int dbId() {
