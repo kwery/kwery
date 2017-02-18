@@ -6,7 +6,7 @@
     <artifactId>kwery</artifactId>
     <packaging>jar</packaging>
     <groupId>com.kwery</groupId>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.7-SNAPSHOT</version>
 
     <url>http://www.getkwery.com</url>
 
