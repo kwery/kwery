@@ -9,7 +9,6 @@ import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -99,11 +98,14 @@ public class SqlQueryExecutionDao {
 
         q.where(predicates.toArray(new Predicate[]{}));
 
-        TypedQuery<SqlQueryExecutionModel> tq = m.createQuery(q)
-                .setMaxResults(filter.getResultCount())
-                .setFirstResult(filter.getPageNumber() * filter.getResultCount());
-
-        return tq.getResultList();
+        if (filter.getResultCount() == 0) {
+            return m.createQuery(q).getResultList();
+        } else {
+            return m.createQuery(q)
+                    .setMaxResults(filter.getResultCount())
+                    .setFirstResult(filter.getPageNumber() * filter.getResultCount())
+                    .getResultList();
+        }
     }
 
     @UnitOfWork

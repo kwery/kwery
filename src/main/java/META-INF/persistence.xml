@@ -15,7 +15,8 @@
             <property name="hibernate.hbm2ddl.auto" value="validate" />
             <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.format_sql" value="true" />
-            
+            <property name="hibernate.id.new_generator_mappings" value="false" />
+
             <!-- Connection Pooling settings -->
             <property name="hibernate.connection.provider_class" value="org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider" />
             <property name="hibernate.connection.autocommit" value="false"/>
@@ -40,7 +41,8 @@
             <property name="hibernate.hbm2ddl.auto" value="validate" />
             <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.format_sql" value="true" />
-            
+            <property name="hibernate.id.new_generator_mappings" value="false" />
+
             <!-- Connection Pooling settings -->
             <property name="hibernate.connection.provider_class" value="org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider" />
 
