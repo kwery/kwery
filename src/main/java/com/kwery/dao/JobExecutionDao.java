@@ -1,5 +1,6 @@
 package com.kwery.dao;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -8,9 +9,10 @@ import com.kwery.models.JobExecutionModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +58,10 @@ public class JobExecutionDao {
 
     @Transactional
     public List<JobExecutionModel> filter(JobExecutionSearchFilter filter) {
+        if (filter.getPageNumber() > 0) {
+            Preconditions.checkArgument(filter.getResultCount() > 0, "Result count cannot be zero if page number is set");
+        }
+
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder c = m.getCriteriaBuilder();
 
@@ -95,11 +101,14 @@ public class JobExecutionDao {
         q.where(predicates.toArray(new Predicate[]{}));
         q.orderBy(c.desc(root.get("executionStart")));
 
-        TypedQuery<JobExecutionModel> tq = m.createQuery(q)
-                .setMaxResults(filter.getResultCount())
-                .setFirstResult(filter.getPageNumber() * filter.getResultCount());
-
-        return tq.getResultList();
+        if (filter.getResultCount() == 0) {
+            return m.createQuery(q).getResultList();
+        } else {
+            return m.createQuery(q)
+                    .setMaxResults(filter.getResultCount())
+                    .setFirstResult(filter.getPageNumber() * filter.getResultCount())
+                    .getResultList();
+        }
     }
 
     @Transactional
@@ -156,19 +165,10 @@ public class JobExecutionDao {
         filter.setJobId(jobId);
         List<JobExecutionModel> jobExecutionModels = filter(filter);
 
-        //TODO - figure out why this is needed
+
         for (JobExecutionModel jobExecutionModel : jobExecutionModels) {
-            jobExecutionModel.getSqlQueryExecutionModels().clear();
+            m.remove(jobExecutionModel);
         }
-
-        m.flush();
-
-        CriteriaBuilder criteriaBuilder = m.getCriteriaBuilder();
-        CriteriaDelete delete = criteriaBuilder.createCriteriaDelete(JobExecutionModel.class);
-        Root jobExecutionModel = delete.from(JobExecutionModel.class);
-        delete.where(criteriaBuilder.equal(jobExecutionModel.get("jobModel").get("id"), jobId));
-        Query query = m.createQuery(delete);
-        query.executeUpdate();
     }
 
     @Transactional
