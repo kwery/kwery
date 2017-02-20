@@ -11,9 +11,9 @@ import static org.junit.Assert.assertThat;
 public class KweryUtilsTest {
     @Test
     public void testFilename() {
-        String expected = "this-is-a-long-title-wed-jan-04.csv";
+        String expected = "this-is-a-long-title-with-hyphen---and-underscore-_-wed-jan-04.csv";
 
-        String title = "   this is   a   long   title    ";
+        String title = "   this is   a   long   title    , with hyphen - and underscore _ ";
         Calendar calendar = Calendar.getInstance();
         calendar.set(2017, Calendar.JANUARY, 4);
         long epoch = calendar.getTimeInMillis();
