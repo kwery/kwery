@@ -1,5 +1,6 @@
 package com.kwery.utils;
 
+import com.google.common.base.CharMatcher;
 import com.kwery.models.JobLabelModel;
 
 import java.io.*;
@@ -11,6 +12,7 @@ public class KweryUtil {
     public static final String CSV_FILE_NAME_DATE_PART = "EEE-MMM-dd";
 
     public static String fileName(String title, long epoch) {
+        title = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.WHITESPACE).or(CharMatcher.anyOf("-_")).retainFrom(title);
         return (title + " " + new SimpleDateFormat(CSV_FILE_NAME_DATE_PART).format(epoch)).toLowerCase().trim().replaceAll("\\s+", "-") + ".csv";
     }
 
