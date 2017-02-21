@@ -16,4 +16,6 @@ kwery.log
 kwery.*.log.gz
 #VI swap files
 *.swp
+#Kwery result files
+kwery_files
 

@@ -1,23 +1,31 @@
 package com.kwery.tests.services.job.email.sqlqueryemailsetting;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.kwery.models.*;
 import com.kwery.services.job.ReportEmailSender;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
+import com.kwery.utils.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -33,13 +41,13 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
     ReportEmailSender reportEmailSender;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         JobModel jobModel = new JobModel();
         jobModel.setTitle("Test Report");
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(ImmutableSet.of("foo@bar.com"));
 
-        sqlQueryModel0 = new SqlQueryModel();
+        sqlQueryModel0 = TestUtil.sqlQueryModel();
         sqlQueryModel0.setId(1);
         sqlQueryModel0.setTitle("Select Authors");
         jobModel.getSqlQueries().add(sqlQueryModel0);
@@ -51,15 +59,19 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
 
         jobExecutionModel.setSqlQueryExecutionModels(new HashSet<>());
 
+        KweryDirectory kweryDirectory = getInstance(KweryDirectory.class);
+        File file = kweryDirectory.createFile();
+
+        String csv = String.join(System.lineSeparator(), "author", "peter thiel") + System.lineSeparator();
+
+        Files.write(Paths.get(file.getPath()), csv.getBytes(), StandardOpenOption.APPEND);
+
         sqlQueryExecutionModel0 = new SqlQueryExecutionModel();
         sqlQueryExecutionModel0.setId(1);
-        sqlQueryExecutionModel0.setResult(TestUtil.toJson(ImmutableList.of(
-                ImmutableList.of("author"),
-                ImmutableList.of("peter thiel")
-                )
-        ));
+        sqlQueryExecutionModel0.setResultFileName(file.getName());
         sqlQueryExecutionModel0.setSqlQuery(sqlQueryModel0);
         sqlQueryExecutionModel0.setJobExecutionModel(jobExecutionModel);
+        sqlQueryExecutionModel0.setStatus(SqlQueryExecutionModel.Status.SUCCESS);
 
         jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel0);
 
@@ -77,6 +89,8 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
     }
 
     public void assertEmail(boolean emptyBody, boolean emptyAttachment) throws Exception {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
+
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));
 
         WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);

@@ -32,7 +32,7 @@ public class ReportExecutingListUiTest extends ChromeFluentTest {
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
-    protected JobApiController controller = new JobApiController(null, null, null, null, null, null, null, null, null);
+    protected JobApiController controller = new JobApiController(null, null, null, null, null, null, null, null, null, null);
 
     @Page
     protected ReportExecutingPage page;

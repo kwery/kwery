@@ -1,21 +1,6 @@
-/**
- * Copyright (C) 2012 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.kwery.conf;
 
+import com.google.common.io.Files;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -25,15 +10,29 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
-import com.kwery.services.scheduler.JsonToHtmlTableConverterFactory;
+import com.kwery.services.kwerydirectory.KweryDirectoryChecker;
+import com.kwery.services.kweryversion.KweryVersionUpdater;
+import com.kwery.services.migration.ResultMigrator;
+import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
+import com.kwery.utils.*;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
+import ninja.utils.NinjaConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Singleton
 public class Module extends AbstractModule {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     protected void configure() {
         bind(SchedulerListener.class).to(SchedulerListenerImpl.class);
         bind(TaskExecutorListener.class).to(TaskExecutorListenerImpl.class);
@@ -41,7 +40,12 @@ public class Module extends AbstractModule {
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
         install(new FactoryModuleBuilder().build(JobTaskFactory.class));
         install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
-        install(new FactoryModuleBuilder().build(JsonToHtmlTableConverterFactory.class));
+        install(new FactoryModuleBuilder().build(CsvToHtmlConverterFactory.class));
+        bind(ResultMigrator.class);
+        bind(KweryVersionUpdater.class);
+        bind((KweryDirectoryChecker.class));
+        bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
+        bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);
     }
 
     @Provides
@@ -57,5 +61,41 @@ public class Module extends AbstractModule {
     @Provides
     protected SqlQueryModel provideQueryRun() {
         return new SqlQueryModel();
+    }
+
+    @Provides @Singleton
+    protected KweryDirectory kweryDirectory() throws URISyntaxException {
+        File base = null;
+        //TODO - Is there a better way to do this?
+        if (NinjaConstant.MODE_TEST.equals(System.getProperty(NinjaConstant.MODE_KEY_NAME))) {
+            base = Files.createTempDir();
+        } else {
+            //This is there only to help in development, should not be used in production as we want to mandate the files being is the same folder as the application jar
+            String kweryBaseDirectory = System.getProperty("kweryBaseDirectory");
+            if (!"".equals(kweryBaseDirectory)) {
+                logger.info("Kwery base directory has been passed through JVM arguments, using that - " + kweryBaseDirectory);
+                base = new File(kweryBaseDirectory, "kwery_files");
+            } else {
+                //Idea is to create the base directory for storing files in the same directory as the one in which Kwery application runs
+                //http://stackoverflow.com/questions/320542/how-to-get-the-path-of-a-running-jar-file
+                //Get the directory from which the jar file running Kwery was started
+                Path path = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+                base = new File(path.toFile(), "kwery-files");
+            }
+        }
+
+        if (base.exists()) {
+            logger.info("Base directory {} exists", base);
+        } else {
+            logger.info("Creating base directory {} to stores result files", base);
+
+            if (!base.mkdir()) {
+                logger.error("Could not create base directory {} to store files", base);
+                logger.error("Kwery shutting down");
+                System.exit(-1);
+            }
+        }
+
+        return new KweryDirectory(base);
     }
 }

@@ -6,10 +6,11 @@ import java.util.List;
 
 public class SqlQueryExecutionResultDto {
     protected String title;
-    protected List<List<?>> jsonResult;
+    protected List<String[]> jsonResult;
     protected SqlQueryExecutionModel.Status status;
     protected String errorResult;
     protected String executionId;
+    protected String warning;
 
     public String getTitle() {
         return title;
@@ -19,11 +20,11 @@ public class SqlQueryExecutionResultDto {
         this.title = title;
     }
 
-    public List<List<?>> getJsonResult() {
+    public List<String[]> getJsonResult() {
         return jsonResult;
     }
 
-    public void setJsonResult(List<List<?>> jsonResult) {
+    public void setJsonResult(List<String[]> jsonResult) {
         this.jsonResult = jsonResult;
     }
 
@@ -49,5 +50,13 @@ public class SqlQueryExecutionResultDto {
 
     public void setExecutionId(String executionId) {
         this.executionId = executionId;
+    }
+
+    public String getWarning() {
+        return warning;
+    }
+
+    public void setWarning(String warning) {
+        this.warning = warning;
     }
 }

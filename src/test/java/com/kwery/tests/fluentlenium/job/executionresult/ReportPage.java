@@ -2,7 +2,6 @@ package com.kwery.tests.fluentlenium.job.executionresult;
 
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
@@ -83,7 +82,11 @@ public class ReportPage extends KweryFluentPage implements RepoDashPage {
        return !el(String.format("table-%d-f th", index)).present() && !el(String.format("table-%d-f tr", index)).present();
     }
 
-    public String getContent(int index) {
-        return $(String.format(".status-%d-f p", index)).text();
+    public String getFailureContent(int index) {
+        return $(String.format(".failure-%d-f p", index)).text();
+    }
+
+    public String getWarningContent(int index) {
+        return $(String.format(".warning-%d-f p", index)).text();
     }
 }

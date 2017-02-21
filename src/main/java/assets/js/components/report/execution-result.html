@@ -25,24 +25,27 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="panel-body">
-                        <div data-bind="visible: status === 'FAILURE', css: 'status-' + $index() + '-f'">
+                        <div data-bind="visible: status === 'WARNING', css: 'warning-' + $index() + '-f'">
+                            <p data-bind="text: content"></p>
+                        </div>
+                        <div data-bind="visible: status === 'FAILURE', css: 'failure-' + $index() + '-f'">
                             <p data-bind="text: content"></p>
                         </div>
                         <div class="table-responsive">
                             <table data-bind="visible: status === 'SUCCESS', css: 'table-' + $index() + '-f'" class="table" id="executionResultTable">
                                 <thead>
-                                <tr data-bind="foreach: header" id="resultHeader">
-                                    <th data-bind="text: $data"></th>
-                                </tr>
+                                    <tr data-bind="foreach: header" id="resultHeader">
+                                        <th data-bind="text: $data"></th>
+                                    </tr>
                                 </thead>
                                 <tbody id="resultContent">
-                                <!-- ko foreach: content -->
-                                <tr>
-                                    <!-- ko foreach: $data -->
-                                    <td data-bind="text: $data"></td>
+                                    <!-- ko foreach: content -->
+                                        <tr>
+                                            <!-- ko foreach: $data -->
+                                            <td data-bind="text: $data"></td>
+                                            <!-- /ko -->
+                                        </tr>
                                     <!-- /ko -->
-                                </tr>
-                                <!-- /ko -->
                                 </tbody>
                             </table>
                         </div>

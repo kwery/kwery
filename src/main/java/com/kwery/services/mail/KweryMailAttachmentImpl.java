@@ -1,18 +1,20 @@
 package com.kwery.services.mail;
 
+import java.io.File;
+
 public class KweryMailAttachmentImpl implements KweryMailAttachment {
-    protected String content;
+    protected File file;
     protected String name;
     protected String description;
 
     @Override
-    public String getContent() {
-        return content;
+    public File getFile() {
+        return file;
     }
 
     @Override
-    public void setContent(String content) {
-        this.content = content;
+    public void setFile(File fileName) {
+        this.file = fileName;
     }
 
     @Override

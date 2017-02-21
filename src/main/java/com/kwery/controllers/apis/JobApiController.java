@@ -1,5 +1,6 @@
 package com.kwery.controllers.apis;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -8,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import com.kwery.controllers.MessageKeys;
 import com.kwery.dao.*;
 import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
@@ -15,8 +17,9 @@ import com.kwery.models.*;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobSearchFilter;
 import com.kwery.services.job.JobService;
-import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
+import com.kwery.utils.CsvReaderFactory;
+import com.kwery.utils.KweryDirectory;
 import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
 import com.kwery.views.ActionResult;
@@ -30,10 +33,7 @@ import ninja.utils.ResponseStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,7 +46,8 @@ import static com.kwery.views.ActionResult.Status.success;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static ninja.Result.*;
+import static ninja.Result.SC_200_OK;
+import static ninja.Result.SC_404_NOT_FOUND;
 import static ninja.Results.json;
 
 public class JobApiController {
@@ -62,12 +63,13 @@ public class JobApiController {
     protected final Messages messages;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
     protected final JobLabelDao jobLabelDao;
-    protected final JsonToCsvConverter jsonToCsvConverter;
+    protected final KweryDirectory kweryDirectory;
+    protected final CsvReaderFactory csvReaderFactory;
 
     @Inject
-    public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao,
-                            SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao,
-                            JsonToCsvConverter jsonToCsvConverter, Messages messages) {
+    public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
+                            SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao, KweryDirectory kweryDirectory, Messages messages,
+                            CsvReaderFactory csvReaderFactory) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
         this.jobService = jobService;
@@ -75,8 +77,9 @@ public class JobApiController {
         this.sqlQueryDao = sqlQueryDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.jobLabelDao = jobLabelDao;
-        this.jsonToCsvConverter = jsonToCsvConverter;
+        this.kweryDirectory = kweryDirectory;
         this.messages = messages;
+        this.csvReaderFactory = csvReaderFactory;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -318,43 +321,39 @@ public class JobApiController {
             List<SqlQueryExecutionResultDto> sqlQueryExecutionResultDtos = new LinkedList<>();
             if (!jobExecutionModels.isEmpty()) {
                 for (SqlQueryExecutionModel sqlQueryExecutionModel : ReportUtil.orderedExecutions(jobExecutionModel)) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    String result = sqlQueryExecutionModel.getResult();
-
                     if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.SUCCESS) {
-                        if (result == null) {
-                            //Insert SQL
+                        if (isInsertQuery(sqlQueryExecutionModel)) {
                             SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
                             dto.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
                             dto.setStatus(sqlQueryExecutionModel.getStatus());
                             dto.setErrorResult("");
                             sqlQueryExecutionResultDtos.add(dto);
                         } else {
-                            if (isJson(result)) {
-                                List<List<?>> jsonResult = new LinkedList<>();
-                                if (!Strings.nullToEmpty(result).trim().equals("")) {
-                                    jsonResult = objectMapper.readValue(
-                                            result,
-                                            objectMapper.getTypeFactory().constructCollectionType(List.class, List.class)
-                                    );
-                                }
+                            SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
+                            dto.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
+                            dto.setStatus(sqlQueryExecutionModel.getStatus());
+                            dto.setExecutionId(sqlQueryExecutionModel.getExecutionId());
+                            sqlQueryExecutionResultDtos.add(dto);
 
-                                SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
-                                dto.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
-                                dto.setStatus(sqlQueryExecutionModel.getStatus());
-                                dto.setJsonResult(jsonResult);
-                                dto.setExecutionId(sqlQueryExecutionModel.getExecutionId());
-                                sqlQueryExecutionResultDtos.add(dto);
+                            String resultFileName = sqlQueryExecutionModel.getResultFileName();
+                            File resultFile = kweryDirectory.getFile(resultFileName);
+                            if (logger.isTraceEnabled()) logger.trace("Result file - " + resultFile);
+
+                            if (KweryUtil.isFileWithinLimits(resultFile)) {
+                                try (FileReader reader = new FileReader(resultFile);
+                                     CSVReader csvReader = csvReaderFactory.create(reader)) {
+                                    dto.setJsonResult(csvReader.readAll());
+                                }
                             } else {
-                                logger.error("SQL query execution result is success but result is not in json format for job id {} and job execution id {}",
-                                        jobExecutionModel.getJobModel().getId(), jobExecutionModel.getId());
+                                String message = messages.get(MessageKeys.JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING, context, Optional.of(json)).get();
+                                dto.setWarning(message);
                             }
                         }
                     } else if (sqlQueryExecutionModel.getStatus() == SqlQueryExecutionModel.Status.FAILURE) {
                         SqlQueryExecutionResultDto dto = new SqlQueryExecutionResultDto();
                         dto.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
                         dto.setStatus(sqlQueryExecutionModel.getStatus());
-                        dto.setErrorResult(result);
+                        dto.setErrorResult(sqlQueryExecutionModel.getExecutionError());
                         sqlQueryExecutionResultDtos.add(dto);
                     }
                 }
@@ -363,6 +362,10 @@ public class JobApiController {
             if (logger.isTraceEnabled()) logger.trace(">");
             return json.render(new JobExecutionResultDto(jobExecutionModel.getJobModel().getTitle(), sqlQueryExecutionResultDtos));
         }
+    }
+
+    private boolean isInsertQuery(SqlQueryExecutionModel sqlQueryExecutionModel) {
+        return sqlQueryExecutionModel.getSqlQuery().getQuery().toLowerCase().startsWith("insert");
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -402,25 +405,18 @@ public class JobApiController {
         if (!models.isEmpty()) {
             SqlQueryExecutionModel model = models.get(0);
             String fileName = fileName(model.getSqlQuery().getTitle(), model.getJobExecutionModel().getExecutionStart());
-            try {
-                String csv = jsonToCsvConverter.convert(model.getResult());
-                if (logger.isTraceEnabled()) logger.trace(">");
-                return new Result(SC_200_OK).render((context, result) -> {
-                    InputStream inputStream = new ByteArrayInputStream(csv.getBytes(Charset.forName("UTF-8")));
-                    result.addHeader("Content-Disposition", "attachment; filename=" + fileName);
-                    result.contentType("text/csv");
-                    ResponseStreams responseStreams = context.finalizeHeaders(result);
-                    try {
-                        ByteStreams.copy(inputStream, responseStreams.getOutputStream());
-                    } catch (IOException e) {
-                        logger.error("Exception while copying csv input stream to output stream for sql query execution id {}", executionId, e);
-                    }
-                });
-            } catch (IOException e) {
-                logger.error("Exception while parsing JSON to CSV for sql query execution id {}", executionId, e);
-                if (logger.isTraceEnabled()) logger.trace(">");
-                return new Result(SC_500_INTERNAL_SERVER_ERROR);
-            }
+            if (logger.isTraceEnabled()) logger.trace(">");
+            return new Result(SC_200_OK).render((context, result) -> {
+                result.addHeader("Content-Disposition", "attachment; filename=" + fileName);
+                result.contentType("text/csv");
+                ResponseStreams responseStreams = context.finalizeHeaders(result);
+                try (OutputStream to = responseStreams.getOutputStream();
+                     FileInputStream from = new FileInputStream(kweryDirectory.getFile(model.getResultFileName()))) {
+                    ByteStreams.copy(from, to);
+                } catch (IOException e) {
+                    logger.error("Exception while copying csv input stream to output stream for sql query execution id {}", executionId, e);
+                }
+            });
         } else {
             logger.error("SQL query execution with id {} not found", executionId);
             if (logger.isTraceEnabled()) logger.trace(">");

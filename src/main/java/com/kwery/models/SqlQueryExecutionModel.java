@@ -3,6 +3,7 @@ package com.kwery.models;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -15,9 +16,12 @@ public class SqlQueryExecutionModel {
     public static final String COLUMN_EXECUTION_START = "execution_start";
     public static final String COLUMN_EXECUTION_END = "execution_end";
     public static final String COLUMN_STATUS = "status";
-    public static final String COLUMN_RESULT = "result";
+    public static final String COLUMN_EXECUTION_ERROR = "execution_error";
     public static final String COLUMN_QUERY_RUN_ID_FK = "sql_query_id_fk";
     public static final String COLUMN_JOB_EXECUTION_ID_FK = "job_execution_id_fk";
+    public static final String COLUMN_RESULT_FILE_NAME = "result_file_name";
+
+    public static final int COLUMN_RESULT_FILE_NAME_LENGTH = 36;
 
     @Column(name = COLUMN_ID)
     @Id
@@ -37,9 +41,13 @@ public class SqlQueryExecutionModel {
     @Enumerated(STRING)
     private Status status;
 
-    @Column(name = COLUMN_RESULT)
+    @Column(name = COLUMN_EXECUTION_ERROR)
     @Type(type = "text")
-    private String result;
+    private String executionError;
+
+    @Column(name = COLUMN_RESULT_FILE_NAME)
+    @Size(min = COLUMN_RESULT_FILE_NAME_LENGTH, max = COLUMN_RESULT_FILE_NAME_LENGTH)
+    private String resultFileName;
 
     @JoinColumn(name = COLUMN_QUERY_RUN_ID_FK)
     @ManyToOne
@@ -89,12 +97,20 @@ public class SqlQueryExecutionModel {
         this.status = status;
     }
 
-    public String getResult() {
-        return result;
+    public String getExecutionError() {
+        return executionError;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setExecutionError(String executionError) {
+        this.executionError = executionError;
+    }
+
+    public String getResultFileName() {
+        return resultFileName;
+    }
+
+    public void setResultFileName(String resultFileName) {
+        this.resultFileName = resultFileName;
     }
 
     public SqlQueryModel getSqlQuery() {

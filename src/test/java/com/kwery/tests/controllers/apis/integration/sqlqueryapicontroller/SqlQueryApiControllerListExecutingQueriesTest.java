@@ -41,7 +41,7 @@ public class SqlQueryApiControllerListExecutingQueriesTest extends AbstractPostL
         DbSetup dbSetup = new DbSetup(new DataSourceDestination(DbUtil.getDatasource()),
                 sequenceOf(
                         insertInto(SqlQueryExecutionModel.TABLE)
-                                .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_RESULT, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
+                                .columns(SqlQueryExecutionModel.COLUMN_ID, COLUMN_EXECUTION_END, COLUMN_EXECUTION_ID, COLUMN_EXECUTION_START, COLUMN_EXECUTION_ERROR, COLUMN_STATUS, COLUMN_QUERY_RUN_ID_FK)
                                     .values(1, null, "sjfljkl", 1475215495171l, "status", SUCCESS, sqlQueryModel.getId())
                                     .values(2, null, "executionId1", 1475215495171l, null, ONGOING, sqlQueryModel.getId())
                                     .values(3, null, "executionId0", 1475215333445l, null, ONGOING, sqlQueryModel.getId())

@@ -13,11 +13,8 @@ import ninja.postoffice.commonsmail.CommonsmailHelper;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
 
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
-import java.io.ByteArrayInputStream;
+import javax.activation.FileDataSource;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class KweryPostofficeImpl implements Postoffice {
     private final CommonsmailHelper commonsmailHelper;
@@ -76,9 +73,8 @@ public class KweryPostofficeImpl implements Postoffice {
 
     protected void attachAttachments(MultiPartEmail multiPartEmail, KweryMail kweryMail) throws IOException, EmailException {
         for (KweryMailAttachment kweryMailAttachment : kweryMail.getAttachments()) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(kweryMailAttachment.getContent().getBytes("UTF-8"));
-            DataSource datasource = new ByteArrayDataSource(byteArrayInputStream, "text/csv");
-            multiPartEmail.attach(datasource, kweryMailAttachment.getName(), kweryMailAttachment.getDescription());
+            FileDataSource ds = new FileDataSource(kweryMailAttachment.getFile());
+            multiPartEmail.attach(ds, kweryMailAttachment.getName(), kweryMailAttachment.getDescription());
         }
     }
 }

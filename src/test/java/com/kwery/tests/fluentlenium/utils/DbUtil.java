@@ -247,10 +247,11 @@ public class DbUtil {
                     .with(SqlQueryExecutionModel.COLUMN_EXECUTION_ID, model.getExecutionId())
                     .with(SqlQueryExecutionModel.COLUMN_EXECUTION_START, model.getExecutionStart())
                     .with(SqlQueryExecutionModel.COLUMN_EXECUTION_END, model.getExecutionEnd())
-                    .with(SqlQueryExecutionModel.COLUMN_RESULT, model.getResult())
+                    .with(SqlQueryExecutionModel.COLUMN_EXECUTION_ERROR, model.getExecutionError())
                     .with(SqlQueryExecutionModel.COLUMN_STATUS, model.getStatus())
                     .with(SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK, model.getSqlQuery().getId())
                     .with(SqlQueryExecutionModel.COLUMN_JOB_EXECUTION_ID_FK, model.getJobExecutionModel().getId())
+                    .with(SqlQueryExecutionModel.COLUMN_RESULT_FILE_NAME, model.getResultFileName())
                     .add();
         }
 
@@ -389,6 +390,20 @@ public class DbUtil {
                 }
 
             }
+        }
+
+        return builder.build();
+    }
+
+    public static IDataSet kweryVersionTable(KweryVersionModel kweryVersionModel) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(KweryVersionModel.KWERY_VERSION_MODEL_TABLE);
+
+        if (kweryVersionModel != null) {
+            builder.newRow(KweryVersionModel.KWERY_VERSION_MODEL_TABLE)
+                    .with(KweryVersionModel.ID_COLUMN, kweryVersionModel.getId())
+                    .with(KweryVersionModel.VERSION_COLUMN, kweryVersionModel.getVersion())
+                    .add();
         }
 
         return builder.build();
@@ -563,10 +578,11 @@ public class DbUtil {
                                 .column(SqlQueryExecutionModel.COLUMN_EXECUTION_ID, model.getExecutionId())
                                 .column(SqlQueryExecutionModel.COLUMN_EXECUTION_START, model.getExecutionStart())
                                 .column(SqlQueryExecutionModel.COLUMN_EXECUTION_END, model.getExecutionEnd())
-                                .column(SqlQueryExecutionModel.COLUMN_RESULT, model.getResult())
+                                .column(SqlQueryExecutionModel.COLUMN_EXECUTION_ERROR, model.getExecutionError())
                                 .column(SqlQueryExecutionModel.COLUMN_STATUS, model.getStatus())
                                 .column(SqlQueryExecutionModel.COLUMN_QUERY_RUN_ID_FK, model.getSqlQuery().getId())
                                 .column(SqlQueryExecutionModel.COLUMN_JOB_EXECUTION_ID_FK, model.getJobExecutionModel().getId())
+                                .column(SqlQueryExecutionModel.COLUMN_RESULT_FILE_NAME, model.getResultFileName())
                                 .end()
                                 .build()
                 )
@@ -755,6 +771,20 @@ public class DbUtil {
                                 .build()
                 )
         ).launch();
+    }
+
+    public static void kweryVersionDbSetup(KweryVersionModel kweryVersionModel) {
+        DbSetup dbSetup = new DbSetup(
+                new DataSourceDestination(DbUtil.getDatasource()),
+                insertInto(KweryVersionModel.KWERY_VERSION_MODEL_TABLE)
+                        .row()
+                        .column(KweryVersionModel.ID_COLUMN, kweryVersionModel.getId())
+                        .column(KweryVersionModel.VERSION_COLUMN, kweryVersionModel.getVersion())
+                        .end()
+                        .build()
+        );
+
+        dbSetup.launch();
     }
 
     public static int dbId() {

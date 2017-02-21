@@ -12,6 +12,7 @@ import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.WiserRule;
+import com.kwery.utils.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,7 +23,6 @@ import java.util.List;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.Messages.REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -51,6 +51,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     protected int sqlQueryId1;
 
     protected MailService mailService;
+    private KweryDirectory kweryDirectory;
 
     @Before
     public void setUpJobServiceJobSetUpAbstractTest() {
@@ -88,6 +89,8 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         jobService = getInstance(JobService.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
         mailService = getInstance(MailService.class);
+
+        kweryDirectory = getInstance(KweryDirectory.class);
     }
 
     protected void assertJobExecutionModel(JobExecutionModel.Status status, int jobId) {
@@ -120,7 +123,6 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
             assertThat(jobExecution.getStatus(), is(status));
             assertThat(jobExecution.getJobModel().getId(), is(jobId));
         }
-
     }
 
     protected void assertSqlQueryExecutionModel(int sqlQueryId, SqlQueryExecutionModel.Status status) {
@@ -135,11 +137,11 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
 
         if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-            assertThat(sqlQueryExecution.getResult(), is("[[\"User\"],[\"root\"]]"));
+            assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"User\"", "\"root\"")));
         } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
-            assertThat(sqlQueryExecution.getResult(), is("No database selected"));
+            assertThat(sqlQueryExecution.getExecutionError(), is("No database selected"));
         } else {
-            assertThat(sqlQueryExecution.getResult(), nullValue());
+            assertThat(sqlQueryExecution.getExecutionError(), nullValue());
         }
     }
 
@@ -155,11 +157,11 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
             assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
 
             if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-                assertThat(sqlQueryExecution.getResult(), is("[[\"User\"],[\"root\"]]"));
+                assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"User\"", "\"root\"")));
             } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
-                assertThat(sqlQueryExecution.getResult(), is("No database selected"));
+                assertThat(sqlQueryExecution.getExecutionError(), is("No database selected"));
             } else {
-                assertThat(sqlQueryExecution.getResult(), nullValue());
+                assertThat(sqlQueryExecution.getExecutionError(), nullValue());
             }
         }
     }

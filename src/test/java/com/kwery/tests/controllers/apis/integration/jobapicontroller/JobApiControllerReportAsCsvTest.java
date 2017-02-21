@@ -1,18 +1,22 @@
 package com.kwery.tests.controllers.apis.integration.jobapicontroller;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.models.*;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
+import com.kwery.utils.KweryDirectory;
 import ninja.Router;
 import org.apache.http.HttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -24,9 +28,10 @@ import static org.junit.Assert.assertThat;
 public class JobApiControllerReportAsCsvTest extends AbstractPostLoginApiTest {
 
     private SqlQueryExecutionModel sqlQueryExecutionModel;
+    private String csv;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         JobModel jobModel = jobModelWithoutDependents();
         jobDbSetUp(jobModel);
 
@@ -49,17 +54,20 @@ public class JobApiControllerReportAsCsvTest extends AbstractPostLoginApiTest {
 
         jobExecutionDbSetUp(jobExecutionModel);
 
+        KweryDirectory kweryDirectory = getInjector().getInstance(KweryDirectory.class);
+
+        File file = kweryDirectory.createFile();
+
+        csv = String.join(System.lineSeparator(), "c", "v") + System.lineSeparator();
+
+        Files.write(Paths.get(file.getPath()), csv.getBytes(), StandardOpenOption.APPEND);
+
         sqlQueryExecutionModel = sqlQueryExecutionModel();
+
+        sqlQueryExecutionModel.setResultFileName(file.getName());
 
         sqlQueryExecutionModel.setExecutionStart(calendar.getTimeInMillis());
 
-        String json = toJson(
-                ImmutableList.of(
-                        ImmutableList.of("c"),
-                        ImmutableList.of("v")
-                )
-        );
-        sqlQueryExecutionModel.setResult(json);
         sqlQueryExecutionModel.setSqlQuery(sqlQueryModel);
         sqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
 
@@ -70,8 +78,7 @@ public class JobApiControllerReportAsCsvTest extends AbstractPostLoginApiTest {
     public void test() throws IOException {
         String url = getInjector().getInstance(Router.class).getReverseRoute(JobApiController.class, "reportAsCsv", ImmutableMap.of("sqlQueryExecutionId", sqlQueryExecutionModel.getExecutionId()));
         HttpResponse response = ninjaTestBrowser.makeRequestAndGetResponse(getUrl(url), new HashMap<>());
-        String expected = "\"c\"\n\"v\"\n";
-        assertThat(fileContent(response), is( expected));
+        assertThat(fileContent(response), is(csv));
 
         String expectedFileName = "csv-test-file-wed-jan-04.csv";
 
