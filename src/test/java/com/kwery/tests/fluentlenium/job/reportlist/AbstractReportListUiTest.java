@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.job.reportlist;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.kwery.controllers.apis.JobApiController;
@@ -14,6 +15,8 @@ import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,7 +26,22 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 
+@RunWith(Parameterized.class)
 public class AbstractReportListUiTest extends ChromeFluentTest {
+    @Parameterized.Parameter(0)
+    public boolean topPagination;
+
+    @Parameterized.Parameter(1)
+    public boolean bottomPagination;
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {true, false},
+                {false, true}
+        });
+    }
+
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
     protected int resultCount;
 
@@ -50,6 +68,8 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
 
     @Before
     public void setUp() {
+        Preconditions.checkState(topPagination != bottomPagination, "topPagination and bottomPagination cannot have the same value");
+
         datasource = datasource();
 
         datasource.setLabel(searchString);
@@ -153,5 +173,13 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         List<JobModel> modifiedJobModels = new ArrayList<>(jobModels);
         modifiedJobModels.removeIf(jobModel1 -> jobModel1.getName().equals(jobModel.getName()));
         return modifiedJobModels;
+    }
+
+    protected ReportListPage.PaginationPosition getPaginationPosition() {
+        if (topPagination) {
+            return ReportListPage.PaginationPosition.top;
+        }
+
+        return ReportListPage.PaginationPosition.bottom;
     }
 }

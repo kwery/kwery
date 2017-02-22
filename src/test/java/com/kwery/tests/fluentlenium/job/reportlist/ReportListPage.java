@@ -5,11 +5,13 @@ import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.hook.wait.Wait;
 import org.fluentlenium.core.hook.wait.WaitHook;
+import org.openqa.selenium.support.FindBy;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static com.kwery.tests.fluentlenium.job.reportlist.ReportListPage.PaginationPosition.top;
 import static com.kwery.tests.fluentlenium.job.reportlist.ReportListPage.ReportList.*;
 import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
@@ -25,7 +27,11 @@ import static org.openqa.selenium.By.tagName;
 public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     protected int resultCount;
 
-    protected PaginationComponent paginationComponent;
+    @FindBy(css = ".pagination-top-f")
+    protected PaginationComponent topPaginationComponent;
+
+    @FindBy(css = ".pagination-bottom-f")
+    protected PaginationComponent bottomPaginationComponent;
 
     protected ActionResultComponent actionResultComponent;
 
@@ -33,10 +39,6 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-list-f")).displayed();
         return true;
-    }
-
-    public void waitForRows(int count) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-list-table-body-f tr")).size(count);
     }
 
     public void assertReportList(int count) {
@@ -89,8 +91,8 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
         assertThat(getDriver().getCurrentUrl(), containsString("pageNumber=0"));
     }
 
-    public PaginationComponent getPaginationComponent() {
-        return paginationComponent;
+    public PaginationComponent getTopPaginationComponent() {
+        return topPaginationComponent;
     }
 
     public enum ReportList {
@@ -104,5 +106,21 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
 
     public void assertInvalidSearchCharacters() {
         actionResultComponent.assertFailureMessage(REPORT_LIST_SEARCH_INVALID_M);
+    }
+
+    public PaginationComponent getBottomPaginationComponent() {
+        return bottomPaginationComponent;
+    }
+
+    public PaginationComponent getPaginationComponent(PaginationPosition position) {
+        if (position == top) {
+            return getTopPaginationComponent();
+        } else {
+            return getBottomPaginationComponent();
+        }
+    }
+
+    public enum PaginationPosition {
+        top, bottom
     }
 }

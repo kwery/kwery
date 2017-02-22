@@ -19,7 +19,7 @@ public class ReportListSearchPaginationResetUiTest extends AbstractReportListUiT
 
         page1();
 
-        page.getPaginationComponent().clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
         page.waitForModalDisappearance();
 
         page.search("");
@@ -29,7 +29,7 @@ public class ReportListSearchPaginationResetUiTest extends AbstractReportListUiT
 
     private void page1() {
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(0)));
-        page.getPaginationComponent().assertNextState(true);
-        page.getPaginationComponent().assertPreviousState(false);
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(true);
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
     }
 }

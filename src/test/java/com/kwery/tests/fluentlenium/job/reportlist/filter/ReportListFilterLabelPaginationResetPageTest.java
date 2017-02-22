@@ -26,14 +26,14 @@ public class ReportListFilterLabelPaginationResetPageTest extends AbstractReport
 
         page.assertReportListRow(0, toReportRowMap(jobs.get(0)));
 
-        page.getPaginationComponent().clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
 
         //page 1
         page.waitForModalDisappearance();
         page.assertReportList(1);
         page.assertReportListRow(0, toReportRowMap(jobs.get(1)));
 
-        page.getPaginationComponent().clickPrevious();
+        page.getPaginationComponent(getPaginationPosition()).clickPrevious();
 
         page.waitForModalDisappearance();
 

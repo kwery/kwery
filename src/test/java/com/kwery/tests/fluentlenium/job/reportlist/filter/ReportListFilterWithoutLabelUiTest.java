@@ -25,12 +25,12 @@ public class ReportListFilterWithoutLabelUiTest extends AbstractReportListUiTest
         page.assertReportListRow(0, toReportRowMap(jobModels.get(0)));
         page.assertReportListRow(1, toReportRowMap(jobModels.get(1)));
 
-        page.getPaginationComponent().clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
 
         page.waitForModalDisappearance();
         page.assertReportListRow(0, toReportRowMap(jobModels.get(2)));
 
-        page.getPaginationComponent().clickPrevious();
+        page.getPaginationComponent(getPaginationPosition()).clickPrevious();
         page.waitForModalDisappearance();
 
         page.assertReportListRow(0, toReportRowMap(jobModels.get(0)));

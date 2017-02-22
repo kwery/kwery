@@ -20,7 +20,7 @@ public class ReportListSearchAndFilterResetUiTest extends AbstractReportListUiTe
         page.waitForModalDisappearance();
 
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(0)));
-        page.getPaginationComponent().clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
         page.waitForModalDisappearance();
 
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(1)));
@@ -40,7 +40,7 @@ public class ReportListSearchAndFilterResetUiTest extends AbstractReportListUiTe
         List<JobModel> jobs = removeJobModel(childJob);
 
         page.assertReportListRow(0, toReportRowMap(jobs.get(0)));
-        page.getPaginationComponent().clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
         page.waitForModalDisappearance();
 
         page.assertReportListRow(0, toReportRowMap(jobs.get(1)));

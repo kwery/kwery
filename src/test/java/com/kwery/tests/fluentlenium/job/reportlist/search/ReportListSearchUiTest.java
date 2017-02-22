@@ -18,19 +18,19 @@ public class ReportListSearchUiTest extends AbstractReportListUiTest {
         page.waitForModalDisappearance();
 
         page1();
-        page.getPaginationComponent().clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
         page.waitForModalDisappearance();
 
         page2();
-        page.getPaginationComponent().clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
         page.waitForModalDisappearance();
 
         page3();
-        page.getPaginationComponent().clickPrevious();
+        page.getPaginationComponent(getPaginationPosition()).clickPrevious();
         page.waitForModalDisappearance();
 
         page2();
-        page.getPaginationComponent().clickPrevious();
+        page.getPaginationComponent(getPaginationPosition()).clickPrevious();
         page.waitForModalDisappearance();
 
         page1();
@@ -38,19 +38,19 @@ public class ReportListSearchUiTest extends AbstractReportListUiTest {
 
     private void page3() {
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(2)));
-        page.getPaginationComponent().assertNextState(false);
-        page.getPaginationComponent().assertPreviousState(true);
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(false);
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(true);
     }
 
     private void page2() {
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(1)));
-        page.getPaginationComponent().assertNextState(true);
-        page.getPaginationComponent().assertPreviousState(true);
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(true);
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(true);
     }
 
     private void page1() {
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(0)));
-        page.getPaginationComponent().assertNextState(true);
-        page.getPaginationComponent().assertPreviousState(false);
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(true);
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
     }
 }

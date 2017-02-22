@@ -2,35 +2,33 @@
     <action-result params="status: status, messages: messages"></action-result>
     <div class="container">
         <div class="row">
-            <div class="col-md-8">
-                <span class="h1"><strong data-bind="text: ko.i18n('report.list.header')"></strong></span>
-            </div>
-            <div class="col-md-3">
-                <div class="form-inline">
-                    <label data-bind="text: ko.i18n('report.list.filter.label')" class="text-muted"></label>
-                    <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: displayLabels, value: reportLabelId">
-                        <option data-bind="html: formattedLabel, value: id"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-1">
+            <div class="col-md-12">
                 <div class="pull-left">
-                    <a data-bind="attr: {title: ko.i18n('report.list.add.report.tooltip')}" href="/#report/add" class="btn-circle btn-primary btn-xl edit-f">
-                        <span class="glyphicon glyphicon-plus"></span>
-                    </a>
+                    <span class="h1"><strong data-bind="text: ko.i18n('report.list.header')"></strong></span>
+                </div>
+                <div class="pull-right pagination-top-f">
+                    <nav>
+                        <ul class="pager pagination-f">
+                            <li data-bind="css: previousStatus" class="previous-f">
+                                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" class="btn"></a>
+                            </li>
+                            <li data-bind="css: nextStatus" class="next-f">
+                                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" class="btn"></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
     <br>
-
     <div class="row">
         <div class="col-md-6">
             <form data-bind="submit: searchAction">
                 <div class="input-group">
-                        <input data-bind="value: search, attr: {'placeholder': ko.i18n('report.list.search.placeholder')}" type="text"
-                               class="form-control search-f" name="reportSearch">
-                        <span class="input-group-btn">
+                    <input data-bind="value: search, attr: {'placeholder': ko.i18n('report.list.search.placeholder')}" type="text"
+                           class="form-control search-f" name="reportSearch">
+                    <span class="input-group-btn">
                         <button class="btn btn-default search-submit-f" type="submit">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
@@ -38,8 +36,22 @@
                 </div>
             </form>
         </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-3">
+            <div class="form-inline">
+                <label data-bind="text: ko.i18n('report.list.filter.label')" class="text-muted"></label>
+                <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: displayLabels, value: reportLabelId">
+                    <option data-bind="html: formattedLabel, value: id"></option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <a data-bind="attr: {title: ko.i18n('report.list.add.report.tooltip')}" href="/#report/add" class="btn-circle btn-primary btn-xl edit-f">
+                <span class="glyphicon glyphicon-plus"></span>
+            </a>
+        </div>
     </div>
-
     <br>
 
     <div class="panel panel-default">
@@ -121,16 +133,18 @@
 
     <div class="row">
         <div class="col-md-12">
-            <nav>
-                <ul class="pager pagination-f">
-                    <li data-bind="css: previousStatus" class="previous previous-f">
-                        <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous" class="btn"></a>
-                    </li>
-                    <li data-bind="css: nextStatus" class="next next-f">
-                        <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next" class="btn"></a>
-                    </li>
-                </ul>
-            </nav>
+            <div class="pull-right pagination-bottom-f">
+                <nav>
+                    <ul class="pager pagination-f">
+                        <li data-bind="css: previousStatus" class="previous-f">
+                            <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" class="btn"></a>
+                        </li>
+                        <li data-bind="css: nextStatus" class="next-f">
+                            <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" class="btn"></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 </div>
