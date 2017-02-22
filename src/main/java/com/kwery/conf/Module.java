@@ -15,6 +15,7 @@ import com.kwery.services.migration.ResultMigrator;
 import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
+import com.kwery.services.search.SearchIndexer;
 import com.kwery.utils.*;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
@@ -43,6 +44,7 @@ public class Module extends AbstractModule {
         install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
         install(new FactoryModuleBuilder().build(CsvToHtmlConverterFactory.class));
         bind(ResultMigrator.class);
+        bind(SearchIndexer.class);
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
         bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);

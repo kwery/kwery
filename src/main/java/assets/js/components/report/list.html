@@ -23,6 +23,25 @@
         </div>
     </div>
     <br>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form data-bind="submit: searchAction">
+                <div class="input-group">
+                        <input data-bind="value: search, attr: {'placeholder': ko.i18n('report.list.search.placeholder')}" type="text"
+                               class="form-control search-f" name="reportSearch">
+                        <span class="input-group-btn">
+                        <button class="btn btn-default search-submit-f" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <br>
+
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="row">

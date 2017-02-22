@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.DatasourceDao;
-import com.kwery.dao.JobDao;
 import com.kwery.dao.JobLabelDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
@@ -70,8 +69,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
         datasourceDao = getInstance(DatasourceDao.class);
         jobLabelDao = getInstance(JobLabelDao.class);
 
-        jobApiController = new JobApiController(datasourceDao, getInstance(JobDao.class), null, null, null,
-                null, jobLabelDao, null, null, null);
+        jobApiController = getInstance(JobApiController.class);
     }
 
     @Test

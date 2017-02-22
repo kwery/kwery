@@ -124,4 +124,6 @@ public class Messages {
     public static final String JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING_M = "Report content too large to display, please download and view";
 
     public static final String REPORTEMAILSENDER_ATTACHMENT_SKIPPED_M = "P.S. Some attachments were not sent as the files were too large";
+
+    public static final String REPORT_LIST_SEARCH_INVALID_M = "Search string contains invalid characters";
 }

@@ -1,11 +1,16 @@
 package com.kwery.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Store;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
+
+import static org.hibernate.search.annotations.Index.YES;
 
 @Entity
 @Table(name = JobLabelModel.JOB_LABEL_TABLE)
@@ -26,6 +31,7 @@ public class JobLabelModel {
     @Column(name = LABEL_COLUMN)
     @Size(min = LABEL_MIN_LENGTH, max = LABEL_MAX_LENGTH)
     @NotNull
+    @Field(index= YES, analyze= Analyze.YES, store= Store.NO)
     protected String label;
 
     @OneToMany(mappedBy = "parentLabel", fetch = FetchType.EAGER)

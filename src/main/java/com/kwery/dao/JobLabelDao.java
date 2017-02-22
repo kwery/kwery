@@ -1,10 +1,12 @@
 package com.kwery.dao;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
+import com.kwery.services.job.JobSearchFilter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -15,18 +17,45 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class JobLabelDao {
+    private final Provider<EntityManager> entityManagerProvider;
+    private final JobDao jobDao;
+
     @Inject
-    private Provider<EntityManager> entityManagerProvider;
+    public JobLabelDao(Provider<EntityManager> entityManagerProvider, JobDao jobDao) {
+        this.entityManagerProvider = entityManagerProvider;
+        this.jobDao = jobDao;
+    }
 
     @Transactional
     public JobLabelModel save(JobLabelModel m) {
         EntityManager e = entityManagerProvider.get();
 
         if (m.getId() != null && m.getId() > 0) {
-            return e.merge(m);
+            m = e.merge(m);
         } else {
             e.persist(m);
-            return m;
+        }
+
+        //TODO - There should be a better way to do this
+        //Below is done so that Hibernate search reindexes associated JobModels
+        updateAssociatedJobModels(m);
+
+        return m;
+    }
+
+    private void updateAssociatedJobModels(JobLabelModel m) {
+        JobSearchFilter filter = new JobSearchFilter();
+        filter.setJobLabelIds(ImmutableSet.of(m.getId()));
+
+        List<JobModel> jobModels = jobDao.filterJobs(filter);
+
+        Integer jobLabelId = m.getId();
+        for (JobModel jobModel : jobModels) {
+
+            jobModel.getLabels().removeIf(model -> model.getId().equals(jobLabelId));
+            jobModel.getLabels().add(m);
+
+            jobDao.save(jobModel);
         }
     }
 

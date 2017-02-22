@@ -1,5 +1,9 @@
 package com.kwery.models;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Store;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -7,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import static javax.persistence.EnumType.STRING;
+import static org.hibernate.search.annotations.Index.YES;
 
 @Entity
 @Table(name = Datasource.TABLE)
@@ -49,6 +54,7 @@ public class Datasource {
     @NotNull(message = "label.validation")
     @Size(min = 1, max = 255, message = "label.validation")
     @Column(name = COLUMN_LABEL, unique = true)
+    @Field(index= YES, analyze= Analyze.YES, store= Store.NO)
     private String label;
 
     @Column(name = COLUMN_DATABASE)

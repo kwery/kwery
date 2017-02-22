@@ -15,11 +15,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SqlQueryDao {
-    @Inject
-    private Provider<EntityManager> entityManagerProvider;
+    protected final Provider<EntityManager> entityManagerProvider;
+    protected final SqlQueryExecutionDao sqlQueryExecutionDao;
 
     @Inject
-    protected SqlQueryExecutionDao sqlQueryExecutionDao;
+    public SqlQueryDao(Provider<EntityManager> entityManagerProvider, SqlQueryExecutionDao sqlQueryExecutionDao) {
+        this.entityManagerProvider = entityManagerProvider;
+        this.sqlQueryExecutionDao = sqlQueryExecutionDao;
+    }
 
     @Transactional
     public SqlQueryModel getByLabel(String label) {
@@ -79,5 +82,22 @@ public class SqlQueryDao {
         q.where(predicates.toArray(new Predicate[]{}));
 
         return m.createQuery(q).getSingleResult();
+    }
+
+    @Transactional
+    public List<SqlQueryModel> getSqlQueriesWithDatasourceId(int datasourceId) {
+        EntityManager m = entityManagerProvider.get();
+
+        CriteriaBuilder c = m.getCriteriaBuilder();
+        CriteriaQuery<SqlQueryModel> q = c.createQuery(SqlQueryModel.class);
+
+        Root<SqlQueryModel> root = q.from(SqlQueryModel.class);
+
+        List<Predicate> predicates = new LinkedList<>();
+        predicates.add(c.equal(root.get("datasource").get("id"), datasourceId));
+
+        q.where(predicates.toArray(new Predicate[]{}));
+
+        return m.createQuery(q).getResultList();
     }
 }

@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kwery.tests.fluentlenium.job.reportlist.ReportListPage.ReportList.*;
-import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M;
-import static com.kwery.tests.util.Messages.REPORT_LIST_DELETE_SUCCESS_M;
+import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
@@ -73,7 +72,7 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void selectLabel(int index) {
-        $(".label-f").fillSelect().withIndex(index);
+        $("select", withClass().contains("label-f")).fillSelect().withIndex(index);
     }
 
     public void assertLabelTexts(Collection<String> labels) {
@@ -96,5 +95,14 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
 
     public enum ReportList {
         title, name, lastExecution, nextExecution, labels, executionsLink, reportEditLink
+    }
+
+    public void search(String search) {
+        el("input", withClass().contains("search-f")).fill().with(search);
+        el(".search-submit-f").withHook(WaitHook.class).click();
+    }
+
+    public void assertInvalidSearchCharacters() {
+        actionResultComponent.assertFailureMessage(REPORT_LIST_SEARCH_INVALID_M);
     }
 }

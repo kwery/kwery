@@ -1,6 +1,8 @@
 package com.kwery.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.hibernate.search.annotations.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -8,9 +10,13 @@ import javax.validation.constraints.Size;
 import java.util.*;
 
 import static javax.persistence.EnumType.STRING;
+import static org.hibernate.search.annotations.Index.YES;
 
 @Entity
 @Table(name = JobModel.JOB_TABLE)
+@Indexed
+//Do not change the analyzer without changing the filtering function used in JobSearchDao
+@Analyzer(impl = StandardAnalyzer.class)
 public class JobModel {
     public static final String JOB_TABLE = "job";
     public static final String ID_COLUMN = "id";
@@ -62,11 +68,13 @@ public class JobModel {
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = NAME_COLUMN)
+    @Field(index= YES, analyze= Analyze.YES, store= Store.NO)
     protected String name;
 
     @NotNull
     @Size(min = 1, max = 1024)
     @Column(name = TITLE_COLUMN)
+    @Field(index= YES, analyze= Analyze.YES, store= Store.NO)
     protected String title;
 
     @OneToMany(fetch = FetchType.EAGER)
@@ -75,6 +83,7 @@ public class JobModel {
             joinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, referencedColumnName = ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, referencedColumnName = JobLabelModel.ID_COLUMN)
     )
+    @IndexedEmbedded
     protected Set<JobLabelModel> labels = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
@@ -84,6 +93,7 @@ public class JobModel {
             inverseJoinColumns = @JoinColumn(name = SQL_QUERY_ID_FK_COLUMN, referencedColumnName = SqlQueryModel.ID_COLUMN)
     )
     @OrderColumn(name = JobModel.JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN)
+    @IndexedEmbedded
     protected List<SqlQueryModel> sqlQueries = new LinkedList<>();
 
     @ManyToMany(fetch = FetchType.EAGER,  cascade = {CascadeType.MERGE, CascadeType.REMOVE})
