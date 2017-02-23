@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.SmtpConfiguration;
-import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -29,12 +28,12 @@ public class SmtpConfigurationDao {
         e.flush();
     }
 
-    @UnitOfWork
+    @Transactional
     public SmtpConfiguration get(int id) {
         return entityManagerProvider.get().find(SmtpConfiguration.class, id);
     }
 
-    @UnitOfWork
+    @Transactional
     public List<SmtpConfiguration> get() {
         EntityManager e = entityManagerProvider.get();
         CriteriaBuilder cb = e.getCriteriaBuilder();
