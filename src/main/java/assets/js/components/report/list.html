@@ -130,20 +130,21 @@
             <!-- /ko -->
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pull-right pagination-bottom-f">
-                <nav>
-                    <ul class="pager pagination-f">
-                        <li data-bind="css: previousStatus" class="previous-f">
-                            <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" class="btn"></a>
-                        </li>
-                        <li data-bind="css: nextStatus" class="next-f">
-                            <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" class="btn"></a>
-                        </li>
-                    </ul>
-                </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-right pagination-bottom-f">
+                    <nav>
+                        <ul class="pager pagination-f">
+                            <li data-bind="css: previousStatus" class="previous-f">
+                                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" class="btn"></a>
+                            </li>
+                            <li data-bind="css: nextStatus" class="next-f">
+                                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" class="btn"></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>

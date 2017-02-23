@@ -45,8 +45,6 @@ public class ReportUiTest extends ChromeFluentTest {
     private SqlQueryExecutionModel successSqlQueryExecutionModel;
     private SqlQueryExecutionModel warningSqlQueryExecutionModel;
 
-    private String jsonResult;
-
     @Page
     protected ReportPage page;
 

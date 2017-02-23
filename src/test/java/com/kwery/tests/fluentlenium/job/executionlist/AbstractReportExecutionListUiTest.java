@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.job.executionlist;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dtos.JobExecutionDto;
@@ -12,13 +13,14 @@ import com.kwery.tests.util.NinjaServerRule;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.kwery.models.JobExecutionModel.Status.*;
 import static com.kwery.tests.fluentlenium.job.executionlist.ReportExecutionListPage.ReportExecution.*;
@@ -28,8 +30,24 @@ import static com.kwery.tests.util.TestUtil.jobExecutionModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static org.junit.rules.RuleChain.outerRule;
 
+@RunWith(Parameterized.class)
 public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest {
+    @Parameter(0)
+    public boolean topPagination;
+
+    @Parameter(1)
+    public boolean bottomPagination;
+
+    @Parameters(name = "topPagination={0}, bottomPagination={1}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {true, false},
+                {false, true}
+        });
+    }
+
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+
     protected int resultCount;
 
     @Rule
@@ -48,6 +66,8 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
     protected List<JobExecutionModel> models;
 
     public void setUp() throws Exception {
+        Preconditions.checkState(topPagination != bottomPagination, "topPagination and bottomPagination cannot have the same value");
+
         jobModel = jobModelWithoutDependents();
         jobDbSetUp(jobModel);
 
@@ -122,5 +142,13 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
         }
 
         return map;
+    }
+
+    protected ReportExecutionListPage.PaginationPosition getPaginationPosition() {
+        if (topPagination) {
+            return ReportExecutionListPage.PaginationPosition.top;
+        }
+
+        return ReportExecutionListPage.PaginationPosition.bottom;
     }
 }

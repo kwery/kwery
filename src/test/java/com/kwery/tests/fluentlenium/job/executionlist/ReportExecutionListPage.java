@@ -3,15 +3,17 @@ package com.kwery.tests.fluentlenium.job.executionlist;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.tests.fluentlenium.job.reportlist.ActionResultComponent;
+import com.kwery.tests.fluentlenium.job.reportlist.PaginationComponent;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.hook.wait.Wait;
 import org.fluentlenium.core.hook.wait.WaitHook;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
 
-import java.util.Arrays;
 import java.util.Map;
 
+import static com.kwery.tests.fluentlenium.job.executionlist.ReportExecutionListPage.PaginationPosition.top;
 import static com.kwery.tests.fluentlenium.job.executionlist.ReportExecutionListPage.ReportExecution.*;
 import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
@@ -19,7 +21,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.*;
 import static org.openqa.selenium.By.className;
-import static org.openqa.selenium.By.id;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#report/{jobId}/execution-list/?resultCount={resultCount}")
@@ -28,14 +29,16 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
     protected int resultCount;
     protected ActionResultComponent actionResultComponent;
 
+    @FindBy(css = ".pagination-top-f")
+    protected PaginationComponent topPaginationComponent;
+
+    @FindBy(css = ".pagination-bottom-f")
+    protected PaginationComponent bottomPaginationComponent;
+
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".execution-list-container-f")).displayed();
         return true;
-    }
-
-    public void waitForRows(int rows) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".execution-list-table-f tr")).size(rows + 1); //Accommodate headers
     }
 
     public int getJobId() {
@@ -48,34 +51,6 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
 
     public void setResultCount(int resultCount) {
         this.resultCount = resultCount;
-    }
-
-    public boolean isNextEnabled() {
-        return !Arrays.asList(find(className("next-f")).attribute("class").split(" ")).contains("disabled");
-    }
-
-    public boolean isPreviousEnabled() {
-        return !Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled");
-    }
-
-    public void clickPrevious() {
-        $(id("previous")).click();
-    }
-
-    public void clickNext() {
-        $(id("next")).click();
-    }
-
-    public void waitUntilPreviousIsEnabled() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> !Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled")
-        );
-    }
-
-    public void waitUntilPreviousIsDisabled() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled")
-        );
     }
 
     public void filterResult(String startDate, String endDate) {
@@ -151,5 +126,17 @@ public class ReportExecutionListPage extends KweryFluentPage implements RepoDash
                     withPredicate(fluentWebElement -> fluentWebElement.$(".actions-f").size() == 1))).isDisplayed();
             assertThat(el(String.format(".report-execution-list-%d-f button", row), withClass().contains("delete-f"))).isDisplayed();
         }
+    }
+
+    public PaginationComponent getPaginationComponent(PaginationPosition position) {
+        if (position == top) {
+            return topPaginationComponent;
+        } else {
+            return bottomPaginationComponent;
+        }
+    }
+
+    public enum PaginationPosition {
+        top, bottom
     }
 }

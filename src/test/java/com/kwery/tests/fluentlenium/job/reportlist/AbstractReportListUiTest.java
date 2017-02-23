@@ -17,6 +17,8 @@ import org.junit.Rule;
 import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,13 +30,13 @@ import static junit.framework.TestCase.fail;
 
 @RunWith(Parameterized.class)
 public class AbstractReportListUiTest extends ChromeFluentTest {
-    @Parameterized.Parameter(0)
+    @Parameter(0)
     public boolean topPagination;
 
-    @Parameterized.Parameter(1)
+    @Parameter(1)
     public boolean bottomPagination;
 
-    @Parameterized.Parameters
+    @Parameters(name = "topPagination={0}, bottomPagination={1}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 {true, false},
