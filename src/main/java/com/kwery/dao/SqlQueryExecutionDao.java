@@ -6,7 +6,6 @@ import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import ninja.jpa.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -35,13 +34,13 @@ public class SqlQueryExecutionDao {
         m.flush();
     }
 
-    @UnitOfWork
+    @Transactional
     public SqlQueryExecutionModel getById(Integer id) {
         return entityManagerProvider.get().find(SqlQueryExecutionModel.class, id);
     }
 
     @SuppressWarnings("unchecked")
-    @UnitOfWork
+    @Transactional
     public SqlQueryExecutionModel getByExecutionId(String executionId) {
         SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
         filter.setExecutionId(executionId);
@@ -58,7 +57,7 @@ public class SqlQueryExecutionDao {
         return executions.get(0);
     }
 
-    @UnitOfWork
+    @Transactional
     public List<SqlQueryExecutionModel> filter(SqlQueryExecutionSearchFilter filter) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder c = m.getCriteriaBuilder();
@@ -108,7 +107,7 @@ public class SqlQueryExecutionDao {
         }
     }
 
-    @UnitOfWork
+    @Transactional
     public long count(SqlQueryExecutionSearchFilter filter) {
         EntityManager m = entityManagerProvider.get();
 
@@ -154,7 +153,7 @@ public class SqlQueryExecutionDao {
         return m.createQuery(q).getSingleResult();
     }
 
-    @UnitOfWork
+    @Transactional
     public List<SqlQueryExecutionModel> lastSuccessfulExecution(List<Integer> sqlQueryIds) {
         //TODO - Simplify
         EntityManager m = entityManagerProvider.get();
