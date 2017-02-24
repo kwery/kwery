@@ -42,7 +42,9 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
         self.pageNumber.extend({notify: 'always'});
         self.resultCount = ko.observable(resultCount);
         self.totalCount = ko.observable(0);
-        self.reportLabelId = ko.observable(reportLabelId);
+        //If the value is set here, post the ajax call which populates the values, the selected option is not retained
+        //Hence, this value is set in the ajax callback
+        self.reportLabelId = ko.observable();
 
         self.reports = ko.observableArray([]);
 
@@ -102,6 +104,14 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
             };
         };
 
+        var moveNode = function(id, newParentId) {
+            var node = findNode(root, id);
+            node.remove();
+            var newParentNode = findNode(root, newParentId);
+            newParentNode.addChild(node);
+            node.parent = newParentNode;
+        };
+
         //This is n2, but we are not bothered about efficiency at this scale
         var findNode = function(node, id) {
             if (node.id === id) {
@@ -145,18 +155,37 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                 var child = jobLabelModelHackDto.jobLabelModel;
 
                 if (parent != undefined) {
-                    //Label has a parent label
-                    var parentNodeInTree = findNode(root, parent.id);
-                    if (parentNodeInTree !== undefined) {
-                        //Parent label is already present in the tree, hence add the child label as a child of the existing parent
-                        parentNodeInTree.addChild(new Node(child.label, child.id, parentNodeInTree));
+                    var parentNode = findNode(root, parent.id);
+                    var childNode = findNode(root, child.id);
+
+                    if (parentNode !== undefined) {
+                        //Parent is already present in the tree
+                        if (childNode !== undefined) {
+                            //Child is already present in the tree
+                            //Move the child from old parent to new parent
+                            moveNode(child.id, parent.id);
+                        } else {
+                            //Child is not present in the tree
+                            //Add the child label as a child of the existing parent
+                            parentNode.addChild(new Node(child.label, child.id, parentNode));
+                        }
                     } else {
-                        //Parent label is not present in the tree, create a new parent node
-                        var parentNode = new Node(parent.label, parent.id, root);
-                        //Add the child label as a child of the parent node
-                        parentNode.addChild(new Node(child.label, child.id, parentNode));
-                        //Add parent node as a child of the root label
-                        root.addChild(parentNode);
+                        //Parent label is not present in the tree
+                        if (childNode !== undefined) {
+                            //Child is already present in the tree
+                            //Add parent
+                            var parentNode = new Node(parent.label, parent.id, root);
+                            root.addChild(parentNode);
+                            //Move child to new parent
+                            moveNode(child.id, parentNode.id);
+                        } else {
+                            //Parent label is not present in the tree, create a new parent node
+                            var parentNode = new Node(parent.label, parent.id, root);
+                            //Add the child label as a child of the parent node
+                            parentNode.addChild(new Node(child.label, child.id, parentNode));
+                            //Add parent node as a child of the root label
+                            root.addChild(parentNode);
+                        }
                     }
                 } else {
                     //Label does not have a parent
@@ -209,7 +238,8 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
         });
         //Pagination - end
 
-        self.filter = function(showWaitingModal) {
+        waitingModal.show();
+        $.when(
             $.ajax({
                 url: "/api/job/list",
                 type: "POST",
@@ -217,34 +247,24 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                 data: ko.toJSON({
                     pageNumber: self.pageNumber(),
                     resultCount: self.resultCount(),
-                    jobLabelId: self.reportLabelId()
+                    //Observable is intentionally not used here as it is set later
+                    jobLabelId: reportLabelId
                 }),
-                beforeSend: function() {
-                    if (showWaitingModal) {
-                        waitingModal.show();
-                    }
-                },
                 success: function (jobListDto) {
                     var reports = [];
                     ko.utils.arrayForEach(jobListDto.jobModelHackDtos, function(jobModelHackDto){
                         jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
                         jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
+                        jobModelHackDto.jobModel.lastExecution = jobModelHackDto.lastExecution;
+                        jobModelHackDto.jobModel.nextExecution = jobModelHackDto.nextExecution;
+
                         reports.push(jobModelHackDto.jobModel);
                     });
 
                     self.reports(reports);
                     self.totalCount(jobListDto.totalCount);
                 }
-            }).always(function(){
-                if (showWaitingModal) {
-                    waitingModal.hide();
-                }
-            });
-        };
-
-        waitingModal.show();
-        $.when(
-            self.filter(false),
+            }),
             $.ajax({
                 url: "/api/job-label/list",
                 type: "GET",
@@ -252,6 +272,14 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                 success: function (jobLabelModelHackDtos) {
                     buildLabelTree(jobLabelModelHackDtos);
                     populateDisplayLabels(root, 0);
+
+                    self.reportLabelId(reportLabelId);
+
+                    //This subscription is intentionally done here after setting the value above to avoid filter being called when the selected value is set
+                    self.reportLabelId.subscribe(function(reportId){
+                        //If a filter is used, we should go to page 0 and start fresh
+                        self.pageNumber(0);
+                    });
                 }
             })
         ).always(function(){

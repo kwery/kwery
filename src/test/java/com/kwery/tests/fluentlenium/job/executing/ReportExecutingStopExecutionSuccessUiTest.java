@@ -1,6 +1,7 @@
 package com.kwery.tests.fluentlenium.job.executing;
 
 import com.google.common.collect.ImmutableList;
+import com.kwery.controllers.apis.JobApiController;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobExecutionModel;
@@ -18,10 +19,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
+import java.util.List;
+
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static junit.framework.TestCase.fail;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.junit.rules.RuleChain.outerRule;
 
@@ -37,6 +39,8 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
     @Page
     protected ReportExecutingPage page;
     private Datasource datasource;
+    private JobExecutionDao jobExecutionDao;
+    private JobApiController controller;
 
     @Before
     public void setUp() {
@@ -47,17 +51,16 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
         setUpJob();
         setUpJob();
 
-        JobExecutionDao jobExecutionDao = ninjaServerRule.getInjector().getInstance(JobExecutionDao.class);
+        jobExecutionDao = ninjaServerRule.getInjector().getInstance(JobExecutionDao.class);
 
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
         filter.setStatuses(ImmutableList.of(JobExecutionModel.Status.ONGOING));
 
+        controller = ninjaServerRule.getInjector().getInstance(JobApiController.class);
+
         waitAtMost(TIMEOUT_SECONDS, SECONDS).until(() -> jobExecutionDao.filter(filter).size() >= 2);
 
         goTo(page);
-        if (!page.isRendered()) {
-            fail("Could not render executing reports page");
-        }
 
         page.waitForModalDisappearance();
     }
@@ -77,14 +80,24 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
 
         JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
         filter.setJobId(jobModel.getId());
+
     }
 
     @Test
     public void test() {
-        page.waitForExecutingReportsList(2);
+        JobExecutionSearchFilter filter = new JobExecutionSearchFilter();
+        filter.setStatuses(ImmutableList.of(JobExecutionModel.Status.ONGOING));
+
+        List<JobExecutionModel> models = jobExecutionDao.filter(filter);
+        models = models.subList(1, models.size());
+
         page.stopExecution(0);
-        page.waitForStopExecutionSuccessMessage();
-        page.waitForExecutingReportsList(1);
+        page.waitForModalDisappearance();
+        page.assertStopExecutionSuccessMessage();
+
+        for (int i = 0; i < models.size(); ++i) {
+            page.assertExecutingReports(i, page.toMap(controller.jobExecutionModelToJobExecutionDto(models.get(i))));
+        }
     }
 
     @Override

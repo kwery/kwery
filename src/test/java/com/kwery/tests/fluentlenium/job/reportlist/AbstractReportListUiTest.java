@@ -1,9 +1,9 @@
 package com.kwery.tests.fluentlenium.job.reportlist;
 
-import com.kwery.models.Datasource;
-import com.kwery.models.JobLabelModel;
-import com.kwery.models.JobModel;
-import com.kwery.models.SqlQueryModel;
+import com.google.common.collect.Lists;
+import com.kwery.controllers.apis.JobApiController;
+import com.kwery.dtos.JobModelHackDto;
+import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
@@ -13,9 +13,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static com.kwery.tests.fluentlenium.job.reportlist.ReportListPage.ReportList.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
@@ -28,21 +29,31 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Page
-    ReportListPage page;
+    protected ReportListPage page;
 
-    Map<String, ReportListRow> rowMap = new HashMap<>();
+    protected String parentJobName;
 
-    String parentJobName;
-    private Datasource datasource;
-    JobLabelModel jobLabelModel;
+    protected Datasource datasource;
+    protected JobLabelModel jobLabelModel;
+
+    protected List<JobModel> jobModels;
+
+    protected JobModel jobModel;
+    protected JobModel parentJob;
+    protected JobModel childJob;
+    private JobApiController jobApiController;
 
     @Before
     public void setUp() {
         datasource = datasource();
         datasourceDbSetup(datasource);
 
-        JobModel jobModel = jobModelWithoutDependents();
+        jobModel = jobModelWithoutDependents();
+
+        JobExecutionModel jobExecutionModel = jobExecutionModel();
+        jobExecutionModel.setJobModel(jobModel);
         jobDbSetUp(jobModel);
+        jobExecutionDbSetUp(jobExecutionModel);
         setSqlQueryModel(jobModel);
 
         jobLabelModel = jobLabelModel();
@@ -50,23 +61,33 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         jobModel.getLabels().add(jobLabelModel);
         jobJobLabelDbSetUp(jobModel);
 
-        JobModel parentJob = jobModelWithoutDependents();
+        parentJob = jobModelWithoutDependents();
         parentJobName = parentJob.getName();
         jobDbSetUp(parentJob);
         parentJob.getLabels().add(jobLabelModel);
         setSqlQueryModel(parentJob);
         jobJobLabelDbSetUp(parentJob);
 
-        JobModel childJob = jobModelWithoutDependents();
+        JobExecutionModel parentJobExecutionModel = jobExecutionModel();
+        parentJobExecutionModel.setJobModel(parentJob);
+        jobExecutionDbSetUp(parentJobExecutionModel);
+
+        childJob = jobModelWithoutDependents();
         childJob.setCronExpression("");
         childJob.setParentJob(parentJob);
         jobDbSetUp(childJob);
         jobDependentDbSetUp(childJob);
         setSqlQueryModel(childJob);
 
+        JobExecutionModel childJobExecutionModel = jobExecutionModel();
+        childJobExecutionModel.setJobModel(childJob);
+        jobExecutionDbSetUp(childJobExecutionModel);
+
         JobService jobService = ninjaServerRule.getInjector().getInstance(JobService.class);
         jobService.schedule(parentJob.getId());
         jobService.schedule(jobModel.getId());
+
+        jobApiController = ninjaServerRule.getInjector().getInstance(JobApiController.class);
 
         page.go(getResultCount());
 
@@ -74,9 +95,8 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
             fail("Could not render report list page");
         }
 
-        rowMap.put(jobModel.getName(), toRow(jobModel));
-        rowMap.put(parentJob.getName(), toRow(parentJob));
-        rowMap.put(childJob.getName(), toRow(childJob));
+        jobModels = Lists.newArrayList(jobModel, parentJob, childJob);
+        jobModels.sort(Comparator.comparing(JobModel::getId));
     }
 
     void setSqlQueryModel(JobModel jobModel) {
@@ -84,17 +104,6 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         sqlQueryDbSetUp(sqlQueryModel);
         jobModel.getSqlQueries().add(sqlQueryModel);
         jobSqlQueryDbSetUp(jobModel);
-    }
-
-    ReportListRow toRow(JobModel jobModel) {
-        ReportListRow row = new ReportListRow();
-
-        row.setLabel(jobModel.getName());
-        row.setReportLink(String.format(ninjaServerRule.getServerUrl() + "/#report/%d", jobModel.getId()));
-        row.setCronExpression(jobModel.getCronExpression());
-        row.setExecutionListLink(String.format(ninjaServerRule.getServerUrl() + "/#report/%d/execution-list", jobModel.getId()));
-
-        return row;
     }
 
     public int getResultCount() {
@@ -108,5 +117,26 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
     @Override
     public String getBaseUrl() {
         return ninjaServerRule.getServerUrl();
+    }
+
+    protected Map<ReportListPage.ReportList, ?> toReportRowMap(JobModel jobModel) {
+        JobModelHackDto dto = jobApiController.toJobModelHackDto(jobModel);
+
+        Map map = new HashMap();
+        map.put(title, jobModel.getTitle());
+        map.put(name, jobModel.getName());
+        map.put(lastExecution, dto.getLastExecution());
+        map.put(nextExecution, dto.getNextExecution());
+        map.put(labels, jobModel.getLabels().stream().map(JobLabelModel::getLabel).collect(Collectors.toList()));
+        map.put(reportEditLink, String.format("/#report/%d", jobModel.getId()));
+        map.put(executionsLink, String.format("/#report/%d/execution-list", jobModel.getId()));
+
+        return map;
+    }
+
+    protected List<JobModel> removeJobModel(JobModel jobModel) {
+        List<JobModel> modifiedJobModels = new ArrayList<>(jobModels);
+        modifiedJobModels.removeIf(jobModel1 -> jobModel1.getName().equals(jobModel.getName()));
+        return modifiedJobModels;
     }
 }

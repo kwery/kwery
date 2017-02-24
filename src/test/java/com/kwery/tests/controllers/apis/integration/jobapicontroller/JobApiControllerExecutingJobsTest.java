@@ -62,7 +62,7 @@ public class JobApiControllerExecutingJobsTest extends AbstractPostLoginApiTest 
 
         assertThat(response, isJson());
 
-        List<JobExecutionDto> expected = ImmutableList.of(jobExecutionModel1, jobExecutionModel0).stream().map(controller::jobExecutionModelToJobExecutionDto).collect(toList());
+        List<JobExecutionDto> expected = ImmutableList.of(jobExecutionModel0, jobExecutionModel1).stream().map(controller::jobExecutionModelToJobExecutionDto).collect(toList());
 
         assertThat(response, sameJSONAs(toJson(expected)));
     }

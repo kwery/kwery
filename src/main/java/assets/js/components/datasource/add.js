@@ -41,14 +41,6 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
 
         var isUpdate = params.datasourceId !== undefined;
 
-        if (isUpdate) {
-            self.actionLabel = ko.observable(ko.i18n('update'));
-            self.title = ko.observable(ko.i18n('datasource.update.title'))
-        } else {
-            self.actionLabel = ko.observable(ko.i18n('create'));
-            self.title = ko.observable(ko.i18n('datasource.add.title'))
-        }
-
         $("#addDatasourceForm").validator({
             disable: false
         }).on("submit", function(e){

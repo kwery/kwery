@@ -3,26 +3,32 @@ package com.kwery.tests.fluentlenium.job.reportlist;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.annotation.PageUrl;
-import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
+import org.fluentlenium.core.hook.wait.WaitHook;
 
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import static com.kwery.tests.fluentlenium.job.reportlist.ReportListPage.ReportList.*;
 import static com.kwery.tests.util.Messages.JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M;
 import static com.kwery.tests.util.Messages.REPORT_LIST_DELETE_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static java.util.stream.Collectors.toList;
-import static org.openqa.selenium.By.className;
-import static org.openqa.selenium.By.id;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.*;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertThat;
+import static org.openqa.selenium.By.tagName;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#report/list/?resultCount={resultCount}")
 public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     protected int resultCount;
+
+    protected PaginationComponent paginationComponent;
+
+    protected ActionResultComponent actionResultComponent;
 
     @Override
     public boolean isRendered() {
@@ -34,99 +40,61 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".report-list-table-body-f tr")).size(count);
     }
 
-    public List<ReportListRow> rows() {
-        List<ReportListRow> rows = new LinkedList<>();
+    public void assertReportList(int count) {
+        assertThat($(".report-list-f").withHook(WaitHook.class).index(count)).isDisplayed();
+    }
 
-        for (FluentWebElement tr : $(".report-list-table-body-f tr")) {
-            ReportListRow row = new ReportListRow();
+    public void assertReportListRow(int row, Map<ReportList, ?> values) {
+        assertThat(el(String.format(".report-list-%d-f .title-f", row), withText(String.valueOf(values.get(title))))).isDisplayed();
+        assertThat(el(String.format(".report-list-%d-f .name-f", row), withText(String.valueOf(values.get(name))))).isDisplayed();
+        assertThat(el(String.format(".report-list-%d-f .last-execution-f", row), withText(String.valueOf(values.get(lastExecution))))).isDisplayed();
+        assertThat(el(String.format(".report-list-%d-f .next-execution-f", row), withText(String.valueOf(values.get(nextExecution))))).isDisplayed();
 
-            row.setLabel(tr.find(className("name-f")).first().text());
-            row.setReportLink(tr.find(className("name-f")).attribute("href"));
-            row.setCronExpression(tr.find(className("cron-expression-f")).text());
-            row.setExecutionListLink(tr.find(className("execution-link-f")).attribute("href"));
-            row.setExecuteNowLink(tr.find(className("execute-now-f")).attribute("href"));
+        List<String> labels = (List<String>) values.get(ReportList.labels);
 
-            rows.add(row);
+        for (String label : labels) {
+            assertThat($(String.format(".report-list-%d-f .label-f", row), containingText(label))).hasSize(1);
         }
 
-        return rows;
+        assertThat(el(String.format(".report-list-%d-f .edit-f", row), with("href").contains(String.valueOf(values.get(reportEditLink))))).isDisplayed();
+        assertThat(el(String.format(".report-list-%d-f .execution-link-f", row), with("href").contains(String.valueOf(values.get(executionsLink))))).isDisplayed();
     }
 
     public void deleteReport(int row) {
-        ($(".report-list-table-body-f tr").get(row).find(className("delete-f"))).click();
+        $(tagName("div"), withClass().contains(String.format("report-list-%d-f", row))).$(".delete-f").click();
     }
 
-    public void waitForDeleteSuccessMessage() {
-        super.waitForSuccessMessage(REPORT_LIST_DELETE_SUCCESS_M);
+    public void assertDeleteSuccessMessage() {
+        actionResultComponent.assertSuccessMessage(REPORT_LIST_DELETE_SUCCESS_M);
     }
 
-    public void waitForDeleteFailureMessage() {
-        super.waitForFailureMessage(JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M);
+    public void assertDeleteFailureMessage() {
+        actionResultComponent.assertFailureMessage(JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M);
     }
 
     public void selectLabel(int index) {
         $(".label-f").fillSelect().withIndex(index);
     }
 
-    public void filterReport() {
-        $(className("report-filter-f")).click();
-    }
-
-    public List<String> labelTexts() {
-        return $(".label-f option").stream().map(option -> option.text().trim()).collect(toList());
-    }
-
-    public int getResultCount() {
-        return resultCount;
+    public void assertLabelTexts(Collection<String> labels) {
+        for (String label : labels) {
+            assertThat(el(".label-f option", withText().contains(label))).isDisplayed();
+        }
     }
 
     public void setResultCount(int resultCount) {
         this.resultCount = resultCount;
     }
 
-    //Pagination related - start
-    public boolean isNextEnabled() {
-        return !Arrays.asList(find(className("next-f")).attribute("class").split(" ")).contains("disabled");
+    public void assertStartingPage() {
+        assertThat(getDriver().getCurrentUrl(), containsString("pageNumber=0"));
     }
 
-    public boolean isPreviousEnabled() {
-        return !Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled");
+    public PaginationComponent getPaginationComponent() {
+        return paginationComponent;
     }
 
-    public void clickPrevious() {
-        $(id("previous")).click();
-    }
-
-    public void clickNext() {
-        $(id("next")).click();
-    }
-
-    public void waitUntilPreviousIsEnabled() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> !Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled")
-        );
-    }
-
-    public void waitUntilPreviousIsDisabled() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> Arrays.asList(find(className("previous-f")).attribute("class").split(" ")).contains("disabled")
-        );
-    }
-
-    public void waitUntilNextIsDisabled() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> Arrays.asList(find(className("next-f")).attribute("class").split(" ")).contains("disabled")
-        );
-    }
-
-    public void waitUntilNextIsEnabled() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(
-                () -> !Arrays.asList(find(className("next-f")).attribute("class").split(" ")).contains("disabled")
-        );
-    }
-    //Pagination related - end
-
-    public void waitForFluentField(String value) {
-        await().pollingEvery(1, MILLISECONDS).atMost(TIMEOUT_SECONDS, SECONDS).until($(".fluent-field-f")).attribute("value", value);
+    public enum ReportList {
+        title, name, lastExecution, nextExecution, labels, executionsLink, reportEditLink
     }
 }

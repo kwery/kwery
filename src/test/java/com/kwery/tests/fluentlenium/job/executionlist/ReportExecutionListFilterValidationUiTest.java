@@ -3,9 +3,6 @@ package com.kwery.tests.fluentlenium.job.executionlist;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertThat;
-
 public class ReportExecutionListFilterValidationUiTest extends AbstractReportExecutionListUiTest {
     @Before
     public void setUp() throws Exception {
@@ -15,7 +12,7 @@ public class ReportExecutionListFilterValidationUiTest extends AbstractReportExe
 
     @Test
     public void test() throws InterruptedException {
-        page.waitForRows(4);
+        page.assertRows(4);
         String start = "Sat Jan 07 2017 22:00";
         String end = "Sat Jan 07 2017 21:10";
         page.fillStart(start);
@@ -24,10 +21,10 @@ public class ReportExecutionListFilterValidationUiTest extends AbstractReportExe
         page.clickFilter();
         page.waitForStartValidationError();
 
-        assertThat(page.executionListTable(), hasSize(4));
+        page.assertRows(4);
 
         page.filterResult("", "");
-        assertThat(page.executionListTable(), hasSize(4)); // Empty date columns does not submit the page
+        page.assertRows(4); // Empty date columns does not submit the page
 
         //Opposite sequence of above
         page.fillEnd(end);
@@ -47,6 +44,6 @@ public class ReportExecutionListFilterValidationUiTest extends AbstractReportExe
         //Fixing validation results in correct result
         page.filterResult("Sat Jan 07 2017 04:00", "Sat Jan 07 2017 05:45");
         page.waitForModalDisappearance();
-        page.waitForRows(2);
+        page.assertRows(2);
     }
 }

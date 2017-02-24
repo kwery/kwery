@@ -11,7 +11,6 @@ import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
 import com.kwery.services.kwerydirectory.KweryDirectoryChecker;
-import com.kwery.services.kweryversion.KweryVersionUpdater;
 import com.kwery.services.migration.ResultMigrator;
 import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
@@ -21,10 +20,12 @@ import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
 import ninja.utils.NinjaConstant;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +43,6 @@ public class Module extends AbstractModule {
         install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
         install(new FactoryModuleBuilder().build(CsvToHtmlConverterFactory.class));
         bind(ResultMigrator.class);
-        bind(KweryVersionUpdater.class);
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
         bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);
@@ -69,6 +69,14 @@ public class Module extends AbstractModule {
         //TODO - Is there a better way to do this?
         if (NinjaConstant.MODE_TEST.equals(System.getProperty(NinjaConstant.MODE_KEY_NAME))) {
             base = Files.createTempDir();
+            File finalBase = base;
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    FileUtils.deleteDirectory(finalBase);
+                } catch (IOException e) {
+                    logger.error("Failed to delete KweryDirectory on shutdown");
+                }
+            }));
         } else {
             //This is there only to help in development, should not be used in production as we want to mandate the files being is the same folder as the application jar
             String kweryBaseDirectory = System.getProperty("kweryBaseDirectory");

@@ -93,6 +93,8 @@ public class JobDao {
             cq.where(ids.in(filter.getJobLabelIds()));
         }
 
+        cq.orderBy(cb.asc(jobModel.get("id")));
+
         TypedQuery<JobModel> allQuery = m.createQuery(cq)
                 .setMaxResults(filter.getResultCount())
                 .setFirstResult(filter.getPageNo() * filter.getResultCount());

@@ -1,28 +1,20 @@
 package com.kwery.tests.fluentlenium.user;
 
+import com.google.common.collect.Lists;
 import com.kwery.models.User;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
+import java.util.Comparator;
 import java.util.List;
 
-import static com.kwery.tests.fluentlenium.user.UserListPage.COLUMNS;
-import static com.kwery.tests.util.Messages.DELETE_M;
-import static com.kwery.tests.util.Messages.USER_NAME_M;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
 
 public class UserListUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
@@ -35,6 +27,7 @@ public class UserListUiTest extends ChromeFluentTest {
     protected UserListPage page;
 
     protected User user1;
+    protected List<User> users;
 
     @Before
     public void before() {
@@ -43,45 +36,20 @@ public class UserListUiTest extends ChromeFluentTest {
         user1.setUsername("purvi");
         user1.setPassword("bestDaughter");
 
-        new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.insertInto(User.TABLE_DASH_REPO_USER)
-                .row()
-                .column(User.COLUMN_ID, user1.getId())
-                        .column(User.COLUMN_USERNAME, user1.getUsername())
-                        .column(User.COLUMN_PASSWORD, user1.getPassword())
-                .end()
-                .build()
-        ).launch();
+        userDbSetUp(user1);
+
+        users = Lists.newArrayList(loginRule.getLoggedInUser(), user1);
+        users.sort(Comparator.comparing(User::getId));
 
         page.go();
-
-        if (!page.isRendered()) {
-            fail("Could not render login page");
-        }
+        page.waitForModalDisappearance();
     }
 
     @Test
     public void test() {
-        page.waitForRows(2);
-
-        List<String> headers = page.headers();
-
-        assertThat(headers, hasSize(COLUMNS));
-
-        assertThat(headers.get(0), is(USER_NAME_M));
-        assertThat(headers.get(1), is(DELETE_M));
-
-        List<List<String>> rows = page.rows();
-
-        assertThat(rows, hasSize(2));
-
-        List<String> firstRow = rows.get(0);
-        User user0 = loginRule.getLoggedInUser();
-        assertThat(firstRow.get(0), is(user0.getUsername()));
-
-        List<String> secondRow = rows.get(1);
-        assertThat(secondRow.get(0), is(user1.getUsername()));
+        for (int i = 0; i < users.size(); ++i) {
+            page.assertUserList(i, page.map(users.get(i)));
+        }
     }
 
     @Override

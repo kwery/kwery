@@ -1,30 +1,44 @@
 <div class="container executing-reports-f">
     <action-result params="status: status, messages: messages"></action-result>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('report.job.executing.header')" class="panel-title"></h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <span class="h1"><strong data-bind="text: ko.i18n('report.job.executing.header')"></strong></span>
+            </div>
         </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
         <div class="panel-body">
-            <table class="table" id="executionListTable">
-                <thead>
-                    <tr>
-                        <th data-bind="text: ko.i18n('report.job.executing.label')"></th>
-                        <th data-bind="text: ko.i18n('report.job.executing.start')"></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody class="executing-reports-tbody-f" data-bind="foreach: executions" id="executionListTableBody">
-                    <tr>
-                        <td data-bind="text: label"></td>
-                        <td data-bind="text: start"></td>
-                        <td>
-                            <a data-bind="click: $parent.stopJobExecution, attr: {title: ko.i18n('report.job.executing.stop.tooltip')}" class="stop-execution-f">
-                                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="row">
+                <div class="col-md-4 text-muted">
+                    <p data-bind="text: ko.i18n('report.job.executing.label')"></p>
+                </div>
+                <div class="col-md-4 text-muted">
+                    <p data-bind="text: ko.i18n('report.job.executing.start')"></p>
+                </div>
+                <div class="col-md-4 text-muted">
+                    <p data-bind="text: ko.i18n('report.job.executing.actions')"></p>
+                </div>
+            </div>
+            <!-- ko foreach: executions -->
+            <hr>
+            <div data-bind="css: 'executing-reports-list-' + $index() +'-f'" class="row">
+                <div class="col-md-4">
+                    <p data-bind="text: label" class="name-f"></p>
+                </div>
+                <div class="col-md-4">
+                    <p data-bind="text: start" class="start-f"></p>
+                </div>
+                <div class="col-md-4">
+                    <a data-bind="click: $parent.stopJobExecution, attr: {title: ko.i18n('report.job.executing.stop.tooltip')}" class="btn stop-execution-f">
+                        <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                    </a>
+                </div>
+            </div>
+            <!-- /ko -->
         </div>
     </div>
 </div>

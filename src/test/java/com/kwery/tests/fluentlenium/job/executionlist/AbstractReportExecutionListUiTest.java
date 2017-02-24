@@ -1,8 +1,11 @@
 package com.kwery.tests.fluentlenium.job.executionlist;
 
+import com.google.common.collect.Lists;
 import com.kwery.controllers.apis.JobApiController;
+import com.kwery.dtos.JobExecutionDto;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
+import com.kwery.tests.fluentlenium.job.executionlist.ReportExecutionListPage.ReportExecution;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -12,13 +15,17 @@ import org.junit.rules.RuleChain;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.kwery.models.JobExecutionModel.Status.*;
+import static com.kwery.tests.fluentlenium.job.executionlist.ReportExecutionListPage.ReportExecution.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobDbSetUp;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobExecutionDbSetUp;
 import static com.kwery.tests.util.TestUtil.jobExecutionModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static junit.framework.TestCase.fail;
 import static org.junit.rules.RuleChain.outerRule;
 
 public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest {
@@ -35,6 +42,10 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
     protected JobExecutionModel jem1;
     protected JobExecutionModel jem2;
     protected JobExecutionModel jem3;
+
+    protected JobApiController controller;
+
+    protected List<JobExecutionModel> models;
 
     public void setUp() throws Exception {
         jobModel = jobModelWithoutDependents();
@@ -68,11 +79,17 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
         jem3.setJobModel(jobModel);
         jobExecutionDbSetUp(jem3);
 
+        models = Lists.newArrayList(jem0, jem1, jem2, jem3);
+        models.sort(Comparator.comparing(JobExecutionModel::getExecutionStart).reversed());
+
+        controller = ninjaServerRule.getInjector().getInstance(JobApiController.class);
+
         page.go(jobModel.getId(), getResultCount());
 
-        if (!page.isRendered()) {
+/*        if (!page.isRendered()) {
             fail("Could not render report execution list page");
-        }
+        }*/
+
 
         page.waitForModalDisappearance();
     }
@@ -92,5 +109,18 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
     @Override
     public String getBaseUrl() {
         return ninjaServerRule.getServerUrl();
+    }
+
+    public Map<ReportExecution, ?> toMap(JobExecutionDto jobExecutionDto, JobModel jobModel) {
+        Map map = new HashMap();
+        map.put(start, jobExecutionDto.getStart());
+        map.put(end, jobExecutionDto.getEnd());
+        map.put(status, jobExecutionDto.getStatus());
+
+        if (SUCCESS.name().equals(jobExecutionDto.getStatus()) || FAILURE.name().equals(jobExecutionDto.getStatus())) {
+            map.put(reportLink, String.format("/#report/%d/execution/%s", jobModel.getId(), jobExecutionDto.getExecutionId()));
+        }
+
+        return map;
     }
 }

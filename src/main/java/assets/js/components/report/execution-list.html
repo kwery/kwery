@@ -1,89 +1,114 @@
-<div class="container execution-list-container-f">
+<div class="container  execution-list-container-f">
     <action-result params="status: status, messages: messages"></action-result>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('report.job.executions.header')" class="panel-title"></h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <span class="h1"><strong data-bind="text: ko.i18n('report.job.executions.header')"></strong></span>
+            </div>
         </div>
+    </div>
+    <br>
+    <form id="filterForm">
+        <div class="row">
+            <div class='col-sm-6'>
+                <div class="form-group">
+                    <div class='input-group' id='datetimepickerStart'>
+                        <input data-bind="dateTimePicker: executionStartStart" type='text' class="form-control filter-start-f" name="executionStartStart"
+                               data-rangevalidation="rangevalidation" id="executionStartStart" autocomplete="off"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                        </span>
+                    </div>
+                    <div class="help-block with-errors start-error-f"></div>
+                </div>
+            </div>
+            <div class='col-sm-6'>
+                <div class="form-group">
+                    <div class='input-group' id='datetimepickerEnd'>
+                        <input data-bind="dateTimePicker: executionStartEnd" type='text' class="form-control filter-end-f" name="executionStartEnd"
+                               data-rangevalidation="rangevalidation" id="executionStartEnd" autocomplete="off"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                        </span>
+                    </div>
+                    <div class="help-block with-errors end-error-f"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class='col-sm-12'>
+                <button type="submit" data-bind="text: ko.i18n('filter')" class="btn btn-lg btn-primary filter-submit-f" id="filterButton"></button>
+            </div>
+        </div>
+    </form>
 
+    <br>
+
+    <div class="panel panel-default">
         <div class="panel-body">
-            <form id="filterForm">
-                <div class="row">
-                    <div class='col-sm-6'>
-                        <div class="form-group">
-                            <div class='input-group' id='datetimepickerStart'>
-                                <input data-bind="dateTimePicker: executionStartStart" type='text' class="form-control filter-start-f" name="executionStartStart"
-                                       data-rangevalidation="rangevalidation" id="executionStartStart" autocomplete="off"/>
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar">
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="help-block with-errors start-error-f"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p data-bind="text: ko.i18n('report.job.execution.start')" class="text-muted"></p>
                         </div>
-                    </div>
-                    <div class='col-sm-6'>
-                        <div class="form-group">
-                            <div class='input-group' id='datetimepickerEnd'>
-                                <input data-bind="dateTimePicker: executionStartEnd" type='text' class="form-control filter-end-f" name="executionStartEnd"
-                                       data-rangevalidation="rangevalidation" id="executionStartEnd" autocomplete="off"/>
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar">
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="help-block with-errors end-error-f"></div>
+                        <div class="col-md-3">
+                            <p data-bind="text: ko.i18n('report.job.execution.end')" class="text-muted"></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p data-bind="text: ko.i18n('report.job.execution.status')" class="text-muted"></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p  class="text-muted">Actions</p>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class='col-sm-12'>
-                        <button type="submit" data-bind="text: ko.i18n('filter')" class="btn btn-primary filter-submit-f" id="filterButton"></button>
-                    </div>
+            </div>
+
+            <!-- ko foreach: executions -->
+            <hr>
+            <div data-bind="css: 'report-execution-list-' + $index() +'-f'" class="row report-execution-list-row-f">
+                <div class="col-md-3">
+                    <p data-bind="text: start" class="start-f"></p>
                 </div>
-            </form>
-
-            <br>
-
-            <table class="table execution-list-table-f">
-                <thead>
-                <tr>
-                    <th data-bind="text: ko.i18n('report.job.execution.start')"></th>
-                    <th data-bind="text: ko.i18n('report.job.execution.end')"></th>
-                    <th data-bind="text: ko.i18n('report.job.execution.status')"></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody data-bind="foreach: executions" id="executionListTableBody">
-                <tr data-bind="css: 'execution-list-row-' + $index() + '-f'">
-                    <td data-bind="text: start" class="execution-start-f"></td>
-                    <td data-bind="text: end" class="execution-end-f"></td>
-                    <td>
+                <div class="col-md-3">
+                    <p data-bind="text: end" class="end-f"></p>
+                </div>
+                <div class="col-md-3">
+                    <span data-bind="text: status, css: css" class="status-f"></span>
+                </div>
+                <div class="col-md-3">
+                    <ul class="list-inline actions-f">
+                        <li>
+                            <button data-bind="click: $parent.deleteReportExecution, attr:{title: ko.i18n('report.job.execution.delete.tooltip')}"
+                                    type="button" class="btn btn-default btn-xs delete-f">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </li>
                         <!-- ko if: status === 'SUCCESS' || status === 'FAILURE' -->
-                            <a data-bind="text:status, attr:{href: executionResultLink}" class="execution-status-f"></a>
+                        <li>
+                            <a data-bind="attr: {href: executionResultLink, title: ko.i18n('report.job.execution.report.tooltip')}"
+                               class="btn btn-default btn-xs report-link-f">
+                                <span class="glyphicon glyphicon-file"></span>
+                            </a>
+                        </li>
                         <!-- /ko -->
-                        <!-- ko if: status !== 'SUCCESS' && status !== 'FAILURE' -->
-                            <span data-bind="text: status" class="execution-status-f"></span>
-                        <!-- /ko -->
-                    </td>
-                    <td>
-                        <button data-bind="click: $parent.deleteReportExecution, attr:{title: ko.i18n('report.job.execution.delete.tooltip')}"
-                                type="button" class="btn btn-default delete-report-execution-f">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                    </ul>
+                </div>
+            </div>
+            <!-- /ko -->
         </div>
     </div>
 
     <nav>
         <ul class="pager">
             <li data-bind="css: previousStatus" class="previous previous-f">
-                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous"></a>
+                <a data-bind="click: previousStatus() != 'disabled' && previous, text:ko.i18n('prev')" id="previous" class="btn"></a>
             </li>
             <li data-bind="css: nextStatus" class="next next-f">
-                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next"></a>
+                <a data-bind="click: nextStatus() != 'disabled' && next, text:ko.i18n('next')" id="next" class="btn"></a>
             </li>
         </ul>
     </nav>

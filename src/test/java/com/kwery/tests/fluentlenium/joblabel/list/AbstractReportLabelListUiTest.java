@@ -14,7 +14,6 @@ import org.junit.rules.RuleChain;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static junit.framework.TestCase.fail;
 import static org.junit.rules.RuleChain.outerRule;
 
 public abstract class AbstractReportLabelListUiTest extends ChromeFluentTest {
@@ -45,12 +44,9 @@ public abstract class AbstractReportLabelListUiTest extends ChromeFluentTest {
         jobModel.getLabels().add(parentJobLabelModel);
         jobJobLabelDbSetUp(jobModel);
 
-        page.setExpectedRows(2);
         page.go();
 
-        if (!page.isRendered()) {
-            fail("Could not render report label list page");
-        }
+        page.waitForModalDisappearance();
 
         jobLabelDao = ninjaServerRule.getInjector().getInstance(JobLabelDao.class);
     }

@@ -70,50 +70,59 @@ public class SqlQueryTask extends Task {
 
         String query = sqlQuery.getQuery();
         logger.info("Executing query {} on datasource {}", query, datasource.getLabel());
-        try (Connection connection = datasourceService.connection(datasource);
-            PreparedStatement p = connection.prepareStatement(query)) {
-
+        try (Connection connection = datasourceService.connection(datasource)) {
             if (sqlQuery.getQuery().trim().toLowerCase().startsWith("insert")) {
-                Future<Integer> queryFuture = preparedStatementExecutorFactory.create(p).executeUpdate();
-
-                try  {
-                    Integer updatedRows = queryFuture.get();
-                    logger.info("{} rows updated by query {} running on datasource {}", updatedRows, query, datasource.getLabel());
-                } catch (InterruptedException e) {
-                    logger.error("Query {} running on datasource {} cancelled, hence cancelling the prepared statement", query, datasource.getLabel(), e);
-                    p.cancel();
-                    //TODO - Needs investigation
-                    //Task executor has been cancelled.
-                    //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
-                } catch (ExecutionException e) {
-                    logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", query, datasource.getLabel(), e);
-                    updateFailure(context, e);
-                    throw new RuntimeException(e);
+                try (PreparedStatement p = connection.prepareStatement(query)) {
+                    Future<Integer> queryFuture = preparedStatementExecutorFactory.create(p).executeUpdate();
+                    try  {
+                        Integer updatedRows = queryFuture.get();
+                        logger.info("{} rows updated by query {} running on datasource {}", updatedRows, query, datasource.getLabel());
+                    } catch (InterruptedException e) {
+                        logger.error("Query {} running on datasource {} cancelled, hence cancelling the prepared statement", query, datasource.getLabel(), e);
+                        p.cancel();
+                        //TODO - Needs investigation
+                        //Task executor has been cancelled.
+                        //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
+                    } catch (ExecutionException e) {
+                        logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", query, datasource.getLabel(), e);
+                        updateFailure(context, e);
+                        throw new RuntimeException(e);
+                    }
                 }
             } else {
-                Future<ResultSet> queryFuture = preparedStatementExecutorFactory.create(p).executeSelect();
+                connection.setAutoCommit(false);
+                try (PreparedStatement p = connection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.FETCH_FORWARD)) {
+                    if (sqlQuery.getDatasource().getType() == Datasource.Type.POSTGRESQL || sqlQuery.getDatasource().getType() == Datasource.Type.REDSHIFT) {
+                        //TODO Random value for now, have to tune this
+                        p.setFetchSize(100);
+                    } else {
+                        p.setFetchSize(Integer.MIN_VALUE);
+                    }
 
-                try (ResultSet rs = queryFuture.get()) {
-                    File file = kweryDirectory.createFile();
-                    resultSetProcessorFactory.create(rs, file).write();
-                    SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
-                    sqlQueryExecution.setResultFileName(file.getName());
-                    sqlQueryExecutionDao.save(sqlQueryExecution);
-                } catch (JsonProcessingException e) {
-                    logger.error("JSON processing exception while processing result of query {} running on datasource {}", query, datasource.getLabel(), e);
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
-                    logger.error("Query {} running on datasource {} cancelled, hence cancelling the prepared statement", query, datasource.getLabel(), e);
-                    p.cancel();
-                    //TODO - Needs investigation
-                    //Task executor has been cancelled.
-                    //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
-                } catch (ExecutionException e) {
-                    logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", query, datasource.getLabel(), e);
-                    updateFailure(context, e);
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    logger.error("Exception while trying to write result set of query {} running on datasource {} to file", query, datasource.getLabel(), e);
+                    Future<ResultSet> queryFuture = preparedStatementExecutorFactory.create(p).executeSelect();
+
+                    try (ResultSet rs = queryFuture.get()) {
+                        File file = kweryDirectory.createFile();
+                        resultSetProcessorFactory.create(rs, file).write();
+                        SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getByExecutionId(context.getTaskExecutor().getGuid());
+                        sqlQueryExecution.setResultFileName(file.getName());
+                        sqlQueryExecutionDao.save(sqlQueryExecution);
+                    } catch (JsonProcessingException e) {
+                        logger.error("JSON processing exception while processing result of query {} running on datasource {}", query, datasource.getLabel(), e);
+                        throw new RuntimeException(e);
+                    } catch (InterruptedException e) {
+                        logger.error("Query {} running on datasource {} cancelled, hence cancelling the prepared statement", query, datasource.getLabel(), e);
+                        p.cancel();
+                        //TODO - Needs investigation
+                        //Task executor has been cancelled.
+                        //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
+                    } catch (ExecutionException e) {
+                        logger.error("Exception while trying to retrieve result set of query {} running on datasource {}", query, datasource.getLabel(), e);
+                        updateFailure(context, e);
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        logger.error("Exception while trying to write result set of query {} running on datasource {} to file", query, datasource.getLabel(), e);
+                    }
                 }
             }
         } catch (SQLException e) {

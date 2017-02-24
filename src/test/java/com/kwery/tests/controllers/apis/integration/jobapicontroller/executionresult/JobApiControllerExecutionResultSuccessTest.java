@@ -2,25 +2,25 @@ package com.kwery.tests.controllers.apis.integration.jobapicontroller.executionr
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.matchers.JsonPathMatchers;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.models.*;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.TestUtil;
-import net.minidev.json.JSONArray;
+import com.kwery.utils.KweryDirectory;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.kwery.models.SqlQueryExecutionModel.Status.*;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.sqlQueryExecutionDbSetUp;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLoginApiTest {
     private JobExecutionModel jobExecutionModel;
@@ -32,9 +32,10 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
     private SqlQueryExecutionModel failedSqlQueryExecutionModel;
     private SqlQueryExecutionModel successSqlQueryExecutionModel;
     private String jsonResult;
+    private ImmutableList<String[]> datum;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         jobModel = TestUtil.jobModelWithoutDependents();
         DbUtil.jobDbSetUp(jobModel);
 
@@ -43,6 +44,7 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
 
         insertQuery = TestUtil.sqlQueryModel(datasource);
         insertQuery.setTitle("insert query");
+        insertQuery.setQuery("insert into foo");
         DbUtil.sqlQueryDbSetUp(insertQuery);
 
         failedQuery = TestUtil.sqlQueryModel(datasource);
@@ -71,33 +73,36 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
         failedSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         failedSqlQueryExecutionModel.setStatus(SqlQueryExecutionModel.Status.FAILURE);
         failedSqlQueryExecutionModel.setExecutionError("foobarmoo");
-        DbUtil.sqlQueryExecutionDbSetUp(failedSqlQueryExecutionModel);
+        sqlQueryExecutionDbSetUp(failedSqlQueryExecutionModel);
 
         insertSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
         insertSqlQueryExecutionModel.setSqlQuery(insertQuery);
         insertSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         insertSqlQueryExecutionModel.setStatus(SUCCESS);
         insertSqlQueryExecutionModel.setExecutionError(null);
-        DbUtil.sqlQueryExecutionDbSetUp(insertSqlQueryExecutionModel);
+        sqlQueryExecutionDbSetUp(insertSqlQueryExecutionModel);
 
         successSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
         successSqlQueryExecutionModel.setSqlQuery(successQuery);
         successSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         successSqlQueryExecutionModel.setStatus(SUCCESS);
-        jsonResult = TestUtil.toJson(ImmutableList.of(
-                ImmutableList.of("header0", "header1"),
-                ImmutableList.of("foo", "bar"),
-                ImmutableList.of("goo", "boo")
-        ));
-        successSqlQueryExecutionModel.setExecutionError(jsonResult);
-        DbUtil.sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
+        KweryDirectory kweryDirectory = getInjector().getInstance(KweryDirectory.class);
+        File csv = kweryDirectory.createFile();
+        datum = ImmutableList.of(
+                new String[]{"header0", "header1"},
+                new String[]{"foo", "bar"},
+                new String[]{"goo", "boo"}
+        );
+        TestUtil.writeCsv(datum, csv);
+        successSqlQueryExecutionModel.setResultFileName(csv.getName());
+        sqlQueryExecutionDbSetUp(successSqlQueryExecutionModel);
 
         SqlQueryExecutionModel killedSqlQueryExecutionModel = TestUtil.sqlQueryExecutionModel();
         killedSqlQueryExecutionModel.setSqlQuery(killedSqlQuery);
         killedSqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
         killedSqlQueryExecutionModel.setStatus(KILLED);
         killedSqlQueryExecutionModel.setExecutionError(null);
-        DbUtil.sqlQueryExecutionDbSetUp(killedSqlQueryExecutionModel);
+        sqlQueryExecutionDbSetUp(killedSqlQueryExecutionModel);
     }
 
     @Test
@@ -119,7 +124,11 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
         assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[2].status", is(SUCCESS.name())));
         assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[2].executionId", is(successSqlQueryExecutionModel.getExecutionId())));
 
-        JSONArray jsonArray = JsonPath.read(response, "$.sqlQueryExecutionResultDtos[2].jsonResult");
-        assertThat(TestUtil.toJson(jsonArray), sameJSONAs(jsonResult));
+        for (int row = 0; row < datum.size(); ++row) {
+            String[] rowDatum = datum.get(row);
+            for (int col = 0; col < rowDatum.length; ++col) {
+                assertThat(response, hasJsonPath(String.format("$.sqlQueryExecutionResultDtos[2].jsonResult[%d][%d]", row, col), is(datum.get(row)[col])));
+            }
+        }
     }
 }

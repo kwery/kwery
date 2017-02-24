@@ -1,37 +1,64 @@
 <div class="container">
     <action-result params="status: status, messages: messages"></action-result>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="panel-title pull-left">
-                <h3 data-bind="text: ko.i18n('datasource.list.title')" class="panel-title text-left"></h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-11">
+                <span class="h1"><strong data-bind="text: ko.i18n('datasource.list.header')"></strong></span>
             </div>
-            <panel-add-link params="url: '/#datasource/add', tooltipMessageKey: 'datasource.list.add.datasource.tooltip'"></panel-add-link>
+            <div class="col-md-1">
+                <div class="pull-left">
+                    <a data-bind="attr: {title: ko.i18n('datasource.list.add.datasource.tooltip')}" href="/#datasource/add" class="btn-circle btn-primary btn-xl edit-f">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </div>
+            </div>
         </div>
+    </div>
+    <br>
+    <div class="panel panel-default">
         <div class="panel-body">
-            <table class="table" id="datasourcesListTable">
-                <thead>
-                <tr>
-                    <th data-bind="text: ko.i18n('label')"></th>
-                    <th data-bind="text: ko.i18n('url')"></th>
-                    <th data-bind="text: ko.i18n('port')"></th>
-                    <th data-bind="text: ko.i18n('user.name')"></th>
-                    <th data-bind="text: ko.i18n('delete')"></th>
-                </tr>
-                </thead>
-                <tbody data-bind="foreach: datasources" id="datasourcesListTableBody">
-                <tr>
-                    <td><a data-bind="text: label, attr: {href: updateLink}"></a></td>
-                    <td data-bind="text: url"></td>
-                    <td data-bind="text: port"></td>
-                    <td data-bind="text: username"></td>
-                    <td>
-                        <button data-bind="click: $parent.delete, attr: {title: ko.i18n('datasource.list.delete.datasource.tooltip')}" class="f-delete">
-                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="row">
+                <div class="col-md-3 text-muted">
+                    <p data-bind="text: ko.i18n('datasource.list.grid.host')"></p>
+                </div>
+                <div class="col-md-3 text-muted">
+                    <p data-bind="text: ko.i18n('datasource.list.grid.type')"></p>
+                </div>
+                <div class="col-md-3 text-muted">
+                    <p data-bind="text: ko.i18n('datasource.list.grid.label')"></p>
+                </div>
+                <div class="col-md-3 text-muted">
+                    <p data-bind="text: ko.i18n('datasource.list.grid.actions')"></p>
+                </div>
+            </div>
+            <!-- ko foreach: datasources -->
+            <hr>
+            <div data-bind="css: 'datasource-list-' + $index() +'-f'" class="row">
+                <div class="col-md-3">
+                    <p data-bind="text: url" class="host-f"></p>
+                </div>
+                <div class="col-md-3">
+                    <p data-bind="text: type" class="type-f"></p>
+                </div>
+                <div class="col-md-3">
+                    <p data-bind="text: label" class="label-f"></p>
+                </div>
+                <div class="col-md-3">
+                    <ul class="list-inline">
+                        <li>
+                            <a data-bind="attr: {href: updateLink, title: ko.i18n('datasource.list.actions.edit.tooltip')}" class="btn btn-default btn-xs edit-f">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <button data-bind="click: $parent.delete, attr: {title: ko.i18n('datasource.list.actions.delete.tooltip')}" class="btn btn-default btn-xs delete-f">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /ko -->
         </div>
     </div>
 </div>

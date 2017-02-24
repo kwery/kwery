@@ -1,52 +1,61 @@
 <div class="container" id="saveReport">
-    <action-result params="status: status,
-                messages: messages">
-    </action-result>
+    <action-result params="status: status, messages: messages"></action-result>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('report.save.header')"></strong></span>
+            </div>
+        </div>
+    </div>
+
+    <br>
 
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('report.save.header')" class="panel-title"></h3>
-        </div>
         <div class="panel-body">
             <form id="reportForm">
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.title')" class="control-label" for="reportTitle"></label>
+                    <label data-bind="text: ko.i18n('report.save.title')" class="control-label text-muted" for="reportTitle"></label>
                     <input data-bind="value: title" type="text" class="form-control f-report-title" name="reportTitle" id="reportTitle" required>
                     <div class="help-block with-errors reportTitle-form-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.name')" class="control-label" for="name"></label>
+                    <label data-bind="text: ko.i18n('report.save.name')" class="control-label text-muted" for="name"></label>
                     <input data-bind="value: reportName" type="text" class="form-control f-report-name" name="name" id="name" required>
                     <div class="help-block with-errors name-form-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.label')" class="control-label"></label>
+                    <label data-bind="text: ko.i18n('report.save.label')" class="control-label text-muted"></label>
                     <span>
-                        <a data-bind="click: addLabel, attr:{title: ko.i18n('report.save.label.add.tooltip')}" class="add-label-f">
-                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <a data-bind="click: addLabel, attr:{title: ko.i18n('report.save.label.add.tooltip')}" class="add-label-f btn">
+                            <span class="glyphicon glyphicon-plus"></span>
                         </a>
                     </span>
                     <!-- ko foreach: {data: labelIds} -->
-                        <div class="form-inline">
-                            <select name="labelId" id="labelId"  class="form-control label-f" data-bind="foreach: $parent.displayLabels, value: id, css: 'select-' + $index() + '-f'">
-                                <option data-bind="html: formattedLabel, value: id, css: 'label-' + $index() + '-f'"></option>
-                            </select>
-                            <a data-bind="click: $parent.removeLabel, attr:{title: ko.i18n('report.save.label.delete.tooltip')}, css: 'remove-label-' + $index() + '-f'">
-                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                            </a>
-                        </div>
-                        <!-- ko if: $index() < $parent.labelIds().length - 1 --> <!-- Do not want a line break after last label as it will screw up UI -->
-                            <br>
-                        <!-- /ko -->
+                    <div class="form-inline">
+                        <select name="labelId" id="labelId"  class="form-control label-f"
+                                data-bind="foreach: $parent.displayLabels, value: id, css: 'select-' + $index() + '-f'">
+                            <option data-bind="html: formattedLabel, value: id, css: 'label-' + $index() + '-f'"></option>
+                        </select>
+                        <a data-bind="click: $parent.removeLabel, attr:{title: ko.i18n('report.save.label.delete.tooltip')},
+                        css: 'remove-label-' + $index() + '-f'" class="btn">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    <!-- ko if: $index() < $parent.labelIds().length - 1 --> <!-- Do not want a line break after last label as it will screw up UI -->
+                    <br>
+                    <!-- /ko -->
                     <!-- /ko -->
                 </div>
+
+                <hr class="bigHr">
+
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.schedule')" class="control-label"></label>
+                    <label data-bind="text: ko.i18n('report.save.schedule')" class="control-label text-muted"></label>
                     <div class="form-inline">
                         <div class="form-group">
                             <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="cronExpression" class="cron-expression-option-f">
                         </div>
-                        <div data-bind="text: ko.i18n('report.save.cron.expression')" class="form-group">
+                        <div data-bind="text: ko.i18n('report.save.cron.expression')" class="form-group text-muted">
                         </div>
                         <div class="form-group">
                             <input data-bind="value: cronExpression" type="text" class="form-control f-report-cron-expression"
@@ -54,7 +63,8 @@
                             <div class="help-block with-errors cronExpression-form-validation-message-f"></div>
                         </div>
                         <div class="form-group">
-                            <a data-bind="text: ko.i18n('report.save.cron.expression.help')" href="http://www.sauronsoftware.it/projects/cron4j/manual.php#p02" target="cron4j"></a>
+                            <a data-bind="text: ko.i18n('report.save.cron.expression.help')" href="http://www.sauronsoftware.it/projects/cron4j/manual.php#p02"
+                               target="cron4j"></a>
                         </div>
                     </div>
                     <br>
@@ -63,7 +73,7 @@
                             <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="cronUi" class="cron-ui-option-f">
                         </div>
                         <!-- TODO Fix alignment -->
-                        <div class="form-group">
+                        <div class="form-group text-muted">
                             <span class="form-group" id="cron"></span>
                         </div>
                     </div>
@@ -72,7 +82,7 @@
                         <div class="form-group">
                             <input data-bind="checked: scheduleOption" type="radio" name="scheduleOption" value="parentReport" class="parent-report-option-f">
                         </div>
-                        <div data-bind="text: ko.i18n('report.save.after')" class="form-group">
+                        <div data-bind="text: ko.i18n('report.save.after')" class="text-muted form-group">
                         </div>
                         <div class="form-group">
                             <select class="form-control f-parent-report" name="parentReportId" data-bind="options: reports,
@@ -80,97 +90,111 @@
                             </select>
                             <div class="help-block with-errors parentReportId-form-validation-message-f"></div>
                         </div>
-                        <div data-bind="text: ko.i18n('report.save.execution')" class="form-group">
+                        <div data-bind="text: ko.i18n('report.save.execution')" class="form-group text-muted">
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.emails')" class="control-label" for="emails"></label>
-                    <input data-bind="value: reportEmails, enable: enableEmails" type="text" class="form-control f-report-emails" name="emails" id="emails">
-                    <div data-bind="visible: !enableEmails()">
-                        <a data-bind="text: ko.i18n('report.save.configure.smtp')" href="/#email/configuration"></a>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="pull-right">
+                            <ul class="list-inline">
+                                <li data-bind="visible: !enableEmails()" >
+                                    <a data-bind="text: ko.i18n('report.save.configure.smtp')" href="/#email/configuration"></a>
+                                </li>
+                                <li data-bind="visible: enableEmails && !urlConfigured()">
+                                    <a data-bind="text: ko.i18n('report.save.configure.url')" href="/#url-configuration/save"></a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('report.save.emails')" class="control-label text-muted" for="emails"></label>
+                    <input data-bind="value: reportEmails, enable: enableEmails" type="text" class="form-control f-report-emails" name="emails" id="emails">
                     <div class="help-block with-errors emails-form-validation-message-f"></div>
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input data-bind="checked: emptyReportNoEmailRule, enable: enableEmails" class="no-email-rule-f" name="noEmailRule" type="checkbox">
-                        <span data-bind="text: ko.i18n('report.save.empty.report.no.email.rule')"> </span>
+                        <input data-bind="checked: emptyReportNoEmailRule, enable: enableEmails" class="text-muted no-email-rule-f" name="noEmailRule" type="checkbox">
+                        <span data-bind="text: ko.i18n('report.save.empty.report.no.email.rule')" class="text-muted"> </span>
                     </label>
-                    <div data-bind="visible: !enableEmails()">
-                        <a data-bind="text: ko.i18n('report.save.configure.smtp')" href="/#email/configuration"></a>
-                    </div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('report.save.failure.alert.emails')" class="control-label" for="alertEmails"></label>
+                    <label data-bind="text: ko.i18n('report.save.failure.alert.emails')" class="control-label text-muted" for="alertEmails"></label>
                     <input data-bind="value: failureAlertEmails, enable: enableEmails && urlConfigured" type="text" class="form-control failure-alert-emails-f" name="alertEmails" id="alertEmails">
-                    <div data-bind="visible: !enableEmails()">
-                        <a data-bind="text: ko.i18n('report.save.configure.smtp')" href="/#email/configuration"></a>
-                    </div>
-                    <div data-bind="visible: enableEmails && !urlConfigured()">
-                        <a data-bind="text: ko.i18n('report.save.configure.url')" href="/#url-configuration/save"></a>
-                    </div>
                     <div class="help-block with-errors alert-emails-form-validation-message-f"></div>
                 </div>
 
+                <hr>
+
                 <!-- ko foreach: {data: queries, afterRender: refreshValidation} -->
 
-                    <div data-bind="css: 'f-sql-query' + $index()" class="panel panel-default">
-                        <div class="panel-heading">
-                            <h5 data-bind="text: ko.i18n('report.save.save.sql.query.header')" class="panel-title"></h5>
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <label data-bind="text: ko.i18n('report.save.save.sql.query.query')" for="query"></label>
-                                <textarea data-bind="value: query" minlength="1" class="form-control f-query" id="query" name="query" required></textarea>
-                                <div class="help-block with-errors query-form-validation-message-f"></div>
-                            </div>
-                            <div class="form-group">
-                                <label data-bind="text: ko.i18n('report.save.save.sql.query.datasource')" for="datasourceId"></label>
-                                <select id="datasourceId" name="datasourceId" class="form-control f-datasource" data-bind="options: $parent.datasources,
+                <div data-bind="css: 'f-sql-query' + $index()">
+                    <div class="form-group">
+                        <span>
+                            <label data-bind="text: ko.i18n('report.save.save.sql.query.query')" for="query" class="text-muted"></label>
+                            <a data-bind="click: $parent.removeQuery, visible: $parent.queries().length > 1,
+                            attr:{title: ko.i18n('report.save.save.sql.query.remove.help')}" class="btn f-remove-sql-query">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                        </span>
+                        <textarea data-bind="value: query" minlength="1" class="form-control f-query" id="query" name="query" required></textarea>
+                        <div class="help-block with-errors query-form-validation-message-f"></div>
+                    </div>
+                    <div class="form-group">
+                        <label data-bind="text: ko.i18n('report.save.save.sql.query.datasource')" for="datasourceId" class="text-muted"></label>
+                        <select id="datasourceId" name="datasourceId" class="form-control f-datasource" data-bind="options: $parent.datasources,
                                                                         optionsText: 'label',
                                                                         optionsValue: 'id',
                                                                         value: datasourceId" required>
-                                </select>
-                                <div class="help-block with-errors datasourceId-form-validation-message-f"></div>
-                            </div>
-                            <div class="form-group">
-                                <label data-bind="text: ko.i18n('report.save.save.sql.query.title')" for="queryTitle"></label>
-                                <input data-bind="value: queryTitle" minlength="1" type="text"  class="form-control sql-query-title f-sql-query-title" id="queryTitle" name="queryTitle" required>
-                                <div class="help-block with-errors queryTitle-form-validation-message-f"></div>
-                            </div>
-                            <div class="form-group">
-                                <label data-bind="text: ko.i18n('report.save.save.sql.query.label')" for="queryLabel"></label>
-                                <input data-bind="value: queryLabel" minlength="1" type="text"  class="form-control sql-query-label f-sql-query-label" id="queryLabel" name="queryLabel"
-                                       data-labelvalidation="labelvalidation" required>
-                                <div class="help-block with-errors queryLabel-form-validation-message-f"></div>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input data-bind="checked: includeInBody" class="include-body-f" name="includeInBody" type="checkbox">
-                                    <span data-bind="text: ko.i18n('report.save.save.sql.include.in.body')"> </span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input data-bind="checked: includeAsAttachment" class="include-attachment-f" name="includeAsAttachment" type="checkbox">
-                                    <span data-bind="text: ko.i18n('report.save.save.sql.include.as.attachment')"> </span>
-                                </label>
-                            </div>
-                            <div>
-                                <a data-bind="click: $parent.removeQuery, visible: $parent.queries().length > 1, attr:{title: ko.i18n('report.save.save.sql.query.remove.help')}" class="f-remove-sql-query">
-                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                                </a>
-                            </div>
-                        </div>
+                        </select>
+                        <div class="help-block with-errors datasourceId-form-validation-message-f"></div>
                     </div>
+                    <div class="form-group">
+                        <label data-bind="text: ko.i18n('report.save.save.sql.query.title')" for="queryTitle" class="text-muted"></label>
+                        <input data-bind="value: queryTitle" minlength="1" type="text"  class="form-control sql-query-title f-sql-query-title" id="queryTitle" name="queryTitle" required>
+                        <div class="help-block with-errors queryTitle-form-validation-message-f"></div>
+                    </div>
+                    <div class="form-group">
+                        <label data-bind="text: ko.i18n('report.save.save.sql.query.label')" for="queryLabel" class="text-muted"></label>
+                        <input data-bind="value: queryLabel" minlength="1" type="text"  class="form-control sql-query-label f-sql-query-label" id="queryLabel" name="queryLabel"
+                               data-labelvalidation="labelvalidation" required>
+                        <div class="help-block with-errors queryLabel-form-validation-message-f"></div>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input data-bind="checked: includeInBody" class="include-body-f" name="includeInBody" type="checkbox">
+                            <span data-bind="text: ko.i18n('report.save.save.sql.include.in.body')" class="text-muted"> </span>
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input data-bind="checked: includeAsAttachment" class="include-attachment-f" name="includeAsAttachment" type="checkbox">
+                            <span data-bind="text: ko.i18n('report.save.save.sql.include.as.attachment')" class="text-muted"> </span>
+                        </label>
+                    </div>
+                </div>
+
+                <hr>
 
                 <!-- /ko -->
+
+                <div>
+                    <a data-bind="click: addSqlQuery, attr:{title: ko.i18n('report.save.save.sql.query.add.another.help')}" class="btn btn-info btn-xs f-add-sql-query">
+                        Add Another SQL Query
+                    </a>
+                </div>
+
+                <hr>
 
                 <div class="checkbox">
                     <label>
                         <input data-bind="checked: sequentialSqlQueryExecution" class="sequential-sql-query-execution-f" name="sequentialSqlQueryExecution" type="checkbox">
-                        <span data-bind="text: ko.i18n('report.save.sequential.sql.query.execution')"> </span>
+                        <span data-bind="text: ko.i18n('report.save.sequential.sql.query.execution')" class="text-muted"> </span>
                     </label>
                 </div>
 
@@ -178,17 +202,13 @@
                     <label>
                         <input data-bind="checked: stopExecutionOnSqlQueryFailure" class="stop-execution-on-sql-query-failure-f"
                                name="stopExecutionOnSqlQueryFailure" type="checkbox">
-                        <span data-bind="text: ko.i18n('report.save.sequential.sql.query.execution.abort.failure')"> </span>
+                        <span data-bind="text: ko.i18n('report.save.sequential.sql.query.execution.abort.failure')" class="text-muted"> </span>
                     </label>
                 </div>
 
-                <div>
-                    <a data-bind="click: addSqlQuery, attr:{title: ko.i18n('report.save.save.sql.query.add.another.help')}" class="f-add-sql-query">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </a>
-                </div>
+                <br>
 
-                <button data-bind="text: ko.i18n('report.save.submit')" type="submit" class="btn btn-primary f-report-submit" id="create"></button>
+                <button data-bind="text: ko.i18n('report.save.submit')" type="submit" class="btn btn-primary btn-lg f-report-submit" id="create"></button>
             </form>
         </div>
     </div>

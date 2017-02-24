@@ -1,99 +1,124 @@
 <div class="container f-email-configuration">
     <action-result params="status: status, messages: messages"></action-result>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('smtp.add.title')" class="panel-title"></h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('smtp.add.title')"></strong></span>
+            </div>
         </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
         <div class="panel-body">
             <form id="saveSmtpConfigurationForm" role="form">
                 <div class="form-group">
                     <div class="form-group">
                         <label for="localSetting">
                             <input data-bind="checked: useLocalSetting" type="checkbox" class="local-setting-f" id="localSetting">
-                            &nbsp;<span data-bind="text: ko.i18n('email.configuration.local.smtp')"></span>
+                            &nbsp;<span data-bind="text: ko.i18n('email.configuration.local.smtp')" class="text-muted"></span>
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('smtp.host')" class="control-label" for="host"></label>
+                    <label data-bind="text: ko.i18n('smtp.host')" class="control-label text-muted" for="host"></label>
                     <input data-bind="value: host" minlength="1" class="form-control f-host" type="text" id="host" name="host" required>
                     <div class="help-block with-errors host-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('smtp.port')" for="port"></label>
+                    <label data-bind="text: ko.i18n('smtp.port')" class="control-label text-muted" for="port"></label>
                     <input data-bind="value: port" minlength="1" min="1" required class="form-control f-port" type="text" id="port" name="port">
                     <div class="help-block with-errors port-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('smtp.ssl')"></label>
+                    <label data-bind="text: ko.i18n('smtp.ssl')" class="text-muted"></label>
                     <div>
                         <div class="radio">
                             <label>
                                 <input data-bind="enable: !useLocalSetting(), checked: ssl" class="radio-inline f-ssl-true" type="radio" name="ssl" id="sslTrue" value="true" required data-validate="true">
-                                True
+                                <span class="text-muted">True</span>
                             </label>
                             <label>
                                 <input data-bind="enable: !useLocalSetting(), checked: ssl" class="radio-inline f-ssl-false" type="radio" name="ssl" id="sslFalse" value="false" required data-validate="true">
-                                False
+                                <span class="text-muted">False</span>
                             </label>
                         </div>
                         <div class="help-block with-errors ssl-validation-message-f"></div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('user.name')" for="username"></label>
-                    <input data-bind="enable: !useLocalSetting(), value: username" minlength="1" class="form-control f-smtp-username" type="text" id="username" name="username" required data-validate="true">
+                    <label data-bind="text: ko.i18n('user.name')" class="text-muted" for="username"></label>
+                    <input data-bind="enable: !useLocalSetting(), value: username" minlength="1" class="form-control text-muted f-smtp-username" type="text" id="username" name="username" required data-validate="true">
                     <div class="help-block with-errors username-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('password')" for="password"></label>
-                    <input data-bind="enable: !useLocalSetting(), value: password" class="form-control f-smtp-password" type="password" id="password" name="password" required data-validate="true">
+                    <label data-bind="text: ko.i18n('password')" class="text-muted" for="password"></label>
+                    <input data-bind="enable: !useLocalSetting(), value: password" class="form-control text-muted f-smtp-password" type="password" id="password" name="password" required data-validate="true">
                     <div class="help-block with-errors password-validation-message-f"></div>
                 </div>
-                <button type="submit" data-bind="text: ko.i18n('email.configuration.save')" class="btn btn-primary f-smtp-configuration-submit" id="create"></button>
+                <button type="submit" data-bind="text: ko.i18n('email.configuration.save')" class="btn btn-primary btn-lg f-smtp-configuration-submit" id="create"></button>
             </form>
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('email.add.title')" class="panel-title"></h3>
+    <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('email.add.title')"></strong></span>
+            </div>
         </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
         <div class="panel-body">
             <form id="saveEmailConfigurationForm" >
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('email.from')" for="from"></label>
+                    <label data-bind="text: ko.i18n('email.from')" class="text-muted" for="from"></label>
                     <input data-bind="value: from" minlength="1" class="form-control f-from-email" type="text" id="from" name="from" required>
                     <div class="help-block with-errors from-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('email.bcc')" for="bcc"></label>
+                    <label data-bind="text: ko.i18n('email.bcc')" class="text-muted" for="bcc"></label>
                     <input data-bind="value: bcc" minlength="1" min="1" class="form-control f-bcc" type="text" id="bcc" name="port">
                     <div class="help-block with-errors bcc-validation-message-f"></div>
                 </div>
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('email.reply.to')" for="replyTo"></label>
+                    <label data-bind="text: ko.i18n('email.reply.to')" class="text-muted" for="replyTo"></label>
                     <input data-bind="value: replyTo" minlength="1" min="1" class="form-control f-reply-to" type="text" id="replyTo" name="replyTo">
                     <div class="help-block with-errors replyTo-validation-message-f"></div>
                 </div>
-                <button type="submit" data-bind="text: ko.i18n('email.configuration.save')" class="btn btn-primary f-email-configuration-submit"></button>
+                <button type="submit" data-bind="text: ko.i18n('email.configuration.save')" class="btn btn-primary btn-lg f-email-configuration-submit"></button>
             </form>
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('email.test.configuration.title')" class="panel-title"></h3>
+    <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('email.test.configuration.title')"></strong></span>
+            </div>
         </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
         <div class="panel-body">
             <form id="testEmailForm">
                 <div class="form-group">
-                    <label data-bind="text: ko.i18n('email.test.configuration.to')" for="to"></label>
+                    <label data-bind="text: ko.i18n('email.test.configuration.to')" class="text-muted" for="to"></label>
                     <input data-bind="value: toEmail, enable: configurationsPresent" minlength="1" class="form-control f-test-email" type="text" id="to" name="to" required>
                     <div class="help-block with-errors test-email-to-validation-message-f"></div>
                 </div>
-                <button type="submit" data-bind="text: ko.i18n('email.test.configuration.send.email'), enable: configurationsPresent" class="btn btn-primary f-test-email-submit"></button>
+                <button type="submit" data-bind="text: ko.i18n('email.test.configuration.send.email'), enable: configurationsPresent" class="btn btn-primary btn-lg  f-test-email-submit"></button>
             </form>
         </div>
     </div>

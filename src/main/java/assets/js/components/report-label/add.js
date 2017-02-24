@@ -38,6 +38,14 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
             };
         };
 
+        var moveNode = function(id, newParentId) {
+            var node = findNode(root, id);
+            node.remove();
+            var newParentNode = findNode(root, newParentId);
+            newParentNode.addChild(node);
+            node.parent = newParentNode;
+        };
+
         //This is n2, but we are not bothered about efficiency at this scale
         var findNode = function(node, id) {
             if (node.id === id) {
@@ -106,18 +114,37 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                 var child = jobLabelModelHackDto.jobLabelModel;
 
                 if (parent != undefined) {
-                    //Label has a parent label
-                    var parentNodeInTree = findNode(root, parent.id);
-                    if (parentNodeInTree !== undefined) {
-                        //Parent label is already present in the tree, hence add the child label as a child of the existing parent
-                        parentNodeInTree.addChild(new Node(child.label, child.id, parentNodeInTree));
+                    var parentNode = findNode(root, parent.id);
+                    var childNode = findNode(root, child.id);
+
+                    if (parentNode !== undefined) {
+                        //Parent is already present in the tree
+                        if (childNode !== undefined) {
+                            //Child is already present in the tree
+                            //Move the child from old parent to new parent
+                            moveNode(child.id, parent.id);
+                        } else {
+                            //Child is not present in the tree
+                            //Add the child label as a child of the existing parent
+                            parentNode.addChild(new Node(child.label, child.id, parentNode));
+                        }
                     } else {
-                        //Parent label is not present in the tree, create a new parent node
-                        var parentNode = new Node(parent.label, parent.id, root);
-                        //Add the child label as a child of the parent node
-                        parentNode.addChild(new Node(child.label, child.id, parentNode));
-                        //Add parent node as a child of the root label
-                        root.addChild(parentNode);
+                        //Parent label is not present in the tree
+                        if (childNode !== undefined) {
+                            //Child is already present in the tree
+                            //Add parent
+                            var parentNode = new Node(parent.label, parent.id, root);
+                            root.addChild(parentNode);
+                            //Move child to new parent
+                            moveNode(child.id, parentNode.id);
+                        } else {
+                            //Parent label is not present in the tree, create a new parent node
+                            var parentNode = new Node(parent.label, parent.id, root);
+                            //Add the child label as a child of the parent node
+                            parentNode.addChild(new Node(child.label, child.id, parentNode));
+                            //Add parent node as a child of the root label
+                            root.addChild(parentNode);
+                        }
                     }
                 } else {
                     //Label does not have a parent

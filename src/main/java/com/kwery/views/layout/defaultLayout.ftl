@@ -33,26 +33,20 @@
             <link href="/assets/css/jquery-ui.theme.css" rel="stylesheet">
 
             <style type="text/css">
-/*                #navbar {
+                #navbar {
                     background: white !important;
                 }
 
                 .navbar-default {
                     background: white !important;
-                }*/
+                }
 
                 .panel-heading {
-/*                    background: #ffe169 !important;*/
                     background: #f4f9fb !important;
                 }
 
                 body {
-/*                    background: #f4f9fb !important;*/
-                    background: rgb(251, 249, 248) !important;
-
-                }
-
-                body {
+                    background: #f0f4f5 !important;
                     font-family: 'Roboto', sans-serif !important;
                 }
 
@@ -60,31 +54,16 @@
                     background: white !important;
                 }
 
-                .top-buffer {
-                    margin-top:20px;
-                }
-
-/*                div[class="row"] {
-                    border: 1px dotted rgba(0, 0, 0, 0.5);
-                }
-
-                div[class^="col-"] {
-                    background-color: rgba(255, 0, 0, 0.2);
-                }*/
-
-                hr.double {
-                    border-top: 3px double #8c8b8b;
-                }
-
-                hr.dotted {
-                    border-top: 1px dashed #8c8b8b;
-                }
-
                 .modal {
                     position: fixed;
                     top: 50% !important;
                     left: 50%;
                 }
+
+                .kwery-color {
+                    color: #1f3a93;
+                }
+
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->

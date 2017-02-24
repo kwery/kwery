@@ -1,7 +1,7 @@
 package com.kwery.tests.fluentlenium.job.executing;
 
+import com.google.common.collect.Lists;
 import com.kwery.controllers.apis.JobApiController;
-import com.kwery.dtos.JobExecutionDto;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
@@ -14,16 +14,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.kwery.models.JobExecutionModel.Status.ONGOING;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobExecutionDbSetUp;
 import static com.kwery.tests.util.TestUtil.jobExecutionModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static junit.framework.TestCase.fail;
-import static org.exparity.hamcrest.BeanMatchers.theSameAs;
-import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
 
 public class ReportExecutingListUiTest extends ChromeFluentTest {
@@ -38,6 +35,7 @@ public class ReportExecutingListUiTest extends ChromeFluentTest {
     protected ReportExecutingPage page;
     protected JobExecutionModel jobExecutionModel0;
     protected JobExecutionModel jobExecutionModel1;
+    private List<JobExecutionModel> models;
 
     @Before
     public void setUpReportExecutingUiAbstractTest() {
@@ -60,24 +58,18 @@ public class ReportExecutingListUiTest extends ChromeFluentTest {
         jobExecutionModel1.setStatus(ONGOING);
         jobExecutionDbSetUp(jobExecutionModel1);
 
+        models = Lists.newArrayList(jobExecutionModel0, jobExecutionModel1);
+        models.sort(Comparator.comparing(JobExecutionModel::getExecutionStart).reversed());
+
         goTo(page);
-        if (!page.isRendered()) {
-            fail("Could not render executing reports page");
-        }
+        page.waitForModalDisappearance();
     }
 
     @Test
     public void test() throws Exception {
-        page.waitForExecutingReportsList(2);
-        List<JobExecutionDto> dtos = page.executions();
-
-        //TODO - Hacky fix to the problem of KO not rendering fast enough :(
-        TimeUnit.SECONDS.sleep(10);
-
-        assertThat(dtos.get(0), theSameAs(controller.jobExecutionModelToJobExecutionDto(jobExecutionModel1))
-                .excludeProperty("end").excludeProperty("status").excludeProperty("executionId"));
-        assertThat(dtos.get(1), theSameAs(controller.jobExecutionModelToJobExecutionDto(jobExecutionModel0))
-                .excludeProperty("end").excludeProperty("status").excludeProperty("executionId"));
+        for (int i = 0; i < models.size(); ++i) {
+            page.assertExecutingReports(i, page.toMap(controller.jobExecutionModelToJobExecutionDto(models.get(i))));
+        }
     }
 
     @Override

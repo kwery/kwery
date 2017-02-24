@@ -1,29 +1,55 @@
-<action-result params="status: status, messages: messages"></action-result>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="panel-title pull-left">
-            <h3 data-bind="text: ko.i18n('report.label.list.header')" class="panel-title text-left"></h3>
+<div class="container">
+    <action-result params="status: status, messages: messages"></action-result>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-11">
+                <span class="h1"><strong data-bind="text: ko.i18n('report.label.list.add.tooltip')"></strong></span>
+            </div>
+            <div class="col-md-1">
+                <div class="pull-left">
+                    <a data-bind="attr: {title: ko.i18n('user.list.add.user.tooltip')}" href="/#report-label/add" class="btn-circle btn-primary btn-xl">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </div>
+            </div>
         </div>
-        <panel-add-link params="url: '/#report-label/add', tooltipMessageKey: 'report.label.list.add.tooltip'"></panel-add-link>
     </div>
-    <div class="panel-body">
-        <table class="table report-label-list-f">
-            <thead>
-                <tr>
-                    <th data-bind="text: ko.i18n('report.label.list.table.header.label')"></th>
-                    <th data-bind="text: ko.i18n('report.label.list.table.header.delete')"></th>
-                </tr>
-            </thead>
-            <tbody data-bind="foreach: displayLabels">
-                <tr>
-                    <td><a data-bind="html: formattedLabel, attr:{href: '/#report-label/' + id}" class="label-f"></a></td>
-                    <td>
-                        <button data-bind="click: $parent.delete, attr: {title: ko.i18n('report.label.list.delete.tooltip')}, css: 'delete-' + $index() + '-f'">
-                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-9">
+                    <p data-bind="text: ko.i18n('report.label.list.table.header.label')" class="text-muted"></p>
+                </div>
+                <div class="col-md-3">
+                    <p data-bind="text: ko.i18n('report.label.list.grid.actions')" class="text-muted"></p>
+                </div>
+            </div>
+
+            <!--ko foreach:displayLabels -->
+            <hr>
+            <div data-bind="css: 'report-label-list-' + $index() +'-f'" class="row">
+                <div class="col-md-9">
+                    <p data-bind="html: formattedLabel" class="label-f"></p>
+                </div>
+                <div class="col-md-3">
+                    <ul class="list-inline">
+                        <li>
+                            <a data-bind="attr: {href: '/#report-label/' + id, title: ko.i18n('report.label.list.edit.tooltip')}" class="btn btn-default btn-xs edit-f">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <button data-bind="click: $parent.delete, attr: {title: ko.i18n('report.label.list.delete.tooltip')}"
+                                    class="btn btn-default btn-xs delete-f">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--/ko -->
+
+        </div>
     </div>
 </div>

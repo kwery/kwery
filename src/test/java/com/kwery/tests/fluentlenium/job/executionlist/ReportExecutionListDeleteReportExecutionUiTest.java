@@ -3,6 +3,8 @@ package com.kwery.tests.fluentlenium.job.executionlist;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Map;
+
 public class ReportExecutionListDeleteReportExecutionUiTest extends AbstractReportExecutionListUiTest {
     @Before
     public void setUp() throws Exception {
@@ -12,9 +14,12 @@ public class ReportExecutionListDeleteReportExecutionUiTest extends AbstractRepo
 
     @Test
     public void test() {
-        page.waitForRows(4);
         page.deleteExecution(0);
-        page.waitForDeleteSuccessMessage();
-        page.waitForRowDelete(0);
+        page.assertDeleteSuccessMessage();
+
+        for (int i = 1; i < models.size(); ++i) {
+            Map<ReportExecutionListPage.ReportExecution, ?> reportExecutionMap = toMap(controller.jobExecutionModelToJobExecutionDto(models.get(i)), jobModel);
+            page.assertReportExecutionList(i - 1, reportExecutionMap);
+        }
     }
 }

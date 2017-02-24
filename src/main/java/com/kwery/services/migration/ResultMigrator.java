@@ -4,11 +4,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kwery.dao.KweryVersionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
-import com.kwery.models.KweryVersionModel;
 import com.kwery.models.SqlQueryExecutionModel;
-import com.kwery.services.kweryversion.KweryVersionUpdater;
 import com.kwery.services.scheduler.JsonToCsvConverter;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.utils.KweryDirectory;
@@ -35,16 +32,14 @@ public class ResultMigrator {
     protected final JsonToCsvConverter jsonToCsvConverter;
     protected final KweryDirectory kweryDirectory;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
-    protected final KweryVersionDao kweryVersionDao;
     protected final NinjaProperties ninjaProperties;
 
     @Inject
     public ResultMigrator(JsonToCsvConverter jsonToCsvConverter, KweryDirectory kweryDirectory,
-                          SqlQueryExecutionDao sqlQueryExecutionDao, KweryVersionDao kweryVersionDao, NinjaProperties ninjaProperties) {
+                          SqlQueryExecutionDao sqlQueryExecutionDao, NinjaProperties ninjaProperties) {
         this.jsonToCsvConverter = jsonToCsvConverter;
         this.kweryDirectory = kweryDirectory;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
-        this.kweryVersionDao = kweryVersionDao;
         this.ninjaProperties = ninjaProperties;
     }
 
@@ -53,11 +48,7 @@ public class ResultMigrator {
         if (ninjaProperties.isTest()) {
             logger.info("Mode is test, hence skipping result migration from Derby to FS");
             return;
-        }
-
-        KweryVersionModel kweryVersionModel = kweryVersionDao.get();
-
-        if (kweryVersionModel.getVersion().equals(KweryVersionUpdater.RELEASE_SNAPSHOT_1_5_1)) {
+        } else {
             logger.info("Migration of results from Derby to file system - start");
 
             SqlQueryExecutionSearchFilter filter = new SqlQueryExecutionSearchFilter();
@@ -112,8 +103,6 @@ public class ResultMigrator {
                 filter.setPageNumber(filter.getPageNumber() + 1);
             } while (!models.isEmpty());
             logger.info("Migration of results from Derby to file system - end");
-        } else {
-            logger.info("Skipping result migration since Kwery is running at version - " + KweryVersionUpdater.RELEASE_SNAPSHOT_1_5_1);
         }
     }
 }

@@ -63,7 +63,7 @@ public class ReportEmailSender {
 
             List<KweryMailAttachment> attachments = new LinkedList<>();
 
-            boolean emptyResult = false;
+            boolean hasContent = false;
 
             boolean attachmentSkipped = false;
 
@@ -82,10 +82,11 @@ public class ReportEmailSender {
                         if (KweryUtil.isFileWithinLimits(resultFile)) {
                             CsvToHtmlConverter csvToHtmlConverter = csvToHtmlConverterFactory.create(resultFile);
                             emailSnippets.add(csvToHtmlConverter.convert());
-                            emptyResult = emptyResult || csvToHtmlConverter.isHasContent();
+                            hasContent = hasContent || csvToHtmlConverter.isHasContent();
                         } else {
                             String message = messages.get(JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING, Optional.absent()).get();
                             emailSnippets.add(String.format("<p>%s</p>", message));
+                            hasContent = true;
                         }
                     }
                 }
@@ -114,7 +115,7 @@ public class ReportEmailSender {
             }
 
             //For now do not bother about include in email and attachments while evaluating rules
-            if (shouldSend(emptyResult, jobModel)) {
+            if (shouldSend(hasContent, jobModel)) {
                 KweryMail kweryMail = kweryMailProvider.get();
                 kweryMail.setSubject(subject);
                 kweryMail.setBodyHtml(String.join("", emailSnippets));
