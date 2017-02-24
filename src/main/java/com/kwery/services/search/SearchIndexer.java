@@ -3,6 +3,7 @@ package com.kwery.services.search;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.google.inject.persist.Transactional;
 import com.kwery.models.JobModel;
 import com.kwery.utils.ServiceStartUpOrderConstant;
 import ninja.lifecycle.Start;
@@ -24,6 +25,7 @@ public class SearchIndexer {
     }
 
     @Start(order = ServiceStartUpOrderConstant.SEARCH_INDEXER_ORDER)
+    @Transactional
     public void index() {
         logger.info("Search indexing - start");
         try {
