@@ -21,6 +21,9 @@ import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withClass;
+import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
@@ -86,7 +89,8 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void waitForReportFormValidationMessage(FormField formField, String message) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(String.format(".%s-error-f", formField))).text(message);
+        //await().atMost(TIMEOUT_SECONDS, SECONDS).until($()).text().not().contains("");
+        assertThat(el("div", withClass().contains(String.format("%s-error-f", formField)), withTextContent().notContains("")));
     }
 
     public void waitForDatabaseFormFieldToBeVisible() {
