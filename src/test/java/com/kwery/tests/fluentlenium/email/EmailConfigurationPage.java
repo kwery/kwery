@@ -121,8 +121,8 @@ public class EmailConfigurationPage extends KweryFluentPage implements RepoDashP
         return !$(className("f-test-email-submit")).first().enabled();
     }
 
-    public String testEmailToFieldValidationMessage() {
-        return $(className("test-email-to-validation-message-f")).first().text();
+    public void assertNonEmptyEmailToFieldValidationMessage() {
+        assertThat(el("div", withClass().contains("test-email-to-validation-message-f"), withTextContent().notContains("")));
     }
 
     public enum SmtpConfigurationFormField {
