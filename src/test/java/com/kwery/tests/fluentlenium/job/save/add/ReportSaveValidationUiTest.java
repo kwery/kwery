@@ -7,22 +7,20 @@ import com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import org.fluentlenium.assertj.FluentLeniumAssertions;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.INPUT_VALIDATION_ERROR_MESSAGE;
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.cronExpression;
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.parentReportId;
-import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SELECT_VALIDATION_ERROR_MESSAGE;
-import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.SqlQueryFormField.datasourceId;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.smtpConfiguration;
 import static junit.framework.TestCase.fail;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withClass;
+import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.junit.rules.RuleChain.outerRule;
 
 public class ReportSaveValidationUiTest extends ChromeFluentTest {
@@ -53,13 +51,13 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         page.chooseCronExpression();
         page.clickOnAddSqlQuery(0);
         page.submitReportSaveForm();
-        page.waitForReportFormValidationMessage();
+        page.assertNonEmptyReportFormValidationMessage();
 
         for (ReportFormField field : ReportFormField.values()) {
             if (field == parentReportId) {
-                assertThat(page.validationMessage(field), is(""));
+                page.assertEmptyValidationMessage(field);
             } else {
-                assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
+                page.assertNonEmptyValidationMessage(field);
             }
         }
 
@@ -71,13 +69,13 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         page.chooseCronUi();
         page.clickOnAddSqlQuery(0);
         page.submitReportSaveForm();
-        page.waitForReportFormValidationMessage();
+        page.assertNonEmptyReportFormValidationMessage();
 
         for (ReportFormField field : ReportFormField.values()) {
             if (field == parentReportId || field == cronExpression) {
-                assertThat(page.validationMessage(field), is(""));
+                page.assertEmptyValidationMessage(field);
             } else {
-                assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
+                page.assertNonEmptyValidationMessage(field);
             }
         }
 
@@ -89,15 +87,13 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         page.chooseParentReport();
         page.clickOnAddSqlQuery(0);
         page.submitReportSaveForm();
-        page.waitForReportFormValidationMessage();
+        page.assertNonEmptyReportFormValidationMessage();
 
         for (ReportFormField field : ReportFormField.values()) {
-            if (field == parentReportId) {
-                assertThat(page.validationMessage(field), is(SELECT_VALIDATION_ERROR_MESSAGE));
-            } else if (field == cronExpression) {
-                assertThat(page.validationMessage(field), is(""));
+            if (field == cronExpression) {
+                page.assertEmptyValidationMessage(field);
             } else {
-                assertThat(page.validationMessage(field), is(INPUT_VALIDATION_ERROR_MESSAGE));
+                page.assertNonEmptyValidationMessage(field);
             }
         }
 
@@ -107,13 +103,14 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
     private void sqlQueryFormValidation() {
         for (int i = 0; i < 2; ++i) {
             for (SqlQueryFormField field : SqlQueryFormField.values()) {
-                if (field == datasourceId) {
-                    assertThat(page.validationMessage(field, i), is(SELECT_VALIDATION_ERROR_MESSAGE));
-                } else {
-                    assertThat(page.validationMessage(field, i), is(INPUT_VALIDATION_ERROR_MESSAGE));
-                }
+                FluentLeniumAssertions.assertThat(el("div",
+                        withClass().contains(String.format(".f-sql-query%d .%s-form-validation-message-f", i, field.name())),
+                        withTextContent().notContains("")));
             }
         }
+
+
+
     }
 
     @Override

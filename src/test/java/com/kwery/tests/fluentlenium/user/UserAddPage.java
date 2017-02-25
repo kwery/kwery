@@ -20,8 +20,6 @@ import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#user/add")
 public class UserAddPage extends KweryFluentPage implements RepoDashPage {
-    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
-
     @Wait(timeout = TIMEOUT_SECONDS, timeUnit = SECONDS)
     @FindBy(className = "add-user-form-f")
     protected FluentWebElement createAdminUserForm;

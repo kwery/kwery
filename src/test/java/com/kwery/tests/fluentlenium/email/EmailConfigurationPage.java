@@ -18,9 +18,6 @@ import static org.openqa.selenium.By.className;
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#email/configuration")
 public class EmailConfigurationPage extends KweryFluentPage implements RepoDashPage {
-    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
-    public static final String RADIO_VALIDATION_ERROR_MESSAGE = "Please select one of these options.";
-
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-email-configuration")).displayed();
