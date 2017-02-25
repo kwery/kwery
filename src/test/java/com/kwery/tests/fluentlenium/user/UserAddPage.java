@@ -13,6 +13,9 @@ import static com.kwery.tests.util.Messages.ADMIN_USER_ADDITION_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withClass;
+import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#user/add")
@@ -32,12 +35,12 @@ public class UserAddPage extends KweryFluentPage implements RepoDashPage {
         $(".user-save-f").click();
     }
 
-    public String usernameValidationErrorMessage() {
-        return $(".username-error-f").text();
+    public void assertNonEmptyUsernameValidationErrorMessage() {
+        assertThat(el("div", withClass().contains("username-error-f"), withTextContent().notContains("")));
     }
 
-    public String passwordValidationErrorMessage() {
-        return $(".password-error-f").text();
+    public void assertNotEmptyPasswordValidationErrorMessage() {
+        assertThat(el("div", withClass().contains("password-error-f"), withTextContent().notContains("")));
     }
 
     @Override
