@@ -14,8 +14,6 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.Datasource.Type.POSTGRESQL;
 import static com.kwery.models.Datasource.Type.REDSHIFT;
 import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.FormField.*;
-import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.INPUT_VALIDATION_ERROR_MESSAGE;
-import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.SELECT_VALIDATION_ERROR_MESSAGE;
 import static junit.framework.TestCase.fail;
 
 public class DatasourceAddValidationUiTest extends ChromeFluentTest {
@@ -47,9 +45,9 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
             if (formField != password) {
                 if (formField == type) {
-                    page.waitForReportFormValidationMessage(formField, SELECT_VALIDATION_ERROR_MESSAGE);
+                    page.assertFormValidationMessagePresent(formField);
                 } else {
-                    page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                    page.assertFormValidationMessagePresent(formField);
                 }
             }
         }
@@ -67,7 +65,7 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
             }
 
             if (formField != password) {
-                page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                page.assertFormValidationMessagePresent(formField);
             }
         }
     }
@@ -84,7 +82,7 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
             }
 
             if (formField != password) {
-                page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                page.assertFormValidationMessagePresent(formField);
             }
         }
     }
@@ -101,7 +99,7 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
             }
 
             if (formField != password) {
-                page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
+                page.assertFormValidationMessagePresent(formField);
             }
         }
     }

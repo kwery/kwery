@@ -30,9 +30,6 @@ import static org.openqa.selenium.By.id;
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#datasource/add")
 public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
-    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
-    public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
-
     @Wait(timeout = TIMEOUT_SECONDS, timeUnit = SECONDS)
     @FindBy(id = "addDatasourceForm")
     protected FluentWebElement form;
@@ -88,7 +85,7 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
         return $(locator).text();
     }
 
-    public void waitForReportFormValidationMessage(FormField formField, String message) {
+    public void assertFormValidationMessagePresent(FormField formField) {
         assertThat(el("div", withClass().contains(String.format("%s-error-f", formField)), withTextContent().notContains("")));
     }
 
