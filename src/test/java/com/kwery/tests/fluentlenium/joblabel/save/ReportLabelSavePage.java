@@ -13,14 +13,14 @@ import java.util.List;
 import static com.kwery.tests.util.Messages.REPORT_LABEL_SAVE_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withClass;
+import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.openqa.selenium.By.className;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#report-label/add")
 public class ReportLabelSavePage extends KweryFluentPage implements RepoDashPage {
-    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
-    public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
-
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".label-form-f")).displayed();
@@ -61,16 +61,16 @@ public class ReportLabelSavePage extends KweryFluentPage implements RepoDashPage
         super.waitForSuccessMessage(MessageFormat.format(REPORT_LABEL_SAVE_SUCCESS_M, label));
     }
 
-    public void waitForLabelNameValidationError() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".name-error-f")).text(INPUT_VALIDATION_ERROR_MESSAGE);
+    public void assertNonEmptyLabelNameValidationError() {
+        assertThat(el("div", withClass().contains("name-error-f"), withTextContent().notContains("")));
     }
 
     public void waitForLabelNameValidationErrorRemoval() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".name-error-f")).text("");
     }
 
-    public void waitForParentLabelValidationError() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".parent-error-f")).text(SELECT_VALIDATION_ERROR_MESSAGE);
+    public void assertNonEmptyParentLabelValidationError() {
+        assertThat(el("div", withClass().contains("parent-error-f"), withTextContent().notContains("")));
     }
 
     public void waitForParentLabelValidationErrorRemoval() {

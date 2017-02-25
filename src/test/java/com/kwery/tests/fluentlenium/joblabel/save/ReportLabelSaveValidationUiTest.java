@@ -22,7 +22,7 @@ public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTe
     public void testNameValidationError() {
         page.waitForModalDisappearance();
         page.submitForm();
-        page.waitForLabelNameValidationError();
+        page.assertNonEmptyLabelNameValidationError();
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(1));
 
         String label = "test";
@@ -40,8 +40,8 @@ public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTe
         page.waitForModalDisappearance();
         page.optParentLabel();
         page.submitForm();
-        page.waitForLabelNameValidationError();
-        page.waitForParentLabelValidationError();
+        page.assertNonEmptyLabelNameValidationError();
+        page.assertNonEmptyParentLabelValidationError();
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(1));
 
         //Uncheck parent label
@@ -66,7 +66,7 @@ public class ReportLabelSaveValidationUiTest extends AbstractReportLabelSaveUiTe
         page.fillName(label);
         page.optParentLabel();
         page.submitForm();
-        page.waitForParentLabelValidationError();
+        page.assertNonEmptyParentLabelValidationError();
         assertThat(jobLabelDao.getAllJobLabelModels(), hasSize(1));
         page.optParentLabel();
         page.waitForParentLabelValidationErrorRemoval();
