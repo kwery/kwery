@@ -89,7 +89,6 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void waitForReportFormValidationMessage(FormField formField, String message) {
-        //await().atMost(TIMEOUT_SECONDS, SECONDS).until($()).text().not().contains("");
         assertThat(el("div", withClass().contains(String.format("%s-error-f", formField)), withTextContent().notContains("")));
     }
 

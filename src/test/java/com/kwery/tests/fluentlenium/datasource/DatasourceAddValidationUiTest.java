@@ -17,8 +17,6 @@ import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.FormFiel
 import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.INPUT_VALIDATION_ERROR_MESSAGE;
 import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.SELECT_VALIDATION_ERROR_MESSAGE;
 import static junit.framework.TestCase.fail;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class DatasourceAddValidationUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
@@ -50,10 +48,8 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
             if (formField != password) {
                 if (formField == type) {
                     page.waitForReportFormValidationMessage(formField, SELECT_VALIDATION_ERROR_MESSAGE);
-                    assertThat(page.validationMessage(formField), is(SELECT_VALIDATION_ERROR_MESSAGE));
                 } else {
                     page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
-                    assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
                 }
             }
         }
@@ -72,7 +68,6 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
             if (formField != password) {
                 page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
-                assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
             }
         }
     }
@@ -90,7 +85,6 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
             if (formField != password) {
                 page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
-                assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
             }
         }
     }
@@ -108,7 +102,6 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
             if (formField != password) {
                 page.waitForReportFormValidationMessage(formField, INPUT_VALIDATION_ERROR_MESSAGE);
-                assertThat(page.validationMessage(formField), is(INPUT_VALIDATION_ERROR_MESSAGE));
             }
         }
     }
