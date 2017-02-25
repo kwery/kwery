@@ -76,15 +76,6 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
         return $(".f-failure-message p").stream().map(FluentWebElement::text).collect(Collectors.toCollection(LinkedList::new));
     }
 
-    public String actionLabel() {
-        return find(id("create")).text();
-    }
-
-    public String validationMessage(FormField formField) {
-        By locator = className(String.format("%s-error-f", formField.name()));
-        return $(locator).text();
-    }
-
     public void assertFormValidationMessagePresent(FormField formField) {
         assertThat(el("div", withClass().contains(String.format("%s-error-f", formField)), withTextContent().notContains("")));
     }
