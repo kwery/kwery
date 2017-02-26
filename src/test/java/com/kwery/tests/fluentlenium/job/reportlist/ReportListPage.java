@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.job.reportlist;
 
+import com.google.common.base.Strings;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.annotation.PageUrl;
@@ -7,10 +8,13 @@ import org.fluentlenium.core.hook.wait.Wait;
 import org.fluentlenium.core.hook.wait.WaitHook;
 import org.openqa.selenium.support.FindBy;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static com.kwery.controllers.apis.JobApiController.DISPLAY_DATE_FORMAT;
 import static com.kwery.tests.fluentlenium.job.reportlist.ReportListPage.PaginationPosition.top;
 import static com.kwery.tests.fluentlenium.job.reportlist.ReportListPage.ReportList.*;
 import static com.kwery.tests.util.Messages.*;
@@ -45,11 +49,17 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
         assertThat($(".report-list-f").withHook(WaitHook.class).index(count)).isDisplayed();
     }
 
-    public void assertReportListRow(int row, Map<ReportList, ?> values) {
+    public void assertReportListRow(int row, Map<ReportList, ?> values) throws ParseException {
         assertThat(el(String.format(".report-list-%d-f .title-f", row), withText(String.valueOf(values.get(title))))).isDisplayed();
         assertThat(el(String.format(".report-list-%d-f .name-f", row), withText(String.valueOf(values.get(name))))).isDisplayed();
         assertThat(el(String.format(".report-list-%d-f .last-execution-f", row), withText(String.valueOf(values.get(lastExecution))))).isDisplayed();
-        assertThat(el(String.format(".report-list-%d-f .next-execution-f", row), withText(String.valueOf(values.get(nextExecution))))).isDisplayed();
+
+        if (!"".equals(Strings.nullToEmpty(String.valueOf(values.get(nextExecution))))) {
+            assertThat(el(String.format(".report-list-%d-f .next-execution-f", row), withTextContent().notContains(""))).isDisplayed();
+            new SimpleDateFormat(DISPLAY_DATE_FORMAT).parse(el(String.format(".report-list-%d-f .next-execution-f", row)).text().trim());
+        } else {
+            assertThat(el(String.format(".report-list-%d-f .next-execution-f", row), withText().equalTo(""))).isDisplayed();
+        }
 
         List<String> labels = (List<String>) values.get(ReportList.labels);
 

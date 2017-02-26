@@ -14,7 +14,7 @@ public class ReportListSearchAndFilterResetUiTest extends AbstractReportListUiTe
     }
 
     @Test
-    public void testFilterReset() {
+    public void testFilterReset() throws Exception {
         page.waitForModalDisappearance();
         page.search(searchString);
         page.waitForModalDisappearance();
@@ -32,7 +32,7 @@ public class ReportListSearchAndFilterResetUiTest extends AbstractReportListUiTe
     }
 
     @Test
-    public void testSearchReset() {
+    public void testSearchReset() throws Exception {
         page.waitForModalDisappearance();
         page.selectLabel(1);
         page.waitForModalDisappearance();

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ChromeFluentTest extends FluentTest {
     @Rule
-    public Timeout globalTimeout = new Timeout(new Long(TimeUnit.MINUTES.toMillis(3)).intValue());
+    public Timeout globalTimeout = new Timeout(new Long(TimeUnit.MINUTES.toMillis(10)).intValue());
 
     @Override
     public Long getImplicitlyWait() {

@@ -16,7 +16,7 @@ public class ReportListFilterWithLabelUiTest extends AbstractReportListUiTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         //page 0
         page.assertLabelTexts(ImmutableList.of(jobLabelModel.getLabel()));
         page.selectLabel(1);

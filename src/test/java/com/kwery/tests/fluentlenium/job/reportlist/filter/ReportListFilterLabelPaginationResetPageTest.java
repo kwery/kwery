@@ -15,7 +15,7 @@ public class ReportListFilterLabelPaginationResetPageTest extends AbstractReport
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         //page 0
         page.selectLabel(1);
         page.waitForModalDisappearance();

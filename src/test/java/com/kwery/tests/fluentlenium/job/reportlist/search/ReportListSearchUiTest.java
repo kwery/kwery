@@ -13,7 +13,7 @@ public class ReportListSearchUiTest extends AbstractReportListUiTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         page.search(searchString);
         page.waitForModalDisappearance();
 
@@ -36,19 +36,19 @@ public class ReportListSearchUiTest extends AbstractReportListUiTest {
         page1();
     }
 
-    private void page3() {
+    private void page3() throws Exception {
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(2)));
         page.getPaginationComponent(getPaginationPosition()).assertNextState(false);
         page.getPaginationComponent(getPaginationPosition()).assertPreviousState(true);
     }
 
-    private void page2() {
+    private void page2() throws Exception {
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(1)));
         page.getPaginationComponent(getPaginationPosition()).assertNextState(true);
         page.getPaginationComponent(getPaginationPosition()).assertPreviousState(true);
     }
 
-    private void page1() {
+    private void page1() throws Exception {
         page.assertReportListRow(0, toReportRowMap(expectedSearchOrder.get(0)));
         page.getPaginationComponent(getPaginationPosition()).assertNextState(true);
         page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
