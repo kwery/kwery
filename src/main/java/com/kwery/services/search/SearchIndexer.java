@@ -7,6 +7,7 @@ import com.google.inject.persist.Transactional;
 import com.kwery.models.JobModel;
 import com.kwery.utils.ServiceStartUpOrderConstant;
 import ninja.lifecycle.Start;
+import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +26,18 @@ public class SearchIndexer {
     }
 
     @Start(order = ServiceStartUpOrderConstant.SEARCH_INDEXER_ORDER)
-    @Transactional
     public void index() {
+        //If the method is annotated with transactional, Ninja is not picking it up on startup, hence the hack of the helper
+        //method with transactional annotation
+        indexerHelper();
+    }
+
+    @Transactional
+    public void indexerHelper() {
         logger.info("Search indexing - start");
         try {
-            Search.getFullTextEntityManager(entityManagerProvider.get()).createIndexer(JobModel.class).startAndWait();
+            FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManagerProvider.get());
+            fullTextEntityManager.createIndexer(JobModel.class).startAndWait();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

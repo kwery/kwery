@@ -11,7 +11,6 @@ import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
 import com.kwery.services.kwerydirectory.KweryDirectoryChecker;
-import com.kwery.services.migration.ResultMigrator;
 import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
@@ -43,7 +42,6 @@ public class Module extends AbstractModule {
         install(new FactoryModuleBuilder().build(JobTaskFactory.class));
         install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
         install(new FactoryModuleBuilder().build(CsvToHtmlConverterFactory.class));
-        bind(ResultMigrator.class);
         bind(SearchIndexer.class);
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
