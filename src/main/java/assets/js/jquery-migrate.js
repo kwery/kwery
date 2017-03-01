@@ -22,6 +22,9 @@
             return;
         }
 
+        //Added to mute warnings
+        jQuery.migrateMute = true;
+
         // Need jQuery 3.0.0+ and no older Migrate loaded
         if ( !jQuery || rbadVersions.test( jQuery.fn.jquery ) ) {
             log( "JQMIGRATE: jQuery 3.0.0+ REQUIRED" );
