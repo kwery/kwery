@@ -18,4 +18,6 @@ kwery.*.log.gz
 *.swp
 #Kwery result files
 kwery_files
+#Kwery search index
+kwery_search
 

@@ -10,14 +10,14 @@ import org.fluentlenium.core.hook.wait.Wait;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withClass;
+import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.openqa.selenium.By.className;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#email/configuration")
 public class EmailConfigurationPage extends KweryFluentPage implements RepoDashPage {
-    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
-    public static final String RADIO_VALIDATION_ERROR_MESSAGE = "Please select one of these options.";
-
     @Override
     public boolean isRendered() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-email-configuration")).displayed();
@@ -86,20 +86,28 @@ public class EmailConfigurationPage extends KweryFluentPage implements RepoDashP
         waitForSuccessMessage(message);
     }
 
-    public String validationMessage(SmtpConfigurationFormField field) {
-        return $(className(format("%s-validation-message-f", field.name()))).text();
+    public void assertNonEmptyValidationMessage(SmtpConfigurationFormField field) {
+        assertThat(el("div", withClass().contains(String.format("%s-validation-message-f", field.name())), withTextContent().notContains("")));
     }
 
-    public void waitForSmtpConfigurationFormValidationMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".host-validation-message-f")).text(INPUT_VALIDATION_ERROR_MESSAGE);
+    public void assertEmptyValidationMessage(SmtpConfigurationFormField field) {
+        assertThat(el("div", withClass().contains(String.format("%s-validation-message-f", field.name())), withTextContent().equalTo("")));
     }
 
-    public String validationMessage(EmailConfigurationFormField field) {
-        return $(className(format("%s-validation-message-f", field.name()))).text();
+    public void assertNonEmptySmtpConfigurationFormValidationMessage() {
+        assertThat(el("div", withClass().contains("host-validation-message-f"), withTextContent().notContains("")));
     }
 
-    public void waitForEmailConfigurationFormValidationMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".from-validation-message-f")).text(INPUT_VALIDATION_ERROR_MESSAGE);
+    public void assertNonEmptyValidationMessage(EmailConfigurationFormField field) {
+        assertThat(el("div", withClass().contains(String.format("%s-validation-message-f", field.name())), withTextContent().notContains("")));
+    }
+
+    public void assertEmptyValidationMessage(EmailConfigurationFormField field) {
+        assertThat(el("div", withClass().contains(String.format("%s-validation-message-f", field.name())), withTextContent().equalTo("")));
+    }
+
+    public void assertNonEmptyEmailConfigurationFormValidationMessage() {
+        assertThat(el("div", withClass().contains("from-validation-message-f"), withTextContent().notContains("")));
     }
 
     public boolean isTestEmailConfigurationToFieldDisabled() {
@@ -110,8 +118,8 @@ public class EmailConfigurationPage extends KweryFluentPage implements RepoDashP
         return !$(className("f-test-email-submit")).first().enabled();
     }
 
-    public String testEmailToFieldValidationMessage() {
-        return $(className("test-email-to-validation-message-f")).first().text();
+    public void assertNonEmptyEmailToFieldValidationMessage() {
+        assertThat(el("div", withClass().contains("test-email-to-validation-message-f"), withTextContent().notContains("")));
     }
 
     public enum SmtpConfigurationFormField {

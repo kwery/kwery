@@ -1,9 +1,13 @@
 package com.kwery.dao;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.Datasource;
+import com.kwery.models.JobModel;
+import com.kwery.models.SqlQueryModel;
+import com.kwery.services.job.JobSearchFilter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -13,8 +17,16 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class DatasourceDao {
+    private final Provider<EntityManager> entityManagerProvider;
+    private final JobDao jobDao;
+    private final SqlQueryDao sqlQueryDao;
+
     @Inject
-    private Provider<EntityManager> entityManagerProvider;
+    public DatasourceDao(Provider<EntityManager> entityManagerProvider, JobDao jobDao, SqlQueryDao sqlQueryDao) {
+        this.entityManagerProvider = entityManagerProvider;
+        this.jobDao = jobDao;
+        this.sqlQueryDao = sqlQueryDao;
+    }
 
     @Transactional
     public void save(Datasource d) {
@@ -27,6 +39,21 @@ public class DatasourceDao {
     public void update(Datasource d) {
         EntityManager m = entityManagerProvider.get();
         m.merge(d);
+
+        //TODO - There should be a better way to do this
+        //Below is done so that Hibernate search reindexes associated JobModels
+        for (SqlQueryModel sqlQueryModel : sqlQueryDao.getSqlQueriesWithDatasourceId(d.getId())) {
+            sqlQueryModel.setDatasource(d);
+
+            JobSearchFilter filter = new JobSearchFilter();
+            filter.setSqlQueryIds(ImmutableSet.of(sqlQueryModel.getId()));
+            for (JobModel jobModel : jobDao.filterJobs(filter)) {
+                jobModel.getSqlQueries().removeIf(sqlQueryModel1 -> sqlQueryModel1.getId().equals(sqlQueryModel.getId()));
+                jobModel.getSqlQueries().add(sqlQueryModel);
+                jobDao.save(jobModel);
+            }
+        }
+
         m.flush();
     }
 

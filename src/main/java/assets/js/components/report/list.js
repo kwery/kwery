@@ -31,17 +31,29 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
         var pageNumber = 0;
         var resultCount = RESULT_COUNT;
         var reportLabelId = 0;
+        var search = "";
+
+        var reportLabelIdSubscription = null;
 
         if (params["?q"] !== undefined) {
             resultCount = params["?q"].resultCount || RESULT_COUNT;
             pageNumber = params["?q"].pageNumber || pageNumber;
             reportLabelId = params["?q"].reportLabelId || reportLabelId;
+
+            try {
+                search = decodeURIComponent(params["?q"].search || search);
+            } catch(e) {
+                self.status("failure");
+                self.messages([ko.i18n('report.list.search.invalid')]);
+            }
         }
 
         self.pageNumber = ko.observable(pageNumber);
         self.pageNumber.extend({notify: 'always'});
         self.resultCount = ko.observable(resultCount);
         self.totalCount = ko.observable(0);
+        self.search = ko.observable(search);
+
         //If the value is set here, post the ajax call which populates the values, the selected option is not retained
         //Hence, this value is set in the ajax callback
         self.reportLabelId = ko.observable();
@@ -230,6 +242,7 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
             window.location.href = "/#report/list/?" +
                 "pageNumber=" + self.pageNumber() +
                 "&resultCount=" + self.resultCount() +
+                "&search=" + encodeURIComponent(self.search()) +
                 "&reportLabelId=" + self.reportLabelId();
         };
 
@@ -240,31 +253,66 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
 
         waitingModal.show();
         $.when(
-            $.ajax({
-                url: "/api/job/list",
-                type: "POST",
-                contentType: "application/json",
-                data: ko.toJSON({
-                    pageNumber: self.pageNumber(),
-                    resultCount: self.resultCount(),
-                    //Observable is intentionally not used here as it is set later
-                    jobLabelId: reportLabelId
-                }),
-                success: function (jobListDto) {
-                    var reports = [];
-                    ko.utils.arrayForEach(jobListDto.jobModelHackDtos, function(jobModelHackDto){
-                        jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
-                        jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
-                        jobModelHackDto.jobModel.lastExecution = jobModelHackDto.lastExecution;
-                        jobModelHackDto.jobModel.nextExecution = jobModelHackDto.nextExecution;
+            (function() {
+                if (self.search() !== '') {
+                    return $.ajax({
+                        url: "/api/job/search",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: ko.toJSON({
+                            firstResult: (self.pageNumber() * self.resultCount()),
+                            maxResults: self.resultCount() + 1,
+                            phrase: self.search()
+                        }),
+                        success: function (jobDtos) {
+                            self.totalCount((self.pageNumber() * self.resultCount()) + jobDtos.length);
 
-                        reports.push(jobModelHackDto.jobModel);
-                    });
+                            //We get one more result to assist in pagination
+                            if (jobDtos.length > self.resultCount()) {
+                                jobDtos = jobDtos.slice(0, self.resultCount())
+                            }
 
-                    self.reports(reports);
-                    self.totalCount(jobListDto.totalCount);
+                            var reports = [];
+                            ko.utils.arrayForEach(jobDtos, function(jobModelHackDto){
+                                jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
+                                jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
+                                jobModelHackDto.jobModel.lastExecution = jobModelHackDto.lastExecution;
+                                jobModelHackDto.jobModel.nextExecution = jobModelHackDto.nextExecution;
+
+                                reports.push(jobModelHackDto.jobModel);
+                            });
+
+                            self.reports(reports);
+                        }
+                    })
+                } else {
+                    return $.ajax({
+                        url: "/api/job/list",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: ko.toJSON({
+                            pageNumber: self.pageNumber(),
+                            resultCount: self.resultCount(),
+                            //Observable is intentionally not used here as it is set later
+                            jobLabelId: reportLabelId
+                        }),
+                        success: function (jobListDto) {
+                            var reports = [];
+                            ko.utils.arrayForEach(jobListDto.jobModelHackDtos, function(jobModelHackDto){
+                                jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
+                                jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
+                                jobModelHackDto.jobModel.lastExecution = jobModelHackDto.lastExecution;
+                                jobModelHackDto.jobModel.nextExecution = jobModelHackDto.nextExecution;
+
+                                reports.push(jobModelHackDto.jobModel);
+                            });
+
+                            self.reports(reports);
+                            self.totalCount(jobListDto.totalCount);
+                        }
+                    })
                 }
-            }),
+            })(),
             $.ajax({
                 url: "/api/job-label/list",
                 type: "GET",
@@ -276,8 +324,9 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                     self.reportLabelId(reportLabelId);
 
                     //This subscription is intentionally done here after setting the value above to avoid filter being called when the selected value is set
-                    self.reportLabelId.subscribe(function(reportId){
+                    reportLabelIdSubscription = self.reportLabelId.subscribe(function(){
                         //If a filter is used, we should go to page 0 and start fresh
+                        self.search("");
                         self.pageNumber(0);
                     });
                 }
@@ -285,6 +334,18 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
         ).always(function(){
             waitingModal.hide();
         });
+
+        self.searchAction = function() {
+            //TODO - Hacky, needs to done better
+            //If we do not do this, search variable gets set to empty string
+            if (reportLabelIdSubscription !== null) {
+                reportLabelIdSubscription.dispose();
+            }
+
+            self.reportLabelId(0);
+            self.pageNumber(0);
+            return false;
+        };
 
         return self;
     }

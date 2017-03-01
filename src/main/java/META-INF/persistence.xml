@@ -15,7 +15,12 @@
             <property name="hibernate.hbm2ddl.auto" value="validate" />
             <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.format_sql" value="true" />
-            
+            <property name="hibernate.id.new_generator_mappings" value="false" />
+
+            <!-- Lucene search directory -->
+            <property name="hibernate.search.default.directory_provider" value="filesystem" />
+            <property name="hibernate.search.default.indexBase" value="./kwery_search" />
+
             <!-- Connection Pooling settings -->
             <property name="hibernate.connection.provider_class" value="org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider" />
             <property name="hibernate.connection.autocommit" value="false"/>
@@ -40,7 +45,11 @@
             <property name="hibernate.hbm2ddl.auto" value="validate" />
             <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.format_sql" value="true" />
-            
+            <property name="hibernate.id.new_generator_mappings" value="false" />
+
+            <!-- Lucene search directory, memory based for test cases -->
+            <property name="hibernate.search.default.directory_provider" value="ram" />
+
             <!-- Connection Pooling settings -->
             <property name="hibernate.connection.provider_class" value="org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider" />
 
@@ -49,7 +58,7 @@
             <property name="hibernate.c3p0.acquire_increment" value="1" />
             <property name="hibernate.c3p0.idle_test_period" value="300" />
             <property name="hibernate.c3p0.max_statements" value="0" />
-            <property name="hibernate.c3p0.timeout" value="100" />     
+            <property name="hibernate.c3p0.timeout" value="100" />
         </properties>
     </persistence-unit>
 

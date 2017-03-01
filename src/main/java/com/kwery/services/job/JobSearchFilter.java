@@ -4,23 +4,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class JobSearchFilter {
-    protected int resultCount;
-    protected int pageNo;
+    protected Integer resultCount;
+    protected Integer pageNo;
     protected Set<Integer> jobLabelIds = new HashSet<>();
+    protected Set<Integer> sqlQueryIds = new HashSet<>();
 
-    public int getResultCount() {
+    public Integer getResultCount() {
         return resultCount;
     }
 
-    public void setResultCount(int resultCount) {
+    public void setResultCount(Integer resultCount) {
         this.resultCount = resultCount;
     }
 
-    public int getPageNo() {
+    public Integer getPageNo() {
         return pageNo;
     }
 
-    public void setPageNo(int pageNo) {
+    public void setPageNo(Integer pageNo) {
         this.pageNo = pageNo;
     }
 
@@ -30,5 +31,13 @@ public class JobSearchFilter {
 
     public void setJobLabelIds(Set<Integer> jobLabelIds) {
         this.jobLabelIds = jobLabelIds;
+    }
+
+    public Set<Integer> getSqlQueryIds() {
+        return sqlQueryIds;
+    }
+
+    public void setSqlQueryIds(Set<Integer> sqlQueryIds) {
+        this.sqlQueryIds = sqlQueryIds;
     }
 }

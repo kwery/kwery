@@ -6,9 +6,6 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 public class ReportExecutionListPaginationUiTest extends AbstractReportExecutionListUiTest {
     @Before
     public void setUp() throws Exception {
@@ -19,25 +16,24 @@ public class ReportExecutionListPaginationUiTest extends AbstractReportExecution
     @Test
     public void test() {
         page.assertRows(2);
-        assertThat(page.isPreviousEnabled(), is(false));
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
 
         for (int i = 0; i < 2; ++i) {
             Map<ReportExecution, ?> reportExecutionMap = toMap(controller.jobExecutionModelToJobExecutionDto(models.get(i)), jobModel);
             page.assertReportExecutionList(i, reportExecutionMap);
         }
 
-        page.clickNext();
-        page.waitUntilPreviousIsEnabled();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(true);
 
         for (int i = 2; i < 4; ++i) {
             Map<ReportExecution, ?> reportExecutionMap = toMap(controller.jobExecutionModelToJobExecutionDto(models.get(i)), jobModel);
             page.assertReportExecutionList(i - 2, reportExecutionMap);
         }
 
-        assertThat(page.isNextEnabled(), is(false));
-
-        page.clickPrevious();
-        page.waitUntilPreviousIsDisabled();
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(false);
+        page.getPaginationComponent(getPaginationPosition()).clickPrevious();
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
 
         page.assertRows(2);
 
@@ -46,6 +42,6 @@ public class ReportExecutionListPaginationUiTest extends AbstractReportExecution
             page.assertReportExecutionList(i, reportExecutionMap);
         }
 
-        assertThat(page.isNextEnabled(), is(true));
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(true);
     }
 }

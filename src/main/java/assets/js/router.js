@@ -38,6 +38,8 @@ define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($,
         crossroads.normalizeFn = crossroads.NORM_AS_OBJECT;
         crossroads.shouldTypecast = true;
 
+        //This is needed so that url parameters are not double encoded
+        hasher.raw = true;
         hasher.initialized.add(parseHash);
         hasher.changed.add(parseHash);
         hasher.init();

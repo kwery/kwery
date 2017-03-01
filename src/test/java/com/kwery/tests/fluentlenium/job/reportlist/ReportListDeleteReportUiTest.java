@@ -14,7 +14,7 @@ public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         page.waitForModalDisappearance();
         page.deleteReport(getRow(jobModel));
         page.waitForModalDisappearance();
@@ -29,7 +29,7 @@ public class ReportListDeleteReportUiTest extends AbstractReportListUiTest {
     }
 
     @Test
-    public void testDeleteParentReport() {
+    public void testDeleteParentReport() throws Exception {
         page.waitForModalDisappearance();
         page.deleteReport(getRow(parentJob));
         page.waitForModalDisappearance();

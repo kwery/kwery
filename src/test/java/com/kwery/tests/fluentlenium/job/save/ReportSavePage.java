@@ -5,6 +5,7 @@ import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.tests.util.TestUtil;
+import org.fluentlenium.assertj.FluentLeniumAssertions;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
@@ -19,14 +20,14 @@ import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withClass;
+import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.openqa.selenium.By.className;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#report/add")
 public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
-    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
-    public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
-
     protected Map<Integer, String> datasourceIdToLabelMap;
     protected Map<Integer, String> parentJobIdToLabelMap;
 
@@ -205,8 +206,14 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
         return count;
     }
 
-    public String validationMessage(ReportFormField field) {
-        return $(className(format("%s-form-validation-message-f", field.name()))).text();
+    public void assertNonEmptyValidationMessage(ReportFormField field) {
+        FluentLeniumAssertions.assertThat(el("div", withClass().contains(format("%s-form-validation-message-f", field.name())),
+                withTextContent().notContains("")));
+    }
+
+    public void assertEmptyValidationMessage(ReportFormField field) {
+        FluentLeniumAssertions.assertThat(el("div", withClass().contains(format("%s-form-validation-message-f", field.name())),
+                withTextContent().equalTo("")));
     }
 
     public String validationMessage(SqlQueryFormField field, int index) {
@@ -221,8 +228,8 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
         return el(format(".f-sql-query%d .include-attachment-f", index)).selected();
     }
 
-    public void waitForReportFormValidationMessage() {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".reportTitle-form-validation-message-f")).text(INPUT_VALIDATION_ERROR_MESSAGE);
+    public void assertNonEmptyReportFormValidationMessage() {
+        assertThat(el("div", withClass().contains(".reportTitle-form-validation-message-f"), withTextContent().notContains("")));
     }
 
     public enum ReportFormField {

@@ -93,13 +93,20 @@ public class JobDao {
             cq.where(ids.in(filter.getJobLabelIds()));
         }
 
+        if (!filter.getSqlQueryIds().isEmpty()) {
+            Expression<Collection<Integer>> ids = jobModel.join("sqlQueries").get("id");
+            cq.where(ids.in(filter.getSqlQueryIds()));
+        }
+
         cq.orderBy(cb.asc(jobModel.get("id")));
 
-        TypedQuery<JobModel> allQuery = m.createQuery(cq)
-                .setMaxResults(filter.getResultCount())
-                .setFirstResult(filter.getPageNo() * filter.getResultCount());
-
-        return allQuery.getResultList();
+        if (filter.getPageNo() != null && filter.getResultCount() != null) {
+            return m.createQuery(cq)
+                    .setMaxResults(filter.getResultCount())
+                    .setFirstResult(filter.getPageNo() * filter.getResultCount()).getResultList();
+        } else {
+            return m.createQuery(cq).getResultList();
+        }
     }
 
     @Transactional

@@ -3,9 +3,6 @@ package com.kwery.tests.fluentlenium.job.executionlist;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 public class ReportExecutionListFilterWithPaginationUiTest extends AbstractReportExecutionListUiTest {
     @Before
     public void setUp() throws Exception {
@@ -24,32 +21,34 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         page.assertReportExecutionList(0, toMap(controller.jobExecutionModelToJobExecutionDto(jem1), jobModel));
         page.assertRows(1);
 
-        assertThat(page.isPreviousEnabled(), is(false));
-        assertThat(page.isNextEnabled(), is(true));
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(true);
 
-        page.clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
+
         page.waitForModalDisappearance();
-        page.waitUntilPreviousIsEnabled();
+
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(true);
 
         page.assertReportExecutionList(0, toMap(controller.jobExecutionModelToJobExecutionDto(jem0), jobModel));
         page.assertRows(1);
 
-        assertThat(page.isPreviousEnabled(), is(true));
-        assertThat(page.isNextEnabled(), is(false));
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(true);
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(false);
 
-        page.clickPrevious();
+        page.getPaginationComponent(getPaginationPosition()).clickPrevious();
         page.waitForModalDisappearance();
-        page.waitUntilPreviousIsDisabled();
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
 
         page.assertReportExecutionList(0, toMap(controller.jobExecutionModelToJobExecutionDto(jem1), jobModel));
         page.assertRows(1);
 
-        assertThat(page.isNextEnabled(), is(true));
+        page.getPaginationComponent(getPaginationPosition()).assertNextState(true);
 
         //Clicking on filter in between pages takes you back to the first page
-        page.clickNext();
+        page.getPaginationComponent(getPaginationPosition()).clickNext();
         page.waitForModalDisappearance();
-        page.waitUntilPreviousIsEnabled();
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(true);
 
         start = "Sat Jan 07 2017 06:05";
         end = "Sat Jan 07 2017 06:15";
@@ -59,7 +58,7 @@ public class ReportExecutionListFilterWithPaginationUiTest extends AbstractRepor
         page.assertReportExecutionList(0, toMap(controller.jobExecutionModelToJobExecutionDto(jem3), jobModel));
         page.assertRows(1);
 
-        assertThat(page.isPreviousEnabled(), is(false));
-        assertThat(page.isNextEnabled(), is(false)); //Only one result in the range
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
+        page.getPaginationComponent(getPaginationPosition()).assertPreviousState(false);
     }
 }

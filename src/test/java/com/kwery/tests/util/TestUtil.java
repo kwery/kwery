@@ -7,6 +7,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
 import com.kwery.dtos.JobDto;
+import com.kwery.dtos.JobModelHackDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.models.SqlQueryExecutionModel.Status;
@@ -26,8 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
@@ -35,6 +35,7 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
 import static java.util.Collections.sort;
 import static java.util.Comparator.comparing;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -391,6 +392,12 @@ public class TestUtil {
         return m;
     }
 
+    public static JobLabelModel jobLabelModelWithoutId() {
+        JobLabelModel jobLabelModel = jobLabelModel();
+        jobLabelModel.setId(null);
+        return jobLabelModel;
+    }
+
     public static UrlConfiguration domainSettingWithoutId() {
         UrlConfiguration d = new UrlConfiguration();
         d.setPort(RandomUtils.nextInt(UrlConfiguration.PORT_MIN, UrlConfiguration.PORT_MAX + 1));
@@ -486,5 +493,19 @@ public class TestUtil {
     public static String toString(File file) throws IOException {
         Path path = Paths.get(file.toURI());
         return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+    }
+
+    public static void assertJsonJobModel(String response, int index, JobModelHackDto dto) {
+        assertThat(response, isJson(allOf(
+                withJsonPath(String.format("$.[%d].jobModel.title", index), is(dto.getJobModel().getTitle())),
+                withJsonPath(String.format("$.[%d].lastExecution", index), is(dto.getLastExecution())),
+                withJsonPath(String.format("$.[%d].nextExecution", index) , is(dto.getNextExecution())),
+                withJsonPath(String.format("$.[%d].jobModel.id", index), is(dto.getJobModel().getId())),
+                withJsonPath(String.format("$.[%d].jobModel.name", index), is(dto.getJobModel().getName()))
+        )));
+
+        for (JobLabelModel jobLabelModel : dto.getJobModel().getLabels()) {
+            assertThat(response, hasJsonPath(String.format("$.[%d].jobModel.labels[*].label", index), hasItem(jobLabelModel.getLabel())));
+        }
     }
 }

@@ -65,5 +65,4 @@ public class KweryFluentPage extends FluentPage {
     public List<String> getErrorMessages() {
         return $(".f-failure-message p").stream().map(FluentWebElement::text).collect(toList());
     }
-
 }

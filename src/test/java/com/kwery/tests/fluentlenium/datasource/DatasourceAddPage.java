@@ -21,15 +21,15 @@ import static com.kwery.tests.util.Messages.DATASOURCE_ADDITION_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withClass;
+import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#datasource/add")
 public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
-    public static final String INPUT_VALIDATION_ERROR_MESSAGE = "Please fill in this field.";
-    public static final String SELECT_VALIDATION_ERROR_MESSAGE = "Please select an item in the list.";
-
     @Wait(timeout = TIMEOUT_SECONDS, timeUnit = SECONDS)
     @FindBy(id = "addDatasourceForm")
     protected FluentWebElement form;
@@ -76,17 +76,8 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
         return $(".f-failure-message p").stream().map(FluentWebElement::text).collect(Collectors.toCollection(LinkedList::new));
     }
 
-    public String actionLabel() {
-        return find(id("create")).text();
-    }
-
-    public String validationMessage(FormField formField) {
-        By locator = className(String.format("%s-error-f", formField.name()));
-        return $(locator).text();
-    }
-
-    public void waitForReportFormValidationMessage(FormField formField, String message) {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until($(String.format(".%s-error-f", formField))).text(message);
+    public void assertFormValidationMessagePresent(FormField formField) {
+        assertThat(el("div", withClass().contains(String.format("%s-error-f", formField)), withTextContent().notContains("")));
     }
 
     public void waitForDatabaseFormFieldToBeVisible() {

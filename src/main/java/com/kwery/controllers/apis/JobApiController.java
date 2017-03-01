@@ -11,6 +11,8 @@ import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.kwery.controllers.MessageKeys;
 import com.kwery.dao.*;
+import com.kwery.dao.search.JobSearchDao;
+import com.kwery.dao.search.SearchFilter;
 import com.kwery.dtos.*;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.*;
@@ -65,10 +67,11 @@ public class JobApiController {
     protected final JobLabelDao jobLabelDao;
     protected final KweryDirectory kweryDirectory;
     protected final CsvReaderFactory csvReaderFactory;
+    protected final JobSearchDao jobSearchDao;
 
     @Inject
     public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
-                            SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao, KweryDirectory kweryDirectory, Messages messages,
+                            SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao, JobSearchDao jobSearchDao, KweryDirectory kweryDirectory, Messages messages,
                             CsvReaderFactory csvReaderFactory) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
@@ -80,6 +83,7 @@ public class JobApiController {
         this.kweryDirectory = kweryDirectory;
         this.messages = messages;
         this.csvReaderFactory = csvReaderFactory;
+        this.jobSearchDao = jobSearchDao;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -454,6 +458,13 @@ public class JobApiController {
     public Result deleteJobExecution(@PathParam("jobExecutionId") Integer jobExecutionModelId) {
         jobExecutionDao.deleteJobExecutions(ImmutableList.of(jobExecutionModelId));
         return json().render(new ActionResult(success, ""));
+    }
+
+    @FilterWith(DashRepoSecureFilter.class)
+    public Result searchJobs(SearchFilter searchFilter) {
+        List<JobModel> jobs = jobSearchDao.search(searchFilter);
+        List<JobModelHackDto> jobModelHackDtos = jobs.stream().map(this::toJobModelHackDto).collect(toList());
+        return json().render(jobModelHackDtos);
     }
 
     @VisibleForTesting

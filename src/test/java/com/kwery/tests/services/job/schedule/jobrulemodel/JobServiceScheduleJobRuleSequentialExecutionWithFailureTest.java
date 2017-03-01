@@ -7,7 +7,7 @@ import org.junit.Test;
 import static com.kwery.tests.util.TestUtil.jobRuleModel;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-public class JobServiceLaunchJobRuleSequentialExecutionWithFailureTest extends JobServiceLaunchJobJobRuleModelAbstractTest {
+public class JobServiceScheduleJobRuleSequentialExecutionWithFailureTest extends JobServiceLaunchJobJobRuleModelAbstractTest {
     @Override
     public String getQuery0() {
         return "select * from foo";

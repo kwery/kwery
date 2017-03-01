@@ -33,10 +33,10 @@ public class PaginationComponent extends FluentWebElement {
     }
 
     public void clickPrevious() {
-        $(By.id("previous")).click();
+        $(By.className("previous-f")).click();
     }
 
     public void clickNext() {
-        $(By.id("next")).click();
+        $(By.className("next-f")).click();
     }
 }

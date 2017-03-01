@@ -1,10 +1,16 @@
 package com.kwery.models;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import static com.kwery.models.SqlQueryEmailSettingModel.*;
+import static org.hibernate.search.annotations.Index.YES;
 
 @Entity
 @Table(name = SqlQueryModel.SQL_QUERY_TABLE)
@@ -31,16 +37,20 @@ public class SqlQueryModel {
 
     @Column(name = LABEL_COLUMN, unique = true)
     @NotNull(message = "label.validation")
+    @Size(min = 1, max = 1024)
+    @Field(index= YES, analyze= Analyze.YES, store= Store.NO)
     private String label;
 
     @Column(name = TITLE_COLUMN)
     @NotNull
     @Size(min = 1, max = 1024)
+    @Field(index= YES, analyze= Analyze.YES, store= Store.NO)
     private String title;
 
     @ManyToOne
     @JoinColumn(name = DATASOURCE_ID_FK_COLUMN)
     @NotNull
+    @IndexedEmbedded(depth = 1)
     private Datasource datasource;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)

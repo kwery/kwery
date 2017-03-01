@@ -6,9 +6,11 @@ import com.kwery.models.*;
 import com.kwery.tests.util.TestUtil;
 import com.mchange.v2.c3p0.C3P0Registry;
 import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.DbSetupRuntimeException;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -743,20 +745,37 @@ public class DbUtil {
     }
 
     public static void emailConfigurationDbSet(EmailConfiguration e) {
-        new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                sequenceOf(
-                        insertInto(
-                                TABLE_EMAIL_CONFIGURATION
-                        ).row()
-                                .column(EmailConfiguration.COLUMN_ID, e.getId())
-                                .column(COLUMN_FROM_EMAIL, e.getFrom())
-                                .column(COLUMN_BCC, e.getBcc())
-                                .column(COLUMN_REPLY_TO, e.getReplyTo())
-                                .end()
-                                .build()
-                )
-        ).launch();
+        boolean repeat = false;
+        int counter = 0;
+        do {
+            try {
+                new DbSetup(
+                        new DataSourceDestination(DbUtil.getDatasource()),
+                        sequenceOf(
+                                insertInto(
+                                        TABLE_EMAIL_CONFIGURATION
+                                ).row()
+                                        .column(EmailConfiguration.COLUMN_ID, e.getId())
+                                        .column(COLUMN_FROM_EMAIL, e.getFrom())
+                                        .column(COLUMN_BCC, e.getBcc())
+                                        .column(COLUMN_REPLY_TO, e.getReplyTo())
+                                        .end()
+                                        .build()
+                        )
+                ).launch();
+            } catch (DbSetupRuntimeException exception) {
+                if (exception.getCause() instanceof DerbySQLIntegrityConstraintViolationException) {
+                    repeat = true;
+                } else {
+                    throw exception;
+                }
+            } finally {
+                counter = counter + 1;
+                if (counter >= 5) {
+                    throw new RuntimeException("Could not insert");
+                }
+            }
+        } while (repeat);
     }
 
     public static int dbId() {
