@@ -12,7 +12,13 @@ define(["knockout", "jquery", "text!components/action-result.html"], function (k
             return self.status() === "failure";
         }, self);
 
-        $(document).ajaxError(function(){
+        $(document).ajaxError(function(event, jqxhr, settings, thrownError){
+            if (window.console) {
+                console.log("Exception:");
+                console.log(jqxhr.responseText);
+                console.log("HTTP status - " + jqxhr.status);
+            }
+
             self.status("failure");
             self.messages([ko.i18n("server.error")]);
         });
