@@ -20,8 +20,6 @@ define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($,
             };
         });
 
-        crossroads.routed.add(console.log, console);
-
         //If a route is bypassed, it means that it did not meet the auth rules, hence redirect to auth
         //Previous is appended so that post login intended page is shown
         crossroads.bypassed.add(function(request){
