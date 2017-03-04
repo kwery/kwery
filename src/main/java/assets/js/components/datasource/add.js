@@ -6,10 +6,12 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
         self.messages = ko.observableArray([]);
 
         //Is this onboarding flow?
-        self.onboarding = params["?q"].onboarding;
-        if (self.onboarding) {
-            self.status("info");
-            self.messages([ko.i18n("onboarding.datasource.add")]);
+        if (params["?q"] !== undefined) {
+            self.onboarding = params["?q"].onboarding;
+            if (self.onboarding !== undefined) {
+                self.status("info");
+                self.messages([ko.i18n("onboarding.datasource.add")]);
+            }
         }
 
         self.username = ko.observable();
