@@ -8,10 +8,9 @@ package com.kwery.tests.util;
  * with hyphens and append _M. Append _HTML_M if the message is HTML.
  */
 public class Messages {
-    public static final String DATASOURCE_ADDITION_SUCCESS_M = "{0} datasource with label {1} created successfully";
-    public static final String DATASOURCE_UPDATE_SUCCESS_M = "{0} datasource with label {1} updated successfully";
-
-    public static final String DATASOURCE_ADDITION_FAILURE_M = "A {0} datasource with label {1} already exists, please choose a different label";
+    public static final String DATASOURCE_ADDITION_SUCCESS_M = "{0} datasource with name {1} created successfully";
+    public static final String DATASOURCE_UPDATE_SUCCESS_M = "{0} datasource with name {1} updated successfully";
+    public static final String DATASOURCE_ADDITION_FAILURE_M = "A {0} datasource with name {1} already exists, please choose a different label";
 
     public static final String USER_NOT_LOGGED_IN_M = "You need to login to perform this action";
     public static final String LOGIN_SUCCESS_M = "Login successful, redirecting...";
@@ -48,8 +47,8 @@ public class Messages {
     public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report saved successfully";
 
     public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS_M = "A report already exists with name {0}, please choose a different name";
-    public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exists with label {0}, please choose a different label";
-    public static final String REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR = "You have already used this label, please choose a different label";
+    public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exists with name {0}, please choose a different name";
+    public static final String REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR = "You have already used this name, please choose a different name";
 
     public static final String REPORT_JOB_EXECUTING_STOP_SUCCESS_M = "Report execution stopped successfully";
     public static final String REPORT_JOB_EXECUTING_STOP_FAILURE_M = "Something went wrong, report execution could not be stopped";
