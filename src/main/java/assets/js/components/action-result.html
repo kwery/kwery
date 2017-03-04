@@ -11,6 +11,12 @@
             <p data-bind="text: $data"></p>
             <!-- /ko -->
         </div>
+
+        <div data-bind="visible: showInfo" class="alert alert-info f-info-message">
+            <!-- ko foreach: messages -->
+            <p data-bind="text: $data"></p>
+            <!-- /ko -->
+        </div>
     </div>
 </div>
 <br>

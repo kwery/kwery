@@ -8,6 +8,14 @@ define(["knockout", "jquery", "text!components/user/sign-up.html", "ajaxutil", "
         //An observable is passed from the parent template in case of edit user
         self.userId = params.userId;
 
+        //Is this onboarding flow?
+        self.onboarding = params["?q"].onboarding;
+
+        if (self.onboarding) {
+            self.status("info");
+            self.messages([ko.i18n("onboarding.user.add")]);
+        }
+
         var update = false;
 
         if (self.userId) {
@@ -79,7 +87,7 @@ define(["knockout", "jquery", "text!components/user/sign-up.html", "ajaxutil", "
                                 } else {
                                     $.jStorage.set("us:status", result.status, {TTL: (10 * 60 * 1000)});
                                     $.jStorage.set("us:messages", [ko.i18n('sign.up.success.message')], {TTL: (10 * 60 * 1000)});
-                                    window.location.href = "#report/list";
+                                    window.location.href = "#user/login";
                                 }
                             } else {
                                 throw new Error("Not enough space available to store result in browser");

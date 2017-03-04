@@ -9,6 +9,13 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
+        //Is this onboarding flow?
+        self.onboarding = params["?q"].onboarding;
+        if (self.onboarding) {
+            self.status("info");
+            self.messages([ko.i18n("onboarding.report.add")]);
+        }
+
         //Schedule options
         self.scheduleOption = ko.observable("cronExpression");
         $("#cronExpression").attr("data-validate", true);

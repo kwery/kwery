@@ -5,6 +5,13 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
+        //Is this onboarding flow?
+        self.onboarding = params["?q"].onboarding;
+        if (self.onboarding) {
+            self.status("info");
+            self.messages([ko.i18n("onboarding.datasource.add")]);
+        }
+
         self.username = ko.observable();
         self.password = ko.observable("");
         self.url = ko.observable();
@@ -66,13 +73,30 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                     contentType: "application/json",
                     success: function(result) {
                         if (result.status === "success") {
-                            if ($.jStorage.storageAvailable()) {
-                                $.jStorage.set("ds:status", result.status, {TTL: (10 * 60 * 1000)});
-                                $.jStorage.set("ds:messages", result.messages, {TTL: (10 * 60 * 1000)});
-                                window.location.href = "#datasource/list";
-                            } else {
-                                throw new Error("Not enough space available to store result in browser");
-                            }
+                            $.ajax({
+                                before: function(){
+                                    waitingModal.show();
+                                },
+                                url: "/api/onboarding/next-action",
+                                type: "GET",
+                                contentType: "application/json",
+                                success: function(response){
+                                    waitingModal.hide();
+                                    switch (response.action) {
+                                        case "ADD_JOB":
+                                            window.location.href = "/#report/add?onboarding=true";
+                                            break;
+                                        case "SHOW_HOME_SCREEN":
+                                            if ($.jStorage.storageAvailable()) {
+                                                $.jStorage.set("ds:status", result.status, {TTL: (10 * 60 * 1000)});
+                                                $.jStorage.set("ds:messages", result.messages, {TTL: (10 * 60 * 1000)});
+                                                window.location.href = "#datasource/list";
+                                            } else {
+                                                throw new Error("Not enough space available to store result in browser");
+                                            }
+                                    }
+                                }
+                            });
                         } else {
                             self.status(result.status);
                             self.messages(result.messages);

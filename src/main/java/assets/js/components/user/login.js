@@ -58,10 +58,10 @@ define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login
                                     waitingModal.hide();
                                     switch (response.action) {
                                         case "ADD_DATASOURCE":
-                                            window.location.href = "/#onboarding";
+                                            window.location.href = "/#datasource/add?onboarding=true";
                                             break;
                                         case "ADD_JOB":
-                                            window.location.href = "/#onboarding";
+                                            window.location.href = "/#report/add?onboarding=true";
                                             break;
                                         case "SHOW_HOME_SCREEN":
                                             window.location.href = "/#report/list";
@@ -70,8 +70,6 @@ define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login
                                 }
                             });
                         }
-                    } else {
-
                     }
                 }
             });

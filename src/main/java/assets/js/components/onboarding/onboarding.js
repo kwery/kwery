@@ -20,7 +20,7 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "aja
                         break;
                     case "SIGN_UP":
                         self.showNextSteps(false);
-                        window.location.href = "/#user/sign-up";
+                        window.location.href = "/#user/sign-up?onboarding=true";
                         break;
                     case "ADD_DATASOURCE":
                         self.showNextSteps(true);
