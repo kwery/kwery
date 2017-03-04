@@ -4,21 +4,20 @@ define(["knockout", "jquery", "repo-dash", "text!components/nav-bar.html"], func
 
         self.showNavBar = ko.observable(false || repoDash.user.isAuthenticated());
 
-        repoDash.user.userAuthenticationBroadcaster.subscribe(function(val){
-            self.showNavBar(val);
-        }, this, "userLogin");
-
         self.username = ko.observable("");
         self.url = ko.observable("");
 
-        $.ajax("/api/user", {
-            type: "GET",
-            contentType: "application/json",
-            success: function(result) {
-                self.username(result.username);
-                self.url("/#user/" + result.id);
-            }
-        });
+        repoDash.user.userAuthenticationBroadcaster.subscribe(function(val){
+            self.showNavBar(val);
+            $.ajax("/api/user", {
+                type: "GET",
+                contentType: "application/json",
+                success: function(result) {
+                    self.username(result.email);
+                    self.url("/#user/" + result.id);
+                }
+            });
+        }, this, "userLogin");
 
         self.logout = function() {
             $.ajax("/api/user/logout", {

@@ -26,7 +26,7 @@ public class Messages {
 
     public static final String USER_NOT_LOGGED_IN_M = "You need to login to perform this action";
     public static final String LOGIN_SUCCESS_M = "Login successful, redirecting...";
-    public static final String LOGIN_FAILURE_M = "Please check your username and/or password";
+    public static final String LOGIN_FAILURE_M = "Please check your email and/or password";
     public static final String LOGIN_M = "Login";
     public static final String USERNAME_VALIDATION_M = "Username should be at least of one character";
     public static final String PASSWORD_VALIDATION_M = "Password should be at least of one character";
@@ -127,7 +127,7 @@ public class Messages {
 
     public static final String REPORT_LIST_SEARCH_INVALID_M = "Search string contains invalid characters";
 
-    public static final String SIGN_UP_SUCCESS_MESSAGE_M = "Signup successful, please login with the username and password";
+    public static final String SIGN_UP_SUCCESS_MESSAGE_M = "Signup successful, please login with the email and password";
 
     public static final String SIGN_UP_FAILURE_MESSAGE_M = "A user already exists with the email {0}";
 
