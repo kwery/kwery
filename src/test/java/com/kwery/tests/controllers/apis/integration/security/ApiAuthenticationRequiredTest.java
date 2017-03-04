@@ -54,7 +54,6 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
                 new ApiSecurityTestVo(ADD_DATASOURCE_API, true, POST),
                 new ApiSecurityTestVo(USER, true, GET),
                 new ApiSecurityTestVo(INDEX, false, GET),
-                new ApiSecurityTestVo(ADD_ADMIN_USER_API, true, POST),
                 new ApiSecurityTestVo(LOGIN_API, false, POST),
                 new ApiSecurityTestVo(ALL_DATASOURCES_API, true, GET),
                 new ApiSecurityTestVo(EXECUTING_SQL_QUERY_API, true, GET),

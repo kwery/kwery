@@ -1,6 +1,5 @@
 package com.kwery.tests.fluentlenium.user.login;
 
-import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.annotation.PageUrl;
@@ -11,8 +10,9 @@ import org.openqa.selenium.support.FindBy;
 import static com.kwery.tests.util.Messages.LOGIN_FAILURE_M;
 import static com.kwery.tests.util.Messages.LOGIN_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
-import static java.text.MessageFormat.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withClass;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#user/login")
@@ -31,12 +31,12 @@ public class UserLoginPage extends KweryFluentPage implements RepoDashPage {
         return loginForm.displayed();
     }
 
-    public void waitForSuccessMessage(User user) {
-        super.waitForSuccessMessage(format(LOGIN_SUCCESS_M, user.getUsername()));
+    public void waitForLoginSuccess() {
+        assertThat(el("div", withClass().contains("welcome-f"))).isDisplayed();
     }
 
     public void waitForSuccessMessage(String username) {
-        super.waitForSuccessMessage(format(LOGIN_SUCCESS_M, username));
+        super.waitForSuccessMessage(LOGIN_SUCCESS_M);
     }
 
     public void waitForFailureMessage() {

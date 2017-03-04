@@ -19,8 +19,14 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-9">
-                    <p data-bind="text: ko.i18n('user.name')" class="text-muted"></p>
+                <div class="col-md-3">
+                    <p class="text-muted">First Name</p>
+                </div>
+                <div class="col-md-3">
+                    <p class="text-muted">Last Name</p>
+                </div>
+                <div class="col-md-3">
+                    <p class="text-muted">Email</p>
                 </div>
                 <div class="col-md-3">
                     <p class="text-muted">Actions</p>
@@ -30,8 +36,14 @@
             <!-- ko foreach:users -->
             <hr>
             <div data-bind="css: 'user-list-' + $index() +'-f'" class="row">
-                <div class="col-md-9">
-                    <p data-bind="text: username" class="username-f"></p>
+                <div class="col-md-3">
+                    <p data-bind="text: firstName" class="first-name-f"></p>
+                </div>
+                <div class="col-md-3">
+                    <p data-bind="text: lastName" class="last-name-f"></p>
+                </div>
+                <div class="col-md-3">
+                    <p data-bind="text: email" class="email-f"></p>
                 </div>
                 <div class="col-md-3">
                     <ul class="list-inline">

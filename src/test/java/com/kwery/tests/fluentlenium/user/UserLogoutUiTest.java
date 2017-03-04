@@ -28,7 +28,7 @@ public class UserLogoutUiTest extends ChromeFluentTest {
         $(className("f-username")).click();
         await().atMost(TIMEOUT_SECONDS).until($(".f-logout")).displayed();
         $(className("f-logout")).click();
-        await().atMost(TIMEOUT_SECONDS).until($(".f-next-steps")).displayed();
+        await().atMost(TIMEOUT_SECONDS).until($(".login-f")).displayed();
     }
 
     @Override

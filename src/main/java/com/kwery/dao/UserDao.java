@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -52,17 +53,12 @@ public class UserDao {
     }
 
     @Transactional
-    public User getUser(String username, String password) {
+    public User getUserByEmail(String email) {
         EntityManager m = entityManagerProvider.get();
         CriteriaBuilder cb = m.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.from(User.class);
-
-        Predicate p0 = cb.and(cb.equal(root.get("username"), username));
-        Predicate p1 = cb.and(cb.equal(root.get("password"), password));
-
-        cq.where(p0, p1);
-
+        cq.where(cb.equal(root.get("email"), email));
         TypedQuery<User> tq = m.createQuery(cq);
         List<User> users = tq.getResultList();
 
@@ -70,9 +66,30 @@ public class UserDao {
             return null;
         } else {
             if (users.size() > 1) {
-                throw new AssertionError(String.format("More than one user with user name %s present in users table", username));
+                throw new AssertionError(String.format("More than one user with email %s present in users table", email));
             }
             return users.get(0);
+        }
+    }
+
+    @Transactional
+    public User getUser(String email, String password) {
+        EntityManager m = entityManagerProvider.get();
+        CriteriaBuilder cb = m.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+
+        Predicate p0 = cb.and(cb.equal(root.get("email"), email));
+        Predicate p1 = cb.and(cb.equal(root.get("password"), password));
+
+        cq.where(p0, p1);
+
+        TypedQuery<User> tq = m.createQuery(cq);
+
+        try {
+            return tq.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         }
     }
 
@@ -80,22 +97,13 @@ public class UserDao {
     @Transactional
     public List<User> list() {
         EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT u FROM User u order by u.id").getResultList();
+        return m.createQuery("SELECT u FROM User u order by u.id ASC").getResultList();
     }
 
     @Transactional
     public void update(User user) {
         EntityManager m = entityManagerProvider.get();
-
-        //TODO - Use the method
-        User fromDb = m.find(User.class, user.getId());;
-
-        if (!user.getUsername().equals(fromDb.getUsername())) {
-            throw new CannotModifyUsernameException();
-        }
-
-        fromDb.setPassword(user.getPassword());
-
+        m.merge(user);
         m.flush();
     }
 

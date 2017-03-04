@@ -182,6 +182,29 @@ public class DbUtil {
         return builder.build();
     }
 
+
+    public static IDataSet userTable(User user) throws DataSetException {
+        return userTable(ImmutableList.of(user));
+    }
+
+    public static IDataSet userTable(List<User> users) throws DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.ensureTableIsPresent(User.TABLE_DASH_REPO_USER);
+
+        for (User user : users) {
+            builder.newRow(User.TABLE_DASH_REPO_USER)
+                    .with(User.COLUMN_ID, user.getId())
+                    .with(User.COLUMN_PASSWORD, user.getPassword())
+                    .with(User.COLUMN_FIRST_NAME, user.getFirstName())
+                    .with(User.COLUMN_MIDDLE_NAME, user.getMiddleName())
+                    .with(User.COLUMN_LAST_NAME, user.getLastName())
+                    .with(User.COLUMN_EMAIL, user.getEmail())
+                    .add();
+        }
+
+        return builder.build();
+    }
+
     public static IDataSet sqlQueryTable(SqlQueryModel m) throws DataSetException {
         return sqlQueryTable(ImmutableList.of(m));
     }
@@ -583,9 +606,12 @@ public class DbUtil {
                 sequenceOf(
                         insertInto(User.TABLE_DASH_REPO_USER)
                                 .row()
-                                    .column(User.COLUMN_ID, user.getId())
-                                    .column(User.COLUMN_USERNAME, user.getUsername())
-                                    .column(User.COLUMN_PASSWORD, user.getPassword())
+                                .column(User.COLUMN_ID, user.getId())
+                                .column(User.COLUMN_PASSWORD, user.getPassword())
+                                .column(User.COLUMN_FIRST_NAME, user.getFirstName())
+                                .column(User.COLUMN_MIDDLE_NAME, user.getMiddleName())
+                                .column(User.COLUMN_LAST_NAME, user.getLastName())
+                                .column(User.COLUMN_EMAIL, user.getEmail())
                                 .end()
                                 .build()
                 )

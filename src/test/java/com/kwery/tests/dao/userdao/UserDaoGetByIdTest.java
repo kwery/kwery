@@ -1,42 +1,34 @@
 package com.kwery.tests.dao.userdao;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.Operations;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.dao.UserDao;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.models.User;
+import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
+import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
+import static com.kwery.tests.util.TestUtil.user;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class UserDaoGetByIdTest extends RepoDashDaoTestBase {
-    protected UserTableUtil userTableUtil;
     protected UserDao userDao;
+    private User user;
 
     @Before
     public void setUpUserDaoGetByIdTest() {
-        userTableUtil = new UserTableUtil(1);
-
-        new DbSetup(
-                new DataSourceDestination(DbUtil.getDatasource()),
-                Operations.sequenceOf(
-                    userTableUtil.insertOperation()
-                )
-        ).launch();
-
+        user = user();
+        userDbSetUp(user);
         userDao = getInstance(UserDao.class);
     }
 
     @Test
     public void test() {
-        User user = userDao.getById(1);
-        assertThat(user, sameBeanAs(userTableUtil.row(0)));
-        assertThat(userDao.getById(2), nullValue());
+        User fromDb = userDao.getById(user.getId());
+        assertThat(fromDb, sameBeanAs(user));
+        assertThat(userDao.getById(RandomUtils.nextInt(TestUtil.DB_START_ID + 1, Integer.MAX_VALUE)), nullValue());
     }
 }

@@ -2,13 +2,17 @@ package com.kwery.tests.dao.userdao;
 
 import com.kwery.dao.UserDao;
 import com.kwery.models.User;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
+import com.kwery.tests.util.RepoDashDaoTestBase;
+import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
 import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolationException;
 
+import static com.kwery.models.User.TABLE_DASH_REPO_USER;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.userTable;
+import static com.kwery.tests.util.TestUtil.userWithoutId;
 import static org.junit.Assert.assertTrue;
 
 public class UserDaoPersistTest extends RepoDashDaoTestBase {
@@ -20,28 +24,25 @@ public class UserDaoPersistTest extends RepoDashDaoTestBase {
     }
 
     @Test
-    public void testPersist() {
-        User user = new User();
-        user.setUsername("purvi");
-        user.setPassword("password");
+    public void testPersist() throws Exception {
+        User user = userWithoutId();
+
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        User expected = mapper.map(user, User.class);
 
         userDao.save(user);
+        expected.setId(user.getId());
 
-        Integer id = user.getId();
-
-        assertTrue("Persisted user has id", id != null && id != 0 && id instanceof Number);
+        new DbTableAsserterBuilder(TABLE_DASH_REPO_USER, userTable(expected)).build().assertTable();
     }
 
     @Test
     public void testUniqueUser() {
-        User user = new User();
-        user.setUsername("purvi");
-        user.setPassword("password");
+        User user = userWithoutId();
         userDao.save(user);
 
-        User newUser = new User();
-        newUser.setUsername("purvi");
-        newUser.setPassword("password");
+        User newUser = userWithoutId();
+        newUser.setEmail(user.getEmail());
 
         try {
             userDao.save(newUser);
@@ -50,19 +51,5 @@ public class UserDaoPersistTest extends RepoDashDaoTestBase {
                 assertTrue("Unique user condition failed", false);
             }
         }
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void testNullValuesValidation() {
-        User invalid = new User();
-        userDao.save(invalid);
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void testInvalidFieldLengthValidation() {
-        User invalid = new User();
-        invalid.setUsername("");
-        invalid.setPassword("");
-        userDao.save(invalid);
     }
 }

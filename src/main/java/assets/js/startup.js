@@ -91,6 +91,14 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/url-configuration/save"
     });
 
+    ko.components.register("user-sign-up", {
+        require: "components/user/sign-up"
+    });
+
+    ko.components.register("user-save", {
+        require: "components/user/save"
+    });
+
     ko.applyBindings({route: router.currentRoute});
 
     //Attach polyglot for i18n to ko

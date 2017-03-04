@@ -1,6 +1,5 @@
-<div class="container">
-    <action-result params="status: status,
-                messages: messages">
+<div class="container login-f">
+    <action-result params="status: status, messages: messages">
     </action-result>
 
     <h1 class="text-center kwery-color"><strong data-bind="text: ko.i18n('product.name')"></strong></h1>
@@ -16,12 +15,21 @@
                         <h3 data-bind="text: ko.i18n('login.title')" class="text-muted"></h3>
 
                         <div class="form-group">
-                            <input data-bind="value: username, attr: {placeholder: ko.i18n('user.name')}" class="form-control" name="username" id="username">
+                            <input data-bind="value: email, attr: {placeholder: ko.i18n('login.form.email.placeholder')}" class="form-control" name="email" id="email">
                         </div>
                         <div class="form-group">
                             <input  data-bind="value: password, attr: {placeholder: ko.i18n('password')}" type="password" class="form-control" id="password">
                         </div>
-                        <button data-bind="text: ko.i18n('login')" type="submit" class="btn btn-lg btn-primary" id="login"></button>
+
+                        <ul class="list-inline">
+                            <li>
+                                <button data-bind="text: ko.i18n('login')" type="submit" class="btn btn-lg btn-primary" id="login"></button>
+                            </li>
+                            <li>
+                                <a data-bind="text: ko.i18n('login.sign.up')" href="/#user/sign-up">Sign up</a>
+                            </li>
+                        </ul>
+
                     </form>
                 </div>
             </div>
@@ -29,5 +37,4 @@
         <div class="col-md-4">
         </div>
     </div>
-
 </div>

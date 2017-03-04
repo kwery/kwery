@@ -47,17 +47,19 @@ public class TestUtil {
     public static final int DB_START_ID = 100;
 
     public static User userWithoutId() {
-        User user = new User();
-        user.setUsername("purvi");
-        user.setPassword("password");
+        User user = user();
+        user.setId(null);
         return user;
     }
 
     public static User user() {
         User user = new User();
         user.setId(dbId());
-        user.setUsername(RandomStringUtils.randomAlphanumeric(1, 256));
         user.setPassword(RandomStringUtils.randomAlphanumeric(1, 256));
+        user.setFirstName(RandomStringUtils.randomAlphanumeric(User.FIRST_NAME_MIN, User.FIRST_NAME_MAX + 1));
+        user.setMiddleName(RandomStringUtils.randomAlphanumeric(User.MIDDLE_NAME_MIN, User.MIDDLE_NAME_MAX + 1));
+        user.setLastName(RandomStringUtils.randomAlphanumeric(User.LAST_NAME_MIN, User.LAST_NAME_MAX + 1));
+        user.setEmail(RandomStringUtils.randomAlphanumeric(User.EMAIL_MIN, User.EMAIL_MAX - 9) + "@gmail.com");
         return user;
     }
 
@@ -507,5 +509,35 @@ public class TestUtil {
         for (JobLabelModel jobLabelModel : dto.getJobModel().getLabels()) {
             assertThat(response, hasJsonPath(String.format("$.[%d].jobModel.labels[*].label", index), hasItem(jobLabelModel.getLabel())));
         }
+    }
+
+    public static void assertActionResultStatus(String response, ActionResult.Status status) {
+        assertThat(response, isJson(allOf(
+                withJsonPath("$.status", is(status.name()))
+        )));
+    }
+
+    public static void assertActionResult(String response, ActionResult actionResult) {
+        assertThat(response, isJson(allOf(
+                withJsonPath("$.status", is(actionResult.getStatus().name()))
+        )));
+
+        assertThat(response, hasJsonPath("$.messages.length()", is(actionResult.getMessages().size())));
+
+        for (String message : actionResult.getMessages()) {
+            assertThat(response, hasJsonPath("$.messages[*]", hasItem(message)));
+        }
+
+    }
+
+    public static void assertUser(String response, User user) {
+        assertThat(response, isJson(allOf(
+                withJsonPath("$.id", is(user.getId())),
+                withJsonPath("$.firstName", is(user.getFirstName())),
+                withJsonPath("$.middleName", is(user.getMiddleName())),
+                withJsonPath("$.lastName" , is(user.getLastName())),
+                withJsonPath("$.email", is(user.getEmail())),
+                withJsonPath("$.password", is(user.getPassword()))
+        )));
     }
 }

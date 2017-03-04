@@ -1,38 +1,26 @@
 package com.kwery.controllers.apis;
 
-import com.google.common.base.Joiner;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kwery.dao.UserDao;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.User;
+import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
 import ninja.i18n.Messages;
 import ninja.params.PathParam;
-import ninja.validation.FieldViolation;
-import ninja.validation.JSR303Validation;
-import ninja.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.kwery.views.ActionResult;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Optional.of;
-import static com.kwery.controllers.ControllerUtil.fieldMessages;
-import static com.kwery.controllers.MessageKeys.ADMIN_USER_ADDITION_FAILURE;
-import static com.kwery.controllers.MessageKeys.ADMIN_USER_ADDITION_SUCCESS;
-import static com.kwery.controllers.MessageKeys.LOGIN_FAILURE;
-import static com.kwery.controllers.MessageKeys.LOGIN_SUCCESS;
-import static com.kwery.controllers.MessageKeys.USER_DELETE_SUCCESS;
-import static com.kwery.controllers.MessageKeys.USER_DELETE_YOURSELF;
-import static com.kwery.controllers.MessageKeys.USER_UPDATE_SUCCESS;
-import static ninja.Results.json;
+import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
+import static ninja.Results.json;
 
 @Singleton
 public class UserApiController {
@@ -46,82 +34,26 @@ public class UserApiController {
     @Inject
     private Messages messages;
 
-    @FilterWith(DashRepoSecureFilter.class)
-    public Result addAdminUser(Context context, @JSR303Validation User user, Validation validation) {
-        if (logger.isTraceEnabled()) logger.trace(">");
-
-        logger.info("User payload - " + user);
-
-        Result json = json();
-        ActionResult actionResult = null;
-
-        if (validation.hasViolations()) {
-            actionResult = new ActionResult(failure, fieldMessages(validation, context, messages, json));
-
-            List<String> violations = new LinkedList<>();
-            violations.add("Field violations:");
-
-            for (FieldViolation fieldViolation : validation.getFieldViolations()) {
-                violations.add(fieldViolation.constraintViolation.getMessageKey());
-            }
-
-            logger.error(Joiner.on("").join(violations));
-        } else {
-            boolean isUpdate = false;
-
-            if (user.getId() != null && user.getId() > 0) {
-                isUpdate = true;
-            }
-
-            if (isUpdate) {
-                logger.info("Updating user with payload - " + user);
-            } else {
-                logger.info("Adding user with payload - " + user);
-            }
-
-            User existingUser = userDao.getByUsername(user.getUsername());
-
-            //TODO - Check whether user name is being changed
-            if (isUpdate) {
-                userDao.update(user);
-                String message = messages.get(USER_UPDATE_SUCCESS, context, of(json), user.getUsername()).get();
-                actionResult = new ActionResult(success, message);
-            } else {
-                if (existingUser == null) {
-                    userDao.save(user);
-                    String message = messages.get(ADMIN_USER_ADDITION_SUCCESS, context, of(json), user.getUsername()).get();
-                    actionResult = new ActionResult(success, message);
-                } else {
-                    logger.error("User already exists with username - {}", existingUser.getUsername());
-                    String message = messages.get(ADMIN_USER_ADDITION_FAILURE, context, of(json), user.getUsername()).get();
-                    actionResult = new ActionResult(failure, message);
-                }
-            }
-        }
-
-        if (logger.isTraceEnabled()) logger.trace("<");
-
-        return json.render(actionResult);
-    }
-
+    @Inject
+    private DashRepoSecureFilter dashRepoSecureFilter;
     public Result login(Context context, User user) {
         if (logger.isTraceEnabled()) logger.trace(">");
 
         logger.info("User logging in - {}", user);
 
-        User fromDb = userDao.getUser(user.getUsername(), user.getPassword());
+        User fromDb = userDao.getUser(user.getEmail(), user.getPassword());
 
         Result json = json();
         ActionResult actionResult = null;
 
         if (fromDb == null) {
-            logger.error("User with username {} not found", user.getUsername());
+            logger.error("User with email {} not found", user.getEmail());
             String message = messages.get(LOGIN_FAILURE, context, of(json)).get();
             actionResult = new ActionResult(failure, message);
         } else {
-            String message = messages.get(LOGIN_SUCCESS, context, of(json), user.getUsername()).get();
+            String message = messages.get(LOGIN_SUCCESS, context, of(json)).get();
             actionResult = new ActionResult(success, message);
-            context.getSession().put(SESSION_USERNAME_KEY, user.getUsername());
+            context.getSession().put(SESSION_USERNAME_KEY, user.getEmail());
         }
 
         if (logger.isTraceEnabled()) logger.trace("<");
@@ -158,7 +90,7 @@ public class UserApiController {
         if (logger.isTraceEnabled()) logger.trace(">");
 
         String loggedInUserName = context.getSession().get(SESSION_USERNAME_KEY);
-        User user = userDao.getByUsername(loggedInUserName);
+        User user = userDao.getUserByEmail(loggedInUserName);
         Result json = json();
         json.render(user);
 
@@ -166,22 +98,23 @@ public class UserApiController {
         return json;
     }
 
+    @FilterWith(DashRepoSecureFilter.class)
     public Result delete(@PathParam("userId") int userId, Context context) {
         if (logger.isTraceEnabled()) logger.trace(">");
 
         logger.info("Deleting user - {}", userId);
 
-        String deletedUsername = userDao.getById(userId).getUsername();
+        String deletedEmail = userDao.getById(userId).getEmail();
         ActionResult actionResult = null;
         Result json = json();
-        if (deletedUsername.equals(context.getSession().get(SESSION_USERNAME_KEY))) {
+        if (deletedEmail.equals(context.getSession().get(SESSION_USERNAME_KEY))) {
             logger.error("{} user is trying to delete himself", userId);
 
             String message = messages.get(USER_DELETE_YOURSELF, context, of(json)).get();
             actionResult = new ActionResult(failure, message);
         } else {
             userDao.delete(userId);
-            String message = messages.get(USER_DELETE_SUCCESS, context, of(json), deletedUsername).get();
+            String message = messages.get(USER_DELETE_SUCCESS, context, of(json), deletedEmail).get();
             actionResult = new ActionResult(success, message);
         }
 
@@ -199,6 +132,41 @@ public class UserApiController {
 
         if (logger.isTraceEnabled()) logger.trace("<");
         return json().render(list);
+    }
+
+    //Since this method is used by both sign up as well as user edit we cannot mark this as secure, we do the security
+    //check first thing inside the method.
+    public Result signUp(User user, Context context) {
+        ActionResult actionResult = null;
+        Result json = json();
+
+        if (user.getId() != null && user.getId() > 0) {
+            actionResult = dashRepoSecureFilter.actionResult(context, json);
+        }
+
+        if (actionResult == null) {
+            User existing = userDao.getUserByEmail(user.getEmail());
+
+            if (existing != null) {
+                if (user.getId() != null && user.getId() > 0 && !existing.getId().equals(user.getId())) {
+                    actionResult = new ActionResult(failure, "");
+                } else {
+                    actionResult = new ActionResult(failure, "");
+                }
+            }
+
+            if (actionResult == null) {
+                if (user.getId() != null && user.getId() > 0) {
+                    userDao.update(user);
+                } else {
+                    userDao.save(user);
+                }
+
+                actionResult = new ActionResult(success, "");
+            }
+        }
+
+        return json().render(actionResult);
     }
 
     public void setUserDao(UserDao userDao) {

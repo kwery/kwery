@@ -86,4 +86,6 @@ public class MessageKeys {
 
     public static final String JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING = "jobapicontroller.report.content.large.warning";
     public static final String REPORTEMAILSENDER_ATTACHMENT_SKIPPED = "reportemailsender.attachment.skipped";
+
+    public static final String USERAPICONTROLLER_SIGN_UP_EMAIL_EXISTS = "userapicontroller.sign.up.email.exists";
 }
