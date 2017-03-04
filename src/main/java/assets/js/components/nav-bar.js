@@ -9,15 +9,10 @@ define(["knockout", "jquery", "repo-dash", "text!components/nav-bar.html"], func
 
         repoDash.user.userAuthenticationBroadcaster.subscribe(function(val){
             self.showNavBar(val);
-            $.ajax("/api/user", {
-                type: "GET",
-                contentType: "application/json",
-                success: function(result) {
-                    self.username(result.email);
-                    self.url("/#user/" + result.id);
-                }
-            });
+            //As soon as user logs in, we want to show email in the navbar
+            self.updateEmail();
         }, this, "userLogin");
+
 
         self.logout = function() {
             $.ajax("/api/user/logout", {
@@ -30,6 +25,20 @@ define(["knockout", "jquery", "repo-dash", "text!components/nav-bar.html"], func
             });
             return false;
         };
+
+        self.updateEmail = function() {
+            $.ajax("/api/user", {
+                type: "GET",
+                contentType: "application/json",
+                success: function(result) {
+                    self.username(result.email);
+                    self.url("/#user/" + result.id);
+                }
+            });
+        };
+
+        //If the user refreshes the page, email is lost, hence call it outside the subscribe block
+        self.updateEmail();
 
         return self;
     }
