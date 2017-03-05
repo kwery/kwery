@@ -10,7 +10,7 @@ package com.kwery.tests.util;
 public class Messages {
     public static final String DATASOURCE_ADDITION_SUCCESS_M = "{0} datasource with name {1} created successfully";
     public static final String DATASOURCE_UPDATE_SUCCESS_M = "{0} datasource with name {1} updated successfully";
-    public static final String DATASOURCE_ADDITION_FAILURE_M = "A {0} datasource with name {1} already exists, please choose a different label";
+    public static final String DATASOURCE_ADDITION_FAILURE_M = "A {0} datasource with name {1} already exists, please choose a different name";
 
     public static final String USER_NOT_LOGGED_IN_M = "You need to login to perform this action";
     public static final String LOGIN_SUCCESS_M = "Login successful, redirecting...";
