@@ -21,7 +21,7 @@ import com.kwery.services.job.JobSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.utils.CsvReaderFactory;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
 import com.kwery.views.ActionResult;

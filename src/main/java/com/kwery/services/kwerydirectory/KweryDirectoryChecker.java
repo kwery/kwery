@@ -2,7 +2,7 @@ package com.kwery.services.kwerydirectory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import ninja.lifecycle.Start;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
