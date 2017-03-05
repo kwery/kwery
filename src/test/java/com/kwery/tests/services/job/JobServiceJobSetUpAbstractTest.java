@@ -12,7 +12,7 @@ import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.WiserRule;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;

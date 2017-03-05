@@ -1,8 +1,7 @@
-package com.kwery.utils;
+package com.kwery.conf;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Files;
-import com.google.inject.Inject;
 import org.apache.commons.codec.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,33 +16,9 @@ public class KweryDirectory {
 
     protected File root;
 
-    @Inject
-    public KweryDirectory(File root) {
+    //This is intentionally package private so that only the Guice module init code present in the same package instantiates this class
+    KweryDirectory(File root) {
         this.root = root;
-    }
-
-    public void createDirectories() {
-        for (char c0 : hex) {
-            File file0 = new File(root, String.valueOf(c0));
-            if (!file0.mkdir()) {
-                logger.error("Kwery exiting because report storage directory {} creation failed", file0);
-                System.exit(-1);
-            }
-            for (char c1 : hex) {
-                File file1 = new File(file0, String.valueOf(c1));
-                if (!file1.mkdir()) {
-                    logger.error("Kwery exiting because report storage directory {} creation failed", file1);
-                    System.exit(-1);
-                }
-                for (char c2 : hex) {
-                    File file2 = new File(file1, String.valueOf(c2));
-                    if (!file2.mkdir()) {
-                        logger.error("Kwery exiting because report storage directory {} creation failed", file2);
-                        System.exit(-1);
-                    }
-                }
-            }
-        }
     }
 
     public void checkAndRepairDirectories() {
