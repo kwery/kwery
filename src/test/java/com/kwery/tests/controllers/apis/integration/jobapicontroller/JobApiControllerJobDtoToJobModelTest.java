@@ -9,7 +9,7 @@ import com.kwery.dao.JobLabelDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
-import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
@@ -33,7 +33,7 @@ import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.junit.Assert.assertThat;
 
-public class JobApiControllerJobDtoToJobModelTest extends RepoDashDaoTestBase {
+public class JobApiControllerJobDtoToJobModelTest extends RepoDashTestBase {
     protected JobApiController jobApiController;
     protected DatasourceDao datasourceDao;
 

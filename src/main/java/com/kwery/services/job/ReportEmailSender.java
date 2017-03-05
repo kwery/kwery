@@ -15,7 +15,7 @@ import com.kwery.services.mail.KweryMailAttachmentImpl;
 import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.CsvToHtmlConverter;
 import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
 import ninja.i18n.Messages;

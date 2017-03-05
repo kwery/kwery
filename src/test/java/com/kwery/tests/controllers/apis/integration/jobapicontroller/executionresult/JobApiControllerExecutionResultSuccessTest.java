@@ -8,7 +8,7 @@ import com.kwery.models.*;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.TestUtil;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
