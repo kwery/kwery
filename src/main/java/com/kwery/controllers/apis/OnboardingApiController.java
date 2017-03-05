@@ -10,6 +10,7 @@ import com.kwery.filters.DashRepoSecureFilter;
 import ninja.Context;
 import ninja.Result;
 import ninja.i18n.Messages;
+import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,23 +36,31 @@ public class OnboardingApiController {
     @Inject
     protected DashRepoSecureFilter dashRepoSecureFilter;
 
+    @Inject
+    protected NinjaProperties ninjaProperties;
+
     public Result nextAction(Context context) {
         if (logger.isTraceEnabled()) logger.trace(">");
 
-        if (!anyUserPresent()) {
-            return json().render(new OnboardingNextActionDto(OnboardingNextActionDto.Action.SIGN_UP));
-        } else if (!dashRepoSecureFilter.isLoggedIn(context)) {
-            return json().render(new OnboardingNextActionDto(OnboardingNextActionDto.Action.LOGIN));
+        //We do not want onboarding actions to kick in during test cases
+        if (ninjaProperties.isTest()) {
+            return json().render(new OnboardingNextActionDto(SHOW_HOME_SCREEN));
         } else {
-            if (!doesDatasourceExist()) {
-                if (logger.isTraceEnabled()) logger.trace("<");
-                return json().render(new OnboardingNextActionDto(ADD_DATASOURCE));
-            } else if(!doesSqlQueryExist()) {
-                if (logger.isTraceEnabled()) logger.trace("<");
-                return json().render(new OnboardingNextActionDto(ADD_JOB));
+            if (!anyUserPresent()) {
+                return json().render(new OnboardingNextActionDto(OnboardingNextActionDto.Action.SIGN_UP));
+            } else if (!dashRepoSecureFilter.isLoggedIn(context)) {
+                return json().render(new OnboardingNextActionDto(OnboardingNextActionDto.Action.LOGIN));
             } else {
-                if (logger.isTraceEnabled()) logger.trace("<");
-                return json().render(new OnboardingNextActionDto(SHOW_HOME_SCREEN));
+                if (!doesDatasourceExist()) {
+                    if (logger.isTraceEnabled()) logger.trace("<");
+                    return json().render(new OnboardingNextActionDto(ADD_DATASOURCE));
+                } else if(!doesSqlQueryExist()) {
+                    if (logger.isTraceEnabled()) logger.trace("<");
+                    return json().render(new OnboardingNextActionDto(ADD_JOB));
+                } else {
+                    if (logger.isTraceEnabled()) logger.trace("<");
+                    return json().render(new OnboardingNextActionDto(SHOW_HOME_SCREEN));
+                }
             }
         }
     }

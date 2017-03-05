@@ -37,7 +37,6 @@ public class LoginRule implements TestRule {
                 }
 
                 loginPage.submitForm(loggedInUser.getEmail(), loggedInUser.getPassword());
-                loginPage.waitForLoginSuccess();
 
                 base.evaluate();
             }
