@@ -11,8 +11,6 @@ import static com.kwery.tests.util.Messages.LOGIN_FAILURE_M;
 import static com.kwery.tests.util.Messages.LOGIN_SUCCESS_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
-import static org.fluentlenium.core.filter.FilterConstructor.withClass;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 @PageUrl("/#user/login")
@@ -29,10 +27,6 @@ public class UserLoginPage extends KweryFluentPage implements RepoDashPage {
     @Override
     public boolean isRendered() {
         return loginForm.displayed();
-    }
-
-    public void waitForLoginSuccess() {
-        assertThat(el("div", withClass().contains("welcome-f"))).isDisplayed();
     }
 
     public void waitForSuccessMessage(String username) {

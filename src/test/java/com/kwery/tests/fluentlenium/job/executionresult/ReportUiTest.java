@@ -7,7 +7,7 @@ import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.utils.KweryConstant;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;

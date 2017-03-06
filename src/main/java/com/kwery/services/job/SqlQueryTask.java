@@ -11,7 +11,7 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.datasource.DatasourceService;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutionContext;
 import org.slf4j.Logger;

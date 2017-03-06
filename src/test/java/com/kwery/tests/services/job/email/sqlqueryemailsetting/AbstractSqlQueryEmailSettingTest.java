@@ -6,7 +6,7 @@ import com.kwery.services.job.ReportEmailSender;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
