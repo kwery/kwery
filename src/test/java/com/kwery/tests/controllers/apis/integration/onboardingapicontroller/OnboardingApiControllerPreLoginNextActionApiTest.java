@@ -20,6 +20,10 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
 
 @RunWith(Parameterized.class)
 public class OnboardingApiControllerPreLoginNextActionApiTest extends AbstractApiTest {
+    static {
+        System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, OnboardingApiController.TEST_ONBOARDING_VALUE);
+    }
+
     protected OnboardingNextActionDto.Action action;
 
     public OnboardingApiControllerPreLoginNextActionApiTest(OnboardingNextActionDto.Action action) {

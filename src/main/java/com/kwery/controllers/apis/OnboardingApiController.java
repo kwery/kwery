@@ -19,6 +19,9 @@ import static ninja.Results.json;
 
 @Singleton
 public class OnboardingApiController {
+    public static final String TEST_ONBOARDING_SYSTEM_KEY = "testOnboarding";
+    public static final String TEST_ONBOARDING_VALUE = "true";
+
     protected Logger logger = LoggerFactory.getLogger(OnboardingApiController.class);
 
     @Inject
@@ -42,10 +45,9 @@ public class OnboardingApiController {
     public Result nextAction(Context context) {
         if (logger.isTraceEnabled()) logger.trace(">");
 
-        //We do not want onboarding actions to kick in during test cases
-        if (ninjaProperties.isTest()) {
-            return json().render(new OnboardingNextActionDto(SHOW_HOME_SCREEN));
-        } else {
+        //We do not want onboarding actions to kick in during non onboarding test cases
+        //If this is test, onboarding flow should kick in only during onboarding tests
+        if ((ninjaProperties.isTest() && TEST_ONBOARDING_VALUE.equals(System.getProperty(TEST_ONBOARDING_SYSTEM_KEY)) || !ninjaProperties.isTest())) {
             if (!anyUserPresent()) {
                 return json().render(new OnboardingNextActionDto(OnboardingNextActionDto.Action.SIGN_UP));
             } else if (!dashRepoSecureFilter.isLoggedIn(context)) {
@@ -62,6 +64,8 @@ public class OnboardingApiController {
                     return json().render(new OnboardingNextActionDto(SHOW_HOME_SCREEN));
                 }
             }
+        } else {
+            return json().render(new OnboardingNextActionDto(SHOW_HOME_SCREEN));
         }
     }
 

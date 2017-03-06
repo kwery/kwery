@@ -24,6 +24,10 @@ import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 
 @RunWith(Parameterized.class)
 public class OnboardingApiControllerPostLoginNextActionApiTest extends AbstractPostLoginApiTest {
+    static {
+        System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, OnboardingApiController.TEST_ONBOARDING_VALUE);
+    }
+
     protected Action action;
 
     public OnboardingApiControllerPostLoginNextActionApiTest(Action action) {
