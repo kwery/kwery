@@ -9,9 +9,7 @@ define(["knockout", "jquery", "text!components/user/sign-up.html", "ajaxutil", "
         self.userId = params.userId;
 
         //Is this onboarding flow?
-        self.onboarding = params["?q"].onboarding;
-
-        if (self.onboarding) {
+        if (params["?q"] && params["?q"].onboarding) {
             self.status("info");
             self.messages([ko.i18n("onboarding.user.add")]);
         }
