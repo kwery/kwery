@@ -569,4 +569,8 @@ public class TestUtil {
 
         return id;
     }
+
+    public static void clearCreatedIds() {
+        createdIds.clear();
+    }
 }

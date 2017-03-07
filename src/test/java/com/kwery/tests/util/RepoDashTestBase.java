@@ -45,6 +45,7 @@ public class RepoDashTestBase {
 
     @Before
     public final void initialize() {
+        TestUtil.clearCreatedIds();
         NinjaPropertiesImpl ninjaProperties = new NinjaPropertiesImpl(ninjaMode);
         bootstrap = new Bootstrap(ninjaProperties);
         bootstrap.boot();
