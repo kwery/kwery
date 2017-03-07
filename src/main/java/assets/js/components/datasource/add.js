@@ -86,7 +86,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                                     waitingModal.hide();
                                     switch (response.action) {
                                         case "ADD_JOB":
-                                            window.location.href = "/#report/add?onboarding=true";
+                                            window.location.href = "/#report/add?onboarding=true&fromDatasource=true";
                                             break;
                                         case "SHOW_HOME_SCREEN":
                                             if ($.jStorage.storageAvailable()) {

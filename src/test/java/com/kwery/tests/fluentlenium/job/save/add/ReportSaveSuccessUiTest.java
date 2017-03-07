@@ -2,11 +2,39 @@ package com.kwery.tests.fluentlenium.job.save.add;
 
 import com.kwery.tests.fluentlenium.job.save.JobForm;
 import org.dozer.DozerBeanMapper;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static com.kwery.tests.util.TestUtil.assertJobModel;
 
+@RunWith(Parameterized.class)
 public class ReportSaveSuccessUiTest extends AbstractReportSaveUiTest {
+    protected boolean onboardingFlow;
+
+    public ReportSaveSuccessUiTest(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
+    }
+
+    @Parameters(name = "Onboarding{0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {true},
+                {false},
+        });
+    }
+
+    @Before
+    public void setUp() {
+        super.setOnboardingFlow(onboardingFlow);
+        super.setUp();
+    }
+
     @Test
     public void testWithCronExpressionChosen() throws InterruptedException {
         DozerBeanMapper mapper = new DozerBeanMapper();

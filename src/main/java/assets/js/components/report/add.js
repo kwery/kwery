@@ -11,8 +11,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
         //Is this onboarding flow?
         if (params["?q"] !== undefined) {
-            self.onboarding = params["?q"].onboarding;
-            if (self.onboarding !== undefined) {
+            if (params["?q"].onboarding && params["?q"].fromDatasource) {
+                self.status("info");
+                self.messages([ko.i18n("onboarding.report.add.post.datasource")]);
+            } else if (params["?q"].onboarding) {
                 self.status("info");
                 self.messages([ko.i18n("onboarding.report.add")]);
             }

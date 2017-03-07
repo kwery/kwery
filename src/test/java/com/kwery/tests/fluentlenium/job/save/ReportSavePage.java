@@ -6,7 +6,6 @@ import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.assertj.FluentLeniumAssertions;
-import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
 import org.openqa.selenium.By;
@@ -26,8 +25,9 @@ import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.openqa.selenium.By.className;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
-@PageUrl("/#report/add")
 public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
+    protected boolean onboardingFlow;
+
     protected Map<Integer, String> datasourceIdToLabelMap;
     protected Map<Integer, String> parentJobIdToLabelMap;
 
@@ -325,6 +325,19 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
             if (isStopExecutionOnSqlQueryFailure()) {
                 el(className("stop-execution-on-sql-query-failure-f")).click();
             }
+        }
+    }
+
+    public void setOnboardingFlow(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
+    }
+
+    @Override
+    public String getUrl() {
+        if (onboardingFlow) {
+            return "/#report/add?onboarding=true";
+        } else {
+            return "/#report/add";
         }
     }
 }

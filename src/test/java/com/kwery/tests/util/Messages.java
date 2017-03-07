@@ -90,4 +90,8 @@ public class Messages {
 
     public static final String SIGN_UP_UPDATE_SUCCESS_MESSAGE_M = "User updated successfully";
 
+    public static final String ONBOARDING_USER_ADD_M = "You made a great choice in using Kwery, let us create a user as the first step";
+    public static final String ONBOARDING_DATASOURCE_ADD_M = "You are almost there, let us add a datasource";
+    public static final String ONBOARDING_REPORT_ADD_M = "This is the last step, let us add a report";
+    public static final String ONBOARDING_REPORT_ADD_POST_DATASOURCE_M = "Datasource added successfully, this is the last step, let us add a report";
 }

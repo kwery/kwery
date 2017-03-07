@@ -20,7 +20,7 @@ public class ActionResultComponent extends FluentWebElement {
     }
 
     public void assertSuccessMessage(String message) {
-        assertThat(el(".f-success-message p", withText(message))).isDisplayed();
+        assertThat(el(".f-success-message p", withText(message)).withHook(WaitHook.class)).isDisplayed();
     }
 
     public void assertFailureMessage(String message) {
@@ -31,5 +31,9 @@ public class ActionResultComponent extends FluentWebElement {
         for (String message : messages) {
             assertThat(el(".f-failure-message p", withText().contains(message))).isDisplayed();
         }
+    }
+
+    public void assertInfoMessage(String message) {
+        assertThat(el(".f-info-message p", withText(message))).isDisplayed();
     }
 }

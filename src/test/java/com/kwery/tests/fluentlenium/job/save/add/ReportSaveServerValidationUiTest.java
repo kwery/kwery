@@ -2,6 +2,7 @@ package com.kwery.tests.fluentlenium.job.save.add;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
@@ -21,20 +22,35 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.Messages.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static java.text.MessageFormat.format;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
+@RunWith(Parameterized.class)
 public class ReportSaveServerValidationUiTest extends ChromeFluentTest {
+    protected boolean onboardingFlow;
+
+    public ReportSaveServerValidationUiTest(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
+    }
+
+    @Parameters(name = "Onboarding{0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {true},
+                {false},
+        });
+    }
+
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -54,6 +70,10 @@ public class ReportSaveServerValidationUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpJobApiControllerSaveJobWithDuplicateLabelTest() {
+        if (onboardingFlow) {
+            System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, OnboardingApiController.TEST_ONBOARDING_VALUE);
+        }
+
         jobModel = jobModelWithoutDependents();
 
         jobDto = jobDtoWithoutId();
@@ -86,6 +106,7 @@ public class ReportSaveServerValidationUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
+        page.setOnboardingFlow(onboardingFlow);
         goTo(page);
 
         if (!page.isRendered()) {

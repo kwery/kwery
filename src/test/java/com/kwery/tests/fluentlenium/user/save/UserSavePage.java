@@ -21,6 +21,8 @@ public class UserSavePage extends KweryFluentPage {
     @Wait
     protected ActionResultComponent actionResultComponent;
 
+    protected boolean onboardingFlow;
+
     public void saveUser(Map<FormField, ?> map) {
         if (map.containsKey(FormField.firstName)) {
             $(".first-name-f").withHook(WaitHook.class).fill().with(String.valueOf(map.get(FormField.firstName)));
@@ -58,4 +60,16 @@ public class UserSavePage extends KweryFluentPage {
         return actionResultComponent;
     }
 
+    @Override
+    public String getUrl() {
+        if (onboardingFlow) {
+            return "/#user/sign-up?onboarding=true";
+        } else {
+            return "/#user/sign-up";
+        }
+    }
+
+    public void setOnboardingFlow(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
+    }
 }
