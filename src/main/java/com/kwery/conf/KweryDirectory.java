@@ -29,7 +29,7 @@ public class KweryDirectory {
                 try {
                     java.nio.file.Files.createDirectory(file0.toPath());
                 } catch (IOException e) {
-                    logger.error("Kwery exiting because report storage directory {} creation failed", file0);
+                    logger.error("Kwery exiting because report storage directory {} creation failed", file0, e);
                     System.exit(-1);
                 }
             }
@@ -40,7 +40,7 @@ public class KweryDirectory {
                     try {
                         java.nio.file.Files.createDirectory(file1.toPath());
                     } catch (IOException e) {
-                        logger.error("Kwery exiting because report storage directory {} creation failed", file1);
+                        logger.error("Kwery exiting because report storage directory {} creation failed", file1, e);
                         System.exit(-1);
                     }
                 }
@@ -51,7 +51,7 @@ public class KweryDirectory {
                         try {
                             java.nio.file.Files.createDirectory(file2.toPath());
                         } catch (IOException e) {
-                            logger.error("Kwery exiting because report storage directory {} creation failed", file2);
+                            logger.error("Kwery exiting because report storage directory {} creation failed", file2, e);
                             System.exit(-1);
                         }
                     }
