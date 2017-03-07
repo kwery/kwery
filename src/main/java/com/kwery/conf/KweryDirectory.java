@@ -26,7 +26,9 @@ public class KweryDirectory {
             File file0 = new File(root, String.valueOf(c0));
             if (!file0.exists()) {
                 logger.error("Directory {} has been deleted, recreating it", file0);
-                if (!file0.mkdir()) {
+                try {
+                    java.nio.file.Files.createDirectory(file0.toPath());
+                } catch (IOException e) {
                     logger.error("Kwery exiting because report storage directory {} creation failed", file0);
                     System.exit(-1);
                 }
@@ -35,7 +37,9 @@ public class KweryDirectory {
                 File file1 = new File(file0, String.valueOf(c1));
                 if (!file1.exists()) {
                     logger.error("Directory {} has been deleted, recreating it", file1);
-                    if (!file1.mkdir()) {
+                    try {
+                        java.nio.file.Files.createDirectory(file1.toPath());
+                    } catch (IOException e) {
                         logger.error("Kwery exiting because report storage directory {} creation failed", file1);
                         System.exit(-1);
                     }
@@ -44,7 +48,9 @@ public class KweryDirectory {
                     File file2 = new File(file1, String.valueOf(c2));
                     if (!file2.exists()) {
                         logger.error("Directory {} has been deleted, recreating it", file2);
-                        if (!file2.mkdir()) {
+                        try {
+                            java.nio.file.Files.createDirectory(file2.toPath());
+                        } catch (IOException e) {
                             logger.error("Kwery exiting because report storage directory {} creation failed", file2);
                             System.exit(-1);
                         }
