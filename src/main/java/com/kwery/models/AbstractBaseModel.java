@@ -33,7 +33,7 @@ public abstract class AbstractBaseModel {
         return created;
     }
 
-    @VisibleForTesting
+    //This value is overridden in the Dao while saving the object through JPA
     public void setCreated(Long created) {
         this.created = created;
     }
@@ -42,18 +42,8 @@ public abstract class AbstractBaseModel {
         return updated;
     }
 
-    @VisibleForTesting
+    //This value is overridden in the Dao while saving the object through JPA
     public void setUpdated(Long updated) {
         this.updated = updated;
-    }
-
-    @PrePersist
-    private void setCreated() {
-        created = System.currentTimeMillis();
-    }
-
-    @PreUpdate
-    private void setUpdated() {
-        updated = System.currentTimeMillis();
     }
 }

@@ -15,7 +15,11 @@ import static com.kwery.models.JobRuleModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.fooTable;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobTable;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
+import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
 import static com.kwery.tests.util.TestUtil.jobRuleModelWithoutId;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
     private JobDao jobDao;
@@ -27,10 +31,12 @@ public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
 
     @Test
     public void test() throws Exception {
-        JobModel jobModel = jobModelWithoutDependents();
+        JobModel jobModel = jobModelWithoutIdWithoutDependents();
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
+        expectedJobModel.setCreated(jobModel.getCreated());
+        expectedJobModel.setUpdated(jobModel.getUpdated());
 
         JobRuleModel jobRuleModel = jobRuleModelWithoutId();
         JobRuleModel expectedJobRuleModel = mapper.map(jobRuleModel, JobRuleModel.class);
@@ -40,12 +46,19 @@ public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
         jobModel = jobDao.save(jobModel);
 
         expectedJobModel.setId(jobModel.getId());
+        expectedJobModel.setUpdated(jobModel.getUpdated());
+        expectedJobModel.setCreated(jobModel.getCreated());
+
+        expectedJobModel.setId(jobModel.getId());
         new DbTableAsserterBuilder(JOB_TABLE, jobTable(expectedJobModel)).columnsToIgnore(ID_COLUMN).build().assertTable();
 
         expectedJobRuleModel.setId(jobModel.getJobRuleModel().getId());
 
         new DbTableAsserterBuilder(JOB_RULE_TABLE, fooTable(expectedJobModel)).columnsToIgnore(JOB_RULE_ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JOB_JOB_RULE_TABLE, fooTable(expectedJobModel)).columnsToIgnore(JOB_JOB_RULE_ID_COLUMN).build().assertTable();
+
+        assertThat(expectedJobModel.getCreated(), notNullValue());
+        assertThat(expectedJobModel.getUpdated(), nullValue());
     }
 }
 

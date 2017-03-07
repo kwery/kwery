@@ -15,6 +15,8 @@ import static com.kwery.models.JobModel.*;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateRuleTest extends RepoDashDaoTestBase {
     private JobModel jobModel;
@@ -35,19 +37,24 @@ public class JobDaoUpdateRuleTest extends RepoDashDaoTestBase {
     public void testUpdate() throws Exception {
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(false)));
         JobModel expected = new DozerBeanMapper().map(jobModel, JobModel.class);
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
+        expected.setUpdated(jobModel.getUpdated());
 
         new DbTableAsserter.DbTableAsserterBuilder(JOB_TABLE, jobTable(expected)).columnsToIgnore(ID_COLUMN).build().assertTable();
         new DbTableAsserter.DbTableAsserterBuilder(JOB_RULE_TABLE, jobRuleTable(expected)).columnsToIgnore(JOB_RULE_TABLE_ID_COLUMN).build().assertTable();
+
+        assertThat(jobModel.getUpdated(), notNullValue());
     }
 
     @Test
     public void testEmptyRules() throws Exception {
         jobModel.setRules(new HashMap<>());
         JobModel expected = new DozerBeanMapper().map(jobModel, JobModel.class);
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
+        expected.setUpdated(jobModel.getUpdated());
 
         new DbTableAsserter.DbTableAsserterBuilder(JOB_TABLE, jobTable(expected)).columnsToIgnore(ID_COLUMN).build().assertTable();
         new DbTableAsserter.DbTableAsserterBuilder(JOB_RULE_TABLE, jobRuleTable(expected)).columnsToIgnore(JOB_RULE_TABLE_ID_COLUMN).build().assertTable();
+        assertThat(jobModel.getUpdated(), notNullValue());
     }
 }

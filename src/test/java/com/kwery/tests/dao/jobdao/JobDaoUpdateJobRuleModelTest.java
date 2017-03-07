@@ -16,6 +16,8 @@ import static com.kwery.models.JobRuleModel.JOB_JOB_RULE_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.jobRuleModel;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateJobRuleModelTest extends RepoDashDaoTestBase {
     private JobModel jobModel;
@@ -43,10 +45,13 @@ public class JobDaoUpdateJobRuleModelTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expected = mapper.map(jobModel, JobModel.class);
 
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
+        expected.setUpdated(jobModel.getUpdated());
 
         new DbTableAsserterBuilder(JOB_TABLE, jobTable(expected)).columnsToIgnore(ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JobRuleModel.JOB_RULE_TABLE, fooTable(expected)).build().assertTable();
         new DbTableAsserterBuilder(JOB_JOB_RULE_TABLE, fooTable(expected)).columnsToIgnore(JOB_JOB_RULE_ID_COLUMN).build().assertTable();
+
+        assertThat(jobModel.getUpdated(), notNullValue());
     }
 }

@@ -12,7 +12,6 @@ import com.kwery.tests.util.TestUtil;
 import org.dbunit.DatabaseUnitException;
 import org.dozer.DozerBeanMapper;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,6 +25,8 @@ import static com.kwery.models.SqlQueryModel.ID_COLUMN;
 import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateTest extends RepoDashDaoTestBase {
     protected JobDao jobDao;
@@ -67,12 +68,15 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(modifiedJobModel, JobModel.class);
 
-        jobDao.save(modifiedJobModel);
+        modifiedJobModel = jobDao.save(modifiedJobModel);
+        expectedJobModel.setUpdated(modifiedJobModel.getUpdated());
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()));
         new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
                 .columnsToIgnore(ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
+
+        assertThat(expectedJobModel.getUpdated(), notNullValue());
     }
 
     @Test
@@ -85,6 +89,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
 
         JobModel fromDbJobModel = jobDao.save(jobModel);
+        expectedJobModel.setUpdated(fromDbJobModel.getUpdated());
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()), ID_COLUMN);
@@ -92,8 +97,10 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                 .columnsToIgnore(ID_COLUMN, SQL_QUERY_ID_FK_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
 
         for (SqlQueryModel queryModel : fromDbJobModel.getSqlQueries()) {
-            Assert.assertThat(queryModel.getId(), Matchers.greaterThan(0));
+            assertThat(queryModel.getId(), Matchers.greaterThan(0));
         }
+
+        assertThat(expectedJobModel.getUpdated(), notNullValue());
     }
 
     @Test
@@ -108,12 +115,15 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
 
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
+        expectedJobModel.setUpdated(jobModel.getUpdated());
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(expectedJobModel.getSqlQueries()));
         new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
                 .columnsToIgnore(ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
+
+        assertThat(expectedJobModel.getUpdated(), notNullValue());
     }
 
 
@@ -130,7 +140,8 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
+        expectedJobModel.setUpdated(jobModel.getUpdated());
 
         DbTableAsserter jobTableAsserter = new DbTableAsserterBuilder(JOB_TABLE, jobTable(expectedJobModel))
                 .build();
@@ -146,6 +157,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                 .columnsToIgnore(JOB_SQL_QUERY_TABLE_ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN)
                 .build().assertTable();
 
+        assertThat(expectedJobModel.getUpdated(), notNullValue());
     }
 
     @Test
@@ -156,9 +168,11 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
             sqlQueryModel.setSqlQueryEmailSettingModel(model);
         }
 
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
 
         new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE,
                 sqlQueryEmailSettingTable(jobModel.getSqlQueries().toArray(new SqlQueryModel[jobModel.getSqlQueries().size()]))).columnsToIgnore(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN).build().assertTable();
+
+        assertThat(jobModel.getUpdated(), notNullValue());
     }
 }

@@ -12,6 +12,8 @@ import org.junit.Test;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobFailureAlertEmailTable;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithFailureAlertEmailTest extends RepoDashDaoTestBase {
     @Test
@@ -21,12 +23,16 @@ public class JobDaoSaveWithFailureAlertEmailTest extends RepoDashDaoTestBase {
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expected = mapper.map(jobModel, JobModel.class);
+        expected.setCreated(jobModel.getCreated());
 
         jobModel = getInstance(JobDao.class).save(jobModel);
         expected.setId(jobModel.getId());
+        expected.setCreated(jobModel.getCreated());
 
         new DbTableAsserterBuilder(JOB_TABLE, DbUtil.jobTable(expected)).build().assertTable();
         new DbTableAsserterBuilder(JOB_FAILURE_ALERT_EMAIL_TABLE, jobFailureAlertEmailTable(expected))
                 .columnToIgnore(JOB_FAILURE_ALERT_EMAIL_ID_COLUMN).build().assertTable();
+
+        assertThat(expected.getCreated(), notNullValue());
     }
 }

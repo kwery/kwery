@@ -30,8 +30,10 @@ public class JobDao {
         EntityManager e = entityManagerProvider.get();
 
         if (m.getId() != null && m.getId() > 0) {
+            m.setUpdated(System.currentTimeMillis());
             return e.merge(m);
         } else {
+            m.setCreated(System.currentTimeMillis());
             e.persist(m);
             return m;
         }

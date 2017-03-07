@@ -17,9 +17,8 @@ import static org.hibernate.search.annotations.Index.YES;
 @Indexed
 //Do not change the analyzer without changing the filtering function used in JobSearchDao
 @Analyzer(impl = StandardAnalyzer.class)
-public class JobModel {
+public class JobModel extends AbstractBaseModel {
     public static final String JOB_TABLE = "job";
-    public static final String ID_COLUMN = "id";
     public static final String CRON_EXPRESSION_COLUMN = "cron_expression";
     public static final String NAME_COLUMN = "j_name";
     public static final String TITLE_COLUMN = "title";
@@ -55,11 +54,6 @@ public class JobModel {
     public static final String JOB_FAILURE_ALERT_EMAIL_ID_COLUMN = "id";
     public static final String JOB_FAILURE_ALERT_EMAIL_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
     public static final String JOB_FAILURE_ALERT_EMAIL_TABLE_EMAIL_COLUMN = "email";
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = ID_COLUMN)
-    protected Integer id;
 
     @Column(name = CRON_EXPRESSION_COLUMN)
     @Size(max = 255)
@@ -143,14 +137,6 @@ public class JobModel {
             inverseJoinColumns = @JoinColumn(name = JobRuleModel.JOB_RULE_ID_FK_COLUMN, referencedColumnName = JobModel.ID_COLUMN)
     )
     protected JobRuleModel jobRuleModel;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getCronExpression() {
         return cronExpression;

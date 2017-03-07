@@ -24,6 +24,7 @@ public class UserDao {
 
     @Transactional
     public void save(User u) {
+        u.setCreated(System.currentTimeMillis());
         logger.trace(">");
         logger.info("Creating user - " + u);
         EntityManager m = entityManagerProvider.get();
@@ -102,6 +103,7 @@ public class UserDao {
 
     @Transactional
     public User update(User user) {
+        user.setUpdated(System.currentTimeMillis());
         EntityManager m = entityManagerProvider.get();
         user = m.merge(user);
         m.flush();

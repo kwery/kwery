@@ -548,7 +548,7 @@ public class TestUtil {
         )));
     }
 
-    private static Integer getId(Class<?> claz) {
+    public static Integer getId(Class<?> claz) {
         int id = dbId();
         if (!createdIds.containsKey(claz)) {
             createdIds.put(claz, Sets.newHashSet(id));

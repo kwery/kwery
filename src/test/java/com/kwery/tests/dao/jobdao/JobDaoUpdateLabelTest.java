@@ -16,6 +16,8 @@ import static com.kwery.models.JobModel.JOB_JOB_LABEL_TABLE_ID_COLUMN;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
     private JobDao jobDao;
@@ -47,10 +49,13 @@ public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
         jobModel.getLabels().clear();
 
         JobModel expected = new DozerBeanMapper().map(jobModel, JobModel.class);
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
+        expected.setUpdated(jobModel.getUpdated());
 
         new DbTableAsserterBuilder(JOB_JOB_LABEL_TABLE, jobJobLabelTable(expected)).columnToIgnore(JOB_JOB_LABEL_TABLE_ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JOB_LABEL_TABLE, jobLabelTable(jobLabelModel0, jobLabelModel1, jobLabelModel2)).build().assertTable();
+
+        assertThat(expected.getUpdated(), notNullValue());
     }
 
     @Test
@@ -59,9 +64,12 @@ public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
         jobModel.getLabels().add(jobLabelModel2);
 
         JobModel expected = new DozerBeanMapper().map(jobModel, JobModel.class);
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
+        expected.setUpdated(jobModel.getUpdated());
 
         new DbTableAsserterBuilder(JOB_JOB_LABEL_TABLE, jobJobLabelTable(expected)).columnToIgnore(JOB_JOB_LABEL_TABLE_ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JOB_LABEL_TABLE, jobLabelTable(jobLabelModel0, jobLabelModel1, jobLabelModel2)).build().assertTable();
+
+        assertThat(expected.getUpdated(), notNullValue());
     }
 }

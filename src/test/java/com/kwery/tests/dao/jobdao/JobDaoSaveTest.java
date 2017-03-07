@@ -25,6 +25,8 @@ import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveTest extends RepoDashTestBase {
@@ -41,16 +43,29 @@ public class JobDaoSaveTest extends RepoDashTestBase {
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
+        jobModel.setCreated(null);
+        jobModel.setUpdated(null);
+
         JobModel expectedJobModel = new DozerBeanMapper().map(jobModel, JobModel.class);
 
         jobDao.save(jobModel);
+
         expectedJobModel.setId(jobModel.getId());
+        expectedJobModel.setCreated(jobModel.getCreated());
+        expectedJobModel.setUpdated(jobModel.getUpdated());
+
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
+
+        assertThat(jobModel.getCreated(), notNullValue());
+        assertThat(jobModel.getUpdated(), nullValue());
     }
 
     @Test
     public void testWithSqlQuery() throws DatabaseUnitException, SQLException, IOException {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
+        jobModel.setCreated(null);
+        jobModel.setUpdated(null);
+
         DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
 
         JobModel expectedJobModel = dozerBeanMapper.map(jobModel, JobModel.class);
@@ -71,6 +86,8 @@ public class JobDaoSaveTest extends RepoDashTestBase {
 
         expectedJobModel.setId(jobModel.getId());
         expectedSqlQueryModel0.setId(jobModel.getSqlQueries().iterator().next().getId());
+        expectedJobModel.setCreated(jobModel.getCreated());
+        expectedJobModel.setUpdated(jobModel.getUpdated());
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
         assertDbState(SQL_QUERY_TABLE, sqlQueryTable(ImmutableSet.of(expectedSqlQueryModel0, expectedSqlQueryModel1)), ID_COLUMN);
@@ -83,5 +100,8 @@ public class JobDaoSaveTest extends RepoDashTestBase {
 
         assertThat(sqlQueryModel0.getId(), greaterThan(0));
         assertThat(sqlQueryModel1.getId(), greaterThan(0));
+
+        assertThat(jobModel.getCreated(), notNullValue());
+        assertThat(jobModel.getUpdated(), nullValue());
     }
 }

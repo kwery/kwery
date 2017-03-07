@@ -160,6 +160,8 @@ public class DbUtil {
                     .with(JobModel.CRON_EXPRESSION_COLUMN, m.getCronExpression())
                     .with(JobModel.TITLE_COLUMN, m.getTitle())
                     .with(JobModel.ID_COLUMN, m.getId())
+                    .with(JobModel.CREATED_COLUMN, m.getCreated())
+                    .with(JobModel.UPDATED_COLUMN, m.getUpdated())
                     .add();
         }
 
@@ -472,6 +474,8 @@ public class DbUtil {
                         .column(JobModel.CRON_EXPRESSION_COLUMN, jobModel.getCronExpression())
                         .column(JobModel.NAME_COLUMN, jobModel.getName())
                         .column(JobModel.TITLE_COLUMN, jobModel.getTitle())
+                        .column(JobModel.CREATED_COLUMN, jobModel.getCreated())
+                        .column(JobModel.UPDATED_COLUMN, jobModel.getUpdated())
                         .end()
                         .build()
         ).launch();
@@ -521,7 +525,8 @@ public class DbUtil {
                     Operations.sequenceOf(
                             insertInto(JOB_SQL_QUERY_TABLE)
                                     .row()
-                                    .column(JobModel.ID_COLUMN, dbId())
+                                    .column(JOB_SQL_QUERY_TABLE_ID_COLUMN, TestUtil.getId(SqlQueryModel.class)) //This is not the right id, but we do not have a
+                                    //class representing this table, hence using SqlQueryModel for now
                                     .column(JobModel.JOB_ID_FK_COLUMN, jobModel.getId())
                                     .column(SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
                                     .column(JobModel.JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN, order)

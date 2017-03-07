@@ -12,6 +12,8 @@ import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobRuleTable;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobTable;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveJobModelWithRulesTest extends RepoDashDaoTestBase {
     @Test
@@ -20,9 +22,11 @@ public class JobDaoSaveJobModelWithRulesTest extends RepoDashDaoTestBase {
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(true)));
 
         JobDao jobDao = getInstance(JobDao.class);
-        jobDao.save(jobModel);
+        jobModel = jobDao.save(jobModel);
 
         new DbTableAsserterBuilder(JOB_TABLE, jobTable(jobModel)).columnsToIgnore(ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JOB_RULE_TABLE, jobRuleTable(jobModel)).columnsToIgnore(JOB_RULE_TABLE_ID_COLUMN).build().assertTable();
+
+        assertThat(jobModel.getCreated(), notNullValue());
     }
 }

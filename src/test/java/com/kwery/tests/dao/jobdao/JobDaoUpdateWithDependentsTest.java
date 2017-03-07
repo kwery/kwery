@@ -18,6 +18,8 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
     protected JobDao jobDao;
@@ -64,6 +66,7 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
         toUpdate = jobDao.save(toUpdate);
 
         assertDbState(JOB_CHILDREN_TABLE, jobDependentTable(expected), JOB_CHILDREN_TABLE_ID_COLUMN);
+        assertThat(toUpdate.getUpdated(), notNullValue());
     }
 
     @Test
@@ -78,5 +81,6 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
         toUpdate = jobDao.save(toUpdate);
 
         assertDbState(JOB_CHILDREN_TABLE, jobDependentTable(expected), JOB_CHILDREN_TABLE_ID_COLUMN);
+        assertThat(toUpdate.getUpdated(), notNullValue());
     }
 }

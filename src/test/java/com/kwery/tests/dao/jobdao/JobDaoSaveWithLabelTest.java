@@ -15,6 +15,9 @@ import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
     private JobLabelModel jobLabelModel0;
@@ -39,9 +42,14 @@ public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
 
         jobModel = getInstance(JobDao.class).save(jobModel);
         expected.setId(jobModel.getId());
+        expected.setCreated(jobModel.getCreated());
+        expected.setUpdated(jobModel.getUpdated());
 
         new DbTableAsserterBuilder(JOB_TABLE, jobTable(expected)).build().assertTable();
         new DbTableAsserterBuilder(JOB_JOB_LABEL_TABLE, jobJobLabelTable(expected)).columnToIgnore(JOB_JOB_LABEL_TABLE_ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JOB_LABEL_TABLE, jobLabelTable(jobLabelModel0, jobLabelModel1)).build().assertTable();
+
+        assertThat(expected.getCreated(), notNullValue());
+        assertThat(expected.getUpdated(), nullValue());
     }
 }

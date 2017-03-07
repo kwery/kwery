@@ -12,3 +12,6 @@ create table kwery_user (
   primary key (id),
   unique(email)
 );
+
+alter table job add column created bigint;
+alter table job add column updated bigint;
