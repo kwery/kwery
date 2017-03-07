@@ -12,6 +12,8 @@ import static com.kwery.models.User.TABLE_DASH_REPO_USER;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.userTable;
 import static com.kwery.tests.util.TestUtil.user;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class UserDaoUpdateTest extends RepoDashDaoTestBase {
     protected UserDao userDao;
@@ -32,8 +34,11 @@ public class UserDaoUpdateTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         User expected = mapper.map(modified, User.class);
 
-        userDao.update(modified);
+        modified = userDao.update(modified);
 
+        expected.setUpdated(modified.getUpdated());
         new DbTableAsserterBuilder(TABLE_DASH_REPO_USER, userTable(expected)).build().assertTable();
+
+        assertThat(user.getUpdated(), notNullValue());
     }
 }

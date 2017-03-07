@@ -65,6 +65,8 @@ public class TestUtil {
         user.setMiddleName(RandomStringUtils.randomAlphanumeric(User.MIDDLE_NAME_MIN, User.MIDDLE_NAME_MAX + 1));
         user.setLastName(RandomStringUtils.randomAlphanumeric(User.LAST_NAME_MIN, User.LAST_NAME_MAX + 1));
         user.setEmail(RandomStringUtils.randomAlphanumeric(User.EMAIL_MIN, User.EMAIL_MAX - 9) + "@gmail.com");
+        user.setCreated(System.currentTimeMillis());
+        user.setUpdated(System.currentTimeMillis());
         return user;
     }
 

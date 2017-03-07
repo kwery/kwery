@@ -101,10 +101,11 @@ public class UserDao {
     }
 
     @Transactional
-    public void update(User user) {
+    public User update(User user) {
         EntityManager m = entityManagerProvider.get();
-        m.merge(user);
+        user = m.merge(user);
         m.flush();
+        return user;
     }
 
     @Transactional

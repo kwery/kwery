@@ -1,20 +1,20 @@
 package com.kwery.models;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = User.TABLE_DASH_REPO_USER)
-public class User {
+public class User extends AbstractBaseModel {
     public static final String TABLE_DASH_REPO_USER = "kwery_user";
     public static final String COLUMN_PASSWORD = "password";
     public static final String COLUMN_FIRST_NAME = "first_name";
     public static final String COLUMN_MIDDLE_NAME = "middle_name";
     public static final String COLUMN_LAST_NAME = "last_name";
     public static final String COLUMN_EMAIL = "email";
-
-    public static final String COLUMN_ID = "id";
 
     public static final int FIRST_NAME_MAX = 255;
     public static final int FIRST_NAME_MIN = 1;
@@ -27,11 +27,6 @@ public class User {
 
     public static final int EMAIL_MAX = 1024;
     public static final int EMAIL_MIN = 7;
-
-    @Column(name = COLUMN_ID)
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
 
     @Column(name = COLUMN_FIRST_NAME)
     @NotNull

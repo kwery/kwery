@@ -13,6 +13,9 @@ import javax.persistence.PersistenceException;
 import static com.kwery.models.User.TABLE_DASH_REPO_USER;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.userTable;
 import static com.kwery.tests.util.TestUtil.userWithoutId;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class UserDaoPersistTest extends RepoDashDaoTestBase {
@@ -26,14 +29,19 @@ public class UserDaoPersistTest extends RepoDashDaoTestBase {
     @Test
     public void testPersist() throws Exception {
         User user = userWithoutId();
+        user.setCreated(null);
+        user.setUpdated(null);
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         User expected = mapper.map(user, User.class);
 
         userDao.save(user);
         expected.setId(user.getId());
-
+        expected.setUpdated(user.getUpdated());
+        expected.setCreated(user.getCreated());
         new DbTableAsserterBuilder(TABLE_DASH_REPO_USER, userTable(expected)).build().assertTable();
+        assertThat(expected.getUpdated(), nullValue());
+        assertThat(expected.getCreated(), notNullValue());
     }
 
     @Test

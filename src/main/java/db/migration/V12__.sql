@@ -7,6 +7,8 @@ create table kwery_user (
   last_name varchar(255) not null,
   email varchar(1024) not null,
   password varchar(255) not null,
+  created bigint not null,
+  updated bigint,
   primary key (id),
   unique(email)
 );

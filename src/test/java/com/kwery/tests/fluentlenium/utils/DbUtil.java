@@ -193,12 +193,14 @@ public class DbUtil {
 
         for (User user : users) {
             builder.newRow(User.TABLE_DASH_REPO_USER)
-                    .with(User.COLUMN_ID, user.getId())
+                    .with(AbstractBaseModel.ID_COLUMN, user.getId())
                     .with(User.COLUMN_PASSWORD, user.getPassword())
                     .with(User.COLUMN_FIRST_NAME, user.getFirstName())
                     .with(User.COLUMN_MIDDLE_NAME, user.getMiddleName())
                     .with(User.COLUMN_LAST_NAME, user.getLastName())
                     .with(User.COLUMN_EMAIL, user.getEmail())
+                    .with(AbstractBaseModel.CREATED_COLUMN, user.getCreated())
+                    .with(AbstractBaseModel.UPDATED_COLUMN, user.getUpdated())
                     .add();
         }
 
@@ -606,7 +608,9 @@ public class DbUtil {
                 sequenceOf(
                         insertInto(User.TABLE_DASH_REPO_USER)
                                 .row()
-                                .column(User.COLUMN_ID, user.getId())
+                                .column(AbstractBaseModel.ID_COLUMN, user.getId())
+                                .column(AbstractBaseModel.CREATED_COLUMN, user.getCreated())
+                                .column(AbstractBaseModel.UPDATED_COLUMN, user.getUpdated())
                                 .column(User.COLUMN_PASSWORD, user.getPassword())
                                 .column(User.COLUMN_FIRST_NAME, user.getFirstName())
                                 .column(User.COLUMN_MIDDLE_NAME, user.getMiddleName())
