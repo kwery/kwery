@@ -275,6 +275,7 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                             var reports = [];
                             ko.utils.arrayForEach(jobDtos, function(jobModelHackDto){
                                 jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
+                                jobModelHackDto.jobModel.copyLink = "/#report/" + jobModelHackDto.jobModel.id + "/copy";
                                 jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
                                 jobModelHackDto.jobModel.lastExecution = jobModelHackDto.lastExecution;
                                 jobModelHackDto.jobModel.nextExecution = jobModelHackDto.nextExecution;
@@ -301,6 +302,7 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                             ko.utils.arrayForEach(jobListDto.jobModelHackDtos, function(jobModelHackDto){
                                 jobModelHackDto.jobModel.executionLink = "/#report/" + jobModelHackDto.jobModel.id + "/execution-list";
                                 jobModelHackDto.jobModel.reportLink = "/#report/" + jobModelHackDto.jobModel.id;
+                                jobModelHackDto.jobModel.copyLink = "/#report/" + jobModelHackDto.jobModel.id + "/copy";
                                 jobModelHackDto.jobModel.lastExecution = jobModelHackDto.lastExecution;
                                 jobModelHackDto.jobModel.nextExecution = jobModelHackDto.nextExecution;
 

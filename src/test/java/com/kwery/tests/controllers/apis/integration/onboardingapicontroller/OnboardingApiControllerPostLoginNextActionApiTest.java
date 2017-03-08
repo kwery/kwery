@@ -2,10 +2,7 @@ package com.kwery.tests.controllers.apis.integration.onboardingapicontroller;
 
 import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.dtos.OnboardingNextActionDto.Action;
-import com.kwery.tests.controllers.apis.integration.AbstractApiTest;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;

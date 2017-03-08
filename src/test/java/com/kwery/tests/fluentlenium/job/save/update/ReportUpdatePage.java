@@ -9,15 +9,7 @@ import static org.openqa.selenium.By.className;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
 public class ReportUpdatePage extends ReportSavePage {
-    protected int reportId;
-
-    public int getReportId() {
-        return reportId;
-    }
-
-    public void setReportId(int reportId) {
-        this.reportId = reportId;
-    }
+    protected boolean isCopy;
 
     public void waitForReportDisplay(String name) {
         await().until($(className("f-report-name"))).attribute("value", name);
@@ -25,6 +17,14 @@ public class ReportUpdatePage extends ReportSavePage {
 
     @Override
     public String getUrl() {
-        return "/#report/{reportId}";
+        if (isCopy) {
+            return "/#report/{reportId}/copy";
+        } else {
+            return "/#report/{reportId}";
+        }
+    }
+
+    public void setCopy(boolean copy) {
+        isCopy = copy;
     }
 }

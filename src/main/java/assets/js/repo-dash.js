@@ -41,6 +41,7 @@
                 {url: "report/list/:?q:", auth: true, component: "report-list"},
                 {url: "report/executing", auth: true, component: "report-executing"},
                 {url: "report/{reportId}", auth: true, component: "report-add"},
+                {url: "report/{reportId}/copy", auth: true, component: "report-copy"},
                 {url: "report/{jobId}/execution-list/:?q:", auth: true, component: "report-execution-list"},
                 {url: "report/{jobId}/execution/{jobExecutionId}", auth: true, component: "report-execution-result"},
                 {url: "report-label/list", auth: true, component: "report-label-list"},

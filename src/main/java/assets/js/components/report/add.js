@@ -3,8 +3,9 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
     function viewModel(params) {
         var self = this;
 
-        var reportId = params.reportId;
+        var reportId = params.reportId || params.toCopyFromReportId(); //Observable if this variable is coming from copy page otherwise regular variable
         var isUpdate = reportId !== undefined && reportId > 0;
+        var isCopy = params.isCopy !== undefined && params.isCopy() === true;
 
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
@@ -179,7 +180,9 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             }
 
                             if (report.jobRuleModel != null) {
-                                self.jobRuleModelId(report.jobRuleModel.id);
+                                if (!isCopy) {
+                                    self.jobRuleModelId(report.jobRuleModel.id);
+                                }
                                 self.sequentialSqlQueryExecution(report.jobRuleModel.sequentialSqlQueryExecution);
                                 self.stopExecutionOnSqlQueryFailure(report.jobRuleModel.stopExecutionOnSqlQueryFailure);
                             }
@@ -190,12 +193,19 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                 var includeAsAttachment = true;
 
                                 if (sqlQuery.sqlQueryEmailSettingModel != null) {
-                                    emailSettingId = sqlQuery.sqlQueryEmailSettingModel.id;
+                                    if (!isCopy) {
+                                        emailSettingId = sqlQuery.sqlQueryEmailSettingModel.id;
+                                    }
                                     includeInBody = sqlQuery.sqlQueryEmailSettingModel.includeInEmailBody;
                                     includeAsAttachment = sqlQuery.sqlQueryEmailSettingModel.includeInEmailAttachment;
                                 }
 
-                                var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQuery.id,
+                                var sqlQueryId = null;
+                                if (!isCopy) {
+                                    sqlQueryId = sqlQuery.id;
+                                }
+
+                                var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQueryId,
                                     emailSettingId, includeInBody, includeAsAttachment);
 
                                 self.queries.push(query);
@@ -316,7 +326,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     }
                 };
 
-                if (isUpdate) {
+                if (isUpdate && !isCopy) {
                     report.id = reportId;
                 }
 
