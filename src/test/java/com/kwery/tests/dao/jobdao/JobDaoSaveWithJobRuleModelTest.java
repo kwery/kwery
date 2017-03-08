@@ -14,11 +14,9 @@ import static com.kwery.models.JobModel.JOB_TABLE;
 import static com.kwery.models.JobRuleModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.fooTable;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobTable;
-import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
 import static com.kwery.tests.util.TestUtil.jobRuleModelWithoutId;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
@@ -32,6 +30,8 @@ public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws Exception {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
+        jobModel.setCreated(null);
+        jobModel.setUpdated(null);
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
@@ -58,7 +58,7 @@ public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JOB_JOB_RULE_TABLE, fooTable(expectedJobModel)).columnsToIgnore(JOB_JOB_RULE_ID_COLUMN).build().assertTable();
 
         assertThat(expectedJobModel.getCreated(), notNullValue());
-        assertThat(expectedJobModel.getUpdated(), nullValue());
+        assertThat(expectedJobModel.getUpdated(), notNullValue());
     }
 }
 

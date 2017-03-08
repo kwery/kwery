@@ -149,7 +149,7 @@ public class ReportUpdateSwitchToCronUiTest extends ChromeFluentTest {
 
         assertJobModel(savedJobModel, null, jobDto, datasource);
 
-        assertThat(parentJobModel, theSameBeanAs(jobDao.getJobById(parentJobModel.getId())));
+        assertThat(parentJobModel, theSameBeanAs(jobDao.getJobById(parentJobModel.getId())).excludeProperty("created").excludeProperty("updated"));
 
         assertThat(jobDao.getAllJobs(), hasSize(2));
         assertThat(sqlQueryDao.getAll(), hasSize(2));

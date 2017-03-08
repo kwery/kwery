@@ -26,7 +26,6 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveTest extends RepoDashTestBase {
@@ -57,7 +56,7 @@ public class JobDaoSaveTest extends RepoDashTestBase {
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
 
         assertThat(jobModel.getCreated(), notNullValue());
-        assertThat(jobModel.getUpdated(), nullValue());
+        assertThat(jobModel.getUpdated(), notNullValue());
     }
 
     @Test
@@ -102,6 +101,6 @@ public class JobDaoSaveTest extends RepoDashTestBase {
         assertThat(sqlQueryModel1.getId(), greaterThan(0));
 
         assertThat(jobModel.getCreated(), notNullValue());
-        assertThat(jobModel.getUpdated(), nullValue());
+        assertThat(jobModel.getUpdated(), notNullValue());
     }
 }

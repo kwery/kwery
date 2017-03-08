@@ -40,7 +40,7 @@ public class UserDaoPersistTest extends RepoDashDaoTestBase {
         expected.setUpdated(user.getUpdated());
         expected.setCreated(user.getCreated());
         new DbTableAsserterBuilder(TABLE_DASH_REPO_USER, userTable(expected)).build().assertTable();
-        assertThat(expected.getUpdated(), nullValue());
+        assertThat(expected.getUpdated(), notNullValue());
         assertThat(expected.getCreated(), notNullValue());
     }
 

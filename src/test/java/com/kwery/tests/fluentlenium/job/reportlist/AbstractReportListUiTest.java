@@ -128,7 +128,7 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         }
 
         jobModels = Lists.newArrayList(jobModel, parentJob, childJob);
-        jobModels.sort(Comparator.comparing(JobModel::getId));
+        jobModels.sort(Comparator.comparing(JobModel::getUpdated).reversed());
 
         expectedSearchOrder = ImmutableList.of(jobModel, parentJob, childJob);
 

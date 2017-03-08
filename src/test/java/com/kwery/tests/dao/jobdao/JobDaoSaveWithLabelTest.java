@@ -16,7 +16,6 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
@@ -35,6 +34,9 @@ public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws Exception {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
+        jobModel.setUpdated(null);
+        jobModel.setCreated(null);
+
         jobModel.setLabels(ImmutableSet.of(jobLabelModel0, jobLabelModel1));
 
         DozerBeanMapper mapper = new DozerBeanMapper();
@@ -50,6 +52,6 @@ public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JOB_LABEL_TABLE, jobLabelTable(jobLabelModel0, jobLabelModel1)).build().assertTable();
 
         assertThat(expected.getCreated(), notNullValue());
-        assertThat(expected.getUpdated(), nullValue());
+        assertThat(expected.getUpdated(), notNullValue());
     }
 }

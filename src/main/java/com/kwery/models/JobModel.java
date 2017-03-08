@@ -86,6 +86,7 @@ public class JobModel extends AbstractBaseModel {
             joinColumns = @JoinColumn(name = JOB_ID_FK_COLUMN, referencedColumnName = ID_COLUMN),
             inverseJoinColumns = @JoinColumn(name = SQL_QUERY_ID_FK_COLUMN, referencedColumnName = SqlQueryModel.ID_COLUMN)
     )
+
     @OrderColumn(name = JobModel.JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN)
     @IndexedEmbedded
     protected List<SqlQueryModel> sqlQueries = new LinkedList<>();

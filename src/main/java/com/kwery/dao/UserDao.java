@@ -24,7 +24,9 @@ public class UserDao {
 
     @Transactional
     public void save(User u) {
-        u.setCreated(System.currentTimeMillis());
+        long now = System.currentTimeMillis();
+        u.setCreated(now);
+        u.setUpdated(now);
         logger.trace(">");
         logger.info("Creating user - " + u);
         EntityManager m = entityManagerProvider.get();

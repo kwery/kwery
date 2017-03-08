@@ -222,6 +222,8 @@ public class TestUtil {
         jobModel.setCronExpression("* * * * *");
         jobModel.setName(RandomStringUtils.randomAlphanumeric(1, 256));
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
+        jobModel.setCreated(System.currentTimeMillis());
+        jobModel.setUpdated(System.currentTimeMillis());
         jobModel.setChildJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setSqlQueries(new LinkedList<>());
@@ -370,7 +372,8 @@ public class TestUtil {
             expectedJobModel.setParentJob(parentJobModel);
         }
 
-        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries").excludeProperty("jobRuleModel.id"));
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries")
+                .excludeProperty("jobRuleModel.id").excludeProperty("created").excludeProperty("updated"));
 
         List<SqlQueryModel> expectedSqlQueryModels = toList(expectedJobModel.getSqlQueries());
         sort(expectedSqlQueryModels, comparing(SqlQueryModel::getLabel));

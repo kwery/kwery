@@ -9,10 +9,7 @@ import com.kwery.dtos.SqlQueryDto;
 import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
-import com.kwery.tests.util.ChromeFluentTest;
-import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
-import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.*;
 import org.dozer.DozerBeanMapper;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
@@ -38,6 +35,9 @@ public class ReportUpdateSwitchParentUiTest extends ChromeFluentTest {
 
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+
+    @Rule
+    public WiserRule wiserRule = new WiserRule();
 
     @Page
     ReportUpdatePage page;
@@ -165,10 +165,10 @@ public class ReportUpdateSwitchParentUiTest extends ChromeFluentTest {
         parentJobModel1.setChildJobs(ImmutableSet.of(savedJobModel));
         assertJobModel(savedJobModel, parentJobModel1, jobDto, datasource);
 
-        assertThat(parentJobModel1, theSameBeanAs(jobDao.getJobById(parentJobModel1.getId())));
+        assertThat(parentJobModel1, theSameBeanAs(jobDao.getJobById(parentJobModel1.getId())).excludeProperty("created").excludeProperty("updated"));
 
         parentJobModel0.getChildJobs().clear();
-        assertThat(parentJobModel0, theSameBeanAs(jobDao.getJobById(parentJobModel0.getId())));
+        assertThat(parentJobModel0, theSameBeanAs(jobDao.getJobById(parentJobModel0.getId())).excludeProperty("created").excludeProperty("updated"));
 
         assertThat(jobDao.getAllJobs(), hasSize(3));
         assertThat(sqlQueryDao.getAll(), hasSize(3));

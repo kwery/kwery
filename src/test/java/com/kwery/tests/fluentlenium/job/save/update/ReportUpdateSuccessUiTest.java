@@ -42,7 +42,7 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
     @Page
     ReportUpdatePage page;
 
-    JobModel jobModel;
+    protected JobModel jobModel;
     Datasource datasource;
     JobDao jobDao;
     private SqlQueryDao sqlQueryDao;
@@ -102,7 +102,6 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
 
         page.waitForModalDisappearance();
         page.waitForReportDisplay(jobModel.getName());
-
 
         JobDto jobDto = jobDto();
         jobDto.setCronExpression("* * * * *");
