@@ -28,6 +28,7 @@ import static org.junit.rules.RuleChain.outerRule;
 
 public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+    protected boolean skipDaoCheck = false;
 
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
@@ -35,16 +36,19 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Rule
+    public WiserRule wiserRule = new WiserRule();
+
     String email0 = "foo@bar.com";
     String email1 = "boo@goo.com";
     String email2 = "moo@goo.com";
 
     @Page
-    ReportUpdatePage page;
+    protected ReportUpdatePage page;
 
     protected JobModel jobModel;
     Datasource datasource;
-    JobDao jobDao;
+    protected JobDao jobDao;
     private SqlQueryDao sqlQueryDao;
 
     @Before
@@ -129,13 +133,19 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
-        assertThat(jobDao.getAllJobs(), hasSize(1));
-        assertThat(sqlQueryDao.getAll(), hasSize(2));
-        assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
+        if (!skipDaoCheck) {
+            assertThat(jobDao.getAllJobs(), hasSize(1));
+            assertThat(sqlQueryDao.getAll(), hasSize(2));
+            assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
+        }
     }
 
     @Override
     public String getBaseUrl() {
         return ninjaServerRule.getServerUrl();
+    }
+
+    public void setSkipDaoCheck(boolean skipDaoCheck) {
+        this.skipDaoCheck = skipDaoCheck;
     }
 }

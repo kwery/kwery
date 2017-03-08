@@ -58,7 +58,7 @@
                         <div data-bind="text: ko.i18n('report.save.cron.expression')" class="form-group text-muted">
                         </div>
                         <div class="form-group">
-                            <input data-bind="value: cronExpression" type="text" class="form-control f-report-cron-expression"
+                            <input data-bind="textInput: cronExpression" type="text" class="form-control f-report-cron-expression"
                                    name="cronExpression" id="cronExpression" required>
                             <div class="help-block with-errors cronExpression-form-validation-message-f"></div>
                         </div>
@@ -142,7 +142,7 @@
                                 <span class="glyphicon glyphicon-trash"></span>
                             </a>
                         </span>
-                        <textarea data-bind="value: query" minlength="1" class="form-control f-query" id="query" name="query" required></textarea>
+                        <textarea data-bind="textInput: query" minlength="1" class="form-control f-query" id="query" name="query" required></textarea>
                         <div class="help-block with-errors query-form-validation-message-f"></div>
                     </div>
                     <div class="form-group">
