@@ -1,7 +1,6 @@
 package com.kwery.tests.fluentlenium.datasource;
 
 import com.kwery.models.Datasource.Type;
-import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
 
@@ -16,7 +15,6 @@ import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.name;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
-@PageUrl("/#datasource/{datasourceId}")
 public class UpdateDatasourcePage extends DatasourceAddPage {
     public static final int FIELDS = 5;
 
@@ -45,5 +43,10 @@ public class UpdateDatasourcePage extends DatasourceAddPage {
     public void submit() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".save-datasource-f")).clickable();
         find(className("save-datasource-f")).click();
+    }
+
+    @Override
+    public String getUrl() {
+        return "/#datasource/{datasourceId}";
     }
 }
