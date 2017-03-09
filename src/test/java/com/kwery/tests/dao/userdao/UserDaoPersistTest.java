@@ -4,6 +4,7 @@ import com.kwery.dao.UserDao;
 import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,8 @@ public class UserDaoPersistTest extends RepoDashDaoTestBase {
         User expected = mapper.map(user, User.class);
 
         long now = System.currentTimeMillis();
+
+        TestUtil.nullifyTimestamps(user);
 
         userDao.save(user);
         expected.setId(user.getId());
