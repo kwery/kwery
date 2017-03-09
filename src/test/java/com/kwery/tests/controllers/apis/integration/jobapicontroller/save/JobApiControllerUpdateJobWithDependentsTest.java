@@ -153,7 +153,8 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
         expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
-        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobById(jobDto.getId())));
-        assertThat(jobDao.getJobById(parentJobModel1.getId()).getChildJobs().iterator().next(), theSameBeanAs(jobDao.getJobById(jobDto.getId())));
+        assertThat(expectedJobModel, theSameBeanAs(jobDao.getJobById(jobDto.getId())).excludeProperty("created").excludeProperty("updated"));
+        assertThat(jobDao.getJobById(parentJobModel1.getId()).getChildJobs().iterator().next(),
+                theSameBeanAs(jobDao.getJobById(jobDto.getId())).excludeProperty("created").excludeProperty("updated"));
     }
 }

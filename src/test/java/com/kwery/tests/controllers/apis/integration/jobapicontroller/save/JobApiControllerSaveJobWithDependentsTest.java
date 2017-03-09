@@ -106,6 +106,7 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
 
         JobModel jobModelFromDb = jobDao.getJobByName(jobDto.getName());
 
-        assertThat(jobModelFromDb, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id"));
+        assertThat(jobModelFromDb, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id")
+                .excludeProperty("created").excludeProperty("updated"));
     }
 }

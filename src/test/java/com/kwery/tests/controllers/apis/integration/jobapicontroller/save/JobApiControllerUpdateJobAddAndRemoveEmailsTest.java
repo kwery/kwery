@@ -92,6 +92,6 @@ public class JobApiControllerUpdateJobAddAndRemoveEmailsTest extends AbstractPos
 
         assertThat(jobDao.getAllJobs(), hasSize(1));
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
-        assertThat(jobDao.getJobById(jobDto.getId()), theSameBeanAs(jobModel));
+        assertThat(jobDao.getJobById(jobDto.getId()), theSameBeanAs(jobModel).excludeProperty("created").excludeProperty("updated"));
     }
 }

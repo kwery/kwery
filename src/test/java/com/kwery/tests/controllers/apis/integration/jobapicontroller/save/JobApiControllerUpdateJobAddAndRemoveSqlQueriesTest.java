@@ -107,7 +107,7 @@ public class JobApiControllerUpdateJobAddAndRemoveSqlQueriesTest extends Abstrac
 
 
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
-        assertThat(jobModel, theSameBeanAs(jobModelFromDb));
+        assertThat(jobModel, theSameBeanAs(jobModelFromDb).excludeProperty("created").excludeProperty("updated"));
 
         assertThat(sqlQueryModelsFromDb.get(0), theSameBeanAs(expectedSqlQueryModels.get(0)).excludeProperty("id"));
         assertThat(sqlQueryModelsFromDb.get(1), theSameBeanAs(expectedSqlQueryModels.get(1)).excludeProperty("id"));

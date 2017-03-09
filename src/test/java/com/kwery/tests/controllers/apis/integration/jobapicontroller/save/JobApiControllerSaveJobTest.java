@@ -99,6 +99,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         JobModel jobModel = jobDao.getJobByName(jobDto.getName());
 
         expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
-        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id").excludeProperty("sqlQueries.sqlQueryEmailSetting.id"));
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id")
+                .excludeProperty("sqlQueries.sqlQueryEmailSetting.id").excludeProperty("created").excludeProperty("updated"));
     }
 }

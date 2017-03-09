@@ -127,7 +127,7 @@ public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
         parentJobModel.setChildJobs(ImmutableSet.of(savedJobModel));
         assertJobModel(savedJobModel, parentJobModel, jobDto, datasource);
 
-        assertThat(parentJobModel, theSameBeanAs(jobDao.getJobById(parentJobModel.getId())));
+        assertThat(parentJobModel, theSameBeanAs(jobDao.getJobById(parentJobModel.getId())).excludeProperty("updated").excludeProperty("created"));
 
         assertThat(jobDao.getAllJobs(), hasSize(2));
     }
