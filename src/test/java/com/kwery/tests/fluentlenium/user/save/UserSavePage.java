@@ -16,7 +16,6 @@ import static org.fluentlenium.core.filter.FilterConstructor.withClass;
 import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
-@PageUrl("/#user/sign-up")
 public class UserSavePage extends KweryFluentPage {
     @Wait
     protected ActionResultComponent actionResultComponent;

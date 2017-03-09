@@ -8,6 +8,9 @@ import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
-@PageUrl("/#user/{userId}")
 public class UserEditPage extends UserSavePage {
+    @Override
+    public String getUrl() {
+        return "/#user/{userId}";
+    }
 }
