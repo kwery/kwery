@@ -25,7 +25,7 @@
                 {url: "user/add", auth: true, component: "user-add"},
                 {url: "user/list", auth: true, component: "user-list"},
                 {url: "user/sign-up/:?q:", auth: false, component: "user-sign-up"},
-                {url: "user/login{?query}", auth: false, component: "user-login"},
+                {url: "user/login", auth: false, component: "user-login"},
                 {url: "user/{userId}", auth: true, component: "user-save"},
                 {url: "datasource/add/:?q:", auth: true, component: "datasource-add"},
                 {url: "datasource/list", auth: true, component: "datasource-list"},

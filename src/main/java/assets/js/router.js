@@ -11,7 +11,7 @@ define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($,
             });
 
             addedRoute.rules = {
-                request_ : function(request) {
+                request_ : function() {
                     if (mapping.auth && !repoDash.user.isAuthenticated()) {
                         return false;
                     }
@@ -20,10 +20,12 @@ define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($,
             };
         });
 
+        //crossroads.routed.add(console.log, console);
+
         //If a route is bypassed, it means that it did not meet the auth rules, hence redirect to auth
         //Previous is appended so that post login intended page is shown
-        crossroads.bypassed.add(function(request){
-            crossroads.parse("user/login?previous=" + request);
+        crossroads.bypassed.add(function(){
+            crossroads.parse("user/login");
         });
 
         activateCrossroads();
