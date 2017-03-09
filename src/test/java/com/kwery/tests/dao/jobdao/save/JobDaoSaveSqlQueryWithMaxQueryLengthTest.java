@@ -1,4 +1,4 @@
-package com.kwery.tests.dao.jobdao;
+package com.kwery.tests.dao.jobdao.save;
 
 import com.google.common.base.Strings;
 import com.kwery.models.Datasource;

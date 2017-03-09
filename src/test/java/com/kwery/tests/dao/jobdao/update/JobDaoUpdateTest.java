@@ -1,4 +1,4 @@
-package com.kwery.tests.dao.jobdao;
+package com.kwery.tests.dao.jobdao.update;
 
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
@@ -25,6 +25,8 @@ import static com.kwery.models.SqlQueryModel.ID_COLUMN;
 import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
@@ -32,6 +34,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
     protected JobDao jobDao;
     protected JobModel jobModel;
     protected Datasource datasource;
+    private long created;
 
     @Before
     public void setUpJobDaoUpdateTest() {
@@ -55,6 +58,8 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
             sqlQueryEmailSettingDbSetUp(sqlQueryModel);
         }
 
+        created = jobModel.getCreated();
+
         jobDao = getInstance(JobDao.class);
     }
 
@@ -64,10 +69,14 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         modifiedJobModel.getSqlQueries().addAll(jobModel.getSqlQueries());
 
         modifiedJobModel.setId(jobModel.getId());
+        modifiedJobModel.setCreated(jobModel.getCreated());
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(modifiedJobModel, JobModel.class);
 
+        long now = System.currentTimeMillis();
+
+        TestUtil.nullifyTimestamps(modifiedJobModel);
         modifiedJobModel = jobDao.save(modifiedJobModel);
         expectedJobModel.setUpdated(modifiedJobModel.getUpdated());
 
@@ -77,6 +86,9 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                 .columnsToIgnore(ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
 
         assertThat(expectedJobModel.getUpdated(), notNullValue());
+
+        assertThat(modifiedJobModel.getCreated(), is(created));
+        assertThat(modifiedJobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 
     @Test
@@ -88,6 +100,9 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
 
+        long now = System.currentTimeMillis();
+
+        TestUtil.nullifyTimestamps(jobModel);
         JobModel fromDbJobModel = jobDao.save(jobModel);
         expectedJobModel.setUpdated(fromDbJobModel.getUpdated());
 
@@ -100,7 +115,8 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
             assertThat(queryModel.getId(), Matchers.greaterThan(0));
         }
 
-        assertThat(expectedJobModel.getUpdated(), notNullValue());
+        assertThat(fromDbJobModel.getCreated(), is(created));
+        assertThat(fromDbJobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 
     @Test
@@ -115,6 +131,9 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
 
+        long now = System.currentTimeMillis();
+
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expectedJobModel.setUpdated(jobModel.getUpdated());
 
@@ -123,7 +142,8 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JOB_SQL_QUERY_TABLE, jobSqlQueryTable(expectedJobModel))
                 .columnsToIgnore(ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN).build().assertTable();
 
-        assertThat(expectedJobModel.getUpdated(), notNullValue());
+        assertThat(jobModel.getCreated(), is(created));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 
 
@@ -140,6 +160,10 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);
+
+        long now = System.currentTimeMillis();
+
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expectedJobModel.setUpdated(jobModel.getUpdated());
 
@@ -157,7 +181,8 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
                 .columnsToIgnore(JOB_SQL_QUERY_TABLE_ID_COLUMN, JOB_SQL_QUERY_TABLE_UI_ORDER_COLUMN)
                 .build().assertTable();
 
-        assertThat(expectedJobModel.getUpdated(), notNullValue());
+        assertThat(jobModel.getCreated(), is(created));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 
     @Test
@@ -168,11 +193,15 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
             sqlQueryModel.setSqlQueryEmailSettingModel(model);
         }
 
+        long now = System.currentTimeMillis();
+
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
 
         new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE,
                 sqlQueryEmailSettingTable(jobModel.getSqlQueries().toArray(new SqlQueryModel[jobModel.getSqlQueries().size()]))).columnsToIgnore(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN).build().assertTable();
 
-        assertThat(jobModel.getUpdated(), notNullValue());
+        assertThat(jobModel.getCreated(), is(created));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 }

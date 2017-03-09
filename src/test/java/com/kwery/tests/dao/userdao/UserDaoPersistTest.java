@@ -4,6 +4,7 @@ import com.kwery.dao.UserDao;
 import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +14,7 @@ import javax.persistence.PersistenceException;
 import static com.kwery.models.User.TABLE_DASH_REPO_USER;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.userTable;
 import static com.kwery.tests.util.TestUtil.userWithoutId;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -35,13 +35,18 @@ public class UserDaoPersistTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         User expected = mapper.map(user, User.class);
 
+        long now = System.currentTimeMillis();
+
+        TestUtil.nullifyTimestamps(user);
+
         userDao.save(user);
         expected.setId(user.getId());
         expected.setUpdated(user.getUpdated());
         expected.setCreated(user.getCreated());
         new DbTableAsserterBuilder(TABLE_DASH_REPO_USER, userTable(expected)).build().assertTable();
-        assertThat(expected.getUpdated(), notNullValue());
-        assertThat(expected.getCreated(), notNullValue());
+
+        assertThat(user.getUpdated(), greaterThanOrEqualTo(now));
+        assertThat(user.getCreated(), greaterThanOrEqualTo(now));
     }
 
     @Test

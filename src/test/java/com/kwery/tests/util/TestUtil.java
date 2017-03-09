@@ -578,4 +578,9 @@ public class TestUtil {
     public static void clearCreatedIds() {
         createdIds.clear();
     }
+
+    public static void nullifyTimestamps(AbstractBaseModel m) {
+        m.setCreated(null);
+        m.setUpdated(null);
+    }
 }
