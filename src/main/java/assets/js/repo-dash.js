@@ -22,7 +22,6 @@
             var _componentMapping = [
                 {url: "", auth: false, component: "onboarding"},
                 {url: "onboarding", auth: true, component: "onboarding"},
-                {url: "user/add", auth: true, component: "user-add"},
                 {url: "user/list", auth: true, component: "user-list"},
                 {url: "user/sign-up/:?q:", auth: false, component: "user-sign-up"},
                 {url: "user/login{?query}", auth: false, component: "user-login"},

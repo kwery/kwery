@@ -15,10 +15,6 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/panel-add-link"
     });
 
-    ko.components.register("user-add", {
-        require: "components/user/add"
-    });
-
     ko.components.register("user-list", {
         require: "components/user/list"
     });
