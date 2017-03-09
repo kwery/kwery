@@ -3,7 +3,13 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
     function viewModel(params) {
         var self = this;
 
-        var reportId = params.reportId || params.toCopyFromReportId(); //Observable if this variable is coming from copy page otherwise regular variable
+        var reportId = params.reportId;
+
+        //For copy report flow
+        if (reportId === undefined && typeof params.toCopyFromReportId === "function") {
+            reportId = params.toCopyFromReportId();
+        }
+
         var isUpdate = reportId !== undefined && reportId > 0;
         var isCopy = params.isCopy !== undefined && params.isCopy() === true;
 
