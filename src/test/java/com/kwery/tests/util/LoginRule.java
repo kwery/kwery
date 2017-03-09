@@ -1,5 +1,6 @@
 package com.kwery.tests.util;
 
+import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
 import org.fluentlenium.adapter.junit.FluentTest;
@@ -29,6 +30,9 @@ public class LoginRule implements TestRule {
                 loggedInUser = TestUtil.user();
                 userDbSetUp(loggedInUser);
 
+                //So that onboarding flows do not kick in automatically on logging in
+                System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, "false");
+
                 UserLoginPage loginPage = fluentTest.newInstance(UserLoginPage.class);
                 loginPage.go();
 
@@ -38,7 +42,6 @@ public class LoginRule implements TestRule {
 
                 loginPage.submitForm(loggedInUser.getEmail(), loggedInUser.getPassword());
                 loginPage.waitForModalDisappearance();
-
                 base.evaluate();
             }
         };
