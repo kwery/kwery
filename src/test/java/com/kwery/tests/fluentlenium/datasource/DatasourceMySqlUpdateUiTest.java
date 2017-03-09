@@ -50,6 +50,8 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
         if (!page.isRendered()) {
             fail("Could not render update mySqlDatasource page");
         }
+
+        page.waitForModalDisappearance();
     }
 
     @Test
@@ -67,6 +69,7 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
         String newLabel = "newLabel";
         page.fillLabel(newLabel);
         page.submit();
+        page.waitForModalDisappearance();
 
         page.waitForDatasourceListPage();
         page.waitForSuccessMessage(newLabel, mySqlDatasource.getType());
@@ -77,6 +80,7 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
         page.waitForForm(DatasourceAddPage.FormField.label, mySqlDatasource.getLabel());
         page.fillLabel(anotherDatasource.getLabel());
         page.submit();
+        page.waitForModalDisappearance();
         page.waitForFailureMessage(anotherDatasource.getLabel(), anotherDatasource.getType());
     }
 
