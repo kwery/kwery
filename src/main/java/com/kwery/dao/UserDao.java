@@ -106,6 +106,8 @@ public class UserDao {
     @Transactional
     public User update(User user) {
         user.setUpdated(System.currentTimeMillis());
+        user.setCreated(getById(user.getId()).getCreated());
+
         EntityManager m = entityManagerProvider.get();
         user = m.merge(user);
         m.flush();
