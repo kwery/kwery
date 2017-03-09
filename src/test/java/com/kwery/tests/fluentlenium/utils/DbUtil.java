@@ -6,11 +6,9 @@ import com.kwery.models.*;
 import com.kwery.tests.util.TestUtil;
 import com.mchange.v2.c3p0.C3P0Registry;
 import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.DbSetupRuntimeException;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -487,7 +485,7 @@ public class DbUtil {
                     new DataSourceDestination(getDatasource()),
                     insertInto(JobModel.JOB_EMAIL_TABLE)
                             .row()
-                                .column(JobModel.JOB_EMAIL_ID_COLUMN, dbId())
+                                .column(JobModel.JOB_EMAIL_ID_COLUMN, TestUtil.getId(DummyModel.class))
                                 .column(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
                                 .column(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, email)
                             .end()
@@ -502,7 +500,7 @@ public class DbUtil {
                     new DataSourceDestination(getDatasource()),
                     insertInto(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE)
                             .row()
-                            .column(JobModel.JOB_FAILURE_ALERT_EMAIL_ID_COLUMN, dbId())
+                            .column(JobModel.JOB_FAILURE_ALERT_EMAIL_ID_COLUMN, TestUtil.getId(DummyModel.class))
                             .column(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
                             .column(JobModel.JOB_FAILURE_ALERT_EMAIL_TABLE_EMAIL_COLUMN, email)
                             .end()
@@ -649,7 +647,7 @@ public class DbUtil {
                     sequenceOf(
                             insertInto(JobModel.JOB_JOB_LABEL_TABLE)
                                     .row()
-                                        .column(JobModel.JOB_JOB_LABEL_TABLE_ID_COLUMN, dbId())
+                                        .column(JobModel.JOB_JOB_LABEL_TABLE_ID_COLUMN, TestUtil.getId(DummyModel.class))
                                         .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, jobModel.getId())
                                         .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, jobLabelModel.getId())
                                     .end()
@@ -666,7 +664,7 @@ public class DbUtil {
                     sequenceOf(
                             insertInto(JobModel.JOB_RULE_TABLE)
                                     .row()
-                                    .column(JobModel.JOB_RULE_TABLE_ID_COLUMN, dbId())
+                                    .column(JobModel.JOB_RULE_TABLE_ID_COLUMN, TestUtil.getId(DummyModel.class))
                                     .column(JobModel.JOB_RULE_TABLE_NAME_COLUMN, rule.getKey())
                                     .column(JobModel.JOB_RULE_TABLE_VALUE_COLUMN, rule.getValue())
                                     .column(JobModel.JOB_RULE_JOB_ID_FK_COLUMN, jobModel.getId())
@@ -722,7 +720,7 @@ public class DbUtil {
                                 .build(),
                         insertInto(SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE)
                                 .row()
-                                .column(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN, dbId())
+                                .column(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN, TestUtil.getId(DummyModel.class))
                                 .column(SqlQueryEmailSettingModel.SQL_QUERY_ID_FK_COLUMN, sqlQueryModel.getId())
                                 .column(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_FK_COLUMN, sqlQueryEmailSettingModel.getId())
                                 .end()
@@ -770,7 +768,7 @@ public class DbUtil {
                                 .build(),
                         insertInto(JobRuleModel.JOB_JOB_RULE_TABLE)
                                 .row()
-                                .column(JobRuleModel.JOB_JOB_RULE_ID_COLUMN, dbId())
+                                .column(JobRuleModel.JOB_JOB_RULE_ID_COLUMN, TestUtil.getId(DummyModel.class))
                                 .column(JobRuleModel.JOB_ID_FK_COLUMN, jobModel.getId())
                                 .column(JobRuleModel.JOB_RULE_ID_FK_COLUMN, jobRuleModel.getId())
                                 .end()
@@ -780,37 +778,20 @@ public class DbUtil {
     }
 
     public static void emailConfigurationDbSet(EmailConfiguration e) {
-        boolean repeat = false;
-        int counter = 0;
-        do {
-            try {
-                new DbSetup(
-                        new DataSourceDestination(DbUtil.getDatasource()),
-                        sequenceOf(
-                                insertInto(
-                                        TABLE_EMAIL_CONFIGURATION
-                                ).row()
-                                        .column(EmailConfiguration.COLUMN_ID, e.getId())
-                                        .column(COLUMN_FROM_EMAIL, e.getFrom())
-                                        .column(COLUMN_BCC, e.getBcc())
-                                        .column(COLUMN_REPLY_TO, e.getReplyTo())
-                                        .end()
-                                        .build()
-                        )
-                ).launch();
-            } catch (DbSetupRuntimeException exception) {
-                if (exception.getCause() instanceof DerbySQLIntegrityConstraintViolationException) {
-                    repeat = true;
-                } else {
-                    throw exception;
-                }
-            } finally {
-                counter = counter + 1;
-                if (counter >= 5) {
-                    throw new RuntimeException("Could not insert");
-                }
-            }
-        } while (repeat);
+        new DbSetup(
+                new DataSourceDestination(DbUtil.getDatasource()),
+                sequenceOf(
+                        insertInto(
+                                TABLE_EMAIL_CONFIGURATION
+                        ).row()
+                                .column(EmailConfiguration.COLUMN_ID, e.getId())
+                                .column(COLUMN_FROM_EMAIL, e.getFrom())
+                                .column(COLUMN_BCC, e.getBcc())
+                                .column(COLUMN_REPLY_TO, e.getReplyTo())
+                                .end()
+                                .build()
+                )
+        ).launch();
     }
 
     public static int dbId() {
