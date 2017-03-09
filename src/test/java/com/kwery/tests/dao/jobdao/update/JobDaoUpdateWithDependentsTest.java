@@ -1,9 +1,10 @@
-package com.kwery.tests.dao.jobdao;
+package com.kwery.tests.dao.jobdao.update;
 
 import com.google.common.collect.ImmutableList;
 import com.kwery.dao.JobDao;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
@@ -18,7 +19,8 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
@@ -56,6 +58,7 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
 
     @Test
     public void testAddDependent() throws Exception {
+        long created = jobModel0.getCreated();
         JobModel toUpdate = jobDao.getJobById(jobModel0.getId());
         JobModel dependent = jobDao.getJobById(jobModel2.getId());
         toUpdate.getChildJobs().add(dependent);
@@ -63,14 +66,20 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expected = mapper.map(toUpdate, JobModel.class);
 
+        long now = System.currentTimeMillis();
+
         toUpdate = jobDao.save(toUpdate);
 
-        assertDbState(JOB_CHILDREN_TABLE, jobDependentTable(expected), JOB_CHILDREN_TABLE_ID_COLUMN);
-        assertThat(toUpdate.getUpdated(), notNullValue());
+        new DbTableAsserterBuilder(JOB_CHILDREN_TABLE, jobDependentTable(expected))
+                .columnsToCompare(JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN).columnsToIgnore(JOB_CHILDREN_TABLE_ID_COLUMN).build().assertTable();
+
+        assertThat(toUpdate.getUpdated(), greaterThanOrEqualTo(now));
+        assertThat(toUpdate.getCreated(), is(created));
     }
 
     @Test
     public void testRemoveAndAddDependent() throws Exception {
+        long created = jobModel0.getCreated();
         JobModel toUpdate = jobDao.getJobById(jobModel0.getId());
         toUpdate.setChildJobs(new HashSet<>());
         toUpdate.getChildJobs().add(jobDao.getJobById(jobModel2.getId()));
@@ -78,9 +87,14 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expected = mapper.map(toUpdate, JobModel.class);
 
+        long now = System.currentTimeMillis();
+
         toUpdate = jobDao.save(toUpdate);
 
-        assertDbState(JOB_CHILDREN_TABLE, jobDependentTable(expected), JOB_CHILDREN_TABLE_ID_COLUMN);
-        assertThat(toUpdate.getUpdated(), notNullValue());
+        new DbTableAsserterBuilder(JOB_CHILDREN_TABLE, jobDependentTable(expected))
+                .columnsToCompare(JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN).columnsToIgnore(JOB_CHILDREN_TABLE_ID_COLUMN).build().assertTable();
+
+        assertThat(toUpdate.getUpdated(), greaterThanOrEqualTo(now));
+        assertThat(toUpdate.getCreated(), is(created));
     }
 }

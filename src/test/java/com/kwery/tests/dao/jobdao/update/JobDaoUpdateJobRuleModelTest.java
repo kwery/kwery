@@ -1,4 +1,4 @@
-package com.kwery.tests.dao.jobdao;
+package com.kwery.tests.dao.jobdao.update;
 
 import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
@@ -16,13 +16,15 @@ import static com.kwery.models.JobRuleModel.JOB_JOB_RULE_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static com.kwery.tests.util.TestUtil.jobRuleModel;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateJobRuleModelTest extends RepoDashDaoTestBase {
     private JobModel jobModel;
     private JobRuleModel jobRuleModel;
     private JobDao jobDao;
+    private long created;
 
     @Before
     public void setUp() {
@@ -33,6 +35,7 @@ public class JobDaoUpdateJobRuleModelTest extends RepoDashDaoTestBase {
         jobModel.setJobRuleModel(jobRuleModel);
         fooDbSetUp(jobModel);
 
+        created = jobModel.getCreated();
         jobDao = getInstance(JobDao.class);
     }
 
@@ -45,6 +48,8 @@ public class JobDaoUpdateJobRuleModelTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expected = mapper.map(jobModel, JobModel.class);
 
+        long now = System.currentTimeMillis();
+
         jobModel = jobDao.save(jobModel);
         expected.setUpdated(jobModel.getUpdated());
 
@@ -52,6 +57,7 @@ public class JobDaoUpdateJobRuleModelTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JobRuleModel.JOB_RULE_TABLE, fooTable(expected)).build().assertTable();
         new DbTableAsserterBuilder(JOB_JOB_RULE_TABLE, fooTable(expected)).columnsToIgnore(JOB_JOB_RULE_ID_COLUMN).build().assertTable();
 
-        assertThat(jobModel.getUpdated(), notNullValue());
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
+        assertThat(jobModel.getCreated(), is(created));
     }
 }

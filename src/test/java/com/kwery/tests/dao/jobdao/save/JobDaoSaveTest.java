@@ -1,4 +1,4 @@
-package com.kwery.tests.dao.jobdao;
+package com.kwery.tests.dao.jobdao.save;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -25,6 +25,7 @@ import static com.kwery.models.SqlQueryModel.SQL_QUERY_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
@@ -42,10 +43,10 @@ public class JobDaoSaveTest extends RepoDashTestBase {
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
-        jobModel.setCreated(null);
-        jobModel.setUpdated(null);
 
         JobModel expectedJobModel = new DozerBeanMapper().map(jobModel, JobModel.class);
+
+        long now = System.currentTimeMillis();
 
         jobDao.save(jobModel);
 
@@ -55,8 +56,8 @@ public class JobDaoSaveTest extends RepoDashTestBase {
 
         assertDbState(JOB_TABLE, jobTable(expectedJobModel));
 
-        assertThat(jobModel.getCreated(), notNullValue());
-        assertThat(jobModel.getUpdated(), notNullValue());
+        assertThat(jobModel.getCreated(), greaterThanOrEqualTo(now));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 
     @Test
@@ -81,6 +82,8 @@ public class JobDaoSaveTest extends RepoDashTestBase {
 
         jobModel.setSqlQueries(ImmutableList.of(sqlQueryModel0, sqlQueryModel1));
 
+        long now = System.currentTimeMillis();
+
         jobDao.save(jobModel);
 
         expectedJobModel.setId(jobModel.getId());
@@ -100,7 +103,7 @@ public class JobDaoSaveTest extends RepoDashTestBase {
         assertThat(sqlQueryModel0.getId(), greaterThan(0));
         assertThat(sqlQueryModel1.getId(), greaterThan(0));
 
-        assertThat(jobModel.getCreated(), notNullValue());
-        assertThat(jobModel.getUpdated(), notNullValue());
+        assertThat(jobModel.getCreated(), greaterThan(now));
+        assertThat(jobModel.getUpdated(), greaterThan(now));
     }
 }

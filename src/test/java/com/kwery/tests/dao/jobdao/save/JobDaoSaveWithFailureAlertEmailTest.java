@@ -1,4 +1,4 @@
-package com.kwery.tests.dao.jobdao;
+package com.kwery.tests.dao.jobdao.save;
 
 import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
@@ -12,7 +12,7 @@ import org.junit.Test;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobFailureAlertEmailTable;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithFailureAlertEmailTest extends RepoDashDaoTestBase {
@@ -25,14 +25,18 @@ public class JobDaoSaveWithFailureAlertEmailTest extends RepoDashDaoTestBase {
         JobModel expected = mapper.map(jobModel, JobModel.class);
         expected.setCreated(jobModel.getCreated());
 
+        long now = System.currentTimeMillis();
+
         jobModel = getInstance(JobDao.class).save(jobModel);
         expected.setId(jobModel.getId());
         expected.setCreated(jobModel.getCreated());
+        expected.setUpdated(jobModel.getUpdated());
 
         new DbTableAsserterBuilder(JOB_TABLE, DbUtil.jobTable(expected)).build().assertTable();
         new DbTableAsserterBuilder(JOB_FAILURE_ALERT_EMAIL_TABLE, jobFailureAlertEmailTable(expected))
                 .columnToIgnore(JOB_FAILURE_ALERT_EMAIL_ID_COLUMN).build().assertTable();
 
-        assertThat(expected.getCreated(), notNullValue());
+        assertThat(jobModel.getCreated(), greaterThanOrEqualTo(now));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 }

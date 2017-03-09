@@ -33,9 +33,10 @@ public class JobDao {
         m.setUpdated(System.currentTimeMillis());
 
         if (m.getId() != null && m.getId() > 0) {
-            m.setCreated(now);
+            m.setCreated(getJobById(m.getId()).getCreated());
             return e.merge(m);
         } else {
+            m.setCreated(now);
             e.persist(m);
             return m;
         }

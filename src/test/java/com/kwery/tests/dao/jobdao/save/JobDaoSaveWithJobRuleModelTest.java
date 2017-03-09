@@ -1,4 +1,4 @@
-package com.kwery.tests.dao.jobdao;
+package com.kwery.tests.dao.jobdao.save;
 
 import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
@@ -16,7 +16,7 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.fooTable;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.jobTable;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
 import static com.kwery.tests.util.TestUtil.jobRuleModelWithoutId;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
@@ -43,6 +43,9 @@ public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
         expectedJobModel.setJobRuleModel(expectedJobRuleModel);
 
         jobModel.setJobRuleModel(jobRuleModel);
+
+        long now = System.currentTimeMillis();
+
         jobModel = jobDao.save(jobModel);
 
         expectedJobModel.setId(jobModel.getId());
@@ -57,8 +60,8 @@ public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JOB_RULE_TABLE, fooTable(expectedJobModel)).columnsToIgnore(JOB_RULE_ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JOB_JOB_RULE_TABLE, fooTable(expectedJobModel)).columnsToIgnore(JOB_JOB_RULE_ID_COLUMN).build().assertTable();
 
-        assertThat(expectedJobModel.getCreated(), notNullValue());
-        assertThat(expectedJobModel.getUpdated(), notNullValue());
+        assertThat(jobModel.getCreated(), greaterThanOrEqualTo(now));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 }
 

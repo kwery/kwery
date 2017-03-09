@@ -1,4 +1,4 @@
-package com.kwery.tests.dao.jobdao;
+package com.kwery.tests.dao.jobdao.save;
 
 import com.google.common.collect.ImmutableSet;
 import com.kwery.dao.JobDao;
@@ -15,7 +15,7 @@ import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
@@ -42,6 +42,8 @@ public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expected = mapper.map(jobModel, JobModel.class);
 
+        long now = System.currentTimeMillis();
+
         jobModel = getInstance(JobDao.class).save(jobModel);
         expected.setId(jobModel.getId());
         expected.setCreated(jobModel.getCreated());
@@ -51,7 +53,7 @@ public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JOB_JOB_LABEL_TABLE, jobJobLabelTable(expected)).columnToIgnore(JOB_JOB_LABEL_TABLE_ID_COLUMN).build().assertTable();
         new DbTableAsserterBuilder(JOB_LABEL_TABLE, jobLabelTable(jobLabelModel0, jobLabelModel1)).build().assertTable();
 
-        assertThat(expected.getCreated(), notNullValue());
-        assertThat(expected.getUpdated(), notNullValue());
+        assertThat(jobModel.getCreated(), greaterThanOrEqualTo(now));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 }
