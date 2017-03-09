@@ -26,7 +26,6 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveTest extends RepoDashTestBase {
@@ -43,6 +42,7 @@ public class JobDaoSaveTest extends RepoDashTestBase {
     @Test
     public void test() throws DatabaseUnitException, SQLException, IOException {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
+        TestUtil.nullifyTimestamps(jobModel);
 
         JobModel expectedJobModel = new DozerBeanMapper().map(jobModel, JobModel.class);
 
@@ -63,8 +63,7 @@ public class JobDaoSaveTest extends RepoDashTestBase {
     @Test
     public void testWithSqlQuery() throws DatabaseUnitException, SQLException, IOException {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
-        jobModel.setCreated(null);
-        jobModel.setUpdated(null);
+        TestUtil.nullifyTimestamps(jobModel);
 
         DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
 

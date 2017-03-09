@@ -5,6 +5,7 @@ import com.kwery.models.JobModel;
 import com.kwery.models.JobRuleModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +31,7 @@ public class JobDaoSaveWithJobRuleModelTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws Exception {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
-        jobModel.setCreated(null);
-        jobModel.setUpdated(null);
+        TestUtil.nullifyTimestamps(jobModel);
 
         DozerBeanMapper mapper = new DozerBeanMapper();
         JobModel expectedJobModel = mapper.map(jobModel, JobModel.class);

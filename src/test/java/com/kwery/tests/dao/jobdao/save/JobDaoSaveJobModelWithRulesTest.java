@@ -5,6 +5,7 @@ import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.junit.Test;
 
 import static com.kwery.models.JobModel.*;
@@ -19,6 +20,8 @@ public class JobDaoSaveJobModelWithRulesTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws Exception {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
+        TestUtil.nullifyTimestamps(jobModel);
+
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(true)));
 
         JobDao jobDao = getInstance(JobDao.class);

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,6 +36,8 @@ public class JobDaoSaveWithDependentsTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws Exception {
         JobModel newJobModel = jobModelWithoutIdWithoutDependents();
+        TestUtil.nullifyTimestamps(newJobModel);
+
         newJobModel.setChildJobs(new HashSet<>());
         newJobModel.getChildJobs().add(jobModel);
 

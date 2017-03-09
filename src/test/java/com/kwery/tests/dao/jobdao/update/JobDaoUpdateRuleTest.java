@@ -5,6 +5,7 @@ import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,7 @@ public class JobDaoUpdateRuleTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expected.setUpdated(jobModel.getUpdated());
 
@@ -61,6 +63,7 @@ public class JobDaoUpdateRuleTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expected.setUpdated(jobModel.getUpdated());
 

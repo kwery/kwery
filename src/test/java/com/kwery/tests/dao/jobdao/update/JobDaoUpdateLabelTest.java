@@ -6,6 +6,7 @@ import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
@@ -59,6 +60,7 @@ public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expected.setUpdated(jobModel.getUpdated());
 
@@ -78,6 +80,7 @@ public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expected.setUpdated(jobModel.getUpdated());
 

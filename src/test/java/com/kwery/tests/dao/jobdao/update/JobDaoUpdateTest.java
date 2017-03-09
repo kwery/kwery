@@ -76,6 +76,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(modifiedJobModel);
         modifiedJobModel = jobDao.save(modifiedJobModel);
         expectedJobModel.setUpdated(modifiedJobModel.getUpdated());
 
@@ -101,6 +102,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         JobModel fromDbJobModel = jobDao.save(jobModel);
         expectedJobModel.setUpdated(fromDbJobModel.getUpdated());
 
@@ -131,6 +133,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expectedJobModel.setUpdated(jobModel.getUpdated());
 
@@ -160,6 +163,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expectedJobModel.setUpdated(jobModel.getUpdated());
 
@@ -191,6 +195,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
 
         new DbTableAsserterBuilder(SQL_QUERY_EMAIL_SETTING_TABLE,

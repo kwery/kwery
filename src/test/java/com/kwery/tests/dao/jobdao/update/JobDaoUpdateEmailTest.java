@@ -5,9 +5,8 @@ import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,10 +14,8 @@ import static com.kwery.models.JobModel.JOB_EMAIL_ID_COLUMN;
 import static com.kwery.models.JobModel.JOB_EMAIL_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateEmailTest extends RepoDashDaoTestBase {
@@ -47,6 +44,7 @@ public class JobDaoUpdateEmailTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expected.setUpdated(jobModel.getUpdated());
 
@@ -65,6 +63,7 @@ public class JobDaoUpdateEmailTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(jobModel);
         jobModel = jobDao.save(jobModel);
         expected.setUpdated(jobModel.getUpdated());
 

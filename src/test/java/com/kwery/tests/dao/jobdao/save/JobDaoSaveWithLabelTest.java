@@ -6,6 +6,7 @@ import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +35,7 @@ public class JobDaoSaveWithLabelTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws Exception {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
-        jobModel.setUpdated(null);
-        jobModel.setCreated(null);
+        TestUtil.nullifyTimestamps(jobModel);
 
         jobModel.setLabels(ImmutableSet.of(jobLabelModel0, jobLabelModel1));
 

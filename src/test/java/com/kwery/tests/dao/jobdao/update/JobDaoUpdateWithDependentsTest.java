@@ -6,8 +6,7 @@ import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +16,6 @@ import java.util.HashSet;
 import static com.kwery.models.JobModel.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -38,20 +35,10 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
 
         jobDbSetUp(ImmutableList.of(jobModel0, jobModel1, jobModel2));
 
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                sequenceOf(
-                        insertInto(JOB_CHILDREN_TABLE)
-                                .row()
-                                    .column(JOB_CHILDREN_TABLE_PARENT_JOB_ID_FK_COLUMN, jobModel0.getId())
-                                    .column(JOB_CHILDREN_TABLE_CHILD_JOB_ID_FK_COLUMN, jobModel1.getId())
-                                .end()
-                        .build()
-                )
-        ).launch();
-
         jobModel0.setChildJobs(new HashSet<>());
         jobModel0.getChildJobs().add(jobModel1);
+
+        jobDependentDbSetUp(jobModel0);
 
         jobDao = getInstance(JobDao.class);
     }
@@ -68,6 +55,7 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(toUpdate);
         toUpdate = jobDao.save(toUpdate);
 
         new DbTableAsserterBuilder(JOB_CHILDREN_TABLE, jobDependentTable(expected))
@@ -89,6 +77,7 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
 
         long now = System.currentTimeMillis();
 
+        TestUtil.nullifyTimestamps(toUpdate);
         toUpdate = jobDao.save(toUpdate);
 
         new DbTableAsserterBuilder(JOB_CHILDREN_TABLE, jobDependentTable(expected))

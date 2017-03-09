@@ -6,6 +6,7 @@ import com.kwery.models.JobModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 
@@ -17,6 +18,8 @@ public class JobDaoSaveWithEmailTest extends RepoDashDaoTestBase {
     @Test
     public void test() throws Exception {
         JobModel jobModel = jobModelWithoutIdWithoutDependents();
+        TestUtil.nullifyTimestamps(jobModel);
+
         jobModel.getEmails().addAll(ImmutableSet.of("foo@bar.com", "boo@goo.com"));
 
         DozerBeanMapper mapper = new DozerBeanMapper();
