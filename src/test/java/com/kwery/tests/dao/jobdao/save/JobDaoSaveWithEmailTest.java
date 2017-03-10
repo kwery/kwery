@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoSaveWithEmailTest extends RepoDashDaoTestBase {
@@ -36,7 +37,7 @@ public class JobDaoSaveWithEmailTest extends RepoDashDaoTestBase {
         new DbTableAsserterBuilder(JobModel.JOB_TABLE, DbUtil.jobTable(expected)).build().assertTable();
         new DbTableAsserterBuilder(JobModel.JOB_EMAIL_TABLE, DbUtil.jobEmailTable(expected)).columnToIgnore(JobModel.JOB_EMAIL_ID_COLUMN).build().assertTable();
 
-        assertThat(jobModel.getCreated(), greaterThan(now));
-        assertThat(jobModel.getUpdated(), greaterThan(now));
+        assertThat(jobModel.getCreated(), greaterThanOrEqualTo(now));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 }

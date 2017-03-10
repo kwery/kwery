@@ -102,7 +102,7 @@ public class JobDaoSaveTest extends RepoDashTestBase {
         assertThat(sqlQueryModel0.getId(), greaterThan(0));
         assertThat(sqlQueryModel1.getId(), greaterThan(0));
 
-        assertThat(jobModel.getCreated(), greaterThan(now));
-        assertThat(jobModel.getUpdated(), greaterThan(now));
+        assertThat(jobModel.getCreated(), greaterThanOrEqualTo(now));
+        assertThat(jobModel.getUpdated(), greaterThanOrEqualTo(now));
     }
 }
