@@ -16,6 +16,7 @@ import static org.awaitility.Awaitility.waitAtMost;
 public abstract class AbstractSqlDocker {
     public static final int DEFAULT_MYSQL_PORT = 3306;
     public static final int DEFAULT_POSTGRESQL_PORT = 5432;
+    public static final int DEFAULT_SQLSERVER_PORT = 1433;
 
     protected CloudHost cloudHost;
 
@@ -72,12 +73,18 @@ public abstract class AbstractSqlDocker {
             label = REDSHIFT.name();
         }
 
+        if (getType() == SQLSERVER) {
+            label = SQLSERVER.name();
+        }
+
         datasource.setLabel(label);
 
         datasource.setType(getType());
 
         if (getType() == POSTGRESQL || getType() == REDSHIFT) {
             datasource.setDatabase("postgres");
+        } else if (getType() == SQLSERVER) {
+            datasource.setDatabase("tempdb");
         }
 
         return datasource;

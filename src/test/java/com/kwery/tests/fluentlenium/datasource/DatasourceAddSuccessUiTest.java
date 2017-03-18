@@ -49,6 +49,9 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
     @Rule
     public RedshiftDockerRule redshiftDockerRule = new RedshiftDockerRule();
 
+    @Rule
+    public SqlServerDockerRule sqlServerDockerRule = new SqlServerDockerRule();
+
     @Page
     protected DatasourceAddPage page;
 
@@ -109,6 +112,21 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
         } else {
             page.waitForDatasourceListPage();
             page.waitForSuccessMessage(datasource.getLabel(), REDSHIFT);
+        }
+    }
+
+    @Test
+    public void testAddSqlServerDatasource() {
+        Datasource datasource = sqlServerDockerRule.getSqlServerDocker().datasource();
+        page.submitForm(datasource);
+        page.waitForModalDisappearance();
+
+        if (onboardingFlow) {
+            page.waitForReportAddPage();
+            page.getActionResultComponent().assertInfoMessage(ONBOARDING_REPORT_ADD_POST_DATASOURCE_M);
+        } else {
+            page.waitForDatasourceListPage();
+            page.waitForSuccessMessage(datasource.getLabel(), SQLSERVER);
         }
     }
 
