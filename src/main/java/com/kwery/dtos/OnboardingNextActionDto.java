@@ -15,8 +15,8 @@ public class OnboardingNextActionDto {
         this.action = action;
     }
 
-    public static enum Action {
-        ADD_ADMIN_USER, ADD_DATASOURCE, ADD_JOB, SHOW_HOME_SCREEN
+    public enum Action {
+        ADD_DATASOURCE, ADD_JOB, SHOW_HOME_SCREEN, LOGIN, SIGN_UP
     }
 }
 

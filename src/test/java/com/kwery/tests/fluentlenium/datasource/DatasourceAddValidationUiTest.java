@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.datasource;
 
+import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.FormField;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
@@ -9,14 +10,33 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-import static com.kwery.models.Datasource.Type.MYSQL;
-import static com.kwery.models.Datasource.Type.POSTGRESQL;
-import static com.kwery.models.Datasource.Type.REDSHIFT;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static com.kwery.models.Datasource.Type.*;
 import static com.kwery.tests.fluentlenium.datasource.DatasourceAddPage.FormField.*;
 import static junit.framework.TestCase.fail;
 
+@RunWith(Parameterized.class)
 public class DatasourceAddValidationUiTest extends ChromeFluentTest {
+    protected boolean onboardingFlow;
+
+    public DatasourceAddValidationUiTest(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
+    }
+
+    @Parameters(name = "Onboarding{0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {true},
+                {false},
+        });
+    }
+
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -27,6 +47,11 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
     @Before
     public void DatasourceAddValidationUiTest() {
+        if (onboardingFlow) {
+            System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, OnboardingApiController.TEST_ONBOARDING_VALUE);
+        }
+
+        page.setOnboardingFlow(onboardingFlow);
         page.go();
 
         if (!page.isRendered()) {
@@ -38,7 +63,7 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
     public void testEmptyValues() {
         page.submitForm();
 
-        for (FormField formField : values()) {
+        for (FormField formField : FormField.values()) {
             if (formField == database) {
                 continue;
             }
@@ -59,7 +84,7 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
         page.submitForm();
 
-        for (FormField formField : values()) {
+        for (FormField formField : FormField.values()) {
             if (formField == database || formField == type) {
                 continue;
             }
@@ -76,7 +101,7 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
         page.submitForm();
 
-        for (FormField formField : values()) {
+        for (FormField formField : FormField.values()) {
             if (formField == type) {
                 continue;
             }
@@ -93,7 +118,7 @@ public class DatasourceAddValidationUiTest extends ChromeFluentTest {
 
         page.submitForm();
 
-        for (FormField formField : values()) {
+        for (FormField formField : FormField.values()) {
             if (formField == type) {
                 continue;
             }

@@ -102,8 +102,8 @@ public class JobApiControllerSaveJobChildJobToCronExpressionTest extends Abstrac
 
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
 
-        assertThat(jobModel, theSameBeanAs(jobDao.getJobById(jobDto.getId())));
-        assertThat(parentJobModel, theSameBeanAs(jobDao.getJobById(parentJobModel.getId())));
+        assertThat(jobModel, theSameBeanAs(jobDao.getJobById(jobDto.getId())).excludeProperty("created").excludeProperty("updated"));
+        assertThat(parentJobModel, theSameBeanAs(jobDao.getJobById(parentJobModel.getId())).excludeProperty("created").excludeProperty("updated"));
 
         assertThat(jobDao.getAllJobs(), hasSize(2));
     }

@@ -133,7 +133,8 @@ public class JobApiControllerUpdateJobWithLabelTest extends AbstractPostLoginApi
         assertThat(response, hasJsonPath("$.status", is(success.name())));
 
         expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
-        assertThat(jobDao.getJobByName(expectedJobModel.getName()), theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id"));
+        assertThat(jobDao.getJobByName(expectedJobModel.getName()), theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id")
+                .excludeProperty("created").excludeProperty("updated"));
         assertThat(jobDao.getAllJobs(), hasSize(1));
     }
 }

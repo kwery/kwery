@@ -51,6 +51,8 @@ public class RepoDashDaoTestBase {
 
     @Before
     public final void initialize() {
+        TestUtil.clearCreatedIds();
+
         NinjaPropertiesImpl ninjaProperties = new NinjaPropertiesImpl(ninjaMode);
         injector = Guice.createInjector(new NinjaBaseModule(ninjaProperties), new JpaModule(ninjaProperties), new MigrationModule());
 

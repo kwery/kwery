@@ -1,0 +1,51 @@
+<div class="container">
+    <action-result params="status: status, messages: messages"></action-result>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: header"></strong></span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form id="signUpForm">
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('sign.up.add.first.name')" class="text-muted" for="firstName"></label>
+                    <input data-bind="value: firstName" minlength="1" maxlength="255" class="form-control first-name-f" type="text" id="firstName" name="firstName" required>
+                    <div class="help-block with-errors first-name-error-f"></div>
+                </div>
+                <div class="form-group text-muted">
+                    <label data-bind="text: ko.i18n('sign.up.add.middle.name')" class="text-muted" for="middleName"></label>
+                    <input data-bind="value: middleName" minlength="1" maxlength="255" class="form-control middle-name-f" type="text" id="middleName" name="middleName">
+                    <div class="help-block with-errors middle-name-error-f"></div>
+                </div>
+                <div class="form-group text-muted">
+                    <label data-bind="text: ko.i18n('sign.up.add.last.name')" class="text-muted" for="lastName"></label>
+                    <input data-bind="value: lastName" minlength="1" maxlength="255" class="form-control last-name-f" type="text" id="lastName" name="lastName" required>
+                    <div class="help-block with-errors last-name-error-f"></div>
+                </div>
+                <div class="form-group text-muted">
+                    <label data-bind="text: ko.i18n('sign.up.add.email')" class="text-muted" for="email"></label>
+                    <input data-bind="value: email" minlength="7" maxlength="1024" class="form-control email-f" type="email" id="email" name="email" required>
+                    <div class="help-block with-errors email-error-f"></div>
+                </div>
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('sign.up.add.password')" for="password" class="text-muted"></label>
+                    <input data-bind="value: password" minlength="1" maxlength="255" class="form-control password-f" type="password" id="password" name="password" required>
+                    <div class="help-block with-errors password-error-f"></div>
+                </div>
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('sign.up.add.confirm.password')" for="password" class="text-muted"></label>
+                    <input data-bind="value: confirmPassword" minlength="1" maxlength="255"  class="form-control confirm-password-f" type="password" id="confirmPassword"
+                           name="confirmPassword" data-match="#password" required>
+                    <div class="help-block with-errors confirm-password-error-f"></div>
+                </div>
+                <button data-bind="text: ko.i18n('sign.up.save')" type="submit" class="btn btn-lg btn-primary save-f"></button>
+            </form>
+        </div>
+    </div>
+</div>

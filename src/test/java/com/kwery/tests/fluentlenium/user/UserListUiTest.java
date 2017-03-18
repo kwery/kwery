@@ -5,6 +5,7 @@ import com.kwery.models.User;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,11 +32,7 @@ public class UserListUiTest extends ChromeFluentTest {
 
     @Before
     public void before() {
-        user1 = new User();
-        user1.setId(2);
-        user1.setUsername("purvi");
-        user1.setPassword("bestDaughter");
-
+        user1 = TestUtil.user();
         userDbSetUp(user1);
 
         users = Lists.newArrayList(loginRule.getLoggedInUser(), user1);

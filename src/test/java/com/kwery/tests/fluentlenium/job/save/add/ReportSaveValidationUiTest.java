@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.job.save.add;
 
+import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.models.SmtpConfiguration;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField;
@@ -13,6 +14,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.cronExpression;
 import static com.kwery.tests.fluentlenium.job.save.ReportSavePage.ReportFormField.parentReportId;
@@ -23,7 +30,22 @@ import static org.fluentlenium.core.filter.FilterConstructor.withClass;
 import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.junit.rules.RuleChain.outerRule;
 
+@RunWith(Parameterized.class)
 public class ReportSaveValidationUiTest extends ChromeFluentTest {
+    protected boolean onboardingFlow;
+
+    public ReportSaveValidationUiTest(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
+    }
+
+    @Parameters(name = "Onboarding{0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {true},
+                {false},
+        });
+    }
+
     NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -37,6 +59,11 @@ public class ReportSaveValidationUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
+        if (onboardingFlow) {
+            System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, OnboardingApiController.TEST_ONBOARDING_VALUE);
+        }
+
+        page.setOnboardingFlow(onboardingFlow);
         goTo(page);
 
         if (!page.isRendered()) {

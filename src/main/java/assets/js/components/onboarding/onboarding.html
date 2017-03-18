@@ -1,16 +1,2 @@
 <div class="container welcome-f">
-    <div data-bind="visible: showLogin" class="jumbotron user-added-f">
-        <h1 data-bind="text: ko.i18n('onboarding.header')"></h1>
-        <p data-bind="html: message"></p>
-        <button data-bind="text: ko.i18n('login'), click: login" class="btn btn-primary"></button>
-    </div>
-    <div data-bind="visible: showNextSteps" class="panel panel-default f-next-steps">
-        <div class="panel-heading">
-            <h3 data-bind="text: ko.i18n('next.step.header')" class="panel-title f-next-steps-header"></h3>
-        </div>
-        <ul class="list-group">
-            <li data-bind="visible: showAddDatasource" class="list-group-item f-add-datasource"><a data-bind="text: ko.i18n('next.step.add.datasource')" href="/#datasource/add"></a></li>
-            <li data-bind="visible: showAddJob" class="list-group-item f-add-job"><a data-bind="text: ko.i18n('next.step.add.job')" href="/#report/add"></a></li>
-        </ul>
-    </div>
 </div>

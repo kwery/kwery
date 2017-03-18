@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.JobModelHackDto;
@@ -14,6 +15,8 @@ import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.models.UrlConfiguration.Scheme;
 import com.kwery.utils.CsvWriterFactoryImpl;
 import com.kwery.views.ActionResult;
+import com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping;
+import net.sf.ehcache.management.sampled.SampledMBeanRegistrationProvider;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -43,21 +46,27 @@ import static org.junit.Assert.assertThat;
 public class TestUtil {
     public static final int TIMEOUT_SECONDS = 30;
 
+    private static Map<Class<?>, Set<Integer>> createdIds = new HashMap<>();
+
     //Corresponds to the starting id set in *sql file
     public static final int DB_START_ID = 100;
 
     public static User userWithoutId() {
-        User user = new User();
-        user.setUsername("purvi");
-        user.setPassword("password");
+        User user = user();
+        user.setId(null);
         return user;
     }
 
     public static User user() {
         User user = new User();
-        user.setId(dbId());
-        user.setUsername(RandomStringUtils.randomAlphanumeric(1, 256));
+        user.setId(getId(User.class));
         user.setPassword(RandomStringUtils.randomAlphanumeric(1, 256));
+        user.setFirstName(RandomStringUtils.randomAlphanumeric(User.FIRST_NAME_MIN, User.FIRST_NAME_MAX + 1));
+        user.setMiddleName(RandomStringUtils.randomAlphanumeric(User.MIDDLE_NAME_MIN, User.MIDDLE_NAME_MAX + 1));
+        user.setLastName(RandomStringUtils.randomAlphanumeric(User.LAST_NAME_MIN, User.LAST_NAME_MAX + 1));
+        user.setEmail(RandomStringUtils.randomAlphanumeric(User.EMAIL_MIN, User.EMAIL_MAX - 9) + "@gmail.com");
+        user.setCreated(System.currentTimeMillis());
+        user.setUpdated(System.currentTimeMillis());
         return user;
     }
 
@@ -69,7 +78,7 @@ public class TestUtil {
 
     public static Datasource datasource() {
         Datasource datasource = new Datasource();
-        datasource.setId(dbId());
+        datasource.setId(getId(DataSource.class));
         datasource.setUrl(RandomStringUtils.randomAlphanumeric(1, 256));
         datasource.setPort(RandomUtils.nextInt(1, 65566));
         datasource.setUsername(RandomStringUtils.randomAlphanumeric(1, 256));
@@ -82,10 +91,10 @@ public class TestUtil {
 
     public static JobExecutionModel jobExecutionModel() {
         PodamFactory podamFactory = new PodamFactoryImpl();
-        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
         JobExecutionModel jobExecutionModel = podamFactory.manufacturePojo(JobExecutionModel.class);
         jobExecutionModel.setSqlQueryExecutionModels(new HashSet<>());
         jobExecutionModel.setJobModel(null);
+        jobExecutionModel.setId(getId(JobExecutionModel.class));
 
         return jobExecutionModel;
     }
@@ -145,7 +154,7 @@ public class TestUtil {
     public static SmtpConfiguration smtpConfiguration() {
         PodamFactory podamFactory = new PodamFactoryImpl();
         SmtpConfiguration config = podamFactory.manufacturePojo(SmtpConfiguration.class);
-        config.setId(dbId());
+        config.setId(getId(SmtpConfiguration.class));
         return config;
     }
 
@@ -160,7 +169,7 @@ public class TestUtil {
         emailConfiguration.setBcc(RandomStringUtils.randomAlphanumeric(1, 100) + "@getkwery.com");
         emailConfiguration.setReplyTo(RandomStringUtils.randomAlphanumeric(1, 100) + "@getkwery.com");
         emailConfiguration.setFrom(RandomStringUtils.randomAlphanumeric(1, 100) + "@getkwery.com");
-        emailConfiguration.setId(dbId());
+        emailConfiguration.setId(getId(EmailConfiguration.class));
         return emailConfiguration;
     }
 
@@ -184,7 +193,7 @@ public class TestUtil {
 
     public static SqlQueryModel sqlQueryModel() {
         SqlQueryModel sqlQueryModel = new SqlQueryModel();
-        sqlQueryModel.setId(dbId());
+        sqlQueryModel.setId(getId(SqlQueryModel.class));
         sqlQueryModel.setQuery(RandomStringUtils.randomAlphanumeric(SqlQueryModel.QUERY_MIN_LENGTH, SqlQueryModel.QUERY_MAX_LENGTH + 1));
         sqlQueryModel.setLabel(RandomStringUtils.randomAlphanumeric(1, 256));
         sqlQueryModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1025));
@@ -209,10 +218,12 @@ public class TestUtil {
 
     private static JobModel jobModel() {
         JobModel jobModel = new JobModel();
-        jobModel.setId(dbId());
+        jobModel.setId(getId(JobModel.class));
         jobModel.setCronExpression("* * * * *");
         jobModel.setName(RandomStringUtils.randomAlphanumeric(1, 256));
         jobModel.setTitle(RandomStringUtils.randomAlphanumeric(1, 1024));
+        jobModel.setCreated(System.currentTimeMillis());
+        jobModel.setUpdated(System.currentTimeMillis());
         jobModel.setChildJobs(new HashSet<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setSqlQueries(new LinkedList<>());
@@ -232,8 +243,8 @@ public class TestUtil {
 
     public static SqlQueryExecutionModel sqlQueryExecutionModel() {
         PodamFactory podamFactory = new PodamFactoryImpl();
-        podamFactory.getStrategy().addOrReplaceTypeManufacturer(Integer.class, new CustomIdManufacturer());
         SqlQueryExecutionModel model = podamFactory.manufacturePojo(SqlQueryExecutionModel.class);
+        model.setId(getId(SqlQueryExecutionModel.class));
         model.setSqlQuery(null);
         model.setJobExecutionModel(null);
         return model;
@@ -276,7 +287,7 @@ public class TestUtil {
 
     public static SqlQueryEmailSettingModel sqlQueryEmailSettingModel() {
         SqlQueryEmailSettingModel sqlQueryEmailSettingModel = new SqlQueryEmailSettingModel();
-        sqlQueryEmailSettingModel.setId(dbId());
+        sqlQueryEmailSettingModel.setId(getId(SqlQueryExecutionModel.class));
         sqlQueryEmailSettingModel.setIncludeInEmailAttachment(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
         sqlQueryEmailSettingModel.setIncludeInEmailBody(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
         return sqlQueryEmailSettingModel;
@@ -290,7 +301,7 @@ public class TestUtil {
 
     public static JobRuleModel jobRuleModel() {
         JobRuleModel jobRuleModel = new JobRuleModel();
-        jobRuleModel.setId(dbId());
+        jobRuleModel.setId(getId(JobRuleModel.class));
         jobRuleModel.setSequentialSqlQueryExecution(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
 
         if (!jobRuleModel.isSequentialSqlQueryExecution()) {
@@ -361,7 +372,8 @@ public class TestUtil {
             expectedJobModel.setParentJob(parentJobModel);
         }
 
-        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries").excludeProperty("jobRuleModel.id"));
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries")
+                .excludeProperty("jobRuleModel.id").excludeProperty("created").excludeProperty("updated"));
 
         List<SqlQueryModel> expectedSqlQueryModels = toList(expectedJobModel.getSqlQueries());
         sort(expectedSqlQueryModels, comparing(SqlQueryModel::getLabel));
@@ -386,7 +398,7 @@ public class TestUtil {
 
     public static JobLabelModel jobLabelModel() {
         JobLabelModel m = new JobLabelModel();
-        m.setId(dbId());
+        m.setId(getId(JobLabelModel.class));
         m.setLabel(RandomStringUtils.randomAlphanumeric(JobLabelModel.LABEL_MIN_LENGTH, JobLabelModel.LABEL_MAX_LENGTH + 1));
         m.setChildLabels(new HashSet<>());
         return m;
@@ -408,7 +420,7 @@ public class TestUtil {
 
     public static UrlConfiguration domainSetting() {
         UrlConfiguration d = domainSettingWithoutId();
-        d.setId(dbId());
+        d.setId(getId(UrlConfiguration.class));
         return d;
     }
 
@@ -507,5 +519,68 @@ public class TestUtil {
         for (JobLabelModel jobLabelModel : dto.getJobModel().getLabels()) {
             assertThat(response, hasJsonPath(String.format("$.[%d].jobModel.labels[*].label", index), hasItem(jobLabelModel.getLabel())));
         }
+    }
+
+    public static void assertActionResultStatus(String response, ActionResult.Status status) {
+        assertThat(response, isJson(allOf(
+                withJsonPath("$.status", is(status.name()))
+        )));
+    }
+
+    public static void assertActionResult(String response, ActionResult actionResult) {
+        assertThat(response, isJson(allOf(
+                withJsonPath("$.status", is(actionResult.getStatus().name()))
+        )));
+
+        assertThat(response, hasJsonPath("$.messages.length()", is(actionResult.getMessages().size())));
+
+        for (String message : actionResult.getMessages()) {
+            assertThat(response, hasJsonPath("$.messages[*]", hasItem(message)));
+        }
+
+    }
+
+    public static void assertUser(String response, User user) {
+        assertThat(response, isJson(allOf(
+                withJsonPath("$.id", is(user.getId())),
+                withJsonPath("$.firstName", is(user.getFirstName())),
+                withJsonPath("$.middleName", is(user.getMiddleName())),
+                withJsonPath("$.lastName" , is(user.getLastName())),
+                withJsonPath("$.email", is(user.getEmail())),
+                withJsonPath("$.password", is(user.getPassword()))
+        )));
+    }
+
+    public static Integer getId(Class<?> claz) {
+        int id = dbId();
+        if (!createdIds.containsKey(claz)) {
+            createdIds.put(claz, Sets.newHashSet(id));
+        } else {
+            int tries = 0;
+            do {
+                if (createdIds.get(claz).contains(id)) {
+                    id = dbId();
+                } else {
+                    createdIds.get(claz).add(id);
+                    break;
+                }
+                tries = tries + 1;
+            } while (tries < TestUtil.DB_START_ID);
+
+            if (tries >= TestUtil.DB_START_ID) {
+                throw new RuntimeException("Could not generate a unique id");
+            }
+        }
+
+        return id;
+    }
+
+    public static void clearCreatedIds() {
+        createdIds.clear();
+    }
+
+    public static void nullifyTimestamps(AbstractBaseModel m) {
+        m.setCreated(null);
+        m.setUpdated(null);
     }
 }

@@ -29,9 +29,14 @@ public class JobDao {
     public JobModel save(JobModel m) {
         EntityManager e = entityManagerProvider.get();
 
+        long now = System.currentTimeMillis();
+        m.setUpdated(System.currentTimeMillis());
+
         if (m.getId() != null && m.getId() > 0) {
+            m.setCreated(getJobById(m.getId()).getCreated());
             return e.merge(m);
         } else {
+            m.setCreated(now);
             e.persist(m);
             return m;
         }
@@ -98,7 +103,9 @@ public class JobDao {
             cq.where(ids.in(filter.getSqlQueryIds()));
         }
 
-        cq.orderBy(cb.asc(jobModel.get("id")));
+        //We need this because updated can be null, which is a remnant from the days where we did not have these columns
+        Expression<Object> updatedExpression = cb.selectCase().when(cb.isNull(jobModel.get("updated")), 0).otherwise(jobModel.get("updated"));
+        cq.orderBy(cb.desc(updatedExpression), cb.desc(jobModel.get("id")));
 
         if (filter.getPageNo() != null && filter.getResultCount() != null) {
             return m.createQuery(cq)

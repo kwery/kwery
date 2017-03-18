@@ -69,6 +69,7 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
 
         assertThat(el(String.format(".report-list-%d-f .edit-f", row), with("href").contains(String.valueOf(values.get(reportEditLink))))).isDisplayed();
         assertThat(el(String.format(".report-list-%d-f .execution-link-f", row), with("href").contains(String.valueOf(values.get(executionsLink))))).isDisplayed();
+        assertThat(el(String.format(".report-list-%d-f .copy-link-f", row), with("href").contains(String.valueOf(values.get(copyLink))))).isDisplayed();
     }
 
     public void deleteReport(int row) {
@@ -106,7 +107,7 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public enum ReportList {
-        title, name, lastExecution, nextExecution, labels, executionsLink, reportEditLink
+        title, name, lastExecution, nextExecution, labels, executionsLink, reportEditLink, copyLink
     }
 
     public void search(String search) {

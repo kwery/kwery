@@ -12,6 +12,10 @@ define(["knockout", "jquery", "text!components/action-result.html"], function (k
             return self.status() === "failure";
         }, self);
 
+        self.showInfo = ko.computed(function(){
+            return self.status() === "info";
+        }, self);
+
         $(document).ajaxError(function(event, jqxhr, settings, thrownError){
             if (window.console) {
                 console.log("Exception:");

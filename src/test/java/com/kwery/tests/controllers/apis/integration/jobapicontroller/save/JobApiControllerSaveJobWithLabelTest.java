@@ -106,6 +106,7 @@ public class JobApiControllerSaveJobWithLabelTest extends AbstractPostLoginApiTe
         JobModel jobModel = jobDao.getJobByName(jobDto.getName());
 
         expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
-        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id"));
+        assertThat(jobModel, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id")
+                .excludeProperty("created").excludeProperty("updated"));
     }
 }

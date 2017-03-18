@@ -2,34 +2,40 @@ package com.kwery.filters;
 
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
-import ninja.Context;
-import ninja.Filter;
-import ninja.FilterChain;
-import ninja.Result;
-import ninja.Results;
-import ninja.i18n.Messages;
+import com.google.inject.Singleton;
 import com.kwery.views.ActionResult;
+import ninja.*;
+import ninja.i18n.Messages;
 
 import static com.kwery.controllers.MessageKeys.USER_NOT_LOGGED_IN;
 import static com.kwery.controllers.apis.UserApiController.SESSION_USERNAME_KEY;
 
+@Singleton
 public class DashRepoSecureFilter implements Filter {
-    public static final String LOGIN_JS_VIEW = "views/modules/user/login/login.js.ftl";
     @Inject
     private Messages messages;
 
     @Override
     public Result filter(FilterChain filterChain, Context context) {
-        if (!isLoggedIn(context)) {
-            Result result = Results.json();
-            String msg = messages.get(USER_NOT_LOGGED_IN, context, Optional.of(result)).get();
-            ActionResult actionResult = new ActionResult(ActionResult.Status.failure, msg);
+        Result result = Results.json();
+        ActionResult actionResult = actionResult(context, result);
+        if (actionResult == null) {
+            return filterChain.next(context);
+        } else {
             return result.render(actionResult);
         }
-        return filterChain.next(context);
     }
 
-    private boolean isLoggedIn(Context context) {
+    public ActionResult actionResult(Context context, Result result) {
+        ActionResult actionResult = null;
+        if (!isLoggedIn(context)) {
+            String msg = messages.get(USER_NOT_LOGGED_IN, context, Optional.of(result)).get();
+            actionResult = new ActionResult(ActionResult.Status.failure, msg);
+        }
+        return actionResult;
+    }
+
+    public boolean isLoggedIn(Context context) {
         return !(context.getSession() == null || context.getSession().get(SESSION_USERNAME_KEY) == null);
     }
 

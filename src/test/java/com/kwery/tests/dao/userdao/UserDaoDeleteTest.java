@@ -1,43 +1,33 @@
 package com.kwery.tests.dao.userdao;
 
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.dao.UserDao;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
 import com.kwery.models.User;
-import org.dbunit.DatabaseUnitException;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
+import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.junit.Before;
 import org.junit.Test;
-import com.kwery.tests.util.RepoDashDaoTestBase;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.LinkedList;
 
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.models.User.TABLE_DASH_REPO_USER;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.userTable;
+import static com.kwery.tests.util.TestUtil.user;
 
 public class UserDaoDeleteTest extends RepoDashDaoTestBase {
-    protected UserTableUtil userTableUtil;
     protected UserDao userDao;
+    private User user;
 
     @Before
     public void setUpUserDaoUpdateTest() {
-        userTableUtil = new UserTableUtil(1);
-
-        new DbSetup(
-                new DataSourceDestination(getDatasource()),
-                sequenceOf(
-                        userTableUtil.insertOperation()
-                )
-        ).launch();
-
+        user = user();
+        userDbSetUp(user);
         userDao = getInstance(UserDao.class);
     }
 
     @Test
-    public void test() throws DatabaseUnitException, SQLException, IOException {
-        userDao.delete(userTableUtil.row(0).getId());
-        assertDbState(User.TABLE_DASH_REPO_USER, "userDaoDeleteTest.xml");
+    public void test() throws Exception {
+        userDao.delete(user.getId());
+        new DbTableAsserterBuilder(TABLE_DASH_REPO_USER, userTable(new LinkedList<>())).build().assertTable();
     }
 }

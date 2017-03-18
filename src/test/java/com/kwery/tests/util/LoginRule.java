@@ -1,16 +1,14 @@
 package com.kwery.tests.util;
 
+import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.user.login.UserLoginPage;
-import com.kwery.tests.fluentlenium.utils.UserTableUtil;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import org.fluentlenium.adapter.junit.FluentTest;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
 import static junit.framework.TestCase.fail;
 
 public class LoginRule implements TestRule {
@@ -29,14 +27,11 @@ public class LoginRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                UserTableUtil userTableUtil = new UserTableUtil();
+                loggedInUser = TestUtil.user();
+                userDbSetUp(loggedInUser);
 
-                new DbSetup(
-                        new DataSourceDestination(
-                                getDatasource()
-                        ),
-                        userTableUtil.insertOperation()
-                ).launch();
+                //So that onboarding flows do not kick in automatically on logging in
+                System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, "false");
 
                 UserLoginPage loginPage = fluentTest.newInstance(UserLoginPage.class);
                 loginPage.go();
@@ -45,11 +40,8 @@ public class LoginRule implements TestRule {
                     fail("Login page is not rendered");
                 }
 
-                loggedInUser = userTableUtil.firstRow();
-
-                loginPage.submitForm(loggedInUser.getUsername(), loggedInUser.getPassword());
-                loginPage.waitForSuccessMessage(loggedInUser);
-
+                loginPage.submitForm(loggedInUser.getEmail(), loggedInUser.getPassword());
+                loginPage.waitForModalDisappearance();
                 base.evaluate();
             }
         };

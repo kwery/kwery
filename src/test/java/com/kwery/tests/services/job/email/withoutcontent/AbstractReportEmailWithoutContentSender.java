@@ -9,7 +9,7 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import org.junit.Before;
 import org.junit.Rule;
 

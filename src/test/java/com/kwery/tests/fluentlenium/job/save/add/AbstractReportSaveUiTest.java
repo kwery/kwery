@@ -2,6 +2,7 @@ package com.kwery.tests.fluentlenium.job.save.add;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.dao.JobDao;
 import com.kwery.dtos.JobDto;
 import com.kwery.dtos.SqlQueryDto;
@@ -25,6 +26,8 @@ import static junit.framework.TestCase.fail;
 import static org.junit.rules.RuleChain.outerRule;
 
 public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
+    protected boolean onboardingFlow;
+
     protected boolean smtpConfigurationSave = true;
     protected boolean urlConfigurationSave = true;
 
@@ -50,6 +53,10 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
 
     @Before
     public void setUp() {
+        if (onboardingFlow) {
+            System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, OnboardingApiController.TEST_ONBOARDING_VALUE);
+        }
+
         datasource = mysqlDockerRule.getMySqlDocker().datasource();
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
@@ -100,6 +107,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
 
         jobDao = ninjaServerRule.getInjector().getInstance(JobDao.class);
 
+        page.setOnboardingFlow(onboardingFlow);
         goTo(page);
 
         if (!page.isRendered()) {
@@ -140,5 +148,9 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
 
     public void setNoEmailSetting(boolean noEmailSetting) {
         this.noEmailSetting = noEmailSetting;
+    }
+
+    public void setOnboardingFlow(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
     }
 }

@@ -16,7 +16,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
@@ -26,8 +32,21 @@ import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.RuleChain.outerRule;
 
+@RunWith(Parameterized.class)
 public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
+    protected boolean skipDaoCheck = false;
+
+    @Parameter
+    public boolean isCopy;
+
+    @Parameters(name = "copy{0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {true},
+                {false},
+        });
+    }
 
     @Rule
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
@@ -35,20 +54,25 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
     @Rule
     public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
 
+    @Rule
+    public WiserRule wiserRule = new WiserRule();
+
     String email0 = "foo@bar.com";
     String email1 = "boo@goo.com";
     String email2 = "moo@goo.com";
 
     @Page
-    ReportUpdatePage page;
+    protected ReportUpdatePage page;
 
-    JobModel jobModel;
+    protected JobModel jobModel;
     Datasource datasource;
-    JobDao jobDao;
+    protected JobDao jobDao;
     private SqlQueryDao sqlQueryDao;
 
     @Before
     public void setUp() {
+        page.setCopy(isCopy);
+
         jobModel = jobModelWithoutDependents();
         jobModel.setCronExpression("* * * * *");
         jobDbSetUp(jobModel);
@@ -103,7 +127,6 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         page.waitForModalDisappearance();
         page.waitForReportDisplay(jobModel.getName());
 
-
         JobDto jobDto = jobDto();
         jobDto.setCronExpression("* * * * *");
         jobDto.setEmails(ImmutableSet.of(email1, email2));
@@ -130,13 +153,24 @@ public class ReportUpdateSuccessUiTest extends ChromeFluentTest {
         page.waitForReportListPage();
         page.waitForReportSaveSuccessMessage();
 
-        assertThat(jobDao.getAllJobs(), hasSize(1));
-        assertThat(sqlQueryDao.getAll(), hasSize(2));
-        assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
+        if (!skipDaoCheck) {
+            if (isCopy) {
+                assertThat(jobDao.getAllJobs(), hasSize(2));
+                assertThat(sqlQueryDao.getAll(), hasSize(3));
+            } else {
+                assertThat(jobDao.getAllJobs(), hasSize(1));
+                assertThat(sqlQueryDao.getAll(), hasSize(2));
+            }
+            assertJobModel(jobDao.getJobByName(jobDto.getName()), null, jobDto, datasource);
+        }
     }
 
     @Override
     public String getBaseUrl() {
         return ninjaServerRule.getServerUrl();
+    }
+
+    public void setSkipDaoCheck(boolean skipDaoCheck) {
+        this.skipDaoCheck = skipDaoCheck;
     }
 }

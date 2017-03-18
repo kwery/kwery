@@ -53,7 +53,7 @@ public class JobApiControllerListJobsTest extends AbstractPostLoginApiTest {
         dependentJobModel.setParentJob(jobModel);
 
         models = Lists.newArrayList(jobModel, dependentJobModel);
-        models.sort(Comparator.comparing(JobModel::getId));
+        models.sort(Comparator.comparing(JobModel::getUpdated).reversed());
 
         JobLabelModel jobLabelModel0 = jobLabelModel();
         jobLabelDbSetUp(jobLabelModel0);

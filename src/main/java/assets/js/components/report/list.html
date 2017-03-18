@@ -59,16 +59,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <p data-bind="text: ko.i18n('report.list.grid.title')" class="text-muted"></p>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <p data-bind="text: ko.i18n('report.list.grid.last.execution')" class="text-muted"></p>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <p data-bind="text: ko.i18n('report.list.grid.next.execution')" class="text-muted"></p>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <p data-bind="text: ko.i18n('report.list.grid.actions')"  class="text-muted"></p>
                         </div>
                     </div>
@@ -79,16 +79,16 @@
                 <hr>
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-md-4 title-f">
+                        <div class="col-md-5 title-f">
                             <p data-bind="text: title"></p>
                         </div>
-                        <div class="col-md-3 last-execution-f">
+                        <div class="col-md-2 last-execution-f">
                             <p data-bind="text: lastExecution"></p>
                         </div>
-                        <div class="col-md-3 next-execution-f">
+                        <div class="col-md-2 next-execution-f">
                             <p data-bind="text: nextExecution"></p>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <ul class="list-inline">
                                 <li>
                                     <a data-bind="attr: {href: executionLink, title: ko.i18n('report.list.actions.execution.tooltip')}"
@@ -105,6 +105,12 @@
                                 <li>
                                     <a data-bind="attr: {href: reportLink, title: ko.i18n('report.list.actions.edit.tooltip')}" class="btn btn-default btn-xs edit-f">
                                         <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-bind="attr: {href: copyLink, title: ko.i18n('report.list.actions.copy.tooltip')}"
+                                       class="btn btn-default btn-xs copy-link-f">
+                                        <span class="glyphicon glyphicon-copy"></span>
                                     </a>
                                 </li>
                                 <li>

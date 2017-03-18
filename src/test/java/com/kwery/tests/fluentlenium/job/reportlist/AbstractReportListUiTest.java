@@ -128,7 +128,7 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         }
 
         jobModels = Lists.newArrayList(jobModel, parentJob, childJob);
-        jobModels.sort(Comparator.comparing(JobModel::getId));
+        jobModels.sort(Comparator.comparing(JobModel::getUpdated).reversed());
 
         expectedSearchOrder = ImmutableList.of(jobModel, parentJob, childJob);
 
@@ -167,6 +167,7 @@ public class AbstractReportListUiTest extends ChromeFluentTest {
         map.put(labels, jobModel.getLabels().stream().map(JobLabelModel::getLabel).collect(Collectors.toList()));
         map.put(reportEditLink, String.format("/#report/%d", jobModel.getId()));
         map.put(executionsLink, String.format("/#report/%d/execution-list", jobModel.getId()));
+        map.put(copyLink, String.format("/#report/%d/copy", jobModel.getId()));
 
         return map;
     }

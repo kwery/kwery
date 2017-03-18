@@ -10,12 +10,12 @@ import ninja.application.ApplicationRoutes;
 public class Routes implements ApplicationRoutes {
     public static final String INDEX = "/";
 
-    public static final String ADD_ADMIN_USER_API = "/api/user/add-admin-user";
     public static final String ADD_DATASOURCE_API = "/api/datasource/add-datasource";
     public static final String LOGIN_API = "/api/user/login";
     public static final String LOGOUT_API = "/api/user/logout";
     public static final String USER = "/api/user";
     public static final String USER_API = "/api/user/{userId}";
+    public static final String USER_SIGN_UP_API = "/api/user/sign-up";
     public static final String DELETE_USER_API = "/api/user/delete/{userId}";
     public static final String ALL_DATASOURCES_API = "/api/datasource/all";
     public static final String EXECUTING_SQL_QUERY_API = "/api/sql-query/executing";
@@ -27,7 +27,6 @@ public class Routes implements ApplicationRoutes {
     public static final String LIST_USERS_API = "/api/user/list";
     public static final String DATASOURCE_API = "/api/datasource/{datasourceId}";
     public static final String DELETE_DATASOURCE_API = "/api/datasource/delete/{datasourceId}";
-    public static final String ONBOARDING_ADD_ROOT_USER_API = "/api/onboarding/user/add";
     public static final String ONBOARDING_NEXT_ACTION_API = "/api/onboarding/next-action";
 
     public static final String MAIL_SAVE_SMTP_CONFIGURATION_API = "/api/mail/save-smtp-configuration";
@@ -67,13 +66,13 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(INDEX).with(IndexController.class, "index");
 
         //Api - Start
-        router.POST().route(ADD_ADMIN_USER_API).with(UserApiController.class, "addAdminUser");
         router.POST().route(LOGIN_API).with(UserApiController.class, "login");
         router.POST().route(LOGOUT_API).with(UserApiController.class, "logout");
         router.GET().route(LIST_USERS_API).with(UserApiController.class, "list");
         router.GET().route(USER).with(UserApiController.class, "user");
         router.GET().route(USER_API).with(UserApiController.class, "userById");
         router.POST().route(DELETE_USER_API).with(UserApiController.class, "delete");
+        router.POST().route(USER_SIGN_UP_API).with(UserApiController.class, "signUp");
 
         router.POST().route(ADD_DATASOURCE_API).with(DatasourceApiController.class, "addDatasource");
         router.GET().route(ALL_DATASOURCES_API).with(DatasourceApiController.class, "allDatasources");
@@ -87,7 +86,6 @@ public class Routes implements ApplicationRoutes {
         router.GET().route(LIST_LATEST_SQL_QUERY_EXECUTIONS_API).with(SqlQueryApiController.class, "latestSqlQueryExecutions");
         router.GET().route(SQL_QUERY_API).with(SqlQueryApiController.class, "sqlQuery");
 
-        router.POST().route(ONBOARDING_ADD_ROOT_USER_API).with(OnboardingApiController.class, "addRootUser");
         router.GET().route(ONBOARDING_NEXT_ACTION_API).with(OnboardingApiController.class, "nextAction");
 
         router.POST().route(MAIL_SAVE_SMTP_CONFIGURATION_API).with(MailApiController.class, "saveSmtpConfiguration");

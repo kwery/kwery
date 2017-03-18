@@ -4,10 +4,9 @@ import com.kwery.models.Datasource;
 import com.kwery.models.Datasource.Type;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
-import org.fluentlenium.core.annotation.PageUrl;
+import com.kwery.tests.fluentlenium.job.reportlist.ActionResultComponent;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
-import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 
 import java.util.LinkedList;
@@ -25,14 +24,16 @@ import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withClass;
 import static org.fluentlenium.core.filter.FilterConstructor.withTextContent;
 import static org.openqa.selenium.By.className;
-import static org.openqa.selenium.By.id;
 
 @Wait(timeUnit = SECONDS, timeout = TIMEOUT_SECONDS)
-@PageUrl("/#datasource/add")
 public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
     @Wait(timeout = TIMEOUT_SECONDS, timeUnit = SECONDS)
     @FindBy(id = "addDatasourceForm")
     protected FluentWebElement form;
+
+    protected boolean onboardingFlow;
+
+    protected ActionResultComponent actionResultComponent;
 
     public void submitForm(Datasource datasource) {
         $(".type-f").fillSelect().withText(datasource.getType().name());
@@ -102,5 +103,26 @@ public class DatasourceAddPage extends KweryFluentPage implements RepoDashPage {
 
     public void waitForDatasourceListPage() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> getDriver().getCurrentUrl().equals(getBaseUrl() + "/#datasource/list"));
+    }
+
+    public void waitForReportAddPage() {
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> getDriver().getCurrentUrl().equals(getBaseUrl() + "/#report/add?onboarding=true&fromDatasource=true"));
+    }
+
+    public void setOnboardingFlow(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
+    }
+
+    @Override
+    public String getUrl() {
+        if (onboardingFlow) {
+            return "/#datasource/add?onboarding=true";
+        } else {
+            return "/#datasource/add";
+        }
+    }
+
+    public ActionResultComponent getActionResultComponent() {
+        return actionResultComponent;
     }
 }

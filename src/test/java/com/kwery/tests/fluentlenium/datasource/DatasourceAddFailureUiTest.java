@@ -1,5 +1,6 @@
 package com.kwery.tests.fluentlenium.datasource;
 
+import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.models.Datasource;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
@@ -10,6 +11,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
@@ -21,7 +28,22 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
+@RunWith(Parameterized.class)
 public class DatasourceAddFailureUiTest extends ChromeFluentTest {
+    protected boolean onboardingFlow;
+
+    public DatasourceAddFailureUiTest(boolean onboardingFlow) {
+        this.onboardingFlow = onboardingFlow;
+    }
+
+    @Parameters(name = "Onboarding{0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {true},
+                {false},
+        });
+    }
+
     public NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     @Rule
@@ -41,6 +63,12 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
         datasource.setId(dbId());
 
         datasourceDbSetup(datasource);
+
+        if (onboardingFlow) {
+            System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, OnboardingApiController.TEST_ONBOARDING_VALUE);
+        }
+
+        page.setOnboardingFlow(onboardingFlow);
 
         page.go();
 

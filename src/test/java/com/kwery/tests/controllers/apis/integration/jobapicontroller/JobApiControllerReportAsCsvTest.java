@@ -5,7 +5,7 @@ import com.google.common.io.CharStreams;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.models.*;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.utils.KweryDirectory;
+import com.kwery.conf.KweryDirectory;
 import ninja.Router;
 import org.apache.http.HttpResponse;
 import org.junit.Before;

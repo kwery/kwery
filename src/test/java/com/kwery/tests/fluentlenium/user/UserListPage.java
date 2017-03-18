@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.kwery.tests.fluentlenium.user.UserListPage.UserList.editLink;
-import static com.kwery.tests.fluentlenium.user.UserListPage.UserList.username;
+import static com.kwery.tests.fluentlenium.user.UserListPage.UserList.*;
 import static com.kwery.tests.util.Messages.USER_DELETE_SUCCESS_M;
 import static com.kwery.tests.util.Messages.USER_DELETE_YOURSELF_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
@@ -61,18 +60,22 @@ public class UserListPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public void assertUserList(int row, Map<UserList, ?> map) {
-        assertThat(el(String.format(".user-list-%d-f .username-f", row), withText(String.valueOf(map.get(username))))).isDisplayed();
+        assertThat(el(String.format(".user-list-%d-f .first-name-f", row), withText(String.valueOf(map.get(firstName))))).isDisplayed();
+        assertThat(el(String.format(".user-list-%d-f .last-name-f", row), withText(String.valueOf(map.get(lastName))))).isDisplayed();
+        assertThat(el(String.format(".user-list-%d-f .email-f", row), withText(String.valueOf(map.get(email))))).isDisplayed();
         assertThat(el(String.format(".user-list-%d-f .edit-f", row), with("href").contains(String.valueOf(map.get(editLink))))).isDisplayed();
     }
 
     public Map<UserList, ?> map(User user) {
         Map map = new HashMap();
-        map.put(username, user.getUsername());
+        map.put(firstName, user.getFirstName());
+        map.put(lastName, user.getLastName());
+        map.put(email, user.getEmail());
         map.put(editLink, String.format("/#user/%d", user.getId()));
         return map;
     }
 
     public enum UserList {
-        username, editLink, deleteLink
+        firstName, lastName, email, editLink, deleteLink
     }
 }
