@@ -91,8 +91,11 @@ public class SqlQueryTask extends Task {
                 }
             } else {
                 connection.setAutoCommit(false);
-                try (PreparedStatement p = connection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.FETCH_FORWARD)) {
-                    if (sqlQuery.getDatasource().getType() == Datasource.Type.POSTGRESQL || sqlQuery.getDatasource().getType() == Datasource.Type.REDSHIFT) {
+                try (PreparedStatement p = connection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+                    if (sqlQuery.getDatasource().getType() == Datasource.Type.POSTGRESQL
+                            || sqlQuery.getDatasource().getType() == Datasource.Type.REDSHIFT
+                            || sqlQuery.getDatasource().getType() == Datasource.Type.SQLSERVER
+                            ) {
                         //TODO Random value for now, have to tune this
                         p.setFetchSize(100);
                     } else {

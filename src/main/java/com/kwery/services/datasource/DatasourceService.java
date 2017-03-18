@@ -28,6 +28,8 @@ public class DatasourceService {
             return String.format("jdbc:mysql://%s:%d?logger=com.mysql.cj.core.log.Slf4JLogger", datasource.getUrl(), datasource.getPort()) ;
         } else if ((datasource.getType() == POSTGRESQL) || (datasource.getType() == REDSHIFT)) {
             return String.format("jdbc:postgresql://%s:%d/%s", datasource.getUrl(), datasource.getPort(), datasource.getDatabase());
+        } else if (datasource.getType() == Datasource.Type.SQLSERVER) {
+            return String.format("jdbc:jtds:sqlserver://%s:%d/%s;useCursors=true", datasource.getUrl(), datasource.getPort(), datasource.getDatabase());
         }
 
         throw new AssertionError("JDBC connection string not present for type " + datasource.getType());
@@ -37,11 +39,11 @@ public class DatasourceService {
         Datasource datasource = new Datasource();
         datasource.setId(1);
         datasource.setLabel("postgres");
-        datasource.setPort(5432);
-        datasource.setType(POSTGRESQL);
+        datasource.setPort(1433);
+        datasource.setType(Datasource.Type.SQLSERVER);
         datasource.setUrl("localhost");
-        datasource.setUsername("postgres");
-        datasource.setPassword("root");
+        datasource.setUsername("SA");
+        datasource.setDatabase("sys");
 
         DatasourceService datasourceService = new DatasourceService();
         datasourceService.connect(datasource);
