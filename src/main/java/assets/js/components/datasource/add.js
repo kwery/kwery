@@ -25,7 +25,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
         self.showDatabase = ko.observable(false);
 
         self.datasourceType.subscribe(function(val){
-            if (val === 'POSTGRESQL' || val === 'REDSHIFT') {
+            if (val === 'POSTGRESQL' || val === 'REDSHIFT' || val === 'SQLSERVER') {
                 self.showDatabase(true);
                 $("#database").attr("data-validate", true);
             } else {
@@ -45,7 +45,8 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
             new DatasourceType(ko.i18n("datasource.add.type.select"), ""),
             new DatasourceType("MYSQL", "MYSQL"),
             new DatasourceType("POSTGRESQL", "POSTGRESQL"),
-            new DatasourceType("REDSHIFT", "REDSHIFT")
+            new DatasourceType("REDSHIFT", "REDSHIFT"),
+            new DatasourceType("SQLSERVER", "SQLSERVER")
         ]);
 
         var isUpdate = params.datasourceId !== undefined;
