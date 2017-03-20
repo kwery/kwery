@@ -19,8 +19,13 @@ import com.kwery.utils.*;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
+import net.binggl.ninja.oauth.NinjaOauthModule;
+import net.binggl.ninja.oauth.OauthAuthorizationService;
+import ninja.Context;
 import ninja.utils.NinjaConstant;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.oauth.profile.google2.Google2Profile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +51,21 @@ public class Module extends AbstractModule {
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
         bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);
+
+        //Google OAuth
+        install(new NinjaOauthModule());
+
+        bind(OauthAuthorizationService.class).toInstance(new OauthAuthorizationService() {
+            @Override
+            public boolean lookupAndProcessProfile(Context context, Google2Profile profile) {
+                boolean profileValid = false;
+                if(profile != null && StringUtils.isNotEmpty(profile.getAccessToken())) {
+                    profileValid = true;
+                    context.getSession().put("id", profile.getId());
+                }
+                return profileValid;
+            }
+        });
     }
 
     @Provides

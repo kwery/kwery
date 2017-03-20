@@ -3,6 +3,7 @@ package com.kwery.conf;
 import com.kwery.controllers.IndexController;
 import com.kwery.controllers.MessageApiController;
 import com.kwery.controllers.apis.*;
+import net.binggl.ninja.oauth.NinjaOauthController;
 import ninja.AssetsController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
@@ -120,6 +121,10 @@ public class Routes implements ApplicationRoutes {
 
         router.GET().route(MESSAGES_JS).with(MessageApiController.class, "getAllMessages");
         //Api - End
+
+        // authentication routes
+        router.GET().route("/startauth").with(NinjaOauthController.class, "startauth");
+        router.GET().route("/oauth2callback").with(NinjaOauthController.class, "oauth2callback");
 
         //Static asset
         router.GET().route("/assets/{fileName: .*}").with(AssetsController.class, "serveStatic");
