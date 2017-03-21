@@ -7,6 +7,8 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="userAuthenticated" content="${userAuthenticated}">
 
+            <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
+
             <title>${title}</title>
 
             <style type="text/css">
