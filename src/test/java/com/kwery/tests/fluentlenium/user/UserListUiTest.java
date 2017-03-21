@@ -1,7 +1,9 @@
 package com.kwery.tests.fluentlenium.user;
 
 import com.google.common.collect.Lists;
+import com.kwery.dao.UserDao;
 import com.kwery.models.User;
+import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -19,7 +21,7 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
 
 public class UserListUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
-    protected LoginRule loginRule = new LoginRule(ninjaServerRule, this);
+    protected LoginRule loginRule = new LoginRule(ninjaServerRule, this, true);
 
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(loginRule);

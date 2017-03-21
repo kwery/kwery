@@ -8,13 +8,13 @@ import org.junit.Before;
 import static com.kwery.conf.Routes.LOGIN_API;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
 
-public abstract class AbstractPostLoginApiTest extends AbstractApiTest {
+public class AbstractPostSuperUserLoginApiTest extends AbstractApiTest {
     protected User loggedInUser;
 
     @Before
     public void setupPostLoginApiTest() {
         loggedInUser = TestUtil.user();
-        loggedInUser.setSuperUser(false);
+        loggedInUser.setSuperUser(true);
         userDbSetUp(loggedInUser);
         ninjaTestBrowser.postJson(getUrl(LOGIN_API), loggedInUser);
     }

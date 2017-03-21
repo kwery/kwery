@@ -1,12 +1,12 @@
 package com.kwery.tests.fluentlenium.onboarding;
 
 import com.kwery.controllers.apis.OnboardingApiController;
+import com.kwery.dao.UserDao;
 import com.kwery.tests.fluentlenium.job.reportlist.ActionResultComponent;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.Messages;
 import com.kwery.tests.util.NinjaServerRule;
 import org.awaitility.Awaitility;
-import org.fluentlenium.core.annotation.Page;
 import org.fluentlenium.core.hook.wait.Wait;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,6 +25,7 @@ public class OnboardingUserSignUpUiTest extends ChromeFluentTest {
     public NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
     protected ActionResultComponent actionResultComponent;
+    private UserDao userDao;
 
     @Before
     public void setUp() {

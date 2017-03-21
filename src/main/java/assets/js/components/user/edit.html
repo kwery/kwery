@@ -1,0 +1,58 @@
+<div class="container">
+    <action-result params="status: status, messages: messages"></action-result>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('user.edit.password.reset.header')"></strong></span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form id="resetForm">
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('sign.up.add.password')" for="password" class="text-muted"></label>
+                    <input data-bind="value: newPassword" minlength="1" maxlength="255" class="form-control password-f" type="password" id="password" name="password" required>
+                    <div class="help-block with-errors password-error-f"></div>
+                </div>
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('sign.up.add.confirm.password')" for="password" class="text-muted"></label>
+                    <input data-bind="value: confirmPassword" minlength="1" maxlength="255"  class="form-control confirm-password-f" type="password" id="confirmPassword"
+                           name="confirmPassword" data-match="#password" required>
+                    <div class="help-block with-errors confirm-password-error-f"></div>
+                </div>
+                <button data-bind="text: ko.i18n('user.edit.password.save')" type="submit" class="btn btn-lg btn-primary password-reset-f"></button>
+            </form>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('user.edit.superuser.header')"></strong></span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form data-bind="submit: superUserSave">
+                <div class="checkbox">
+                    <label>
+                        <input data-bind="checked: superUser" class="text-muted super-user-f" name="superUser" type="checkbox">
+                        <span data-bind="text: ko.i18n('user.edit.superuser')" class="text-muted"> </span>
+                    </label>
+                </div>
+                <button data-bind="text: ko.i18n('user.edit.superuser.save')" type="submit" class="btn btn-lg btn-primary promote-to-admin-f"></button>
+            </form>
+        </div>
+    </div>
+</div>

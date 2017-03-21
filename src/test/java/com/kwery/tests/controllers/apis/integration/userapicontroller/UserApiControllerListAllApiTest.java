@@ -20,7 +20,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 //ToDO requires refactoring related to user login
-public class UserApiControllerListAllApiTest extends AbstractPostLoginApiTest {
+public class UserApiControllerListAllApiTest extends AbstractPostSuperUserLoginApiTest {
     private User user0;
     private User user1;
 

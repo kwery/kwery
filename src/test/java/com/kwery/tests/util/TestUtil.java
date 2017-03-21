@@ -15,8 +15,6 @@ import com.kwery.models.SqlQueryExecutionModel.Status;
 import com.kwery.models.UrlConfiguration.Scheme;
 import com.kwery.utils.CsvWriterFactoryImpl;
 import com.kwery.views.ActionResult;
-import com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping;
-import net.sf.ehcache.management.sampled.SampledMBeanRegistrationProvider;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -67,6 +65,7 @@ public class TestUtil {
         user.setEmail(RandomStringUtils.randomAlphanumeric(User.EMAIL_MIN, User.EMAIL_MAX - 9) + "@gmail.com");
         user.setCreated(System.currentTimeMillis());
         user.setUpdated(System.currentTimeMillis());
+        user.setSuperUser(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
         return user;
     }
 

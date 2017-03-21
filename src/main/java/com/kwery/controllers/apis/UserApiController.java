@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kwery.dao.UserDao;
 import com.kwery.filters.DashRepoSecureFilter;
+import com.kwery.filters.SuperUserFilter;
 import com.kwery.models.User;
 import com.kwery.views.ActionResult;
 import ninja.Context;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Optional.of;
 import static com.kwery.controllers.MessageKeys.*;
@@ -36,6 +38,7 @@ public class UserApiController {
 
     @Inject
     private DashRepoSecureFilter dashRepoSecureFilter;
+
     public Result login(Context context, User user) {
         if (logger.isTraceEnabled()) logger.trace(">");
 
@@ -98,7 +101,7 @@ public class UserApiController {
         return json;
     }
 
-    @FilterWith(DashRepoSecureFilter.class)
+    @FilterWith({DashRepoSecureFilter.class, SuperUserFilter.class})
     public Result delete(@PathParam("userId") int userId, Context context) {
         if (logger.isTraceEnabled()) logger.trace(">");
 
@@ -122,7 +125,7 @@ public class UserApiController {
         return json.render(actionResult);
     }
 
-    @FilterWith(DashRepoSecureFilter.class)
+    @FilterWith({DashRepoSecureFilter.class, SuperUserFilter.class})
     public Result list() {
         if (logger.isTraceEnabled()) logger.trace(">");
 
@@ -136,34 +139,54 @@ public class UserApiController {
 
     //Since this method is used by both sign up as well as user edit we cannot mark this as secure, we do the security
     //check first thing inside the method.
+    //TODO - Security, we have to do super user check here also
     public Result signUp(User user, Context context) {
         ActionResult actionResult = null;
         Result json = json();
 
-        if (user.getId() != null && user.getId() > 0) {
+        boolean update = user.getId() != null && user.getId() > 0;
+
+        if (update) {
+            //Login check
             actionResult = dashRepoSecureFilter.actionResult(context, json);
+            if (actionResult != null) {
+                return json().render(actionResult);
+            }
+        }
+
+        User existing = userDao.getUserByEmail(user.getEmail());
+        if (!update) { //Sign up
+            if (existing != null) {//A user already exists with this email
+                actionResult = new ActionResult(failure, "");
+            }
+        } else { //Edit
+            if (existing != null && !user.getId().equals(existing.getId())) {//A user already exists with this email
+                actionResult = new ActionResult(failure, "");
+            }
         }
 
         if (actionResult == null) {
-            User existing = userDao.getUserByEmail(user.getEmail());
-
-            if (existing != null) {
-                if (user.getId() != null && user.getId() > 0 && !existing.getId().equals(user.getId())) {
+            if (update) {
+                //We do not want to be in a state where there are no super users
+                if (isDemotion(user) && !canDemote(user)) {
                     actionResult = new ActionResult(failure, "");
                 } else {
-                    actionResult = new ActionResult(failure, "");
-                }
-            }
-
-            if (actionResult == null) {
-                if (user.getId() != null && user.getId() > 0) {
+                    //Set super user details
+                    //If the FE has supplied super user details, use that, else get it from DB
+                    user.setSuperUser(user.getSuperUser() != null ? user.getSuperUser() : userDao.getById(user.getId()).getSuperUser());
                     userDao.update(user);
-                } else {
-                    userDao.save(user);
+                    actionResult = new ActionResult(success, "");
+                }
+            } else {
+                //This is the first user, hence make this user super user by default
+                if (userDao.list().isEmpty()) {
+                    user.setSuperUser(true);
                 }
 
+                userDao.save(user);
                 actionResult = new ActionResult(success, "");
             }
+
         }
 
         return json().render(actionResult);
@@ -175,5 +198,33 @@ public class UserApiController {
 
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    protected boolean isDemotion(User user) {
+        if (user.getSuperUser() != null) {
+            User fromDb = userDao.getById(user.getId());
+            if (fromDb.getSuperUser() != null && fromDb.getSuperUser() && !user.getSuperUser()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean canDemote(User user) {
+        List<User> superUsers = userDao.list().stream().filter(User::getSuperUser).collect(Collectors.toList());
+        if (superUsers.size() > 1) {
+            return true;
+        } else {
+            if (superUsers.isEmpty()) {
+                throw new AssertionError("No super users found");
+            }
+
+            if (superUsers.get(0).getId().equals(user.getId())) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 }

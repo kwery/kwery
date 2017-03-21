@@ -27,12 +27,10 @@ public class UserDao {
         long now = System.currentTimeMillis();
         u.setCreated(now);
         u.setUpdated(now);
-        logger.trace(">");
         logger.info("Creating user - " + u);
         EntityManager m = entityManagerProvider.get();
         m.persist(u);
         m.flush();
-        logger.trace("<");
     }
 
     @Transactional

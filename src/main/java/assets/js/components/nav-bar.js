@@ -6,6 +6,7 @@ define(["knockout", "jquery", "repo-dash", "text!components/nav-bar.html"], func
 
         self.username = ko.observable("");
         self.url = ko.observable("");
+        self.showUserSettings = ko.observable(false);
 
         repoDash.user.userAuthenticationBroadcaster.subscribe(function(val){
             self.showNavBar(val);
@@ -33,6 +34,7 @@ define(["knockout", "jquery", "repo-dash", "text!components/nav-bar.html"], func
                 success: function(result) {
                     self.username(result.email);
                     self.url("/#user/" + result.id);
+                    self.showUserSettings(result.superUser === true);
                 }
             });
         };

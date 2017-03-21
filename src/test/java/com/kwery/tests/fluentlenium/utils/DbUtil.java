@@ -199,6 +199,7 @@ public class DbUtil {
                     .with(User.COLUMN_MIDDLE_NAME, user.getMiddleName())
                     .with(User.COLUMN_LAST_NAME, user.getLastName())
                     .with(User.COLUMN_EMAIL, user.getEmail())
+                    .with(User.COLUMN_SUPER_USER, user.getSuperUser())
                     .with(AbstractBaseModel.CREATED_COLUMN, user.getCreated())
                     .with(AbstractBaseModel.UPDATED_COLUMN, user.getUpdated())
                     .add();
@@ -619,6 +620,7 @@ public class DbUtil {
                                 .column(User.COLUMN_MIDDLE_NAME, user.getMiddleName())
                                 .column(User.COLUMN_LAST_NAME, user.getLastName())
                                 .column(User.COLUMN_EMAIL, user.getEmail())
+                                .column(User.COLUMN_SUPER_USER, user.getSuperUser())
                                 .end()
                                 .build()
                 )

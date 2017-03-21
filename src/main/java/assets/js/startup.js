@@ -99,6 +99,10 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/user/save"
     });
 
+    ko.components.register("user-edit", {
+        require: "components/user/edit"
+    });
+
     ko.components.register("report-copy", {
         require: "components/report/copy"
     });

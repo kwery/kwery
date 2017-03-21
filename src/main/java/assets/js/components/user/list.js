@@ -25,7 +25,7 @@ define(["knockout", "jquery", "text!components/user/list.html", "ajaxutil", "jst
             contentType: "application/json",
             success: function(result){
                 ko.utils.arrayForEach(result, function (user) {
-                    user.updateLink = "/#user/" + user.id;
+                    user.editLink = "/#user/" + user.id + "/edit";
                 });
                 self.users(result);
             }

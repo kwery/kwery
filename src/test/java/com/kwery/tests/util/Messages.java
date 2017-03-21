@@ -94,4 +94,9 @@ public class Messages {
     public static final String ONBOARDING_DATASOURCE_ADD_M = "You are almost there, let us add a datasource";
     public static final String ONBOARDING_REPORT_ADD_M = "This is the last step, let us add a report";
     public static final String ONBOARDING_REPORT_ADD_POST_DATASOURCE_M = "Datasource added successfully, this is the last step, let us add a report";
+
+    public static final String USER_EDIT_PASSWORD_SUCCESS_MESSAGE_M = "Password reset successfully";
+    public static final String USER_EDIT_SUPERUSER_SUCCESS_MESSAGE_M = "User saved successfully";
+
+    public static final String  USER_EDIT_SUPERUSER_FAILURE_MESSAGE_M = "Cannot demote from admin, at least one user has to be an admin";
 }

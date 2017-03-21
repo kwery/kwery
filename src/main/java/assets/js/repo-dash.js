@@ -27,6 +27,7 @@
                 {url: "user/sign-up/:?q:", auth: false, component: "user-sign-up"},
                 {url: "user/login", auth: false, component: "user-login"},
                 {url: "user/{userId}", auth: true, component: "user-save"},
+                {url: "user/{userId}/edit", auth: true, component: "user-edit"},
                 {url: "datasource/add/:?q:", auth: true, component: "datasource-add"},
                 {url: "datasource/list", auth: true, component: "datasource-list"},
                 {url: "datasource/{datasourceId}", auth: true, component: "datasource-add"},
