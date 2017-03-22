@@ -11,11 +11,15 @@ import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
 import com.kwery.services.kwerydirectory.KweryDirectoryChecker;
+import com.kwery.services.license.LicenseChecker;
 import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
 import com.kwery.services.search.SearchIndexer;
-import com.kwery.utils.*;
+import com.kwery.utils.CsvReaderFactory;
+import com.kwery.utils.CsvReaderFactoryImpl;
+import com.kwery.utils.CsvWriterFactory;
+import com.kwery.utils.CsvWriterFactoryImpl;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
@@ -46,6 +50,7 @@ public class Module extends AbstractModule {
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
         bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);
+        bind(LicenseChecker.class);
     }
 
     @Provides

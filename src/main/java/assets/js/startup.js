@@ -3,6 +3,10 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/nav-bar"
     });
 
+    ko.components.register("license-details", {
+        require: "components/license-details"
+    });
+
     ko.components.register("onboarding", {
         require: "components/onboarding/onboarding"
     });

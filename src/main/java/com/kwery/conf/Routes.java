@@ -58,6 +58,7 @@ public class Routes implements ApplicationRoutes {
     public static final String DOMAIN_SETTING_SAVE_API = "/api/url-configuration/save";
     public static final String DOMAIN_SETTING_GET_API = "/api/url-configuration";
 
+    public static final String LICENSE_API = "/api/license";
 
     public static final String MESSAGES_JS = "/messages.js";
 
@@ -117,6 +118,8 @@ public class Routes implements ApplicationRoutes {
 
         router.POST().route(DOMAIN_SETTING_SAVE_API).with(UrlConfigurationApiController.class, "saveDomainSetting");
         router.GET().route(DOMAIN_SETTING_GET_API).with(UrlConfigurationApiController.class, "getDomainSetting");
+
+        router.GET().route(LICENSE_API).with(LicenseApiController.class, "getLicenseDetails");
 
         router.GET().route(MESSAGES_JS).with(MessageApiController.class, "getAllMessages");
         //Api - End

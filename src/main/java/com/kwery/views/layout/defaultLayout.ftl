@@ -71,6 +71,7 @@
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->
         </head>
         <body>
+            <license-details></license-details>
             <nav-bar></nav-bar>
             <#nested/>
         </body>

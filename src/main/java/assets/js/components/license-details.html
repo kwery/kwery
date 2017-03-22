@@ -1,0 +1,11 @@
+<div data-bind="visible: showTrialMessage" class="alert alert-warning alert-dismissible license-header" role="alert">
+    <button data-bind="click: disappear" type="button" class="close"><span aria-hidden="true">&times;</span></button>
+    <div class="text-center">
+        <strong data-bind="text: ko.i18n('trial.message')"></strong>
+    </div>
+</div>
+<div data-bind="visible: showTrialExpiryMessage" class="alert alert-danger license-header" role="alert">
+    <div class="text-center">
+        <strong data-bind="text: ko.i18n('trial.expiry.message')"></strong>
+    </div>
+</div>
