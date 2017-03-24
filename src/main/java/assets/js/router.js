@@ -1,4 +1,12 @@
 define(["jquery", "knockout", "crossroads", "hasher", "repo-dash"], function ($, ko, crossroads, hasher, repoDash) {
+    //This is placed in router for now because there is no better place to place it for now.
+    //Display the footer after 30 seconds, this is done not to cause a jarring affect during initial display of page.
+    $(document).ready(function(){
+        setTimeout(function(){
+            $(".kwery-footer").show();
+        }, 1000) //1 ms is a randomly chosen value
+    });
+
     return new Router(repoDash.componentMapping.mapping());
 
     function Router(componentMapping) {
