@@ -48,6 +48,8 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
         expectedBody.add(String.format("<p>%s</p>", JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING_M));
         expectedBody.add(String.format("<p style='color:red'>%s</p>", REPORTEMAILSENDER_ATTACHMENT_SKIPPED_M));
 
+        expectedBody.add("<br><hr><p>Report generated using <a href='http://getkwery.com'>Kwery</a></p>");
+
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));
 
