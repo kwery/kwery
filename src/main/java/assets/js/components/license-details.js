@@ -10,7 +10,6 @@ define(["knockout", "jquery", "repo-dash", "text!components/license-details.html
         };
 
         self.checkLicense = function() {
-            debugger;
             $.getJSON("/api/license", function(licenseDetails){
                 //Reset
                 self.showTrialMessage(false);
