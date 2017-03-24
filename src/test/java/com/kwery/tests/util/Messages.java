@@ -39,12 +39,12 @@ public class Messages {
     public static final String SMTP_CONFIGURATION_ADDED_M = "SMTP configuration successfully added";
     public static final String SMTP_CONFIGURATION_UPDATED_M = "SMTP configuration successfully updated";
     public static final String SMTP_CONFIGURATION_ALREADY_PRESENT_M = "SMTP configuration is present, cannot add another one. Please edit the existing configuration";
-    public static final String EMAIL_CONFIGURATION_SAVED_M = "Email configuration saved successfully";
+    public static final String EMAIL_CONFIGURATION_SAVED_M = "Sender details configuration saved successfully";
     public static final String EMAIL_TEST_SUCCESS_M = "Email sent successfully, hop on to your inbox and confirm that you have received the mail";
     public static final String EMAIL_TEST_SUBJECT_M = "Test mail from Kwery";
     public static final String EMAIL_TEST_BODY_M = "Congratulations, Kwery has been successfully configured to send mails.";
 
-    public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report saved successfully";
+    public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report template saved successfully";
 
     public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS_M = "A report already exists with name {0}, please choose a different name";
     public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exists with name {0}, please choose a different name";
@@ -99,4 +99,7 @@ public class Messages {
     public static final String USER_EDIT_SUPERUSER_SUCCESS_MESSAGE_M = "User saved successfully";
 
     public static final String  USER_EDIT_SUPERUSER_FAILURE_MESSAGE_M = "Cannot demote from admin, at least one user has to be an admin";
+
+    public static final String EMAIL_CONFIGURATION_SMTP_MISSING_M = "Please configure SMTP";
+    public static final String EMAIL_CONFIGURATION_SENDER_DETAILS_MISSING_M = "Please configure sender details";
 }
