@@ -1,5 +1,6 @@
 package com.kwery.conf;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -27,10 +28,16 @@ import ninja.utils.NinjaConstant;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -110,5 +117,22 @@ public class Module extends AbstractModule {
         }
 
         return new KweryDirectory(base);
+    }
+
+    @Provides @Singleton
+    protected ITemplateEngine htmlTemplateEngine() {
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(htmlTemplateResolver());
+        return templateEngine;
+    }
+
+    private ITemplateResolver htmlTemplateResolver() {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver(getClass().getClassLoader());
+        templateResolver.setPrefix("/emails/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding(Charsets.UTF_8.displayName());
+        templateResolver.setCacheable(false);
+        return templateResolver;
     }
 }
