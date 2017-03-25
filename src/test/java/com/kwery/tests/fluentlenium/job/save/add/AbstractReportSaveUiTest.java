@@ -97,6 +97,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
         if (smtpConfigurationSave) {
             SmtpConfiguration smtpConfiguration = smtpConfiguration();
             smtpConfigurationDbSetUp(smtpConfiguration);
+            emailConfigurationDbSet(emailConfiguration());
         }
 
         if (isUrlConfigurationSave()) {
