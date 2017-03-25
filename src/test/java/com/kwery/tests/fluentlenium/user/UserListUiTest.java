@@ -1,9 +1,7 @@
 package com.kwery.tests.fluentlenium.user;
 
 import com.google.common.collect.Lists;
-import com.kwery.dao.UserDao;
 import com.kwery.models.User;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
@@ -38,7 +36,7 @@ public class UserListUiTest extends ChromeFluentTest {
         userDbSetUp(user1);
 
         users = Lists.newArrayList(loginRule.getLoggedInUser(), user1);
-        users.sort(Comparator.comparing(User::getId));
+        users.sort(Comparator.comparing(User::getCreated));
 
         page.go();
         page.waitForModalDisappearance();

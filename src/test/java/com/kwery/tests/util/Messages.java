@@ -44,7 +44,7 @@ public class Messages {
     public static final String EMAIL_TEST_SUBJECT_M = "Test mail from Kwery";
     public static final String EMAIL_TEST_BODY_M = "Congratulations, Kwery has been successfully configured to send mails.";
 
-    public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report template save successfully";
+    public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report template saved successfully";
 
     public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS_M = "A report template already exists with name {0}, please choose a different name";
     public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exists with name {0}, please choose a different name";
@@ -58,7 +58,7 @@ public class Messages {
     public static final String REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_START_M = "Invalid range, start is after end";
     public static final String REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_END_M = "Invalid range, end is before start";
 
-    public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M = "There are other report templates which depend on this job, please remove the dependencies before deleting this job";
+    public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M = "There are other report templates which depend on this template, please delete the dependencies before deleting this report template";
     public static final String REPORT_LIST_DELETE_SUCCESS_M = "Report template deleted successfully";
 
     public static final String REPORT_LABEL_SAVE_SUCCESS_M = "Label {0} saved successfully";
@@ -76,7 +76,7 @@ public class Messages {
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M = "Report Generation Failed";
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M = "Failed Report";
 
-    public static final String REPORT_JOB_EXECUTION_DELETE_M = "Report execution deleted successfully";
+    public static final String REPORT_JOB_EXECUTION_DELETE_M = "Report deleted successfully";
 
     public static final String JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING_M = "Report too large to display, please download and view";
 
