@@ -8,6 +8,7 @@ import org.hibernate.search.annotations.Store;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 import static com.kwery.models.SqlQueryEmailSettingModel.*;
 import static org.hibernate.search.annotations.Index.YES;
@@ -60,6 +61,10 @@ public class SqlQueryModel {
             inverseJoinColumns = @JoinColumn(name = SQL_QUERY_EMAIL_SETTING_ID_FK_COLUMN, referencedColumnName = SQL_QUERY_EMAIL_SETTING_ID_COLUMN)
     )
     private SqlQueryEmailSettingModel sqlQueryEmailSettingModel;
+
+    //If we try to delete a SqlQueryModel from a report and if that SqlQueryModel has executions, delete fails. Hence adding this here, so that JPA can manage the delete
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sqlQuery")
+    private List<SqlQueryExecutionModel> sqlQueryExecutionModels;
 
     public Integer getId() {
         return id;
