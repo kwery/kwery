@@ -107,11 +107,12 @@ public class ReportUpdateSwitchParentUiTest extends ChromeFluentTest {
         JobRuleModel jobRuleModel = jobRuleModel();
         childJobModel.setJobRuleModel(jobRuleModel);
         jobRuleDbSetUp(childJobModel);
-
         //Child Job setup - end
 
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
+
+        emailConfigurationDbSet(emailConfiguration());
 
         page.go(childJobModel.getId());
 
