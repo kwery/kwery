@@ -114,6 +114,7 @@ public class ReportEmailSender {
                 emailSnippets.add(String.format("<p style='color:red'>%s</p>", message));
             }
 
+            emailSnippets.add("<br><hr><p>Report generated using <a href='http://getkwery.com'>Kwery</a></p>");
 
             //For now do not bother about include in email and attachments while evaluating rules
             if (shouldSend(hasContent, jobModel)) {

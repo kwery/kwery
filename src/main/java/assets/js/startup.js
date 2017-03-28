@@ -111,6 +111,12 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/report/copy"
     });
 
+    ko.components.register("cron-help", {
+        template : {
+            require: "text!components/report/cron-help.html"
+        }
+    });
+
     ko.applyBindings({route: router.currentRoute});
 
     //Attach polyglot for i18n to ko

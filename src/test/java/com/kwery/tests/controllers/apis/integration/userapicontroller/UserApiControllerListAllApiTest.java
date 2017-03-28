@@ -40,7 +40,7 @@ public class UserApiControllerListAllApiTest extends AbstractPostSuperUserLoginA
         String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(url));
 
         List<User> users = Lists.newArrayList(user0, user1, loggedInUser);
-        users.sort(Comparator.comparing(User::getId));
+        users.sort(Comparator.comparing(User::getCreated));
 
         assertUser(jsonResponse, 0, users.get(0));
         assertUser(jsonResponse, 1, users.get(1));

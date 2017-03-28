@@ -42,7 +42,13 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.queries = ko.observableArray([]);
         self.emptyReportNoEmailRule = ko.observable(false);
 
-        self.enableEmails = ko.observable(false);
+        self.smtpConfiguration = ko.observable(false);
+        self.senderDetailsConfiguration = ko.observable(false);
+
+        self.enableEmails = ko.computed(function(){
+            return self.smtpConfiguration() && self.senderDetailsConfiguration();
+        });
+
         self.urlConfigured = ko.observable(false);
 
         self.jobRuleModelId = ko.observable();
@@ -151,7 +157,16 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                 contentType: "application/json",
                 success: function(conf) {
                     if (conf != null) {
-                        self.enableEmails(true);
+                        self.smtpConfiguration(true);
+                    }
+                }
+            }),
+            $.ajax("/api/mail/email-configuration", {
+                type: "GET",
+                contentType: "application/json",
+                success: function(conf) {
+                    if (conf != null) {
+                        self.senderDetailsConfiguration(true);
                     }
                 }
             }),

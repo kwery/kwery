@@ -87,6 +87,21 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
             })
         ).always(function(){
             waitingModal.hide();
+
+            //We want this message to be shown only when the page loads, not after any actions
+            //This should be shown only if either one of the configurations are missing, not when both are missing
+            if (self.emailConfigurationPresent() || self.smtpConfigurationPresent()) {
+                if (!(self.emailConfigurationPresent() && self.smtpConfigurationPresent())) {
+                    self.status("failure");
+                    if (!self.smtpConfigurationPresent()) {
+                        self.messages([ko.i18n("email.configuration.smtp.missing")]);
+                    }
+
+                    if (!self.emailConfigurationPresent()) {
+                        self.messages([ko.i18n("email.configuration.sender.details.missing")]);
+                    }
+                }
+            }
         });
 
         self.validateSmtpConfigurationForm = function() {

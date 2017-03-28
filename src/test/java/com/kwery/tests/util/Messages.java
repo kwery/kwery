@@ -39,46 +39,46 @@ public class Messages {
     public static final String SMTP_CONFIGURATION_ADDED_M = "SMTP configuration successfully added";
     public static final String SMTP_CONFIGURATION_UPDATED_M = "SMTP configuration successfully updated";
     public static final String SMTP_CONFIGURATION_ALREADY_PRESENT_M = "SMTP configuration is present, cannot add another one. Please edit the existing configuration";
-    public static final String EMAIL_CONFIGURATION_SAVED_M = "Email configuration saved successfully";
+    public static final String EMAIL_CONFIGURATION_SAVED_M = "Sender details configuration saved successfully";
     public static final String EMAIL_TEST_SUCCESS_M = "Email sent successfully, hop on to your inbox and confirm that you have received the mail";
     public static final String EMAIL_TEST_SUBJECT_M = "Test mail from Kwery";
     public static final String EMAIL_TEST_BODY_M = "Congratulations, Kwery has been successfully configured to send mails.";
 
-    public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report saved successfully";
+    public static final String REPORT_SAVE_SUCCESS_MESSAGE_M = "Report template saved successfully";
 
-    public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS_M = "A report already exists with name {0}, please choose a different name";
+    public static final String JOBAPICONTROLLER_REPORT_NAME_EXISTS_M = "A report template already exists with name {0}, please choose a different name";
     public static final String JOBAPICONTROLLER_SQL_QUERY_LABEL_EXISTS_M = "A SQL query already exists with name {0}, please choose a different name";
     public static final String REPORT_SAVE_DUPLICATE_SQL_QUERY_LABEL_ERROR = "You have already used this name, please choose a different name";
 
-    public static final String REPORT_JOB_EXECUTING_STOP_SUCCESS_M = "Report execution stopped successfully";
-    public static final String REPORT_JOB_EXECUTING_STOP_FAILURE_M = "Something went wrong, report execution could not be stopped";
+    public static final String REPORT_JOB_EXECUTING_STOP_SUCCESS_M = "Report generation stopped successfully";
+    public static final String REPORT_JOB_EXECUTING_STOP_FAILURE_M = "Something went wrong, report generation could not be stopped";
 
     public static final String JOBAPICONTROLLER_FILTER_DATE_PARSE_ERROR_M = "Could not parse date time {0}";
 
     public static final String REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_START_M = "Invalid range, start is after end";
     public static final String REPORT_JOB_EXECUTION_FILTER_INVALID_RANGE_END_M = "Invalid range, end is before start";
 
-    public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M = "There are other jobs which depend on this job, please remove the dependencies before deleting this job";
-    public static final String REPORT_LIST_DELETE_SUCCESS_M = "Report deleted successfully";
+    public static final String JOBAPICONTROLLER_DELETE_JOB_HAS_CHILDREN_M = "There are other report templates which depend on this template, please delete the dependencies before deleting this report template";
+    public static final String REPORT_LIST_DELETE_SUCCESS_M = "Report template deleted successfully";
 
     public static final String REPORT_LABEL_SAVE_SUCCESS_M = "Label {0} saved successfully";
 
-    public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL_M = "There are reports which have label {0}";
+    public static final String JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL_M = "There are report templates which have label {0}";
     public static final String JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN_M = "There are labels which are nested under {0}";
     public static final String JOBLABELAPICONTROLLER_DELETE_SUCCESS_M = "Label {0} deleted successfully";
 
     public static final String JOBLABELAPICONTROLLER_INVALID_CRON_EXPRESSION_M = "{0} is not a valid cron expression";
 
-    public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND_M = "Report not found";
+    public static final String JOBAPICONTROLLER_REPORT_NOT_FOUND_M = "Report template not found";
 
     public static final String URL_CONFIGURATION_SAVE_SUCCESS_M = "Kwery URL saved successfully";
 
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M = "Report Generation Failed";
     public static final String REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M = "Failed Report";
 
-    public static final String REPORT_JOB_EXECUTION_DELETE_M = "Report execution deleted successfully";
+    public static final String REPORT_JOB_EXECUTION_DELETE_M = "Report deleted successfully";
 
-    public static final String JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING_M = "Report content too large to display, please download and view";
+    public static final String JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING_M = "Report too large to display, please download and view";
 
     public static final String REPORTEMAILSENDER_ATTACHMENT_SKIPPED_M = "P.S. Some attachments were not sent as the files were too large";
 
@@ -99,4 +99,7 @@ public class Messages {
     public static final String USER_EDIT_SUPERUSER_SUCCESS_MESSAGE_M = "User saved successfully";
 
     public static final String  USER_EDIT_SUPERUSER_FAILURE_MESSAGE_M = "Cannot demote from admin, at least one user has to be an admin";
+
+    public static final String EMAIL_CONFIGURATION_SMTP_MISSING_M = "Please configure SMTP";
+    public static final String EMAIL_CONFIGURATION_SENDER_DETAILS_MISSING_M = "Please configure sender details";
 }

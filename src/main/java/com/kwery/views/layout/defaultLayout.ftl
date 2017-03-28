@@ -65,7 +65,6 @@
                 .kwery-color {
                     color: #1f3a93;
                 }
-
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->
@@ -74,6 +73,13 @@
             <license-details></license-details>
             <nav-bar></nav-bar>
             <#nested/>
+            <div class="kwery-footer" style="display: none">
+                <hr>
+                <div class="text-center text-muted">
+                    <a href="http://getkwery.com" target="kwery">Kwery</a> - The simplest way to generate, schedule, view and email business reports from datasources using SQL.
+                </div>
+                <br>
+            </div>
         </body>
         <script src="/assets/app/require.config.js"></script>
         <script data-main="startup" src="/assets/js/require.js"></script>

@@ -93,6 +93,8 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
+        emailConfigurationDbSet(emailConfiguration());
+
         page.go(childJobModel.getId());
 
         if (!page.isRendered()) {
