@@ -15,6 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class UserDao {
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -27,12 +28,10 @@ public class UserDao {
         long now = System.currentTimeMillis();
         u.setCreated(now);
         u.setUpdated(now);
-        logger.trace(">");
         logger.info("Creating user - " + u);
         EntityManager m = entityManagerProvider.get();
         m.persist(u);
         m.flush();
-        logger.trace("<");
     }
 
     @Transactional
@@ -100,7 +99,7 @@ public class UserDao {
     @Transactional
     public List<User> list() {
         EntityManager m = entityManagerProvider.get();
-        return m.createQuery("SELECT u FROM User u order by u.id ASC").getResultList();
+        return m.createQuery("SELECT u FROM User u order by u.created ASC").getResultList();
     }
 
     @Transactional

@@ -86,6 +86,8 @@ public class ReportSaveWithDependentsSuccessUiTest extends ChromeFluentTest {
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
 
+        emailConfigurationDbSet(emailConfiguration());
+
         ninjaServerRule.getInjector().getInstance(JobService.class).schedule(parentJobModel.getId());
 
         jobDao = ninjaServerRule.getInjector().getInstance(JobDao.class);

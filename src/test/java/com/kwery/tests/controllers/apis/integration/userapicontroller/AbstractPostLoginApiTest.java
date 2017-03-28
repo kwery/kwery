@@ -14,6 +14,7 @@ public abstract class AbstractPostLoginApiTest extends AbstractApiTest {
     @Before
     public void setupPostLoginApiTest() {
         loggedInUser = TestUtil.user();
+        loggedInUser.setSuperUser(false);
         userDbSetUp(loggedInUser);
         ninjaTestBrowser.postJson(getUrl(LOGIN_API), loggedInUser);
     }

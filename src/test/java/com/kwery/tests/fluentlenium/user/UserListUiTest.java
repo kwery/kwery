@@ -19,7 +19,7 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
 
 public class UserListUiTest extends ChromeFluentTest {
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
-    protected LoginRule loginRule = new LoginRule(ninjaServerRule, this);
+    protected LoginRule loginRule = new LoginRule(ninjaServerRule, this, true);
 
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(loginRule);
@@ -36,7 +36,7 @@ public class UserListUiTest extends ChromeFluentTest {
         userDbSetUp(user1);
 
         users = Lists.newArrayList(loginRule.getLoggedInUser(), user1);
-        users.sort(Comparator.comparing(User::getId));
+        users.sort(Comparator.comparing(User::getCreated));
 
         page.go();
         page.waitForModalDisappearance();

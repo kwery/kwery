@@ -19,7 +19,6 @@ import org.junit.rules.RuleChain;
 
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
@@ -61,6 +60,8 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
 
         SmtpConfiguration smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
+
+        emailConfigurationDbSet(emailConfiguration());
 
         page.go(jobModel.getId());
 

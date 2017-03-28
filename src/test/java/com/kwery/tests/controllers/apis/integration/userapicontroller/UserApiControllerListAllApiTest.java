@@ -20,7 +20,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 //ToDO requires refactoring related to user login
-public class UserApiControllerListAllApiTest extends AbstractPostLoginApiTest {
+public class UserApiControllerListAllApiTest extends AbstractPostSuperUserLoginApiTest {
     private User user0;
     private User user1;
 
@@ -40,7 +40,7 @@ public class UserApiControllerListAllApiTest extends AbstractPostLoginApiTest {
         String jsonResponse = ninjaTestBrowser.makeJsonRequest(getUrl(url));
 
         List<User> users = Lists.newArrayList(user0, user1, loggedInUser);
-        users.sort(Comparator.comparing(User::getId));
+        users.sort(Comparator.comparing(User::getCreated));
 
         assertUser(jsonResponse, 0, users.get(0));
         assertUser(jsonResponse, 1, users.get(1));

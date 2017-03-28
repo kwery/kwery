@@ -19,7 +19,7 @@ import static java.text.MessageFormat.format;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class UserApiControllerDeleteUserTest extends AbstractPostLoginApiTest {
+public class UserApiControllerDeleteUserTest extends AbstractPostSuperUserLoginApiTest {
     private User user;
 
     @Before

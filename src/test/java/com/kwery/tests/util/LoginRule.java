@@ -13,6 +13,7 @@ import static junit.framework.TestCase.fail;
 
 public class LoginRule implements TestRule {
     protected User loggedInUser;
+    protected boolean superUser = false;
 
     protected NinjaServerRule ninjaServerRule;
     protected FluentTest fluentTest;
@@ -22,12 +23,20 @@ public class LoginRule implements TestRule {
         this.fluentTest = fluentTest;
     }
 
+    public LoginRule(NinjaServerRule ninjaServerRule, FluentTest fluentTest, boolean superUser) {
+        this.ninjaServerRule = ninjaServerRule;
+        this.fluentTest = fluentTest;
+        this.superUser = superUser;
+    }
+
     @Override
     public Statement apply(Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 loggedInUser = TestUtil.user();
+                loggedInUser.setSuperUser(superUser);
+
                 userDbSetUp(loggedInUser);
 
                 //So that onboarding flows do not kick in automatically on logging in

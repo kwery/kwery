@@ -15,6 +15,7 @@ public class User extends AbstractBaseModel {
     public static final String COLUMN_MIDDLE_NAME = "middle_name";
     public static final String COLUMN_LAST_NAME = "last_name";
     public static final String COLUMN_EMAIL = "email";
+    public static final String COLUMN_SUPER_USER = "super_user";
 
     public static final int FIRST_NAME_MAX = 255;
     public static final int FIRST_NAME_MIN = 1;
@@ -51,6 +52,9 @@ public class User extends AbstractBaseModel {
     @NotNull
     @Size(min = EMAIL_MIN, max = EMAIL_MAX)
     private String email;
+
+    @Column(name = COLUMN_SUPER_USER)
+    private Boolean superUser;
 
     public Integer getId() {
         return id;
@@ -98,6 +102,14 @@ public class User extends AbstractBaseModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getSuperUser() {
+        return superUser;
+    }
+
+    public void setSuperUser(Boolean superUser) {
+        this.superUser = superUser;
     }
 
     @Override

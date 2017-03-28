@@ -1,6 +1,5 @@
 package com.kwery.tests.dao.userdao;
 
-import com.google.common.collect.Lists;
 import com.kwery.dao.UserDao;
 import com.kwery.models.User;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
@@ -9,11 +8,9 @@ import com.kwery.tests.util.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Comparator;
 import java.util.List;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 
 public class UserDaoListTest extends RepoDashDaoTestBase {
@@ -24,9 +21,13 @@ public class UserDaoListTest extends RepoDashDaoTestBase {
     @Before
     public void setUpUserDaoListTest() {
         user0 = TestUtil.user();
+        user0.setCreated(System.currentTimeMillis() - 1000);
+
         DbUtil.userDbSetUp(user0);
 
         user1 = TestUtil.user();
+        user1.setCreated(System.currentTimeMillis());
+
         DbUtil.userDbSetUp(user1);
 
         userDao = getInstance(UserDao.class);
@@ -35,13 +36,7 @@ public class UserDaoListTest extends RepoDashDaoTestBase {
     @Test
     public void test() {
         List<User> users = userDao.list();
-        assertThat(users, hasSize(2));
-
-        List<User> savedUsers = Lists.newArrayList(user0, user1);
-        savedUsers.sort(Comparator.comparing(User::getId));
-
-        for (int i = 0; i < users.size(); ++i) {
-            assertThat(users.get(i), sameBeanAs(savedUsers.get(i)));
-        }
+        assertThat(users.get(0), sameBeanAs(user0));
+        assertThat(users.get(1), sameBeanAs(user1));
     }
 }

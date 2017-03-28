@@ -5,6 +5,7 @@ import com.kwery.tests.fluentlenium.RepoDashPage;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
+import org.fluentlenium.core.hook.wait.WaitHook;
 import org.openqa.selenium.support.FindBy;
 
 import static com.kwery.tests.util.Messages.LOGIN_FAILURE_M;
@@ -20,7 +21,7 @@ public class UserLoginPage extends KweryFluentPage implements RepoDashPage {
     protected FluentWebElement loginForm;
 
     public void submitForm(String... inputs) {
-        $("input").fill().with(inputs);
+        $("input").withHook(WaitHook.class).fill().with(inputs);
         $("#login").click();
     }
 

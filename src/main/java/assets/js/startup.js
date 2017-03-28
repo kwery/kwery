@@ -3,6 +3,10 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/nav-bar"
     });
 
+    ko.components.register("license-details", {
+        require: "components/license-details"
+    });
+
     ko.components.register("onboarding", {
         require: "components/onboarding/onboarding"
     });
@@ -99,8 +103,18 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/user/save"
     });
 
+    ko.components.register("user-edit", {
+        require: "components/user/edit"
+    });
+
     ko.components.register("report-copy", {
         require: "components/report/copy"
+    });
+
+    ko.components.register("cron-help", {
+        template : {
+            require: "text!components/report/cron-help.html"
+        }
     });
 
     ko.applyBindings({route: router.currentRoute});
