@@ -1,0 +1,18 @@
+<div class='section' th:each="section: ${reportEmail.reportEmailSections}">
+    <h1 th:text="${section.title}">Title</h1>
+
+    <p th:if="${section.contentTooLarge}">Report too large to display, please download and view</p>
+
+    <table th:if="${!section.contentTooLarge and !section.headers.empty and !section.rows.empty}" style='border: 1px solid black; table-layout: auto;'>
+        <tr style='border: 1px solid black;'>
+            <th th:each="header : ${section.headers}" th:text="|${header}|" style='border: 1px solid black;'></th>
+        </tr>
+        <tr th:each="row: ${section.rows}" style='border: 1px solid black;'>
+            <td th:each="column : ${row}" th:text="|${column}|" style='border: 1px solid black;'></td>
+        </tr>
+    </table>
+</div>
+
+<p th:if="${reportEmail.attachmentSkipped}" style='color:red'>P.S. Some attachments were not sent as the files were too large</p>
+
+<div th:replace="footer :: copy"></div>

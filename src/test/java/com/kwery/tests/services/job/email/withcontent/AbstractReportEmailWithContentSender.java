@@ -3,16 +3,15 @@ package com.kwery.tests.services.job.email.withcontent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
 import com.kwery.utils.KweryConstant;
-import com.kwery.conf.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,7 +49,6 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
     SqlQueryExecutionModel sqlQueryExecutionModel1;
     SqlQueryExecutionModel sqlQueryExecutionModel3;
 
-    CsvToHtmlConverterFactory csvToHtmlConverterFactory;
     KweryDirectory kweryDirectory;
 
     @Before
@@ -136,8 +134,6 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
         File file2 = kweryDirectory.createFile();
         TestUtil.writeCsvOfSize(KweryConstant.SQL_QUERY_RESULT_ATTACHMENT_SIZE_LIMIT + 1024, file2);
         sqlQueryExecutionModel3.setResultFileName(file2.getName());
-
-        csvToHtmlConverterFactory = getInstance(CsvToHtmlConverterFactory.class);
 
         smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
         emailConfigurationDbSet(wiserRule.emailConfiguration());

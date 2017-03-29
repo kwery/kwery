@@ -13,12 +13,13 @@ import com.kwery.services.mail.MailService;
 import ninja.i18n.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static com.kwery.controllers.MessageKeys.REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY;
 import static com.kwery.controllers.MessageKeys.REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT;
 
 @Singleton
@@ -29,12 +30,15 @@ public class ReportFailureAlertEmailSender {
     protected DomainConfigurationDao domainConfigurationDao;
     protected Provider<KweryMail> kweryMailProvider;
     protected Messages messages;
+    protected final ITemplateEngine templateEngine;
 
     @Inject
-    public ReportFailureAlertEmailSender(MailService mailService, DomainConfigurationDao domainConfigurationDao, Provider<KweryMail> kweryMailProvider, Messages messages) {
+    public ReportFailureAlertEmailSender(MailService mailService, DomainConfigurationDao domainConfigurationDao, Provider<KweryMail> kweryMailProvider,
+                                       ITemplateEngine templateEngine,  Messages messages) {
         this.mailService = mailService;
         this.domainConfigurationDao = domainConfigurationDao;
         this.kweryMailProvider = kweryMailProvider;
+        this.templateEngine = templateEngine;
         this.messages = messages;
     }
 
@@ -56,16 +60,15 @@ public class ReportFailureAlertEmailSender {
             urlConfiguration = domainConfigurationDao.get().get(0);
         }
 
+        Context context = new Context();
+
         if (urlConfiguration!= null) {
             String url = urlConfiguration.getScheme() + "://" + urlConfiguration.getDomain() + ":" + urlConfiguration.getPort()
                     + String.format("/#report/%d/execution/%s", jobExecutionModel.getJobModel().getId(), jobExecutionModel.getExecutionId());
-            String text = messages.get(REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY, Optional.absent()).get();
-            String body = String.format("<a href='%s'>%s</a>", url, text);
-            kweryMail.setBodyHtml(body);
-        } else {
-            //Hack to send an email with empty body
-            kweryMail.setBodyHtml(" ");
+            context.setVariable("url", url);
         }
+
+        kweryMail.setBodyHtml(templateEngine.process("alert", context));
 
         jobExecutionModel.getJobModel().getFailureAlertEmails().forEach(kweryMail::addTo);
 
@@ -77,6 +80,5 @@ public class ReportFailureAlertEmailSender {
             logger.error("Exception while trying to send report generation failure alert email for job id {} and execution id {}",
                     jobModel.getId(), jobExecutionModel.getId(), e);
         }
-
     }
 }

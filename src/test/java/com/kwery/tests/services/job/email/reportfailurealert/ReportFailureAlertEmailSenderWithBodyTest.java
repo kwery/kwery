@@ -36,13 +36,6 @@ public class ReportFailureAlertEmailSenderWithBodyTest extends ReportFailureAler
     public void test() throws Exception {
         emailSender.send(jobExecutionModel);
 
-        UrlConfiguration urlConfiguration = domainConfigurationDao.get().get(0);
-
-        String url = urlConfiguration.getScheme() + "://" + urlConfiguration.getDomain() + ":" + urlConfiguration.getPort();
-
-        String body = String.format("<a href='%s/#report/%d/execution/%s'>%s</a>",
-                url, jobExecutionModel.getJobModel().getId(), jobExecutionModel.getExecutionId(), REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M);
-
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
 
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));
@@ -50,8 +43,17 @@ public class ReportFailureAlertEmailSenderWithBodyTest extends ReportFailureAler
         WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);
 
         MimeMessage mimeMessage = wiserMessage.getMimeMessage();
+
         MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
+        String htmlContent = mimeMessageParser.getHtmlContent();
+
+        UrlConfiguration urlConfiguration = domainConfigurationDao.get().get(0);
+        String url = urlConfiguration.getScheme() + "://" + urlConfiguration.getDomain() + ":" + urlConfiguration.getPort()
+                + "/#report/" + jobExecutionModel.getJobModel().getId() + "/execution/" + jobExecutionModel.getExecutionId();
+
+        assertLink(htmlContent, REPORT_GENERATION_FAILURE_ALERT_EMAIL_BODY_M, url);
+        assertFooter(htmlContent);
+
         assertThat(mimeMessageParser.getSubject(), is(expectedSubject()));
-        assertThat(mimeMessageParser.getHtmlContent(), is(body));
     }
 }

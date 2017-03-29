@@ -13,7 +13,7 @@ import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
 import com.kwery.services.kwerydirectory.KweryDirectoryChecker;
 import com.kwery.services.license.LicenseChecker;
-import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
+import com.kwery.services.mail.converter.CsvToReportEmailSectionConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
 import com.kwery.services.search.SearchIndexer;
@@ -37,7 +37,6 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -52,7 +51,7 @@ public class Module extends AbstractModule {
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
         install(new FactoryModuleBuilder().build(JobTaskFactory.class));
         install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
-        install(new FactoryModuleBuilder().build(CsvToHtmlConverterFactory.class));
+        install(new FactoryModuleBuilder().build(CsvToReportEmailSectionConverterFactory.class));
         bind(SearchIndexer.class);
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
@@ -132,7 +131,7 @@ public class Module extends AbstractModule {
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding(Charsets.UTF_8.displayName());
-        templateResolver.setCacheable(false);
+        templateResolver.setCacheable(true);
         return templateResolver;
     }
 }

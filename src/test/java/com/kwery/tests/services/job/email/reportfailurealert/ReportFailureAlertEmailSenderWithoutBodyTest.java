@@ -26,6 +26,9 @@ public class ReportFailureAlertEmailSenderWithoutBodyTest extends ReportFailureA
         MimeMessage mimeMessage = wiserMessage.getMimeMessage();
         MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
         assertThat(mimeMessageParser.getSubject(), is(expectedSubject()));
-        assertThat(mimeMessageParser.getHtmlContent(), is(" "));
+
+        String htmlContent = mimeMessageParser.getHtmlContent();
+        assertLinkAbsent(htmlContent);
+        assertFooter(htmlContent);
     }
 }

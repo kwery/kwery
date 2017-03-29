@@ -1,10 +1,12 @@
 package com.kwery.services.job;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.kwery.conf.KweryDirectory;
+import com.kwery.dtos.email.ReportEmail;
+import com.kwery.dtos.email.ReportEmailSection;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryEmailSettingModel;
@@ -13,14 +15,15 @@ import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.KweryMailAttachment;
 import com.kwery.services.mail.KweryMailAttachmentImpl;
 import com.kwery.services.mail.MailService;
-import com.kwery.services.scheduler.CsvToHtmlConverter;
-import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
-import com.kwery.conf.KweryDirectory;
+import com.kwery.services.mail.converter.CsvToReportEmailSectionConverter;
+import com.kwery.services.mail.converter.CsvToReportEmailSectionConverterFactory;
 import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
 import ninja.i18n.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,28 +32,28 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.kwery.controllers.MessageKeys.JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING;
-import static com.kwery.controllers.MessageKeys.REPORTEMAILSENDER_ATTACHMENT_SKIPPED;
 import static com.kwery.utils.KweryUtil.fileName;
 
 @Singleton
 public class ReportEmailSender {
     protected Logger logger = LoggerFactory.getLogger(ReportEmailSender.class);
 
-    protected CsvToHtmlConverterFactory csvToHtmlConverterFactory;
+    protected CsvToReportEmailSectionConverterFactory csvToReportEmailSectionConverterFactory;
     protected final Provider<KweryMail> kweryMailProvider;
     protected final MailService mailService;
     protected final KweryDirectory kweryDirectory;
     protected final Messages messages;
+    protected final ITemplateEngine templateEngine;
 
     @Inject
-    public ReportEmailSender(CsvToHtmlConverterFactory csvToHtmlConverterFactory, Provider<KweryMail> kweryMailProvider,
-                             MailService mailService, KweryDirectory kweryDirectory, Messages messages) {
+    public ReportEmailSender(CsvToReportEmailSectionConverterFactory csvToReportEmailSectionConverterFactory, Provider<KweryMail> kweryMailProvider,
+                             MailService mailService, KweryDirectory kweryDirectory, ITemplateEngine templateEngine, Messages messages) {
         this.kweryMailProvider = kweryMailProvider;
         this.mailService = mailService;
         this.kweryDirectory = kweryDirectory;
-        this.csvToHtmlConverterFactory = csvToHtmlConverterFactory;
+        this.csvToReportEmailSectionConverterFactory = csvToReportEmailSectionConverterFactory;
         this.messages = messages;
+        this.templateEngine = templateEngine;
     }
 
     public void send(JobExecutionModel jobExecutionModel) {
@@ -59,7 +62,7 @@ public class ReportEmailSender {
         String subject = jobModel.getTitle() + " - " + new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(jobExecutionModel.getExecutionStart()));
 
         try {
-            List<String> emailSnippets = new LinkedList<>();
+            ReportEmail reportEmail = new ReportEmail();
 
             List<KweryMailAttachment> attachments = new LinkedList<>();
 
@@ -72,23 +75,24 @@ public class ReportEmailSender {
                 //If this is null, we include in both email and attachments
                 SqlQueryEmailSettingModel sqlQueryEmailSettingModel = sqlQueryExecutionModel.getSqlQuery().getSqlQueryEmailSettingModel();
                 if (sqlQueryEmailSettingModel == null || sqlQueryEmailSettingModel.getIncludeInEmailBody()) {
-                    emailSnippets.add("<h1>" + sqlQueryExecutionModel.getSqlQuery().getTitle() + "</h1>");
+                    ReportEmailSection section = new ReportEmailSection();
 
-                    if (sqlQueryExecutionModel.getResultFileName() == null) {
-                        emailSnippets.add("<div></div>");
-                    } else {
+                    if (sqlQueryExecutionModel.getResultFileName() != null) {
                         File resultFile = kweryDirectory.getFile(sqlQueryExecutionModel.getResultFileName());
-
                         if (KweryUtil.isFileWithinLimits(resultFile)) {
-                            CsvToHtmlConverter csvToHtmlConverter = csvToHtmlConverterFactory.create(resultFile);
-                            emailSnippets.add(csvToHtmlConverter.convert());
-                            hasContent = hasContent || csvToHtmlConverter.isHasContent();
+                            CsvToReportEmailSectionConverter converter = csvToReportEmailSectionConverterFactory.create(resultFile);
+                            section = converter.convert();
+                            hasContent = hasContent || !section.getRows().isEmpty();
                         } else {
-                            String message = messages.get(JOBAPICONTROLLER_REPORT_CONTENT_LARGE_WARNING, Optional.absent()).get();
-                            emailSnippets.add(String.format("<p>%s</p>", message));
+                            section = new ReportEmailSection();
+                            section.setContentTooLarge(true);
                             hasContent = true;
                         }
                     }
+
+                    section.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
+
+                    reportEmail.getReportEmailSections().add(section);
                 }
 
                 if (sqlQueryEmailSettingModel == null || sqlQueryEmailSettingModel.getIncludeInEmailAttachment()) {
@@ -110,17 +114,17 @@ public class ReportEmailSender {
             }
 
             if (attachmentSkipped) {
-                String message = messages.get(REPORTEMAILSENDER_ATTACHMENT_SKIPPED, Optional.absent()).get();
-                emailSnippets.add(String.format("<p style='color:red'>%s</p>", message));
+                reportEmail.setAttachmentSkipped(true);
             }
-
-            emailSnippets.add("<br><hr><p>Report generated using <a href='http://getkwery.com'>Kwery</a></p>");
 
             //For now do not bother about include in email and attachments while evaluating rules
             if (shouldSend(hasContent, jobModel)) {
                 KweryMail kweryMail = kweryMailProvider.get();
                 kweryMail.setSubject(subject);
-                kweryMail.setBodyHtml(String.join("", emailSnippets));
+
+                Context context = new Context();
+                context.setVariable("reportEmail", reportEmail);
+                kweryMail.setBodyHtml(templateEngine.process("report", context));
 
                 //This condition might occur due to email setting rules
                 if (kweryMail.getBodyHtml().equals("")) {
