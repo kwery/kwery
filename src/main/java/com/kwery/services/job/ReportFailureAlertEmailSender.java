@@ -65,6 +65,7 @@ public class ReportFailureAlertEmailSender {
         if (urlConfiguration!= null) {
             String url = urlConfiguration.getScheme() + "://" + urlConfiguration.getDomain() + ":" + urlConfiguration.getPort()
                     + String.format("/#report/%d/execution/%s", jobExecutionModel.getJobModel().getId(), jobExecutionModel.getExecutionId());
+            context.setVariable("title", jobExecutionModel.getJobModel().getTitle());
             context.setVariable("url", url);
         }
 

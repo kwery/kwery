@@ -1,10 +1,6 @@
 package com.kwery.tests.services.job.email.reportfailurealert;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Resources;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.services.job.ReportFailureAlertEmailSender;
@@ -16,14 +12,11 @@ import org.jsoup.nodes.Element;
 import org.junit.Before;
 import org.junit.Rule;
 
-import java.io.IOException;
-
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.Messages.REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M;
 import static com.kwery.tests.util.TestUtil.jobExecutionModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class ReportFailureAlertEmailSenderAbstractTest extends RepoDashTestBase {
@@ -58,33 +51,14 @@ public class ReportFailureAlertEmailSenderAbstractTest extends RepoDashTestBase 
         return REPORT_GENERATION_FAILURE_ALERT_EMAIL_SUBJECT_M + " - " + jobExecutionModel.getJobModel().getTitle() + " - Thu Dec 22 2016 21:29";
     }
 
-    public void assertLinkAbsent(String html) {
+    public static void assertAlertFooter(String html) {
         Document doc = Jsoup.parse(html);
-        Element link = doc.select("a#url").first();
-        assertThat(link, nullValue());
-    }
+        String text = doc.select(".footer-t").get(0).text();
+        assertThat(text, is("Alert sent by Kwery"));
 
-    public void assertLink(String html, String expectedText, String expectedUrl) {
-        Document doc = Jsoup.parse(html);
-        Element link = doc.select("a#url").first();
-        assertThat(link.text(), is(expectedText));
-        assertThat(link.attr("href"), is(expectedUrl));
-    }
+        Element kweryLink = doc.select(".kwery-link-t").get(0);
 
-    public void assertFooter(String html) throws IOException {
-        Document doc = Jsoup.parse(html);
-        Element footerDiv = doc.select("div.footer").first();
-
-        String text = footerDiv.outerHtml().replaceAll("\"", "'");
-
-        String actual = Joiner.on("").join(Splitter.on("\n").omitEmptyStrings().trimResults().splitToList(
-                text.replaceAll("\r\n", "\n"))
-        );
-
-        String expected = Joiner.on("").join(Splitter.on("\n").omitEmptyStrings().trimResults().splitToList(
-                Resources.toString(Resources.getResource("email/expectedFooter.html"), Charsets.UTF_8))
-        );
-
-        assertThat(actual, is(expected));
+        assertThat(kweryLink.text(), is("Kwery"));
+        assertThat(kweryLink.attr("href"), is("http://getkwery.com/"));
     }
 }

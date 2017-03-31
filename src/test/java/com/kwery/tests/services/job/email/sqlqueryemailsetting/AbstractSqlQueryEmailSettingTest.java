@@ -1,10 +1,6 @@
 package com.kwery.tests.services.job.email.sqlqueryemailsetting;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Resources;
 import com.kwery.conf.KweryDirectory;
 import com.kwery.models.*;
 import com.kwery.services.job.ReportEmailSender;
@@ -14,7 +10,6 @@ import com.kwery.tests.util.WiserRule;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,14 +27,13 @@ import java.util.LinkedList;
 import static com.jayway.jsonassert.impl.matcher.IsEmptyCollection.empty;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.services.job.email.EmailHtmlTestUtil.assertReportFooter;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
@@ -112,7 +106,7 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
         MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
 
         String htmlContent = mimeMessageParser.getHtmlContent();
-        assertFooter(htmlContent);
+        assertReportFooter(htmlContent);
 
         if (emptyBody) {
             assertSection(htmlContent, false);
@@ -130,30 +124,14 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
         sqlQueryModel0.setSqlQueryEmailSettingModel(model);
     }
 
-    public void assertFooter(String html) throws IOException {
-        Document doc = Jsoup.parse(html);
-        Element footerDiv = doc.select("div.footer").first();
-
-        String text = footerDiv.outerHtml().replaceAll("\"", "'");
-
-        String actual = Joiner.on("").join(Splitter.on("\n").omitEmptyStrings().trimResults().splitToList(
-                text.replaceAll("\r\n", "\n"))
-        );
-
-        String expected = Joiner.on("").join(Splitter.on("\n").omitEmptyStrings().trimResults().splitToList(
-                Resources.toString(Resources.getResource("email/expectedFooter.html"), Charsets.UTF_8))
-        );
-
-        assertThat(actual, is(expected));
-    }
-
     protected void assertSection(String html, boolean present) {
         Document doc = Jsoup.parse(html);
-        Elements footerDivs = doc.select("div.section");
+        Elements headers = doc.select(".report-content-t th");
+
         if (present) {
-            assertThat(footerDivs.size(), greaterThanOrEqualTo(1));
+            assertThat(headers.size(), greaterThanOrEqualTo(1));
         } else {
-            assertThat(footerDivs, empty());
+            assertThat(headers, empty());
         }
     }
 }

@@ -8,6 +8,8 @@ import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.WiserRule;
 import ninja.Router;
 import org.apache.commons.mail.util.MimeMessageParser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -70,7 +72,13 @@ public class MailApiControllerTestEmailConfigurationSuccessTest extends Abstract
         for (WiserMessage wiserMessage : wiserRule.wiser().getMessages()) {
             MimeMessage mimeMessage = wiserMessage.getMimeMessage();
             MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
-            assertThat(mimeMessageParser.getPlainContent(), is(EMAIL_TEST_BODY_M));
+
+            String html = mimeMessageParser.getHtmlContent();
+
+            Document document = Jsoup.parse(html);
+            assertThat(document.select(".footer-t").get(0).text(), is("Email sent by Kwery"));
+            assertThat(document.select(".kwery-link-t").get(0).attr("href"), is("http://getkwery.com/"));
+
             assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(true));
             assertThat(mimeMessageParser.getSubject(), is(EMAIL_TEST_SUBJECT_M));
             assertThat(mimeMessageParser.getFrom(), is(emailConfiguration.getFrom()));
