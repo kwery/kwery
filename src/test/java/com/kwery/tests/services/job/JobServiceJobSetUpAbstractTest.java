@@ -201,7 +201,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     protected abstract String getQuery();
 
     public void assertReportEmailExists() throws Exception {
-        assertThat(wiserRule.wiser().getMessages().isEmpty(), is(false));
+        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
 
         for (WiserMessage wiserMessage : wiserRule.wiser().getMessages()) {
             MimeMessage mimeMessage = wiserMessage.getMimeMessage();
