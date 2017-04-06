@@ -131,7 +131,15 @@ public class ReportListPage extends KweryFluentPage implements RepoDashPage {
         }
     }
 
+    public void generateNow(int index) {
+        el(String.format(".report-list-%d-f .execute-now-f", index)).withHook(WaitHook.class).click();
+    }
+
     public enum PaginationPosition {
         top, bottom
+    }
+
+    public void assertWaitingMessage() {
+        assertThat(el("span", withClass("waiting-text-f"), containingText(REPORT_LIST_EXECUTE_NOW_WAITING_M))).isDisplayed();
     }
 }

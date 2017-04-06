@@ -102,4 +102,6 @@ public class Messages {
 
     public static final String EMAIL_CONFIGURATION_SMTP_MISSING_M = "Please configure SMTP";
     public static final String EMAIL_CONFIGURATION_SENDER_DETAILS_MISSING_M = "Please configure sender details";
+
+    public static final String REPORT_LIST_EXECUTE_NOW_WAITING_M = "Generating Report";
 }
