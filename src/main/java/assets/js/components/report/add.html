@@ -208,7 +208,10 @@
 
                 <br>
 
-                <button data-bind="text: ko.i18n('report.save.submit')" type="submit" class="btn btn-primary btn-lg f-report-submit" id="create"></button>
+                <button data-bind="text: ko.i18n('report.save.submit')" type="submit" class="btn btn-primary btn-lg f-report-submit"
+                        id="create" value="save"></button>
+                <button data-bind="text: ko.i18n('report.save.generate.submit'), attr: {'title': ko.i18n('report.save.generate.submit.tooltip')}"
+                        type="submit" class="btn btn-primary btn-lg f-report-generate-submit" value="generate"></button>
             </form>
         </div>
     </div>

@@ -94,7 +94,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
         String response = ninjaTestBrowser.postJson(getUrl(url), jobDto);
 
         assertThat(response, isJson());
-        assertThat(response, hasJsonPath("$.status", is(success.name())));
+        assertThat(response, hasJsonPath("$.reportId", is(jobDao.getAllJobs().get(0).getId())));
 
         JobModel jobModel = jobDao.getJobByName(jobDto.getName());
 

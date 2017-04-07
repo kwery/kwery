@@ -89,8 +89,6 @@ public class JobApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result saveJob(JobDto jobDto, Context context) {
-        if (logger.isTraceEnabled()) logger.trace("<");
-
         boolean isUpdate = jobDto.getId() > 0;
 
         Result json = json();
@@ -160,13 +158,10 @@ public class JobApiController {
                 jobService.schedule(jobModel.getId());
             }
 
-            actionResult = new ActionResult(success, "");
+            return json.render(ImmutableMap.of("reportId", jobModel.getId()));
         } else {
-            actionResult = new ActionResult(failure, errorMessages);
+            return json.render(actionResult);
         }
-
-        if (logger.isTraceEnabled()) logger.trace(">");
-        return json.render(actionResult);
     }
 
     @FilterWith(DashRepoSecureFilter.class)

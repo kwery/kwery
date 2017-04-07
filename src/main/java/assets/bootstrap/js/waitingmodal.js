@@ -9,7 +9,7 @@
                 html = html + '<img class="center-block" src="/assets/images/loader.gif">';
             } else {
                 html = html + '<div class="text-center">' +
-                    '<div class="progress center-block" style="width:200px;">' +
+                    '<div class="progress center-block" style="width:300px;">' +
                     '<div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%;">' +
                     '<span class="waiting-text-f">' +
                     text +
