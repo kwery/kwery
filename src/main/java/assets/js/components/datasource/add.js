@@ -1,17 +1,23 @@
 define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil", "waitingmodal", "jstorage", "validator"], function (ko, $, template, ajaxUtil, waitingModal) {
-    function viewModel(params) {
+    function ViewModel(params) {
         var self = this;
 
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
-        //Is this onboarding flow?
-        if (params["?q"] !== undefined) {
-            self.onboarding = params["?q"].onboarding;
-            if (self.onboarding !== undefined) {
-                self.status("info");
-                self.messages([ko.i18n("onboarding.datasource.add")]);
+        var isUpdate = false;
+
+        if (params !== undefined) {
+            //Is this onboarding flow?
+            if (params["?q"] !== undefined) {
+                self.onboarding = params["?q"].onboarding;
+                if (self.onboarding !== undefined) {
+                    self.status("info");
+                    self.messages([ko.i18n("onboarding.datasource.add")]);
+                }
             }
+
+            isUpdate = params.datasourceId !== undefined;
         }
 
         self.username = ko.observable();
@@ -49,7 +55,6 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
             new DatasourceType("SQLSERVER", "SQLSERVER")
         ]);
 
-        var isUpdate = params.datasourceId !== undefined;
 
         $("#addDatasourceForm").validator({
             disable: false
@@ -57,7 +62,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
             if (!e.isDefaultPrevented()) {
                 var datasource = {
                     url: self.url(),
-                    port: self.port(),
+                    port: Number(self.port()),
                     username: self.username(),
                     password: self.password(),
                     label: self.label(),
@@ -69,41 +74,15 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                     datasource.id = params.datasourceId;
                 }
 
+                debugger;
+
                 ajaxUtil.waitingAjax({
                     url: "/api/datasource/add-datasource",
                     data: ko.toJSON(datasource),
                     type: "POST",
                     contentType: "application/json",
-                    success: function(result) {
-                        if (result.status === "success") {
-                            $.ajax({
-                                before: function(){
-                                    waitingModal.show();
-                                },
-                                url: "/api/onboarding/next-action",
-                                type: "GET",
-                                contentType: "application/json",
-                                success: function(response){
-                                    waitingModal.hide();
-                                    switch (response.action) {
-                                        case "ADD_JOB":
-                                            window.location.href = "/#report/add?onboarding=true&fromDatasource=true";
-                                            break;
-                                        case "SHOW_HOME_SCREEN":
-                                            if ($.jStorage.storageAvailable()) {
-                                                $.jStorage.set("ds:status", result.status, {TTL: (10 * 60 * 1000)});
-                                                $.jStorage.set("ds:messages", result.messages, {TTL: (10 * 60 * 1000)});
-                                                window.location.href = "#datasource/list";
-                                            } else {
-                                                throw new Error("Not enough space available to store result in browser");
-                                            }
-                                    }
-                                }
-                            });
-                        } else {
-                            self.status(result.status);
-                            self.messages(result.messages);
-                        }
+                    success: function(response){
+                      self.addDatasourceSuccessCb(response, self);
                     }
                 });
             }
@@ -116,23 +95,65 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
         };
 
         if (isUpdate) {
-            ajaxUtil.waitingAjax({
-                url: "/api/datasource/" + params.datasourceId,
-                type: "GET",
-                contentType: "application/json",
-                success: function(datasource) {
-                    self.username(datasource.username);
-                    self.password(datasource.password);
-                    self.url(datasource.url);
-                    self.port(datasource.port);
-                    self.label(datasource.label);
-                    self.datasourceType(datasource.type);
-                    self.database(datasource.database);
-                }
-            })
+            self.populateForm(params.datasourceId);
         }
 
         return self;
     }
-    return { viewModel: viewModel, template: template };
+
+    ViewModel.prototype.populateForm = function(datasourceId) {
+        var self = this;
+        ajaxUtil.waitingAjax({
+            url: "/api/datasource/" + datasourceId,
+            type: "GET",
+            contentType: "application/json",
+            success: function(datasource) {
+                self.username(datasource.username);
+                self.password(datasource.password);
+                self.url(datasource.url);
+                self.port(datasource.port);
+                self.label(datasource.label);
+                self.datasourceType(datasource.type);
+                self.database(datasource.database);
+            }
+        })
+    };
+
+    ViewModel.prototype.addDatasourceSuccessCb = function(result, ref) {
+        if (result.status === "success") {
+            $.ajax({
+                before: function(){
+                    waitingModal.show();
+                },
+                url: "/api/onboarding/next-action",
+                type: "GET",
+                contentType: "application/json",
+                success: function(response){
+                  ref.nextActionCb(response, result);
+                }
+            });
+        } else {
+            ref.status(result.status);
+            ref.messages(result.messages);
+        }
+    };
+
+    ViewModel.prototype.nextActionCb = function(response, addResponse) {
+        waitingModal.hide();
+        switch (response.action) {
+            case "ADD_JOB":
+                window.location.href = "/#report/add?onboarding=true&fromDatasource=true";
+                break;
+            case "SHOW_HOME_SCREEN":
+                if ($.jStorage.storageAvailable()) {
+                    $.jStorage.set("ds:status", addResponse.status, {TTL: (10 * 60 * 1000)});
+                    $.jStorage.set("ds:messages", addResponse.messages, {TTL: (10 * 60 * 1000)});
+                    window.location.href = "#datasource/list";
+                } else {
+                    throw new Error("Not enough space available to store result in browser");
+                }
+        }
+    };
+
+    return { viewModel: ViewModel, template: template };
 });

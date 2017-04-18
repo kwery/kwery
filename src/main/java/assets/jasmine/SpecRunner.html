@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jasmine Spec Runner v2.5.2</title>
+
+    <link rel="shortcut icon" type="image/png" href="/assets/jasmine/jasmine_favicon.png">
+    <link rel="stylesheet" href="/assets/jasmine/jasmine.css">
+
+<!--    &lt;!&ndash; include source files here... &ndash;&gt;
+    <script src="src/Player.js"></script>
+    <script src="src/Song.js"></script>-->
+
+    <script src="/assets/app/require.config.js"></script>
+    <script data-main="startup" src="/assets/js/require.js"></script>
+    <script>
+        require(['jasmine-boot'], function () {
+            require([
+                'components/datasource/test/datasource-spec',
+                ], function(){
+                window.executeTests();
+            })
+        });
+    </script>
+
+<!--    &lt;!&ndash; include spec files here... &ndash;&gt;
+    <script src="spec/SpecHelper.js"></script>
+    <script src="spec/PlayerSpec.js"></script>-->
+
+</head>
+
+<body>
+</body>
+</html>
