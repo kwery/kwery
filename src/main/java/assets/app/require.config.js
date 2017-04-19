@@ -19,7 +19,12 @@ var require = {
         "waitingmodal": "/assets/bootstrap/js/waitingmodal",
         "ajaxutil": "ajaxutil",
         "jstorage": "jstorage",
-        "messages": "/messages"
+        "messages": "/messages",
+        "jasmine": "/assets/jasmine/jasmine",
+        "jasmine-html": "/assets/jasmine/jasmine-html",
+        "jasmine-boot": "/assets/jasmine/boot",
+        "jasmine-extensions": "/assets/jasmine/jasmine-extensions",
+        "jasmine-mock-ajax": "/assets/jasmine/mock-ajax"
     },
     shim: {
         "bootstrap": {
@@ -44,6 +49,15 @@ var require = {
         "jstorage": {
             deps: ["jquery"],
             exports: "jstorage"
+        },
+        "jasmine-html": {
+            deps: ["jasmine"]
+        },
+        "jasmine-boot": {
+            deps: ["jasmine", "jasmine-html"]
+        },
+        "jasmine-mock-ajax": {
+            deps: ["jasmine"]
         }
     }
 };
