@@ -1,7 +1,7 @@
 ;((function(){
     define(["jquery", "bootstrap"], function($){
         function constructModal(text) {
-            var html = '<div class="modal fade waiting-modal-f" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="waitingFor">' +
+            var html = '<div class="modal fade waiting-modal-f" id="kweryModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="waitingFor">' +
                 '<div class="modal-dialog" role="document">' +
                 '<div>';
 
@@ -27,16 +27,47 @@
 
         var $modal;
 
+        //Tracks the time between calling action and the actions taking place post CSS transitions
+        var showCalled = false;
+        var hideCalled = false;
+
+        var showQueue = [];
+        var hideQueue = [];
+
         return {
             show : function(text) {
-                $modal = constructModal(text);
-                $modal.modal();
-                $modal.on("hidden.bs.modal", function(){
-                    $(this).remove();
-                });
+                var self = this;
+                if (hideCalled === true || showCalled === true) {
+                    showQueue.push({"show": text});
+                } else {
+                    showCalled = true;
+                    $modal = constructModal(text);
+                    $modal.modal();
+                    $modal.on("hidden.bs.modal", function(){
+                        $(this).remove();
+                        hideCalled = false;
+                        //Drain piled up events
+                        if (showQueue.length > 0) {
+                            self.show(showQueue.pop()["show"]);
+                        }
+                    });
+                    $modal.on("shown.bs.modal", function(){
+                        showCalled = false;
+                        //Drain piled up events
+                        if (hideQueue.length > 0) {
+                            hideQueue.pop();
+                            self.hide();
+                        }
+                    });
+                }
             },
             hide: function() {
-                $modal.modal("hide");
+                if (hideCalled === true || showCalled === true) {
+                    hideQueue.push("hide");
+                } else {
+                    hideCalled = true;
+                    $modal.modal("hide");
+                }
             }
         }
     });
