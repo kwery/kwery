@@ -30,6 +30,8 @@
         //Tracks the time between calling action and the actions taking place post CSS transitions
         var showCalled = false;
         var hideCalled = false;
+        //Tracks whether modal is open
+        var modalShown = false;
 
         var showQueue = [];
         var hideQueue = [];
@@ -37,7 +39,9 @@
         return {
             show : function(text) {
                 var self = this;
-                if (hideCalled === true || showCalled === true) {
+                //At a time only one modal can exist
+                //Modals do not open or close immediately on call, there is a delay due to the transition effect
+                if (hideCalled === true || showCalled === true || modalShown === true) {
                     showQueue.push({"show": text});
                 } else {
                     showCalled = true;
@@ -46,6 +50,7 @@
                     $modal.on("hidden.bs.modal", function(){
                         $(this).remove();
                         hideCalled = false;
+                        modalShown = false;
                         //Drain piled up events
                         if (showQueue.length > 0) {
                             self.show(showQueue.pop()["show"]);
@@ -53,6 +58,7 @@
                     });
                     $modal.on("shown.bs.modal", function(){
                         showCalled = false;
+                        modalShown = true;
                         //Drain piled up events
                         if (hideQueue.length > 0) {
                             hideQueue.pop();
