@@ -99,12 +99,13 @@ public class JobApiControllerSaveJobWithDependentsTest extends AbstractPostLogin
         String response = ninjaTestBrowser.postJson(getUrl(url), jobDto);
 
         assertThat(response, isJson());
-        assertThat(response, hasJsonPath("$.status", is(success.name())));
 
         expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
         expectedJobModel.setParentJob(jobDao.getJobById(jobModel.getId()));
 
         JobModel jobModelFromDb = jobDao.getJobByName(jobDto.getName());
+
+        assertThat(response, hasJsonPath("$.reportId", is(jobModelFromDb.getId())));
 
         assertThat(jobModelFromDb, theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("sqlQueries.id")
                 .excludeProperty("created").excludeProperty("updated"));
