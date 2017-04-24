@@ -74,8 +74,6 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                     datasource.id = params.datasourceId;
                 }
 
-                debugger;
-
                 ajaxUtil.waitingAjax({
                     url: "/api/datasource/add-datasource",
                     data: ko.toJSON(datasource),
