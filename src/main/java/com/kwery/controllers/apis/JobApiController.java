@@ -160,7 +160,7 @@ public class JobApiController {
 
             return json.render(ImmutableMap.of("reportId", jobModel.getId()));
         } else {
-            return json.render(actionResult);
+            return json.render(new ActionResult(failure, errorMessages));
         }
     }
 

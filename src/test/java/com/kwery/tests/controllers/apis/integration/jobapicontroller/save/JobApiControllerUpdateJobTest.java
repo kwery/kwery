@@ -113,7 +113,7 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         String response = ninjaTestBrowser.postJson(getUrl(url), jobDto);
 
         assertThat(response, isJson());
-        assertThat(response, hasJsonPath("$.status", is(success.name())));
+        assertThat(response, hasJsonPath("$.reportId", is(jobModel.getId())));
 
         expectedJobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
         assertThat(jobDao.getJobByName(expectedJobModel.getName()), theSameBeanAs(expectedJobModel).excludeProperty("id").excludeProperty("queries.id")
