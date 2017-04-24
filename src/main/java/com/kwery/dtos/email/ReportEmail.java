@@ -6,6 +6,7 @@ import java.util.List;
 public class ReportEmail {
     protected List<ReportEmailSection> reportEmailSections = new LinkedList<>();
     protected boolean attachmentSkipped;
+    protected String logoUrl;
 
     public List<ReportEmailSection> getReportEmailSections() {
         return reportEmailSections;
@@ -21,5 +22,13 @@ public class ReportEmail {
 
     public void setAttachmentSkipped(boolean attachmentSkipped) {
         this.attachmentSkipped = attachmentSkipped;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
 }

@@ -58,6 +58,9 @@ public class Routes implements ApplicationRoutes {
     public static final String DOMAIN_SETTING_SAVE_API = "/api/url-configuration/save";
     public static final String DOMAIN_SETTING_GET_API = "/api/url-configuration";
 
+    public static final String REPORT_EMAIL_CONFIGURATION_SAVE_API = "/api/report-email-configuration/save";
+    public static final String REPORT_EMAIL_CONFIGURATION_GET_API = "/api/report-email-configuration/get";
+
     public static final String LICENSE_API = "/api/license";
 
     public static final String MESSAGES_JS = "/messages.js";
@@ -118,6 +121,9 @@ public class Routes implements ApplicationRoutes {
 
         router.POST().route(DOMAIN_SETTING_SAVE_API).with(UrlConfigurationApiController.class, "saveDomainSetting");
         router.GET().route(DOMAIN_SETTING_GET_API).with(UrlConfigurationApiController.class, "getDomainSetting");
+
+        router.POST().route(REPORT_EMAIL_CONFIGURATION_SAVE_API).with(ReportEmailConfigurationApiController.class, "saveReportEmailConfiguration");
+        router.GET().route(REPORT_EMAIL_CONFIGURATION_GET_API).with(ReportEmailConfigurationApiController.class, "getReportEmailConfiguration");
 
         router.GET().route(LICENSE_API).with(LicenseApiController.class, "getLicenseDetails");
 

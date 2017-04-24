@@ -5,12 +5,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.kwery.conf.KweryDirectory;
+import com.kwery.dao.ReportEmailConfigurationDao;
 import com.kwery.dtos.email.ReportEmail;
 import com.kwery.dtos.email.ReportEmailSection;
-import com.kwery.models.JobExecutionModel;
-import com.kwery.models.JobModel;
-import com.kwery.models.SqlQueryEmailSettingModel;
-import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.models.*;
 import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.KweryMailAttachment;
 import com.kwery.services.mail.KweryMailAttachmentImpl;
@@ -44,16 +42,18 @@ public class ReportEmailSender {
     protected final KweryDirectory kweryDirectory;
     protected final Messages messages;
     protected final ITemplateEngine templateEngine;
+    protected final ReportEmailConfigurationDao reportEmailConfigurationDao;
 
     @Inject
     public ReportEmailSender(CsvToReportEmailSectionConverterFactory csvToReportEmailSectionConverterFactory, Provider<KweryMail> kweryMailProvider,
-                             MailService mailService, KweryDirectory kweryDirectory, ITemplateEngine templateEngine, Messages messages) {
+                             MailService mailService, ReportEmailConfigurationDao reportEmailConfigurationDao, KweryDirectory kweryDirectory, ITemplateEngine templateEngine, Messages messages) {
         this.kweryMailProvider = kweryMailProvider;
         this.mailService = mailService;
         this.kweryDirectory = kweryDirectory;
         this.csvToReportEmailSectionConverterFactory = csvToReportEmailSectionConverterFactory;
         this.messages = messages;
         this.templateEngine = templateEngine;
+        this.reportEmailConfigurationDao = reportEmailConfigurationDao;
     }
 
     public void send(JobExecutionModel jobExecutionModel) {
@@ -63,6 +63,11 @@ public class ReportEmailSender {
 
         try {
             ReportEmail reportEmail = new ReportEmail();
+
+            ReportEmailConfigurationModel reportEmailConfigurationModel = reportEmailConfigurationDao.get();
+            if (reportEmailConfigurationModel != null) {
+                reportEmail.setLogoUrl(reportEmailConfigurationModel.getLogoUrl());
+            }
 
             List<KweryMailAttachment> attachments = new LinkedList<>();
 
@@ -125,6 +130,7 @@ public class ReportEmailSender {
                 Context context = new Context();
                 context.setVariable("reportEmail", reportEmail);
                 kweryMail.setBodyHtml(templateEngine.process("report", context));
+
 
                 //This condition might occur due to email setting rules
                 if (kweryMail.getBodyHtml().equals("")) {

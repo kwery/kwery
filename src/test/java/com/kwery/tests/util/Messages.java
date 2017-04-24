@@ -104,4 +104,6 @@ public class Messages {
     public static final String EMAIL_CONFIGURATION_SENDER_DETAILS_MISSING_M = "Please configure sender details";
 
     public static final String REPORT_LIST_EXECUTE_NOW_WAITING_M = "Generating Report";
+
+    public static final String REPORT_EMAIL_CONFIGURATION_SAVE_SUCCESS = "Logo image URL saved successfully";
 }

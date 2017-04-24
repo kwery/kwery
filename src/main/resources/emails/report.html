@@ -1,6 +1,13 @@
 <html>
-<body style="font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 1.42857; font-size: 14px; background: #f0f4f5;">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<body style="font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 1.42857; font-size: 14px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: white">
+    <tr th:if="${reportEmail.logoUrl}">
+        <td align="center">
+            <img class="logo-t" th:src="${reportEmail.logoUrl}"/>
+        </td>
+    </tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: #f0f4f5;">
     <tr>
         <td align="center">
             <table>

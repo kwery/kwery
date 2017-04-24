@@ -49,7 +49,8 @@
                 {url: "report-label/list", auth: true, component: "report-label-list"},
                 {url: "report-label/add", auth: true, component: "report-label-add"},
                 {url: "report-label/{reportLabelId}", auth: true, component: "report-label-add"},
-                {url: "url-configuration/save", auth: true, component: "url-configuration-save"}
+                {url: "url-configuration/save", auth: true, component: "url-configuration-save"},
+                {url: "logo/save/:?q:", auth: true, component: "logo-save"}
             ];
 
             var componentMapping = {
