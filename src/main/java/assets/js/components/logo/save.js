@@ -18,8 +18,10 @@ define(["knockout", "jquery", "text!components/logo/save.html", "ajaxutil", "wai
                 type: "GET",
                 contentType: "application/json",
                 success: function(reportEmailConfiguration) {
-                    self.logo(reportEmailConfiguration.logoUrl);
-                    self.id(reportEmailConfiguration.id);
+                    if (reportEmailConfiguration !== null) {
+                        self.logo(reportEmailConfiguration.logoUrl);
+                        self.id(reportEmailConfiguration.id);
+                    }
                 }
             });
         };
