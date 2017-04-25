@@ -21,6 +21,9 @@ public class ReportEmailConfigurationApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result saveReportEmailConfiguration(ReportEmailConfigurationModel m) {
+        if (m.getLogoUrl().trim().equals("")) {
+            m.setLogoUrl(null);
+        }
         reportEmailConfigurationDao.save(m);
         return json().render(new ActionResult(success, ""));
     }

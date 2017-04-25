@@ -26,14 +26,6 @@ define(["knockout", "jquery", "text!components/logo/save.html", "ajaxutil", "wai
             });
         };
 
-        $("#reportEmailConfigurationForm").validator({disable: false}).on("submit", function (e) {
-            if (!e.isDefaultPrevented()) {
-                self.submitForm();
-            }
-
-            return false;
-        });
-
         self.getLogo();
 
         return self;
@@ -56,6 +48,8 @@ define(["knockout", "jquery", "text!components/logo/save.html", "ajaxutil", "wai
             self.submitFormCb(actionResult);
             waitingModal.hide();
         });
+
+        return false;
     };
 
     ViewModel.prototype.submitFormCb = function(actionResult){
