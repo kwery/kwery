@@ -8,6 +8,7 @@ import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.assertj.FluentLeniumAssertions;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.hook.wait.Wait;
+import org.fluentlenium.core.hook.wait.WaitHook;
 import org.openqa.selenium.By;
 
 import java.util.LinkedList;
@@ -145,6 +146,10 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     public void submitReportSaveForm() {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until($(".f-report-submit")).clickable();
         $(".f-report-submit").click();
+    }
+
+    public void submitReportGenerateForm() {
+        $(".f-report-generate-submit").withHook(WaitHook.class).click();
     }
 
     public void clickOnAddSqlQuery(int i) {

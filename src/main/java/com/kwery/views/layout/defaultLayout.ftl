@@ -65,6 +65,17 @@
                 .kwery-color {
                     color: #1f3a93;
                 }
+
+                /* Used in waiting modal*/
+                .modal {
+                    width: 100%;
+                    left: 0;
+                    background-color: transparent; }
+
+                .modal-body {
+                    display: inline-block;
+                    background-color: #FFF;
+                }
             </style>
 
             <!-- TODO Add all the required IE8 and other stuff for bootstrap -->

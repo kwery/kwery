@@ -2,16 +2,10 @@ package com.kwery.controllers.apis;
 
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.kwery.filters.DashRepoSecureFilter;
 import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.services.mail.EmailConfigurationExistsException;
-import com.kwery.services.mail.EmailConfigurationService;
-import com.kwery.services.mail.KweryMail;
-import com.kwery.services.mail.KweryMailImpl;
-import com.kwery.services.mail.MailService;
-import com.kwery.services.mail.MultipleEmailConfigurationException;
+import com.kwery.services.mail.*;
 import com.kwery.services.mail.smtp.MultipleSmtpConfigurationFoundException;
 import com.kwery.services.mail.smtp.SmtpConfigurationAlreadyPresentException;
 import com.kwery.services.mail.smtp.SmtpConfigurationNotFoundException;
@@ -24,16 +18,9 @@ import ninja.FilterWith;
 import ninja.Result;
 import ninja.i18n.Messages;
 import ninja.params.PathParam;
+import org.thymeleaf.ITemplateEngine;
 
-import static com.kwery.controllers.MessageKeys.EMAIL_CONFIGURATION_SAVED;
-import static com.kwery.controllers.MessageKeys.EMAIL_TEST_BODY;
-import static com.kwery.controllers.MessageKeys.EMAIL_TEST_FAILURE;
-import static com.kwery.controllers.MessageKeys.EMAIL_TEST_SUBJECT;
-import static com.kwery.controllers.MessageKeys.EMAIL_TEST_SUCCESS;
-import static com.kwery.controllers.MessageKeys.SMTP_CONFIGURATION_ADDED;
-import static com.kwery.controllers.MessageKeys.SMTP_CONFIGURATION_ALREADY_PRESENT;
-import static com.kwery.controllers.MessageKeys.SMTP_CONFIGURATION_UPDATED;
-import static com.kwery.controllers.MessageKeys.SMTP_MULTIPLE_CONFIGURATION;
+import static com.kwery.controllers.MessageKeys.*;
 import static com.kwery.views.ActionResult.Status.failure;
 import static com.kwery.views.ActionResult.Status.success;
 import static ninja.Results.json;
@@ -45,13 +32,16 @@ public class MailApiController {
     protected final EmailConfigurationService emailConfigurationService;
     protected final Messages messages;
     protected final MailService mailService;
+    protected final ITemplateEngine templateEngine;
 
     @Inject
-    public MailApiController(SmtpService smtpService, EmailConfigurationService emailConfigurationService, MailService mailService, Messages messages) {
+    public MailApiController(SmtpService smtpService, EmailConfigurationService emailConfigurationService,
+                             ITemplateEngine templateEngine, MailService mailService, Messages messages) {
         this.smtpService = smtpService;
         this.emailConfigurationService = emailConfigurationService;
         this.mailService = mailService;
         this.messages = messages;
+        this.templateEngine = templateEngine;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -146,8 +136,8 @@ public class MailApiController {
         String subject = messages.get(EMAIL_TEST_SUBJECT, context, Optional.of(json)).get();
         mail.setSubject(subject);
 
-        String body = messages.get(EMAIL_TEST_BODY, context, Optional.of(json)).get();
-        mail.setBodyText(body);
+        org.thymeleaf.context.Context emailContext = new  org.thymeleaf.context.Context();
+        mail.setBodyHtml(templateEngine.process("test", emailContext));
 
         ActionResult actionResult = null;
 

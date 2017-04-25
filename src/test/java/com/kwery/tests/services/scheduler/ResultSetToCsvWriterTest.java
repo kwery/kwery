@@ -38,14 +38,14 @@ public class ResultSetToCsvWriterTest extends RepoDashTestBase {
     @Test
     public void test() throws Exception {
         Connection connection = datasourceService.connection(mysqlDockerRule.getMySqlDocker().datasource());
-        String sql = "select User, max_questions from mysql.user where User = 'root'";
+        String sql = "select User as `Foo Bar Moo`, max_questions from mysql.user where User = 'root'";
         PreparedStatement p = connection.prepareStatement(sql);
         ResultSet resultSet = p.executeQuery();
         File file = temporaryFolder.newFile();
         ResultSetToCsvWriter resultSetToCsvWriter = new ResultSetToCsvWriter(new CsvWriterFactoryImpl(), resultSet, file);
         resultSetToCsvWriter.write();
 
-        String expected = String.join(System.lineSeparator(), ImmutableList.of("\"User\",\"max_questions\"", "\"root\",\"0\"")) + System.lineSeparator();
+        String expected = String.join(System.lineSeparator(), ImmutableList.of("\"Foo Bar Moo\",\"max_questions\"", "\"root\",\"0\"")) + System.lineSeparator();
 
         assertThat(Files.toString(file, Charsets.UTF_8), is(expected));
     }

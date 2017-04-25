@@ -1,5 +1,6 @@
 package com.kwery.conf;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -12,7 +13,7 @@ import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
 import com.kwery.services.kwerydirectory.KweryDirectoryChecker;
 import com.kwery.services.license.LicenseChecker;
-import com.kwery.services.scheduler.CsvToHtmlConverterFactory;
+import com.kwery.services.mail.converter.CsvToReportEmailSectionConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
 import com.kwery.services.search.SearchIndexer;
@@ -27,6 +28,11 @@ import ninja.utils.NinjaConstant;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +51,7 @@ public class Module extends AbstractModule {
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
         install(new FactoryModuleBuilder().build(JobTaskFactory.class));
         install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
-        install(new FactoryModuleBuilder().build(CsvToHtmlConverterFactory.class));
+        install(new FactoryModuleBuilder().build(CsvToReportEmailSectionConverterFactory.class));
         bind(SearchIndexer.class);
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
@@ -110,5 +116,22 @@ public class Module extends AbstractModule {
         }
 
         return new KweryDirectory(base);
+    }
+
+    @Provides @Singleton
+    protected ITemplateEngine htmlTemplateEngine() {
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(htmlTemplateResolver());
+        return templateEngine;
+    }
+
+    private ITemplateResolver htmlTemplateResolver() {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver(getClass().getClassLoader());
+        templateResolver.setPrefix("/emails/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding(Charsets.UTF_8.displayName());
+        templateResolver.setCacheable(true);
+        return templateResolver;
     }
 }

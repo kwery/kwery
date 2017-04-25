@@ -52,9 +52,9 @@ public class JobService {
         }
     }
 
-    public void launch(int jobId) {
+    public TaskExecutor launch(int jobId) {
         logger.info("Launching job with id {}", jobId);
-        kweryScheduler.launch(jobTaskFactory.create(jobId));
+        return kweryScheduler.launch(jobTaskFactory.create(jobId));
     }
 
     public boolean stopExecution(String executionId) {

@@ -1,13 +1,16 @@
 package com.kwery.tests.services.job.email.sqlqueryemailsetting;
 
 import com.google.common.collect.ImmutableSet;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.models.*;
 import com.kwery.services.job.ReportEmailSender;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
-import com.kwery.conf.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.Before;
 import org.junit.Rule;
 import org.subethamail.wiser.WiserMessage;
@@ -21,14 +24,16 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import static com.jayway.jsonassert.impl.matcher.IsEmptyCollection.empty;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
+import static com.kwery.tests.services.job.email.EmailHtmlTestUtil.assertReportFooter;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
 public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
@@ -43,6 +48,8 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
     @Before
     public void setUp() throws IOException {
         JobModel jobModel = new JobModel();
+        jobModel.setId(1);
+
         jobModel.setTitle("Test Report");
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(ImmutableSet.of("foo@bar.com"));
@@ -54,7 +61,7 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
 
         jobExecutionModel = new JobExecutionModel();
         jobExecutionModel.setJobModel(jobModel);
-
+        jobExecutionModel.setExecutionId("foobarmoo");
         jobExecutionModel.setExecutionStart(1482422361284l); //Thu Dec 22 21:29:21 IST 2016
 
         jobExecutionModel.setSqlQueryExecutionModels(new HashSet<>());
@@ -98,10 +105,13 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
         MimeMessage mimeMessage = wiserMessage.getMimeMessage();
         MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
 
+        String htmlContent = mimeMessageParser.getHtmlContent();
+        assertReportFooter(htmlContent);
+
         if (emptyBody) {
-            assertThat(mimeMessageParser.getHtmlContent(), is(" "));
+            assertSection(htmlContent, false);
         } else {
-            assertThat(mimeMessageParser.getHtmlContent(), not(" "));
+            assertSection(htmlContent, true);
         }
 
         assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(emptyAttachment));
@@ -112,5 +122,16 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
         model.setIncludeInEmailBody(includeInBody);
         model.setIncludeInEmailAttachment(includeInAttachment);
         sqlQueryModel0.setSqlQueryEmailSettingModel(model);
+    }
+
+    protected void assertSection(String html, boolean present) {
+        Document doc = Jsoup.parse(html);
+        Elements headers = doc.select(".report-content-t th");
+
+        if (present) {
+            assertThat(headers.size(), greaterThanOrEqualTo(1));
+        } else {
+            assertThat(headers, empty());
+        }
     }
 }

@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.controllers.MessageKeys;
 import com.kwery.dao.*;
 import com.kwery.dao.search.JobSearchDao;
@@ -21,12 +22,12 @@ import com.kwery.services.job.JobSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
 import com.kwery.utils.CsvReaderFactory;
-import com.kwery.conf.KweryDirectory;
 import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
 import com.kwery.views.ActionResult;
 import it.sauronsoftware.cron4j.Predictor;
 import it.sauronsoftware.cron4j.SchedulingPattern;
+import it.sauronsoftware.cron4j.TaskExecutor;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -88,8 +89,6 @@ public class JobApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result saveJob(JobDto jobDto, Context context) {
-        if (logger.isTraceEnabled()) logger.trace("<");
-
         boolean isUpdate = jobDto.getId() > 0;
 
         Result json = json();
@@ -159,13 +158,10 @@ public class JobApiController {
                 jobService.schedule(jobModel.getId());
             }
 
-            actionResult = new ActionResult(success, "");
+            return json.render(ImmutableMap.of("reportId", jobModel.getId()));
         } else {
-            actionResult = new ActionResult(failure, errorMessages);
+            return json.render(new ActionResult(failure, errorMessages));
         }
-
-        if (logger.isTraceEnabled()) logger.trace(">");
-        return json.render(actionResult);
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -195,10 +191,8 @@ public class JobApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result executeJob(@PathParam("jobId") int jobId) {
-        if (logger.isTraceEnabled()) logger.trace("<");
-        jobService.launch(jobId);
-        if (logger.isTraceEnabled()) logger.trace(">");
-        return json().render(new ActionResult(success, ""));
+        TaskExecutor taskExecutor = jobService.launch(jobId);
+        return json().render(ImmutableMap.of("executionId", taskExecutor.getGuid()));
     }
 
     @FilterWith(DashRepoSecureFilter.class)
@@ -303,6 +297,10 @@ public class JobApiController {
             }
         }
 
+        if (filterDto.getExecutionId() != null) {
+            filter.setExecutionId(filterDto.getExecutionId());
+        }
+
         Result response = null;
 
         if (!errorMessages.isEmpty()) {
@@ -390,7 +388,7 @@ public class JobApiController {
             }
 
             if (logger.isTraceEnabled()) logger.trace(">");
-            return json.render(new JobExecutionResultDto(jobExecutionModel.getJobModel().getTitle(), sqlQueryExecutionResultDtos));
+            return json.render(new JobExecutionResultDto(jobExecutionModel.getJobModel().getTitle(), sqlQueryExecutionResultDtos, jobExecutionModel.getStatus()));
         }
     }
 

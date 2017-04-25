@@ -3,12 +3,12 @@ package com.kwery.tests.controllers.apis.integration.jobapicontroller.executionr
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.matchers.JsonPathMatchers;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.controllers.apis.JobApiController;
 import com.kwery.models.*;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.TestUtil;
-import com.kwery.conf.KweryDirectory;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,6 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
     private SqlQueryExecutionModel insertSqlQueryExecutionModel;
     private SqlQueryExecutionModel failedSqlQueryExecutionModel;
     private SqlQueryExecutionModel successSqlQueryExecutionModel;
-    private String jsonResult;
     private ImmutableList<String[]> datum;
 
     @Before
@@ -112,6 +111,7 @@ public class JobApiControllerExecutionResultSuccessTest extends AbstractPostLogi
         String response = ninjaTestBrowser.makeJsonRequest(getUrl(url));
         assertThat(response, JsonPathMatchers.isJson());
         assertThat(response, hasJsonPath("$.title", is(jobModel.getTitle())));
+        assertThat(response, hasJsonPath("$.executionStatus", is(jobExecutionModel.getStatus().name())));
 
         assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[0].title", is(insertQuery.getTitle())));
         assertThat(response, hasJsonPath("$.sqlQueryExecutionResultDtos[0].status", is(SUCCESS.name())));

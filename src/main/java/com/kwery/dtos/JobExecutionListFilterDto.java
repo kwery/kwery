@@ -5,6 +5,7 @@ public class JobExecutionListFilterDto {
     protected int resultCount;
     protected String executionStartStart;
     protected String executionStartEnd;
+    protected String executionId;
 
     public int getPageNumber() {
         return pageNumber;
@@ -36,5 +37,13 @@ public class JobExecutionListFilterDto {
 
     public void setExecutionStartEnd(String executionStartEnd) {
         this.executionStartEnd = executionStartEnd;
+    }
+
+    public String getExecutionId() {
+        return executionId;
+    }
+
+    public void setExecutionId(String executionId) {
+        this.executionId = executionId;
     }
 }

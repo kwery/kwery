@@ -1,6 +1,6 @@
 define(["knockout", "jquery", "text!components/report/add.html", "validator", "jquery-cron", "waitingmodal", "ajaxutil", "jstorage"],
     function (ko, $, template, validator, jqueryCron, waitingModal, ajaxUtil) {
-    function viewModel(params) {
+    function ViewModel(params) {
         var self = this;
 
         var reportId = params.reportId;
@@ -113,6 +113,42 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             query.includeInBody = true;
             self.queries.push(query);
         }
+
+        self.fetchReport = function(reportId, executionId){
+            $.ajax({
+                url: "/api/job/" + reportId + "/execution",
+                data: ko.toJSON({
+                    pageNumber: 0,
+                    resultCount: 1,
+                    executionId: executionId
+                }),
+                type: "POST",
+                contentType: "application/json",
+                success: function(response) {
+                    if (response.jobExecutionDtos.length > 0 && response.jobExecutionDtos[0].status !== 'ONGOING') {
+                        waitingModal.hide();
+                        document.location.href = "/#report/" + reportId + "/execution/" + executionId;
+                    } else {
+                        setTimeout(function(){
+                            self.fetchReport(reportId, executionId)
+                        }, 5000);
+                    }
+                }
+            });
+        };
+
+        self.executeReport = function(reportId) {
+            waitingModal.show(ko.i18n('report.save.generate.message'));
+            $.ajax({
+                url: "/api/job/" + reportId + "/execute",
+                type: "POST",
+                contentType: "application/json",
+                success: function(executeResponse) {
+                    self.fetchReport(reportId, executeResponse.executionId);
+                }
+            });
+            return false;
+        };
 
         waitingModal.show();
         $.when(
@@ -252,6 +288,12 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         ).always(function(){
             waitingModal.hide();
             self.refreshValidation();
+
+            //Is this a save and generate report request?
+            if (isUpdate && $.jStorage.get("report:execute") === true) {
+                $.jStorage.deleteKey("report:execute");
+                self.executeReport(reportId);
+            }
         });
 
         self.addSqlQuery = function() {
@@ -351,23 +393,39 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     report.id = reportId;
                 }
 
-                ajaxUtil.waitingAjax({
+                $.ajax({
                     url: "/api/job/save",
                     data: ko.toJSON(report),
                     type: "POST",
                     contentType: "application/json",
+                    beforeSend: function(){
+                        waitingModal.show();
+                    },
                     success: function(result) {
-                        if (result.status === "success") {
-                            if ($.jStorage.storageAvailable()) {
-                                $.jStorage.set("report:status", result.status, {TTL: (10 * 60 * 1000)});
-                                $.jStorage.set("report:messages", [ko.i18n('report.save.success.message')], {TTL: (10 * 60 * 1000)});
-                                window.location.href = "#report/list";
-                            } else {
-                                throw new Error("Not enough space available to store result in browser");
-                            }
-                        } else {
+                        waitingModal.hide();
+                        if (result.status === "failure") {
                             self.status(result.status);
                             self.messages(result.messages);
+                        } else {
+                            var val = $("button[type=submit][clicked=true]").val();
+                            if (val === "save") {
+                                window.location.href = "/#report/list";
+                                if ($.jStorage.storageAvailable()) {
+                                    $.jStorage.set("report:status", "success", {TTL: (10 * 60 * 1000)});
+                                    $.jStorage.set("report:messages", [ko.i18n('report.save.success.message')], {TTL: (10 * 60 * 1000)});
+                                } else {
+                                    throw new Error("Not enough space available to store result in browser");
+                                }
+                            } else {
+                                if (isUpdate) {
+                                    self.executeReport(result.reportId);
+                                } else {
+                                    //We do this so that pressing back button on the report page takes the user back to the
+                                    //report edit page.
+                                    $.jStorage.set("report:execute", true, {TTL: (10 * 60 * 1000)});
+                                    window.location.href = "/#report/" + result.reportId;
+                                }
+                            }
                         }
                     }
                 });
@@ -393,6 +451,12 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.removeLabel = function(labelId) {
             self.labelIds.remove(labelId);
         };
+
+        //To figure out which button was clicked on form submit
+        $("form button[type=submit]").on("click", function() {
+            $("button[type=submit]", $(this).parents("form")).removeAttr("clicked");
+            $(this).attr("clicked", "true");
+        });
 
         //TODO - Duplicated code with add label page, needs to be refactored into a common code
         //Label related - start
@@ -519,5 +583,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
         return self;
     }
-    return { viewModel: viewModel, template: template };
+
+    return { viewModel: ViewModel, template: template };
 });

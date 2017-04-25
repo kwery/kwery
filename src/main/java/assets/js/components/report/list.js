@@ -61,15 +61,39 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
         self.reports = ko.observableArray([]);
 
         self.executeReport = function(report) {
-            ajaxUtil.waitingAjax({
+            waitingModal.show(ko.i18n('report.list.execute.now.waiting'));
+            $.ajax({
                 url: "/api/job/" + report.id + "/execute",
                 type: "POST",
                 contentType: "application/json",
-                success: function(result) {
-                    self.status(result.status);
-                    self.messages([ko.i18n("report.list.execute.now.success")]);
+                success: function(executeResponse) {
+                    fetchReport(report.id, executeResponse.executionId);
                 }
-            })
+            });
+            return false;
+        };
+
+        var fetchReport = function(reportId, executionId){
+            $.ajax({
+                url: "/api/job/" + reportId + "/execution",
+                data: ko.toJSON({
+                    pageNumber: 0,
+                    resultCount: 1,
+                    executionId: executionId
+                }),
+                type: "POST",
+                contentType: "application/json",
+                success: function(response) {
+                    if (response.jobExecutionDtos.length > 0 && response.jobExecutionDtos[0].status !== 'ONGOING') {
+                        waitingModal.hide();
+                        document.location.href = "/#report/" + reportId + "/execution/" + executionId;
+                    } else {
+                       setTimeout(function(){
+                           fetchReport(reportId, executionId)
+                       }, 5000);
+                    }
+                }
+            });
         };
 
         self.deleteReport = function(report) {
