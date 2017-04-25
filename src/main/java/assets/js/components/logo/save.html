@@ -12,10 +12,10 @@
 
     <div class="panel panel-default">
         <div class="panel-body">
-            <form id="reportEmailConfigurationForm">
+            <form data-bind="submit: submitForm" id="reportEmailConfigurationForm">
                 <div class="form-group">
                     <label data-bind="text: ko.i18n('report.email.configuration.logo.url')" class="text-muted" for="logo"></label>
-                    <input data-bind="textInput: logo" minlength="1" class="form-control logo-f" type="url" id="logo" name="logo" required>
+                    <input data-bind="textInput: logo" minlength="1" class="form-control logo-f" type="url" id="logo" name="logo">
                     <div class="help-block with-errors logo-error-f"></div>
                 </div>
                 <ul>

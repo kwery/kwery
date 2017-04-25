@@ -15,7 +15,6 @@ public class ReportEmailConfigurationModel extends AbstractBaseModel {
     public static final int LOGO_URL_MAX = 2083;
     public static final int LOGO_URL_MIN = 1;
 
-    @NotNull
     @Column(name = LOGO_URL_COLUMN)
     @Size(min = LOGO_URL_MIN, max = LOGO_URL_MAX)
     protected String logoUrl;

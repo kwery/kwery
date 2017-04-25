@@ -47,6 +47,17 @@ public class ReportEmailConfigurationApiControllerTest extends AbstractPostLogin
     }
 
     @Test
+    public void testSaveEmpty() throws DatabaseUnitException, SQLException, IOException {
+        String url = getInjector().getInstance(Router.class).getReverseRoute(ReportEmailConfigurationApiController.class, "saveReportEmailConfiguration");
+        ReportEmailConfigurationModel m = reportEmailConfigurationModelWithoutId();
+        m.setLogoUrl("");
+        String response = ninjaTestBrowser.postJson(getUrl(url), m);
+        assertSuccessActionResultStatus(response);
+        m.setLogoUrl(null);
+        new DbTableAsserterBuilder(REPORT_EMAIL_CONFIGURATION_TABLE, reportEmailConfigurationTable(m)).columnsToIgnore("id", "created", "updated").build().assertTable();
+    }
+
+    @Test
     public void testUpdate() throws DatabaseUnitException, SQLException, IOException {
         String url = getInjector().getInstance(Router.class).getReverseRoute(ReportEmailConfigurationApiController.class, "saveReportEmailConfiguration");
         ReportEmailConfigurationModel m = reportEmailConfigurationModel();
@@ -57,6 +68,24 @@ public class ReportEmailConfigurationApiControllerTest extends AbstractPostLogin
 
         String response = ninjaTestBrowser.postJson(getUrl(url), updated);
         assertSuccessActionResultStatus(response);
+        new DbTableAsserterBuilder(REPORT_EMAIL_CONFIGURATION_TABLE, reportEmailConfigurationTable(updated)).columnsToIgnore("id", "created", "updated").build().assertTable();
+    }
+
+    @Test
+    public void testUpdateEmpty() throws DatabaseUnitException, SQLException, IOException {
+        String url = getInjector().getInstance(Router.class).getReverseRoute(ReportEmailConfigurationApiController.class, "saveReportEmailConfiguration");
+        ReportEmailConfigurationModel m = reportEmailConfigurationModel();
+        reportEmailConfigurationDbSetUp(m);
+
+        ReportEmailConfigurationModel updated = reportEmailConfigurationModelWithoutId();
+        updated.setLogoUrl("");
+        updated.setId(m.getId());
+
+        String response = ninjaTestBrowser.postJson(getUrl(url), updated);
+        assertSuccessActionResultStatus(response);
+
+        updated.setLogoUrl(null);
+
         new DbTableAsserterBuilder(REPORT_EMAIL_CONFIGURATION_TABLE, reportEmailConfigurationTable(updated)).columnsToIgnore("id", "created", "updated").build().assertTable();
     }
 }
