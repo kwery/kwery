@@ -796,6 +796,43 @@ public class DbUtil {
         ).launch();
     }
 
+    public static void reportEmailConfigurationDbSetUp(ReportEmailConfigurationModel m) {
+        new DbSetup(
+                new DataSourceDestination(DbUtil.getDatasource()),
+                sequenceOf(
+                        insertInto(
+                               ReportEmailConfigurationModel.REPORT_EMAIL_CONFIGURATION_TABLE
+                        ).row()
+                                .column(ReportEmailConfigurationModel.ID_COLUMN, m.getId())
+                                .column(ReportEmailConfigurationModel.LOGO_URL_COLUMN, m.getLogoUrl())
+                                .column(ReportEmailConfigurationModel.CREATED_COLUMN, m.getCreated())
+                                .column(ReportEmailConfigurationModel.UPDATED_COLUMN, m.getUpdated())
+                                .end()
+                                .build()
+                )
+        ).launch();
+    }
+
+    public static IDataSet reportEmailConfigurationTable(ReportEmailConfigurationModel m) {
+        try {
+            DataSetBuilder builder = new DataSetBuilder();
+            builder.ensureTableIsPresent(ReportEmailConfigurationModel.REPORT_EMAIL_CONFIGURATION_TABLE);
+
+            if (m != null) {
+                builder.newRow(ReportEmailConfigurationModel.REPORT_EMAIL_CONFIGURATION_TABLE)
+                        .with(ReportEmailConfigurationModel.ID_COLUMN, m.getId())
+                        .with(ReportEmailConfigurationModel.LOGO_URL_COLUMN, m.getLogoUrl())
+                        .with(ReportEmailConfigurationModel.CREATED_COLUMN, m.getCreated())
+                        .with(ReportEmailConfigurationModel.UPDATED_COLUMN, m.getUpdated())
+                        .add();
+            }
+
+            return builder.build();
+        } catch (DataSetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static int dbId() {
         return RandomUtils.nextInt(1, TestUtil.DB_START_ID + 1);
     }

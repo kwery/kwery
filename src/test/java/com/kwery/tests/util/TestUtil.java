@@ -33,6 +33,7 @@ import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
+import static com.kwery.views.ActionResult.Status.success;
 import static java.util.Collections.sort;
 import static java.util.Comparator.comparing;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
@@ -526,6 +527,11 @@ public class TestUtil {
         )));
     }
 
+
+    public static void assertSuccessActionResultStatus(String response) {
+        assertActionResultStatus(response, success);
+    }
+
     public static void assertActionResult(String response, ActionResult actionResult) {
         assertThat(response, isJson(allOf(
                 withJsonPath("$.status", is(actionResult.getStatus().name()))
@@ -581,5 +587,20 @@ public class TestUtil {
     public static void nullifyTimestamps(AbstractBaseModel m) {
         m.setCreated(null);
         m.setUpdated(null);
+    }
+
+    public static ReportEmailConfigurationModel reportEmailConfigurationModel() {
+        ReportEmailConfigurationModel m = new ReportEmailConfigurationModel();
+        m.setId(getId(ReportEmailConfigurationModel.class));
+        m.setLogoUrl(RandomStringUtils.randomAlphanumeric(1, 513));
+        m.setCreated(System.currentTimeMillis());
+        m.setUpdated(System.currentTimeMillis());
+        return m;
+    }
+
+    public static ReportEmailConfigurationModel reportEmailConfigurationModelWithoutId() {
+        ReportEmailConfigurationModel m = reportEmailConfigurationModel();
+        m.setId(null);
+        return m;
     }
 }

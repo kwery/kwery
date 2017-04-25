@@ -1,0 +1,31 @@
+<div class="container report-email-configuration-f">
+    <action-result params="status: status, messages: messages"></action-result>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('report.email.configuration.edit.header')"></strong></span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form id="reportEmailConfigurationForm">
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('report.email.configuration.logo.url')" class="text-muted" for="logo"></label>
+                    <input data-bind="textInput: logo" minlength="1" class="form-control logo-f" type="url" id="logo" name="logo" required>
+                    <div class="help-block with-errors logo-error-f"></div>
+                </div>
+                <ul>
+                    <li data-bind="text: ko.i18n('report.email.configuration.logo.edit.warning.0')"></li>
+                    <li data-bind="text: ko.i18n('report.email.configuration.logo.edit.warning.1')"></li>
+                    <li data-bind="text: ko.i18n('report.email.configuration.logo.edit.warning.2')"></li>
+                </ul>
+                <img data-bind="visible: logoAdded, attr:{src: logo}" class="center-block logo-img-f" />
+                <button data-bind="text: ko.i18n('report.email.configuration.edit.save')" type="submit" class="btn btn-lg btn-primary save-logo-f"></button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -74,6 +74,18 @@
                     hideCalled = true;
                     $modal.modal("hide");
                 }
+            },
+            //For testing
+            _cleanUp: function() {
+                $("#kweryModal").removeClass("fade");
+                $modal.off("hidden.bs.modal");
+                $modal.modal("hide");
+                $modal.remove();
+                showCalled = false;
+                hideCalled = false;
+                modalShown = false;
+                showQueue = [];
+                hideQueue = [];
             }
         }
     });
