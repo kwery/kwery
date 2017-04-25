@@ -19,7 +19,6 @@ import org.subethamail.wiser.WiserMessage;
 
 import javax.activation.DataSource;
 import javax.mail.internet.MimeMessage;
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -30,31 +29,37 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
 public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender {
-    protected boolean withLogo;
+    protected States state;
 
     @Parameters(name = "WithLogo-{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                {false},
-                {true},
+                {States.withLogo},
+                {States.withoutLogo},
+                {States.emptyLogo}
         });
     }
 
     @Before
     public void reportEmailSenderSetUp() {
-        if (this.withLogo) {
+        if (state == States.withLogo) {
             ReportEmailConfigurationModel m = reportEmailConfigurationModel();
             m.setLogoUrl("https://s3.amazonaws.com/getkwery.com/logo.png");
+            reportEmailConfigurationDbSetUp(m);
+        } else if (state == States.emptyLogo) {
+            ReportEmailConfigurationModel m = reportEmailConfigurationModel();
+            m.setLogoUrl(null);
             reportEmailConfigurationDbSetUp(m);
         }
     }
 
-    public ReportEmailSenderTest(boolean withLogo) {
-        this.withLogo = withLogo;
+    public ReportEmailSenderTest(States state) {
+        this.state = state;
     }
 
     @Test
@@ -107,8 +112,10 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
         DataSource dataSource1 = mimeMessageParser.findAttachmentByName("select-books-thu-dec-22.csv");
         assertThat(TestUtil.toString(dataSource1).replaceAll("\r\n", "\n").trim(), is(TestUtil.toString(kweryDirectory.getFile(sqlQueryExecutionModel1.getResultFileName())).trim()));
 
-        if (this.withLogo) {
+        if (state == States.withLogo) {
             assertLogo(html, "https://s3.amazonaws.com/getkwery.com/logo.png");
+        } else  {
+            assertNoLogo(html);
         }
     }
 
@@ -127,5 +134,15 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
         Document doc = Jsoup.parse(html);
         Element element = doc.select(".logo-t").first();
         assertThat(element.attr("src"), is(logoUrl));
+    }
+
+    private void assertNoLogo(String html) {
+        Document doc = Jsoup.parse(html);
+        Element element = doc.select(".logo-t").first();
+        assertThat(element, nullValue());
+    }
+
+    private enum States {
+        withLogo, withoutLogo, emptyLogo
     }
 }

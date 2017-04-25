@@ -592,7 +592,7 @@ public class TestUtil {
     public static ReportEmailConfigurationModel reportEmailConfigurationModel() {
         ReportEmailConfigurationModel m = new ReportEmailConfigurationModel();
         m.setId(getId(ReportEmailConfigurationModel.class));
-        m.setLogoUrl(RandomStringUtils.randomAlphanumeric(1, 513));
+        m.setLogoUrl(RandomStringUtils.randomAlphanumeric(ReportEmailConfigurationModel.LOGO_URL_MIN, ReportEmailConfigurationModel.LOGO_URL_MAX + 1));
         m.setCreated(System.currentTimeMillis());
         m.setUpdated(System.currentTimeMillis());
         return m;
