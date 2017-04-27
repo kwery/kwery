@@ -2,39 +2,24 @@ package com.kwery.tests.dao.emailconfiguration;
 
 import com.kwery.dao.EmailConfigurationDao;
 import com.kwery.models.EmailConfiguration;
+import com.kwery.services.mail.InvalidEmailException;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.builder.DataSetBuilder;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
-import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
-import static com.kwery.models.EmailConfiguration.COLUMN_ID;
-import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
 import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationTable;
+import static com.kwery.tests.util.TestUtil.emailConfigurationWithoutId;
 
 public class EmailConfigurationDaoSaveNewTest extends RepoDashDaoTestBase {
     @Test
-    public void test() throws DatabaseUnitException, SQLException, IOException {
-        EmailConfiguration e = new EmailConfiguration();
-        e.setFrom("foo@from.com");
-        e.setBcc("foo@bar.com");
-        e.setReplyTo("bar@foo.com");
-
+    public void test() throws DatabaseUnitException, SQLException, IOException, InvalidEmailException {
+        EmailConfiguration e = emailConfigurationWithoutId();
         getInstance(EmailConfigurationDao.class).save(e);
-
-        DataSetBuilder builder = new DataSetBuilder();
-
-        builder.newRow(TABLE_EMAIL_CONFIGURATION)
-                .with(COLUMN_FROM_EMAIL, e.getFrom())
-                .with(COLUMN_BCC, e.getBcc())
-                .with(COLUMN_REPLY_TO, e.getReplyTo())
-                .add();
-
-        assertDbState(TABLE_EMAIL_CONFIGURATION, builder.build(), COLUMN_ID);
+        new DbTableAsserterBuilder(TABLE_EMAIL_CONFIGURATION, emailConfigurationTable(e)).build().assertTable();
      }
 }

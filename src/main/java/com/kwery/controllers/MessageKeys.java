@@ -88,4 +88,7 @@ public class MessageKeys {
     public static final String REPORTEMAILSENDER_ATTACHMENT_SKIPPED = "reportemailsender.attachment.skipped";
 
     public static final String USERAPICONTROLLER_SIGN_UP_EMAIL_EXISTS = "userapicontroller.sign.up.email.exists";
+
+    public static final String EMAIL_CONFIGURATION_EMPTY_FROM_EMAIL = "email.configuration.empty.from.email";
+    public static final String EMAIL_CONFIGURATION_INVALID_EMAIL = "email.configuration.invalid.email";
 }

@@ -1,9 +1,13 @@
-define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxutil", "waitingmodal", "validator"], function (ko, $, template, ajaxUtil, waitingModal) {
-    function viewModel(params) {
+define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxutil", "waitingmodal", "validator", "jstorage"], function (ko, $, template, ajaxUtil, waitingModal) {
+    function ViewModel(params) {
         var self = this;
+
+        $('body').scrollTop(0);
 
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
+
+        self.displayMessage();
 
         self.smtpConfigurationId = ko.observable();
         self.host = ko.observable();
@@ -13,12 +17,17 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
         self.password = ko.observable();
 
         self.emailConfigurationId = ko.observable();
-        self.from = ko.observable();
-        self.bcc = ko.observable();
-        self.replyTo = ko.observable();
+        self.from = ko.observable("");
+        self.bcc = ko.observable("");
+        self.replyTo = ko.observable("");
 
         self.smtpConfigurationPresent = ko.observable(false);
         self.emailConfigurationPresent = ko.observable(false);
+
+        self.warningMessage = ko.observable("");
+        self.showWarning = ko.computed(function(){
+            return self.warningMessage() !== "";
+        }, self);
 
         self.toEmail = ko.observable();
         self.useLocalSetting = ko.observable(false);
@@ -58,7 +67,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                 type: "GET",
                 contentType: "application/json",
                 success: function(conf) {
-                    if (conf != null) {
+                    if (conf !== null) {
                         self.smtpConfigurationId(conf.id);
                         self.host(conf.host);
                         self.port(conf.port);
@@ -75,7 +84,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                 type: "GET",
                 contentType: "application/json",
                 success: function(conf) {
-                    if (conf != null) {
+                    if (conf !== null) {
                         self.emailConfigurationId(conf.id);
                         self.from(conf.from);
                         self.bcc(conf.bcc);
@@ -92,13 +101,12 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
             //This should be shown only if either one of the configurations are missing, not when both are missing
             if (self.emailConfigurationPresent() || self.smtpConfigurationPresent()) {
                 if (!(self.emailConfigurationPresent() && self.smtpConfigurationPresent())) {
-                    self.status("failure");
                     if (!self.smtpConfigurationPresent()) {
-                        self.messages([ko.i18n("email.configuration.smtp.missing")]);
+                        self.warningMessage([ko.i18n("email.configuration.smtp.missing")]);
                     }
 
                     if (!self.emailConfigurationPresent()) {
-                        self.messages([ko.i18n("email.configuration.sender.details.missing")]);
+                        self.warningMessage([ko.i18n("email.configuration.sender.details.missing")]);
                     }
                 }
             }
@@ -128,9 +136,9 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                         data: ko.toJSON(smtpConfiguration),
                         contentType: "application/json",
                         success: function(result) {
-                            self.status(result.status);
-                            self.messages(result.messages);
-                            self.smtpConfigurationPresent(true);
+                            $.jStorage.set("ec:status", "success", {TTL: (10 * 60 * 1000)});
+                            $.jStorage.set("ec:message", result.messages[0], {TTL: (10 * 60 * 1000)});
+                            document.location.href = "/#email/configuration?_=" + new Date().getTime();
                         }
                     });
                 }
@@ -164,9 +172,15 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                         waitingModal.show(ko.i18n("progress.indicator.msg.saving"));
                     },
                     success: function(result) {
-                        self.status(result.status);
-                        self.messages(result.messages);
-                        self.emailConfigurationPresent(true);
+                        if (result.status === "success") {
+                            $.jStorage.set("ec:status", "success", {TTL: (10 * 60 * 1000)});
+                            $.jStorage.set("ec:message", result.messages[0], {TTL: (10 * 60 * 1000)});
+                            document.location.href = "/#email/configuration?_=" + new Date().getTime();
+                        } else {
+                            self.status(result.status);
+                            self.messages(result.messages);
+                            self.emailConfigurationPresent(true);
+                        }
                     }
                 })
             }
@@ -185,6 +199,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                     success: function(result) {
                         self.status(result.status);
                         self.messages(result.messages);
+                        $('body').scrollTop(0);
                     }
                 });
             }
@@ -199,5 +214,22 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
 
         return self;
     }
-    return { viewModel: viewModel, template: template };
+
+    ViewModel.prototype.displayMessage = function () {
+        var self = this;
+
+        var status = $.jStorage.get("ec:status", null);
+        if (status !== null) {
+            self.status(status);
+            $.jStorage.deleteKey("ec:status");
+        }
+
+        var message = $.jStorage.get("ec:message", null);
+        if (message !== null) {
+            self.messages([message]);
+            $.jStorage.deleteKey("ec:message");
+        }
+    };
+
+    return { viewModel: ViewModel, template: template };
 });

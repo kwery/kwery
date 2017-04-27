@@ -2,26 +2,27 @@ package com.kwery.tests.dao.emailconfiguration;
 
 import com.kwery.dao.EmailConfigurationDao;
 import com.kwery.models.EmailConfiguration;
+import com.kwery.services.EmptyFromEmailException;
+import com.kwery.services.mail.InvalidEmailException;
+import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
+import com.kwery.tests.util.TestUtil;
+import junit.framework.TestCase;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.dataset.builder.DataSetBuilder;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
-import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
-import static com.kwery.models.EmailConfiguration.COLUMN_ID;
-import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
 import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.getDatasource;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.operation.CompositeOperation.sequenceOf;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
+import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationTable;
+import static com.kwery.tests.util.TestUtil.emailConfiguration;
+import static com.kwery.tests.util.TestUtil.emailConfigurationWithoutId;
+import static junit.framework.TestCase.fail;
 
 public class EmailConfigurationDaoSaveUpdateTest extends RepoDashDaoTestBase {
     protected EmailConfigurationDao emailConfigurationDao;
@@ -29,44 +30,48 @@ public class EmailConfigurationDaoSaveUpdateTest extends RepoDashDaoTestBase {
 
     @Before
     public void setUpEmailConfigurationDaoSaveUpdateTest() {
-        e = new EmailConfiguration();
-        e.setId(1);
-        e.setFrom("from@foo.com");
-        e.setReplyTo("foo@bar.com");
-        e.setBcc("bar@foo.com");
-
-        new DbSetup(new DataSourceDestination(
-                getDatasource()),
-                sequenceOf(
-                        insertInto(TABLE_EMAIL_CONFIGURATION)
-                        .row()
-                        .column(COLUMN_ID, e.getId())
-                        .column(COLUMN_FROM_EMAIL, e.getFrom())
-                        .column(COLUMN_BCC, e.getBcc())
-                        .column(COLUMN_REPLY_TO, e.getReplyTo())
-                        .end()
-                        .build()
-                )
-        ).launch();
-
+        e = emailConfiguration();
+        emailConfigurationDbSet(e);
         emailConfigurationDao = getInstance(EmailConfigurationDao.class);
     }
 
     @Test
-    public void test() throws DatabaseUnitException, SQLException, IOException {
-        e.setBcc("goo@moo.com");
-        e.setReplyTo("foo@cho.com");
+    public void test() throws DatabaseUnitException, SQLException, IOException, InvalidEmailException {
+        EmailConfiguration updated = TestUtil.emailConfiguration();
+        updated.setId(e.getId());
+        emailConfigurationDao.save(updated);
+        new DbTableAsserterBuilder(TABLE_EMAIL_CONFIGURATION, emailConfigurationTable(updated)).build().assertTable();
+    }
 
-        emailConfigurationDao.save(e);
+    @Test(expected = EmptyFromEmailException.class)
+    public void testEmptyFromEmailExceptionTest() {
+        EmailConfiguration config = TestUtil.emailConfiguration();
+        config.setFrom("            ");
+        emailConfigurationDao.save(config);
+    }
 
-        DataSetBuilder b = new DataSetBuilder();
-        b.newRow(TABLE_EMAIL_CONFIGURATION)
-                .with(COLUMN_ID, e.getId())
-                .with(COLUMN_FROM_EMAIL, e.getFrom())
-                .with(COLUMN_BCC, e.getBcc())
-                .with(COLUMN_REPLY_TO, e.getReplyTo())
-                .add();
+    @Test
+    public void testInvalidEmailException() {
+        EmailConfiguration config = TestUtil.emailConfiguration();
+        config.setFrom("sdjflkd  ");
+        config.setReplyTo("kj lklkjlkjl");
+        config.setBcc("abhi@getkwery.com, sdkfdsfkl, foo@bar.com");
 
-        assertDbState(TABLE_EMAIL_CONFIGURATION, b.build());
+        try {
+            emailConfigurationDao.save(config);
+            fail("Should have thrown InvalidEmailException");
+        } catch (InvalidEmailException e) {
+            Assert.assertThat(e.getInvalids(), Matchers.containsInAnyOrder("sdjflkd", "kj lklkjlkjl", "sdkfdsfkl"));
+        }
+    }
+
+    @Test
+    public void updateToEmptyTest() throws DatabaseUnitException, SQLException, IOException {
+        EmailConfiguration updated = emailConfigurationWithoutId();
+        updated.setBcc("");
+        updated.setReplyTo("");
+        updated.setId(e.getId());
+        emailConfigurationDao.save(updated);
+        new DbTableAsserterBuilder(TABLE_EMAIL_CONFIGURATION, emailConfigurationTable(updated)).build().assertTable();
     }
 }

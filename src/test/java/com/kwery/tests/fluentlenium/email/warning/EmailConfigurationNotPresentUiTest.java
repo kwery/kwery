@@ -2,7 +2,6 @@ package com.kwery.tests.fluentlenium.email.warning;
 
 import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.tests.fluentlenium.job.reportlist.ActionResultComponent;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
@@ -25,6 +24,8 @@ import static com.kwery.tests.util.Messages.EMAIL_CONFIGURATION_SENDER_DETAILS_M
 import static com.kwery.tests.util.Messages.EMAIL_CONFIGURATION_SMTP_MISSING_M;
 import static com.kwery.tests.util.TestUtil.emailConfiguration;
 import static com.kwery.tests.util.TestUtil.smtpConfiguration;
+import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.containingText;
 
 @RunWith(Parameterized.class)
 public class EmailConfigurationNotPresentUiTest extends ChromeFluentTest {
@@ -43,8 +44,6 @@ public class EmailConfigurationNotPresentUiTest extends ChromeFluentTest {
     }
 
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
-
-    protected ActionResultComponent actionResultComponent;
 
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
@@ -66,9 +65,9 @@ public class EmailConfigurationNotPresentUiTest extends ChromeFluentTest {
     @Test
     public void test() {
         if (testScenario == senderDetails) {
-            actionResultComponent.assertFailureMessage(EMAIL_CONFIGURATION_SENDER_DETAILS_MISSING_M);
+            assertThat(el("div", containingText(EMAIL_CONFIGURATION_SENDER_DETAILS_MISSING_M))).isDisplayed();
         } else if (testScenario == smtpConfiguration) {
-            actionResultComponent.assertFailureMessage(EMAIL_CONFIGURATION_SMTP_MISSING_M);
+            assertThat(el("div", containingText(EMAIL_CONFIGURATION_SMTP_MISSING_M))).isDisplayed();
         }
     }
 

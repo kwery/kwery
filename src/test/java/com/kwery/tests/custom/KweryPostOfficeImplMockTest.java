@@ -1,9 +1,9 @@
 package com.kwery.tests.custom;
 
 import com.kwery.custom.KweryPostofficeImpl;
+import com.kwery.dao.EmailConfigurationDao;
 import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.services.mail.EmailConfigurationService;
 import com.kwery.services.mail.KweryMailImpl;
 import com.kwery.services.mail.smtp.SmtpService;
 import ninja.postoffice.Mail;
@@ -28,11 +28,11 @@ public class KweryPostOfficeImplMockTest {
     @Mock
     protected SmtpService smtpService;
     @Mock
-    protected EmailConfigurationService emailConfigurationService;
+    protected EmailConfigurationDao emailConfigurationDao;
 
     @Test
     public void test() throws Exception {
-        Postoffice postoffice = new KweryPostofficeImpl(commonsmailHelper, smtpService, emailConfigurationService);
+        Postoffice postoffice = new KweryPostofficeImpl(commonsmailHelper, smtpService, emailConfigurationDao);
 
         SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
         smtpConfiguration.setHost("mail.getquery.com");
@@ -48,7 +48,7 @@ public class KweryPostOfficeImplMockTest {
         emailConfiguration.setBcc("bcc@getquery.com");
         emailConfiguration.setReplyTo("reply-to@getquery.com");
 
-        when(emailConfigurationService.getEmailConfiguration()).thenReturn(emailConfiguration);
+        when(emailConfigurationDao.get()).thenReturn(emailConfiguration);
 
         Mail mail = new KweryMailImpl();
         mail.setBodyText("body test");

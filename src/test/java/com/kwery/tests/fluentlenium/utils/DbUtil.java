@@ -833,6 +833,27 @@ public class DbUtil {
         }
     }
 
+    public static IDataSet emailConfigurationTable(EmailConfiguration m) {
+        try {
+            DataSetBuilder builder = new DataSetBuilder();
+            builder.ensureTableIsPresent(EmailConfiguration.TABLE_EMAIL_CONFIGURATION);
+
+            if (m != null) {
+                builder.newRow(TABLE_EMAIL_CONFIGURATION)
+                        .with(COLUMN_FROM_EMAIL, m.getFrom())
+                        .with(COLUMN_BCC, m.getBcc())
+                        .with(COLUMN_REPLY_TO, m.getReplyTo())
+                        .with(EmailConfiguration.COLUMN_ID, m.getId())
+                        .add();
+            }
+
+            return builder.build();
+
+        } catch (DataSetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static int dbId() {
         return RandomUtils.nextInt(1, TestUtil.DB_START_ID + 1);
     }
