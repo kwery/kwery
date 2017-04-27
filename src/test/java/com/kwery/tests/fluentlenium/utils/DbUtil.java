@@ -409,6 +409,7 @@ public class DbUtil {
                     builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE)
                             .with(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_COLUMN, model.getId())
                             .with(SqlQueryEmailSettingModel.EMAIL_BODY_INCLUDE_COLUMN, model.getIncludeInEmailBody())
+                            .with(SqlQueryEmailSettingModel.IGNORE_LABEL_COLUMN, model.isIgnoreLabel())
                             .with(SqlQueryEmailSettingModel.EMAIL_ATTACHMENT_INCLUDE_COLUMN, model.getIncludeInEmailAttachment())
                             .add();
                     builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE)
@@ -718,6 +719,7 @@ public class DbUtil {
                                 .column(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_COLUMN, sqlQueryEmailSettingModel.getId())
                                 .column(EMAIL_BODY_INCLUDE_COLUMN, sqlQueryEmailSettingModel.getIncludeInEmailBody())
                                 .column(EMAIL_ATTACHMENT_INCLUDE_COLUMN, sqlQueryEmailSettingModel.getIncludeInEmailAttachment())
+                                .column(SqlQueryEmailSettingModel.IGNORE_LABEL_COLUMN, sqlQueryEmailSettingModel.isIgnoreLabel())
                                 .end()
                                 .build(),
                         insertInto(SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE)

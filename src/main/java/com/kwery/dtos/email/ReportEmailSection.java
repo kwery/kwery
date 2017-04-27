@@ -9,6 +9,7 @@ public class ReportEmailSection {
     protected List<List<String>> rows = new LinkedList<>();
     protected boolean contentTooLarge;
     protected boolean attachmentTooLarge;
+    protected boolean ignoreHeader;
 
     public String getTitle() {
         return title;
@@ -48,5 +49,13 @@ public class ReportEmailSection {
 
     public void setAttachmentTooLarge(boolean attachmentTooLarge) {
         this.attachmentTooLarge = attachmentTooLarge;
+    }
+
+    public boolean isIgnoreHeader() {
+        return ignoreHeader;
+    }
+
+    public void setIgnoreHeader(boolean ignoreHeader) {
+        this.ignoreHeader = ignoreHeader;
     }
 }

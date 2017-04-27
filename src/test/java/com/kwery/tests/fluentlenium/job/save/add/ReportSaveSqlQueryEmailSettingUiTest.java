@@ -38,10 +38,12 @@ public class ReportSaveSqlQueryEmailSettingUiTest extends AbstractReportSaveUiTe
     public void test() {
         assertThat(page.sqlQueryEmailSettingIncludeAsEmailAttachment(0), is(true));
         assertThat(page.sqlQueryEmailSettingIncludeInEmailBody(0), is(true));
+        assertThat(page.sqlQueryEmailSettingIgnoreLabel(0), is(false));
 
         page.clickOnAddSqlQuery(0);
 
         assertThat(page.sqlQueryEmailSettingIncludeAsEmailAttachment(1), is(true));
         assertThat(page.sqlQueryEmailSettingIncludeInEmailBody(1), is(true));
+        assertThat(page.sqlQueryEmailSettingIgnoreLabel(1), is(false));
     }
 }

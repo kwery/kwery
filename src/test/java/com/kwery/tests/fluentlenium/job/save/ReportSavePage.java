@@ -99,6 +99,17 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
                         el(iCls).click();
                     }
                 }
+
+                String ignoreLabelClass = String.format(".f-sql-query%d .ignore-label-f", i);
+                if (model.isIgnoreLabel()) {
+                    if (!el(ignoreLabelClass).selected()) {
+                        el(ignoreLabelClass).click();
+                    }
+                } else {
+                    if (el(ignoreLabelClass).selected()) {
+                        el(ignoreLabelClass).click();
+                    }
+                }
             }
         }
 
@@ -231,6 +242,10 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
 
     public boolean sqlQueryEmailSettingIncludeAsEmailAttachment(int index) {
         return el(format(".f-sql-query%d .include-attachment-f", index)).selected();
+    }
+
+    public boolean sqlQueryEmailSettingIgnoreLabel(int index) {
+        return el(format(".f-sql-query%d .ignore-label-f", index)).selected();
     }
 
     public void assertNonEmptyReportFormValidationMessage() {

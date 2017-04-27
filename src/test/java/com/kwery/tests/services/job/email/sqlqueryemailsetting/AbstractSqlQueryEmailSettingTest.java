@@ -88,13 +88,6 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
         reportEmailSender = getInstance(ReportEmailSender.class);
     }
 
-    public void setUp(boolean includeInEmail, boolean includeInAttachment) {
-        SqlQueryEmailSettingModel model = new SqlQueryEmailSettingModel();
-        model.setIncludeInEmailAttachment(includeInEmail);
-        model.setIncludeInEmailBody(includeInAttachment);
-        sqlQueryModel0.setSqlQueryEmailSettingModel(model);
-    }
-
     public void assertEmail(boolean emptyBody, boolean emptyAttachment) throws Exception {
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
 
@@ -122,6 +115,11 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
         model.setIncludeInEmailBody(includeInBody);
         model.setIncludeInEmailAttachment(includeInAttachment);
         sqlQueryModel0.setSqlQueryEmailSettingModel(model);
+    }
+
+    public void setEmailSetting(boolean includeInBody, boolean includeInAttachment, boolean ignoreLabel) {
+        setEmailSetting(includeInBody, includeInAttachment);
+        sqlQueryModel0.getSqlQueryEmailSettingModel().setIgnoreLabel(ignoreLabel);
     }
 
     protected void assertSection(String html, boolean present) {

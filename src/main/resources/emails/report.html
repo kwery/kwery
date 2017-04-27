@@ -11,7 +11,7 @@
     <tr>
         <td align="center">
             <table>
-                <div th:each="section: ${reportEmail.reportEmailSections}" th:remove="tag">
+                <div th:each="section,sectionIter: ${reportEmail.reportEmailSections}" th:remove="tag">
                     <tr>
                         <td>
                             <h1 class="report-title-t" th:text="${section.title}">
@@ -22,7 +22,7 @@
                     <tr style="border: 1px solid black;">
                         <td style="padding-bottom: 1em;">
                             <table class="report-content-t" style="border: 1px solid black; table-layout: auto; border-collapse: collapse;">
-                                <tr style="border: 1px solid black;">
+                                <tr th:class="'report-label-' + ${sectionIter.index} + '-t'" th:if="${not section.ignoreHeader}" style="border: 1px solid black;">
                                     <th th:each="header : ${section.headers}" th:text="|${header}|" style="border: 1px solid black; padding: 5px;">
                                         Header 0
                                     </th>
