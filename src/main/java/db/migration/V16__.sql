@@ -1,1 +1,1 @@
-alter table email_configuration alter column bcc set data type varchar(32672);
+alter table report_email_configuration alter column logo_url null;

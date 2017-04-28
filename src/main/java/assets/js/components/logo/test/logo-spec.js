@@ -46,13 +46,6 @@ define(['components/logo/save', "knockout", "jasmine-extensions", "jasmine-mock-
                 ko.applyBindings(model, testNode);
             });
 
-            it("Validation errors are shown when required fields are not filled", function(){
-                $(".save-logo-f").submit();
-
-                expect($(".logo-error-f").text()).not.toEqual("");
-                expect(submitFormSpy).not.toHaveBeenCalled();
-            });
-
             it("Logo is not visible when logo url field is empty", function(){
                 expect($(".logo-img-f").is(":visible")).toBe(false);
             });
@@ -144,6 +137,20 @@ define(['components/logo/save', "knockout", "jasmine-extensions", "jasmine-mock-
                 });
 
                 expect(submitFormCbSpy).toHaveBeenCalled();
+            });
+
+            it("Form with empty logo url can be submitted", function(){
+                $(".logo-f").val("").change();
+
+                $(".save-logo-f").submit();
+
+                var request = jasmine.Ajax.requests.mostRecent();
+
+                expect(request.url).toBe('/api/report-email-configuration/save');
+                expect(request.method).toBe('POST');
+                expect(request.data()).toEqual({
+                    logoUrl: ""
+                });
             });
         });
     });

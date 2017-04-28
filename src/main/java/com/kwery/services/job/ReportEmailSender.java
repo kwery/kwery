@@ -65,7 +65,7 @@ public class ReportEmailSender {
             ReportEmail reportEmail = new ReportEmail();
 
             ReportEmailConfigurationModel reportEmailConfigurationModel = reportEmailConfigurationDao.get();
-            if (reportEmailConfigurationModel != null) {
+            if (reportEmailConfigurationModel != null && !"".equals(reportEmailConfigurationModel.getLogoUrl())) {
                 reportEmail.setLogoUrl(reportEmailConfigurationModel.getLogoUrl());
             }
 
