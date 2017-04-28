@@ -89,7 +89,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
         self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
-        var Query = function(query, queryTitle, queryLabel, datasourceId, id, emailSettingId, includeInBody, includeAsAttachment, ignoreLabel) {
+        var Query = function(query, queryTitle, queryLabel, datasourceId, id, emailSettingId, includeInBody, includeAsAttachment, singleResultStyling) {
             this.query = query;
             this.queryLabel = queryLabel;
             this.queryTitle = queryTitle;
@@ -98,7 +98,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             this.emailSettingId = emailSettingId;
             this.includeInBody = includeInBody;
             this.includeAsAttachment = includeAsAttachment;
-            this.ignoreLabel = ignoreLabel;
+            this.singleResultStyling = singleResultStyling;
         };
 
         var Report = function(id, name) {
@@ -112,7 +112,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             var query = new Query();
             query.includeAsAttachment = true;
             query.includeInBody = true;
-            query.ignoreLabel = false;
+            query.singleResultStyling = false;
             self.queries.push(query);
         }
 
@@ -250,7 +250,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                 var emailSettingId = null;
                                 var includeInBody = true;
                                 var includeAsAttachment = true;
-                                var ignoreLabel = false;
+                                var singleResultStyling = false;
 
                                 if (sqlQuery.sqlQueryEmailSettingModel != null) {
                                     if (!isCopy) {
@@ -258,7 +258,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                     }
                                     includeInBody = sqlQuery.sqlQueryEmailSettingModel.includeInEmailBody;
                                     includeAsAttachment = sqlQuery.sqlQueryEmailSettingModel.includeInEmailAttachment;
-                                    ignoreLabel = sqlQuery.sqlQueryEmailSettingModel.ignoreLabel;
+                                    singleResultStyling = sqlQuery.sqlQueryEmailSettingModel.singleResultStyling;
                                 }
 
                                 var sqlQueryId = null;
@@ -267,7 +267,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                                 }
 
                                 var query = new Query(sqlQuery.query, sqlQuery.title, sqlQuery.label, sqlQuery.datasource.id, sqlQueryId,
-                                    emailSettingId, includeInBody, includeAsAttachment, ignoreLabel);
+                                    emailSettingId, includeInBody, includeAsAttachment, singleResultStyling);
 
                                 self.queries.push(query);
                             });
@@ -282,7 +282,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             });
 
                             self.emptyReportNoEmailRule(jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === undefined ? false : (jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === "true") );
-
                         }
                     })
                 } else {
@@ -305,7 +304,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             //By default, we want the below checked
             query.includeInBody = true;
             query.includeAsAttachment = true;
-            query.ignoreLabel = false;
+            query.singleResultStyling = false;
 
             self.queries.push(query);
         };
@@ -350,7 +349,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             id: query.emailSettingId,
                             includeInEmailBody: query.includeInBody,
                             includeInEmailAttachment: query.includeAsAttachment,
-                            ignoreLabel: query.ignoreLabel
+                            singleResultStyling: query.singleResultStyling
                         }
                     });
                 });
@@ -586,6 +585,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             });
         };
         //Label related - end
+
+        $('body').tooltip({
+            selector: '[data-toggle="tooltip"]'
+        });
 
         return self;
     }

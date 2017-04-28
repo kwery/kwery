@@ -290,7 +290,7 @@ public class TestUtil {
         sqlQueryEmailSettingModel.setId(getId(SqlQueryExecutionModel.class));
         sqlQueryEmailSettingModel.setIncludeInEmailAttachment(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
         sqlQueryEmailSettingModel.setIncludeInEmailBody(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
-        sqlQueryEmailSettingModel.setIgnoreLabel(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
+        sqlQueryEmailSettingModel.setSingleResultStyling(new Boolean[]{true, false}[RandomUtils.nextInt(0, 2)]);
         return sqlQueryEmailSettingModel;
     }
 
@@ -349,7 +349,7 @@ public class TestUtil {
                 SqlQueryEmailSettingModel model = new SqlQueryEmailSettingModel();
                 model.setIncludeInEmailAttachment(true);
                 model.setIncludeInEmailBody(true);
-                model.setIgnoreLabel(false);
+                model.setSingleResultStyling(false);
                 sqlQueryModel.setSqlQueryEmailSettingModel(model);
             } else {
                 sqlQueryModel.setSqlQueryEmailSettingModel(sqlQueryDto.getSqlQueryEmailSetting());

@@ -97,7 +97,7 @@ public class ReportEmailSender {
 
                     section.setTitle(sqlQueryExecutionModel.getSqlQuery().getTitle());
 
-                    if (sqlQueryEmailSettingModel != null && sqlQueryEmailSettingModel.isIgnoreLabel()) {
+                    if (sqlQueryEmailSettingModel != null && sqlQueryEmailSettingModel.isSingleResultStyling()) {
                         section.setIgnoreHeader(true);
                     }
 
