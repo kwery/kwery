@@ -282,7 +282,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             });
 
                             self.emptyReportNoEmailRule(jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === undefined ? false : (jobModelHackDto.jobModel.rules["EMPTY_REPORT_NO_EMAIL"] === "true") );
-
                         }
                     })
                 } else {
@@ -586,6 +585,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             });
         };
         //Label related - end
+
+        $('body').tooltip({
+            selector: '[data-toggle="tooltip"]'
+        });
 
         return self;
     }
