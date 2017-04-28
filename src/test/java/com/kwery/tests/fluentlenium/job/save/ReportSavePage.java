@@ -100,8 +100,8 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
                     }
                 }
 
-                String ignoreLabelClass = String.format(".f-sql-query%d .ignore-label-f", i);
-                if (model.isIgnoreLabel()) {
+                String ignoreLabelClass = String.format(".f-sql-query%d .single-result-styling-f", i);
+                if (model.isSingleResultStyling()) {
                     if (!el(ignoreLabelClass).selected()) {
                         el(ignoreLabelClass).click();
                     }
@@ -245,7 +245,7 @@ public class ReportSavePage extends KweryFluentPage implements RepoDashPage {
     }
 
     public boolean sqlQueryEmailSettingIgnoreLabel(int index) {
-        return el(format(".f-sql-query%d .ignore-label-f", index)).selected();
+        return el(format(".f-sql-query%d .single-result-styling-f", index)).selected();
     }
 
     public void assertNonEmptyReportFormValidationMessage() {

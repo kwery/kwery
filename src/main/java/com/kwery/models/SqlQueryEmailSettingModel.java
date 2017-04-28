@@ -9,7 +9,7 @@ public class SqlQueryEmailSettingModel {
     public static final String SQL_QUERY_EMAIL_SETTING_ID_COLUMN = "id";
     public static final String EMAIL_BODY_INCLUDE_COLUMN = "email_body_include";
     public static final String EMAIL_ATTACHMENT_INCLUDE_COLUMN = "email_attachment_include";
-    public static final String IGNORE_LABEL_COLUMN = "ignore_label";
+    public static final String SINGLE_RESULT_STYLING_COLUMN = "single_result_styling";
 
     public static final String SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE = "sql_query_sql_query_email_setting";
     public static final String SQL_QUERY_SQL_QUERY_EMAIL_SETTING_ID_COLUMN = "id";
@@ -27,8 +27,8 @@ public class SqlQueryEmailSettingModel {
     @Column(name = EMAIL_ATTACHMENT_INCLUDE_COLUMN)
     protected boolean includeInEmailAttachment;
 
-    @Column(name = IGNORE_LABEL_COLUMN)
-    protected boolean ignoreLabel;
+    @Column(name = SINGLE_RESULT_STYLING_COLUMN)
+    protected boolean singleResultStyling;
 
     public Integer getId() {
         return id;
@@ -54,11 +54,11 @@ public class SqlQueryEmailSettingModel {
         this.includeInEmailAttachment = includeInEmailAttachment;
     }
 
-    public boolean isIgnoreLabel() {
-        return ignoreLabel;
+    public boolean isSingleResultStyling() {
+        return singleResultStyling;
     }
 
-    public void setIgnoreLabel(boolean ignoreLabel) {
-        this.ignoreLabel = ignoreLabel;
+    public void setSingleResultStyling(boolean ignoreLabel) {
+        this.singleResultStyling = ignoreLabel;
     }
 }

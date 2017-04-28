@@ -27,11 +27,11 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
 @RunWith(Parameterized.class)
-public class SqlQueryEmailSettingIgnoreLabelTest extends AbstractSqlQueryEmailSettingTest {
-    protected boolean ignoreLabel = false;
+public class SqlQueryEmailSettingSingleResultStylingTest extends AbstractSqlQueryEmailSettingTest {
+    protected boolean singleResultStyling = false;
 
-    public SqlQueryEmailSettingIgnoreLabelTest(boolean ignoreLabel) {
-        this.ignoreLabel = ignoreLabel;
+    public SqlQueryEmailSettingSingleResultStylingTest(boolean singleResultStyling) {
+        this.singleResultStyling = singleResultStyling;
     }
 
     @Parameterized.Parameters(name = "{0}")
@@ -50,7 +50,7 @@ public class SqlQueryEmailSettingIgnoreLabelTest extends AbstractSqlQueryEmailSe
         model.setIncludeInEmailBody(true);
         sqlQueryModel0.setSqlQueryEmailSettingModel(model);
 
-        if (ignoreLabel) {
+        if (singleResultStyling) {
             setEmailSetting(true, true, true);
         } else {
             setEmailSetting(true, true, false);
@@ -73,7 +73,7 @@ public class SqlQueryEmailSettingIgnoreLabelTest extends AbstractSqlQueryEmailSe
 
         Document doc = Jsoup.parse(html);
 
-        if (ignoreLabel) {
+        if (singleResultStyling) {
             Element table = doc.select(".report-content-t").first();
             assertThat(table.attr("style"), containsString("border: none;"));
             assertThat(table.attr("style"), not(containsString("border: 1px solid black;")));

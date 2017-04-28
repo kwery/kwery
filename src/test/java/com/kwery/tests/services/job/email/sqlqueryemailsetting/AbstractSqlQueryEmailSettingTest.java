@@ -119,7 +119,7 @@ public class AbstractSqlQueryEmailSettingTest extends RepoDashTestBase {
 
     public void setEmailSetting(boolean includeInBody, boolean includeInAttachment, boolean ignoreLabel) {
         setEmailSetting(includeInBody, includeInAttachment);
-        sqlQueryModel0.getSqlQueryEmailSettingModel().setIgnoreLabel(ignoreLabel);
+        sqlQueryModel0.getSqlQueryEmailSettingModel().setSingleResultStyling(ignoreLabel);
     }
 
     protected void assertSection(String html, boolean present) {
