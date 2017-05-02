@@ -2,9 +2,9 @@ package com.kwery.custom;
 
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
+import com.kwery.dao.EmailConfigurationDao;
 import com.kwery.models.EmailConfiguration;
 import com.kwery.models.SmtpConfiguration;
-import com.kwery.services.mail.EmailConfigurationService;
 import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.KweryMailAttachment;
 import com.kwery.services.mail.smtp.SmtpService;
@@ -20,23 +20,24 @@ import java.io.IOException;
 public class KweryPostofficeImpl implements Postoffice {
     private final CommonsmailHelper commonsmailHelper;
     private final SmtpService smtpService;
-    private final EmailConfigurationService emailConfigurationService;
+    private final EmailConfigurationDao emailConfigurationDao;
 
     @Inject
-    public KweryPostofficeImpl(CommonsmailHelper commonsmailHelper, SmtpService smtpService, EmailConfigurationService emailConfigurationService) {
+    public KweryPostofficeImpl(CommonsmailHelper commonsmailHelper, SmtpService smtpService, EmailConfigurationDao emailConfigurationDao) {
         this.commonsmailHelper = commonsmailHelper;
         this.smtpService = smtpService;
-        this.emailConfigurationService = emailConfigurationService;
+        this.emailConfigurationDao = emailConfigurationDao;
     }
 
     @Override
     public void send(Mail mail) throws Exception {
-        EmailConfiguration emailConfiguration = emailConfigurationService.getEmailConfiguration();
+        EmailConfiguration emailConfiguration = emailConfigurationDao.get();
         mail.setFrom(emailConfiguration.getFrom());
 
         if (!Strings.nullToEmpty(emailConfiguration.getBcc()).trim().equals("")) {
-            mail.getBccs().clear();
-            mail.addBcc(emailConfiguration.getBcc());
+            for (String email : emailConfiguration.getBcc().split(",")) {
+                mail.addBcc(email);
+            }
         }
 
         if (!Strings.nullToEmpty(emailConfiguration.getReplyTo()).trim().equals("")) {
@@ -68,7 +69,7 @@ public class KweryPostofficeImpl implements Postoffice {
             commonsmailHelper.doSetServerParameter(multiPartEmail, smtpHost, smtpPort, smtpSsl, smtpUser, smtpPassword, smtpDebug);
         }
 
-        // And send it:
+        //Send mail
         multiPartEmail.send();
     }
 

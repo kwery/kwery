@@ -11,7 +11,7 @@
     <tr>
         <td align="center">
             <table>
-                <div th:each="section: ${reportEmail.reportEmailSections}" th:remove="tag">
+                <div th:each="section,sectionIter: ${reportEmail.reportEmailSections}" th:remove="tag">
                     <tr>
                         <td>
                             <h1 class="report-title-t" th:text="${section.title}">
@@ -21,14 +21,14 @@
                     </tr>
                     <tr style="border: 1px solid black;">
                         <td style="padding-bottom: 1em;">
-                            <table class="report-content-t" style="border: 1px solid black; table-layout: auto; border-collapse: collapse;">
-                                <tr style="border: 1px solid black;">
+                            <table class="report-content-t" th:styleappend="${section.ignoreHeader}? 'border: none;' : 'border: 1px solid black;'" style="table-layout: auto; border-collapse: collapse;">
+                                <tr th:class="'report-label-' + ${sectionIter.index} + '-t'" th:if="${not section.ignoreHeader}" style="border: 1px solid black;">
                                     <th th:each="header : ${section.headers}" th:text="|${header}|" style="border: 1px solid black; padding: 5px;">
                                         Header 0
                                     </th>
                                 </tr>
-                                <tr th:each="row: ${section.rows}" style="border: 1px solid black;">
-                                    <td th:each="column : ${row}" th:text="|${column}|" style="border: 1px solid black; padding: 5px;"> Val 0</td>
+                                <tr th:class="'section-' + ${sectionIter.index} + '-row-' + ${rowIter.index} + '-t'" th:each="row,rowIter: ${section.rows}" th:style="${section.ignoreHeader}? 'border: none;' : 'border: 1px solid black;'">
+                                    <td th:class="'section-' + ${sectionIter.index} + '-row-' + ${rowIter.index} + '-col-' + ${rowIter.index} + '-t'" th:each="column,colIter : ${row}" th:text="|${column}|"th:styleappend="${section.ignoreHeader}? 'border: none; font-size: x-large' : 'border: 1px solid black;'" style="padding: 5px;"> Val 0</td>
                                 </tr>
                             </table>
                         </td>

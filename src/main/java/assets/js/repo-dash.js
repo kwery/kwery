@@ -37,7 +37,7 @@
                 {url: "sql-query/list", auth: true, component: "sql-query-list"},
                 {url: "sql-query/execution-summary", auth: true, component: "sql-query-execution-summary"},
                 {url: "sql-query/{sqlQueryId}", auth: true, component: "sql-query-add"},
-                {url: "email/configuration", auth: true, component: "email-configuration"},
+                {url: "email/configuration/:?q:", auth: true, component: "email-configuration"},
                 {url: "report/add/:?q:", auth: true, component: "report-add"},
                 {url: "report/list/:?q:", auth: true, component: "report-list"},
                 {url: "report/executing", auth: true, component: "report-executing"},

@@ -106,4 +106,8 @@ public class Messages {
     public static final String REPORT_LIST_EXECUTE_NOW_WAITING_M = "Generating Report";
 
     public static final String REPORT_EMAIL_CONFIGURATION_SAVE_SUCCESS = "Logo image URL saved successfully";
+
+    public static final String EMAIL_CONFIGURATION_EMPTY_FROM_EMAIL_M = "From email address cannot be empty";
+
+    public static final String EMAIL_CONFIGURATION_INVALID_EMAIL_M = "{0} emails are not valid";
 }

@@ -409,6 +409,7 @@ public class DbUtil {
                     builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_TABLE)
                             .with(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_COLUMN, model.getId())
                             .with(SqlQueryEmailSettingModel.EMAIL_BODY_INCLUDE_COLUMN, model.getIncludeInEmailBody())
+                            .with(SqlQueryEmailSettingModel.SINGLE_RESULT_STYLING_COLUMN, model.isSingleResultStyling())
                             .with(SqlQueryEmailSettingModel.EMAIL_ATTACHMENT_INCLUDE_COLUMN, model.getIncludeInEmailAttachment())
                             .add();
                     builder.newRow(SqlQueryEmailSettingModel.SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE)
@@ -718,6 +719,7 @@ public class DbUtil {
                                 .column(SqlQueryEmailSettingModel.SQL_QUERY_EMAIL_SETTING_ID_COLUMN, sqlQueryEmailSettingModel.getId())
                                 .column(EMAIL_BODY_INCLUDE_COLUMN, sqlQueryEmailSettingModel.getIncludeInEmailBody())
                                 .column(EMAIL_ATTACHMENT_INCLUDE_COLUMN, sqlQueryEmailSettingModel.getIncludeInEmailAttachment())
+                                .column(SqlQueryEmailSettingModel.SINGLE_RESULT_STYLING_COLUMN, sqlQueryEmailSettingModel.isSingleResultStyling())
                                 .end()
                                 .build(),
                         insertInto(SQL_QUERY_SQL_QUERY_EMAIL_SETTING_TABLE)
@@ -828,6 +830,27 @@ public class DbUtil {
             }
 
             return builder.build();
+        } catch (DataSetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static IDataSet emailConfigurationTable(EmailConfiguration m) {
+        try {
+            DataSetBuilder builder = new DataSetBuilder();
+            builder.ensureTableIsPresent(EmailConfiguration.TABLE_EMAIL_CONFIGURATION);
+
+            if (m != null) {
+                builder.newRow(TABLE_EMAIL_CONFIGURATION)
+                        .with(COLUMN_FROM_EMAIL, m.getFrom())
+                        .with(COLUMN_BCC, m.getBcc())
+                        .with(COLUMN_REPLY_TO, m.getReplyTo())
+                        .with(EmailConfiguration.COLUMN_ID, m.getId())
+                        .add();
+            }
+
+            return builder.build();
+
         } catch (DataSetException e) {
             throw new RuntimeException(e);
         }
