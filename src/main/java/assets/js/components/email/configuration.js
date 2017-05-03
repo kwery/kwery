@@ -60,7 +60,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
             $("#saveSmtpConfigurationForm").validator("validate");
         });
 
-        waitingModal.show();
+        waitingModal.show(undefined, "getSettings");
 
         $.when(
             $.ajax("/api/mail/smtp-configuration", {
@@ -95,7 +95,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                 }
             })
         ).always(function(){
-            waitingModal.hide();
+            waitingModal.hide("getSettings");
 
             //We want this message to be shown only when the page loads, not after any actions
             //This should be shown only if either one of the configurations are missing, not when both are missing
@@ -140,7 +140,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                             $.jStorage.set("ec:message", result.messages[0], {TTL: (10 * 60 * 1000)});
                             document.location.href = "/#email/configuration?_=" + new Date().getTime();
                         }
-                    });
+                    }, "saveSmtpConfiguration");
                 }
                 return false;
             });
@@ -168,9 +168,6 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                     type: "POST",
                     data: ko.toJSON(conf),
                     contentType: "application/json",
-                    beforeSend: function(){
-                        waitingModal.show(ko.i18n("progress.indicator.msg.saving"));
-                    },
                     success: function(result) {
                         if (result.status === "success") {
                             $.jStorage.set("ec:status", "success", {TTL: (10 * 60 * 1000)});
@@ -182,7 +179,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                             self.emailConfigurationPresent(true);
                         }
                     }
-                })
+                }, "saveEmailConfiguration")
             }
 
             return false;
@@ -201,7 +198,7 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                         self.messages(result.messages);
                         $('body').scrollTop(0);
                     }
-                });
+                }, "testEmailConfiguration");
             }
 
             return false;

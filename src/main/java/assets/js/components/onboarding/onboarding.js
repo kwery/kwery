@@ -25,7 +25,7 @@ define(["knockout", "jquery", "text!components/onboarding/onboarding.html", "aja
                         break;
                 }
             }
-        });
+        }, "onboarding");
 
         return self;
     }

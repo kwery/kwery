@@ -166,7 +166,7 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                 type: "GET",
                 contentType: "application/json",
                 beforeSend: function(){
-                    waitingModal.show();
+                    waitingModal.show(undefined, "getJobLabel");
                 },
                 success: function (jobLabelModelHackDtos) {
                     buildLabelTree(jobLabelModelHackDtos);
@@ -199,7 +199,7 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                 })
             }
         }).always(function(){
-            waitingModal.hide();
+            waitingModal.hide("showJobLabel");
             self.refreshValidation();
         });
 
@@ -231,7 +231,7 @@ define(["knockout", "jquery", "text!components/report-label/add.html", "waitingm
                                 self.messages(result.messages);
                             }
                         }
-                    })
+                    }, "saveJobLabel")
                 }
 
                 return false;

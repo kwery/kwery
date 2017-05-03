@@ -29,7 +29,7 @@ define(["knockout", "jquery", "text!components/user/list.html", "ajaxutil", "jst
                 });
                 self.users(result);
             }
-        });
+        }, "listAllUsers");
 
         self.delete = function(user) {
             ajaxUtil.waitingAjax({
@@ -44,7 +44,7 @@ define(["knockout", "jquery", "text!components/user/list.html", "ajaxutil", "jst
                         self.users.remove(user);
                     }
                 }
-            });
+            }, "deleteUser");
         };
 
         $('[data-toggle="tooltip"]').tooltip();

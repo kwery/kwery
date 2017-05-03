@@ -14,7 +14,7 @@ define(["knockout", "jquery", "text!components/report/executing.html", "ajaxutil
             success: function(result) {
                 self.executions(result);
             }
-        });
+        }, "getExecutingJobs");
 
         self.stopJobExecution = function(execution) {
             self.status("");
@@ -33,7 +33,7 @@ define(["knockout", "jquery", "text!components/report/executing.html", "ajaxutil
                     }
                     self.status(result.status);
                 }
-            });
+            }, "stopJob");
         };
 
         return self;
