@@ -2,8 +2,6 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
     function ViewModel(params) {
         var self = this;
 
-        $('body').scrollTop(0);
-
         self.status = ko.observable("");
         self.messages = ko.observableArray([]);
 
@@ -196,7 +194,6 @@ define(["knockout", "jquery", "text!components/email/configuration.html", "ajaxu
                     success: function(result) {
                         self.status(result.status);
                         self.messages(result.messages);
-                        $('body').scrollTop(0);
                     }
                 }, "testEmailConfiguration");
             }

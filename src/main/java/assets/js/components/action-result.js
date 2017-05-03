@@ -4,16 +4,33 @@ define(["knockout", "jquery", "text!components/action-result.html"], function (k
         self.status = params.status;
         self.messages = params.messages;
 
+        self.status.extend({notify: "always"});
+        self.status.subscribe(function(){
+            $('body').scrollTop(0);
+        }, self);
+
         self.showSuccess = ko.computed(function(){
-            return self.status() === "success";
+            var ret = self.status() === "success";
+            if (ret) {
+                $('body').scrollTop(0);
+            }
+            return ret;
         }, self);
 
         self.showFailure = ko.computed(function(){
-            return self.status() === "failure";
+            var ret = self.status() === "failure";
+            if (ret) {
+                $('body').scrollTop(0);
+            }
+            return ret;
         }, self);
 
         self.showInfo = ko.computed(function(){
-            return self.status() === "info";
+            var ret = self.status() === "info";
+            if (ret) {
+                $('body').scrollTop(0);
+            }
+            return ret;
         }, self);
 
         $(document).ajaxError(function(event, jqxhr, settings, thrownError){
