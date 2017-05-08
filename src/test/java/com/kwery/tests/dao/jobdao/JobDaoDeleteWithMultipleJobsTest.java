@@ -21,7 +21,10 @@ public class JobDaoDeleteWithMultipleJobsTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoDeleteWithMultipleJobsTest() {
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
+
         jobModelToDelete = jobModelWithoutDependents();
+        jobModelToDelete.setParameterCsv("foo bar moo");
 
         jobDbSetUp(ImmutableList.of(jobModel, jobModelToDelete));
 

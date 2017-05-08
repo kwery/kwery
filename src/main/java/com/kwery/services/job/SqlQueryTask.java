@@ -9,6 +9,10 @@ import com.kwery.models.Datasource;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.datasource.DatasourceService;
+import com.kwery.services.job.parameterised.SqlQueryNormalizer;
+import com.kwery.services.job.parameterised.SqlQueryNormalizerFactory;
+import com.kwery.services.job.parameterised.SqlQueryParameterExtractor;
+import com.kwery.services.job.parameterised.SqlQueryParameterExtractorFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
 import com.kwery.conf.KweryDirectory;
@@ -17,12 +21,15 @@ import it.sauronsoftware.cron4j.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -40,6 +47,10 @@ public class SqlQueryTask extends Task {
     private final CountDownLatch latch;
     private final String jobExecutionId;
     protected final KweryDirectory kweryDirectory;
+    protected final Map<String, ?> parameters;
+    protected final SqlQueryNormalizerFactory sqlQueryNormalizerFactory;
+    protected final SqlQueryParameterExtractorFactory sqlQueryParameterExtractorFactory;
+
 
     @Inject
     public SqlQueryTask(SqlQueryDao sqlQueryDao,
@@ -48,9 +59,12 @@ public class SqlQueryTask extends Task {
                         PreparedStatementExecutorFactory preparedStatementExecutorFactory,
                         ResultSetProcessorFactory resultSetProcessorFactory,
                         KweryDirectory kweryDirectory,
+                        SqlQueryNormalizerFactory sqlQueryNormalizerFactory,
+                        SqlQueryParameterExtractorFactory sqlQueryParameterExtractorFactory,
                         @Assisted int sqlQueryModelId,
                         @Assisted String jobExecutionId,
-                        @Assisted CountDownLatch latch
+                        @Assisted CountDownLatch latch,
+                        @Assisted Map<String, ?> parameters
     ) {
         this.sqlQueryDao = sqlQueryDao;
         this.datasourceService = datasourceService;
@@ -61,6 +75,9 @@ public class SqlQueryTask extends Task {
         this.latch = latch;
         this.jobExecutionId = jobExecutionId;
         this.kweryDirectory = kweryDirectory;
+        this.parameters = parameters;
+        this.sqlQueryNormalizerFactory = sqlQueryNormalizerFactory;
+        this.sqlQueryParameterExtractorFactory = sqlQueryParameterExtractorFactory;
     }
 
     @Override
@@ -71,6 +88,7 @@ public class SqlQueryTask extends Task {
         String query = sqlQuery.getQuery();
         logger.info("Executing query {} on datasource {}", query, datasource.getLabel());
         try (Connection connection = datasourceService.connection(datasource)) {
+            //TODO - Parameterise this
             if (sqlQuery.getQuery().trim().toLowerCase().startsWith("insert")) {
                 try (PreparedStatement p = connection.prepareStatement(query)) {
                     Future<Integer> queryFuture = preparedStatementExecutorFactory.create(p).executeUpdate();
@@ -91,7 +109,23 @@ public class SqlQueryTask extends Task {
                 }
             } else {
                 connection.setAutoCommit(false);
+
+                //Extract parameters from query if present
+                SqlQueryParameterExtractor extractor = sqlQueryParameterExtractorFactory.create(query);
+                List<String> parametersFromQuery = extractor.extract();
+
+                //Replace parameters with ?
+                SqlQueryNormalizer sqlQueryNormalizer = sqlQueryNormalizerFactory.create(query);
+                query = sqlQueryNormalizer.normalise();
+
                 try (PreparedStatement p = connection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+                    //Provide arguments to prepared statement
+                    int position = 1;
+                    for (String parameter : parametersFromQuery) {
+                        p.setObject(position, parameters.get(parameter));
+                        position = position + 1;
+                    }
+
                     if (sqlQuery.getDatasource().getType() == Datasource.Type.POSTGRESQL
                             || sqlQuery.getDatasource().getType() == Datasource.Type.REDSHIFT
                             || sqlQuery.getDatasource().getType() == Datasource.Type.SQLSERVER

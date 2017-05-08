@@ -15,6 +15,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -59,7 +60,7 @@ public class SqlQueryEmailSettingSingleResultStylingTest extends AbstractSqlQuer
 
     @Test
     public void test() throws Exception {
-        reportEmailSender.send(jobExecutionModel);
+        reportEmailSender.send(jobExecutionModel, new LinkedList<>());
 
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));

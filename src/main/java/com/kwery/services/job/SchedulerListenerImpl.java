@@ -58,7 +58,10 @@ public class SchedulerListenerImpl implements SchedulerListener {
             saveSqlQueryExecutionStart(sqlQueryModel, jobExecutionModel, executor);
         } else if (task instanceof JobTask) {
             JobTask jobTask = (JobTask) task;
-            JobModel jobModel = jobDao.getJobById(jobTask.getJobId());
+            JobModel jobModel = jobTask.getJobModel();
+            if (jobModel == null) {
+                jobModel = jobDao.getJobById(jobTask.getJobId());
+            }
             logger.info("Job with id {} and label {} execution launched", jobModel.getId(), jobModel.getName());
             saveJobExecutionStart(jobModel, executor);
         } else {
@@ -75,7 +78,10 @@ public class SchedulerListenerImpl implements SchedulerListener {
             logger.info("Sql query with id {} and label {} execution completed", sqlQueryModel.getId(), sqlQueryModel.getLabel());
         } else if (task instanceof JobTask) {
             JobTask jobTask = (JobTask) task;
-            JobModel jobModel = jobDao.getJobById(jobTask.getJobId());
+            JobModel jobModel = jobTask.getJobModel();
+            if (jobModel == null) {
+                jobModel = jobDao.getJobById(jobTask.getJobId());
+            }
             logger.info("Job with id {} and label {} execution completed", jobModel.getId(), jobModel.getName());
         } else {
             throw new AssertionError("Unknown task type being executed");
@@ -91,7 +97,10 @@ public class SchedulerListenerImpl implements SchedulerListener {
             logger.info("Sql query with id {} and label {} execution failed", sqlQueryModel.getId(), sqlQueryModel.getLabel());
         } else if (task instanceof JobTask) {
             JobTask jobTask = (JobTask) task;
-            JobModel jobModel = jobDao.getJobById(jobTask.getJobId());
+            JobModel jobModel = jobTask.getJobModel();
+            if (jobModel == null) {
+                jobModel = jobDao.getJobById(jobTask.getJobId());
+            }
             logger.info("Job with id {} and label {} execution failed", jobModel.getId(), jobModel.getName());
         } else {
             throw new AssertionError("Unknown task type being executed");

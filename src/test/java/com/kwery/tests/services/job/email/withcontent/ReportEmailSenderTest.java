@@ -21,6 +21,7 @@ import javax.activation.DataSource;
 import javax.mail.internet.MimeMessage;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.reportEmailConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
@@ -64,7 +65,7 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
 
     @Test
     public void test() throws Exception {
-        getInstance(ReportEmailSender.class).send(jobExecutionModel);
+        getInstance(ReportEmailSender.class).send(jobExecutionModel, new LinkedList<>());
 
         String expectedSubject = "Test Report - Thu Dec 22 2016 21:29";
 

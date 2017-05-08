@@ -91,4 +91,11 @@ public class MessageKeys {
 
     public static final String EMAIL_CONFIGURATION_EMPTY_FROM_EMAIL = "email.configuration.empty.from.email";
     public static final String EMAIL_CONFIGURATION_INVALID_EMAIL = "email.configuration.invalid.email";
+
+    public static final String JOB_PARAMETER_VALIDATION_ERROR_VALUES_NOT_PRESENT = "job.parameter.validation.error.values.not.present";
+    public static final String JOB_PARAMETER_VALIDATION_ERROR_VALUE_NAME_COUNT_MISMATCH = "job.parameter.validation.error.value.name.count.mismatch";
+    public static final String JOB_PARAMETER_VALIDATION_ERROR_QUOTE_LINE_ENDING = "job.parameter.validation.error.quote.line.ending";
+    public static final String JOB_PARAMETER_VALIDATION_ERROR_PARAMETERS_NOT_PRESENT = "job.parameter.validation.error.parameters.not.present";
+    public static final String JOB_PARAMETER_VALIDATION_ERROR_EXTRA_PARAMETERS_PRESENT = "job.parameter.validation.error.extra.parameters.present";
+    public static final String JOB_PARAMETER_VALIDATION_ERROR_INVALID_EMAIL = "job.parameter.validation.error.invalid.email";
 }

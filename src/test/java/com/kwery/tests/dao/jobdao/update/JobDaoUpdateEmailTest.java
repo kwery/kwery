@@ -26,6 +26,8 @@ public class JobDaoUpdateEmailTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoUpdateEmailTest() {
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
+
         jobModel.getEmails().addAll(ImmutableSet.of("foo@goo.com", "bar@foo.com"));
 
         jobDbSetUp(jobModel);

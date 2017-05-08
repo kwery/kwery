@@ -28,6 +28,7 @@ public class JobDaoUpdateRuleTest extends RepoDashDaoTestBase {
     @Before
     public void setUp() {
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
         jobDbSetUp(jobModel);
 
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(true)));

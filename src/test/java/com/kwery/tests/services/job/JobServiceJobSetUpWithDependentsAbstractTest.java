@@ -29,6 +29,8 @@ public abstract class JobServiceJobSetUpWithDependentsAbstractTest extends JobSe
     @Before
     public void setUpJobServiceJobSetUpWithDependentsAbstractTest() {
         dependentJobModel = jobModelWithoutDependents();
+        dependentJobModel.setParameterCsv("");
+
         dependentJobModel.setCronExpression("");
 
         for (int i = 0; i < 2; ++i) {

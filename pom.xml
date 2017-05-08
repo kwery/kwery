@@ -6,7 +6,7 @@
     <artifactId>kwery</artifactId>
     <packaging>jar</packaging>
     <groupId>com.kwery</groupId>
-    <version>1.9.6</version>
+    <version>parameter-beta</version>
 
     <url>http://www.getkwery.com</url>
 
@@ -348,6 +348,24 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- Used to parse parameter queries -->
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Nullable annotation -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.ninjaframework</groupId>

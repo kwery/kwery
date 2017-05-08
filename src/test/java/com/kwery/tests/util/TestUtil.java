@@ -230,6 +230,7 @@ public class TestUtil {
         jobModel.setParentJob(null);
         jobModel.setLabels(new HashSet<>());
         jobModel.setJobRuleModel(null);
+        jobModel.setParameterCsv("");
         return jobModel;
     }
 

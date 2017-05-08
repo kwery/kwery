@@ -39,6 +39,7 @@ public class JobDaoUpdateTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoUpdateTest() {
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
         jobDbSetUp(jobModel);
 
         datasource = datasource();

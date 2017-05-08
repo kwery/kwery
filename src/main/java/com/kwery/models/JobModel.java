@@ -1,12 +1,16 @@
 package com.kwery.models;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableList;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.hibernate.search.annotations.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
 
 import static javax.persistence.EnumType.STRING;
@@ -54,6 +58,8 @@ public class JobModel extends AbstractBaseModel {
     public static final String JOB_FAILURE_ALERT_EMAIL_ID_COLUMN = "id";
     public static final String JOB_FAILURE_ALERT_EMAIL_TABLE_JOB_ID_FK_COLUMN = "job_id_fk";
     public static final String JOB_FAILURE_ALERT_EMAIL_TABLE_EMAIL_COLUMN = "email";
+
+    public static final String PARAMETER_CSV_COLUMN = "parameter_csv";
 
     @Column(name = CRON_EXPRESSION_COLUMN)
     @Size(max = 255)
@@ -139,6 +145,10 @@ public class JobModel extends AbstractBaseModel {
     )
     protected JobRuleModel jobRuleModel;
 
+    @Column(name = PARAMETER_CSV_COLUMN)
+    @Size(max = 32672)
+    protected String parameterCsv = "";
+
     public String getCronExpression() {
         return cronExpression;
     }
@@ -223,11 +233,23 @@ public class JobModel extends AbstractBaseModel {
         EMPTY_REPORT_NO_EMAIL
     }
 
-    public JobRuleModel getJobRuleModel() {
+    public JobRuleModel getJobRuleModel(){
         return jobRuleModel;
     }
 
     public void setJobRuleModel(JobRuleModel jobRuleModel) {
         this.jobRuleModel = jobRuleModel;
+    }
+
+    public String getParameterCsv() {
+        return this.parameterCsv;
+    }
+
+    public void setParameterCsv(String parameterCsv) {
+        this.parameterCsv = parameterCsv;
+    }
+
+    public boolean isParameterised() {
+        return !"".equals(getParameterCsv());
     }
 }

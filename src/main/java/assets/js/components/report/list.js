@@ -61,13 +61,23 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
         self.reports = ko.observableArray([]);
 
         self.executeReport = function(report) {
-            waitingModal.show(ko.i18n('report.list.execute.now.waiting'));
+            if (report.parameterCsv !== "") {
+               waitingModal.show();
+            } else {
+                waitingModal.show(ko.i18n('report.list.execute.now.waiting'));
+            }
             $.ajax({
                 url: "/api/job/" + report.id + "/execute",
                 type: "POST",
                 contentType: "application/json",
                 success: function(executeResponse) {
-                    fetchReport(report.id, executeResponse.executionId);
+                    if (report.parameterCsv !== "") {
+                        self.status("success");
+                        self.messages(["Report generation started"]);
+                        waitingModal.hide();
+                    } else {
+                        fetchReport(report.id, executeResponse.executionId);
+                    }
                 }
             });
             return false;

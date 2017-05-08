@@ -22,6 +22,7 @@ public class JobDaoDeleteSqlQueryTest extends RepoDashDaoTestBase {
     @Before
     public void setUp() {
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
         jobDbSetUp(jobModel);
 
         datasource = datasource();

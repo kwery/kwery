@@ -10,6 +10,8 @@ import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.internet.MimeMessage;
 
+import java.util.LinkedList;
+
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -18,7 +20,7 @@ import static org.junit.Assert.assertThat;
 public class ReportEmailSenderEmptyReportEmailRuleFalseTest extends AbstractReportEmailWithContentSender {
     @Test
     public void test() throws Exception {
-        getInstance(ReportEmailSender.class).send(jobExecutionModel);
+        getInstance(ReportEmailSender.class).send(jobExecutionModel, new LinkedList<>());
         assertMailPresent();
     }
 

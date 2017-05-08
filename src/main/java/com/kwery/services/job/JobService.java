@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
+import com.kwery.services.job.parameterised.ParameterisedJobTask;
+import com.kwery.services.job.parameterised.ParameterisedJobTaskFactory;
 import it.sauronsoftware.cron4j.TaskExecutor;
 import ninja.lifecycle.Start;
 import org.slf4j.Logger;
@@ -22,23 +24,38 @@ public class JobService {
     protected final KweryScheduler kweryScheduler;
     protected final JobTaskFactory jobTaskFactory;
     protected final JobDao jobDao;
+    protected final ParameterisedKweryScheduler parameterisedKweryScheduler;
+    protected final ParameterisedJobTaskFactory parameterisedJobTaskFactory;
 
     //TODO - Needs to be done in a better way
     protected Map<Integer, String> jobIdSchedulerIdMap = new ConcurrentHashMap<>();
 
     @Inject
-    public JobService(KweryScheduler kweryScheduler, JobTaskFactory jobTaskFactory, JobDao jobDao) {
+    public JobService(KweryScheduler kweryScheduler, ParameterisedKweryScheduler parameterisedKweryScheduler,
+                      JobTaskFactory jobTaskFactory, ParameterisedJobTaskFactory parameterisedJobTaskFactory, JobDao jobDao) {
         this.kweryScheduler = kweryScheduler;
+        this.parameterisedKweryScheduler = parameterisedKweryScheduler;
         this.jobTaskFactory = jobTaskFactory;
         this.jobDao = jobDao;
+        this.parameterisedJobTaskFactory = parameterisedJobTaskFactory;
     }
 
     public String schedule(int jobId) {
         logger.info("Scheduling job with id {}", jobId);
-        JobTask jobTask = jobTaskFactory.create(jobId);
         JobModel jobModel = jobDao.getJobById(jobId);
-        String schedulerId = kweryScheduler.schedule(jobModel.getCronExpression(), jobTask);
-        jobIdSchedulerIdMap.put(jobId, schedulerId);
+
+        String schedulerId = "";
+
+        if (jobModel.isParameterised()) {
+            ParameterisedJobTask jobTask = parameterisedJobTaskFactory.create(jobId);
+            schedulerId = parameterisedKweryScheduler.schedule(jobModel.getCronExpression(), jobTask);
+            jobIdSchedulerIdMap.put(jobId, schedulerId);
+        } else {
+            JobTask jobTask = jobTaskFactory.create(jobId);
+            schedulerId = kweryScheduler.schedule(jobModel.getCronExpression(), jobTask);
+            jobIdSchedulerIdMap.put(jobId, schedulerId);
+        }
+
         return schedulerId;
     }
 
@@ -54,7 +71,11 @@ public class JobService {
 
     public TaskExecutor launch(int jobId) {
         logger.info("Launching job with id {}", jobId);
-        return kweryScheduler.launch(jobTaskFactory.create(jobId));
+        if (jobDao.getJobById(jobId).isParameterised()) {
+            return parameterisedKweryScheduler.launch(parameterisedJobTaskFactory.create(jobId));
+        } else {
+            return kweryScheduler.launch(jobTaskFactory.create(jobId));
+        }
     }
 
     public boolean stopExecution(String executionId) {
@@ -68,6 +89,17 @@ public class JobService {
                 found = true;
                 logger.info("Task execution with id {} stopped successfully", executionId);
                 break;
+            }
+        }
+
+        if (!found) {
+            for (TaskExecutor taskExecutor : parameterisedKweryScheduler.getExecutingTasks()) {
+                if (executionId.equals(taskExecutor.getGuid())) {
+                    taskExecutor.stop();
+                    found = true;
+                    logger.info("Task execution with id {} stopped successfully", executionId);
+                    break;
+                }
             }
         }
 
@@ -88,6 +120,7 @@ public class JobService {
 
         jobIdSchedulerIdMap.remove(jobId);
         kweryScheduler.deschedule(id);
+        parameterisedKweryScheduler.deschedule(id);
     }
 
     @VisibleForTesting

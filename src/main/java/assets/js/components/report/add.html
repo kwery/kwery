@@ -216,11 +216,52 @@
 
                 <br>
 
+                <div data-bind="visible: isParameterised" class="form-group">
+                    <label class="control-label text-muted" for="name">Parameters</label>
+                    <a data-toggle="collapse" href="#parameterCsvHelpContent" aria-expanded="false" aria-controls="collapseExample">
+                        Help
+                    </a>
+                    <textarea data-bind="value: parameterCsv" class="form-control" name="parameterCsv" id="parameterCsv"
+                              required></textarea>
+                    <div class="help-block with-errors"></div>
+
+                    <div id="parameterCsvHelpContent" class="collapse">
+                        <div class="well">
+                            <h6 class="text-muted">Points to keep in mind while entering Parameter CSV:</h6>
+                            <ul>
+                                <li>First line of the CSV should contain parameter names</li>
+                                <li>Subsequent lines should contain values</li>
+                                <li>No need to quote values</li>
+                                <li>If parameter values contain quotes, quotes should be escaped using double quotes, for example ""quoted value""</li>
+                                <li>Email addresses corresponding to each parameter list should have the header kwery_email</li>
+                            </ul>
+                            <p>
+                                If report template contains two sql queries
+                                <code>
+                                    select * from table0 where id = :id
+                                </code>
+                                and
+                                <code>
+                                    select * from table1 where name = :name
+                                </code>
+                            </p>
+
+                            <h6 class="text-muted">Example Parameter CSV:</h6>
+<pre>
+id, name, kwery_email
+1, ram, "user0@company0.com, user1@company1.com"
+2, ""guru"", "user2@company2.com, user3@company3.com"
+</pre>
+                        </div>
+                    </div>
+                </div>
+
                 <button data-bind="text: ko.i18n('report.save.submit')" type="submit" class="btn btn-primary btn-lg f-report-submit"
                         id="create" value="save"></button>
-                <button data-bind="text: ko.i18n('report.save.generate.submit'), attr: {'title': ko.i18n('report.save.generate.submit.tooltip')}"
+                <button data-bind="visible: !isParameterised(), text: ko.i18n('report.save.generate.submit'), attr: {'title': ko.i18n('report.save.generate.submit.tooltip')}"
                         type="submit" class="btn btn-primary btn-lg f-report-generate-submit" value="generate"></button>
             </form>
+
         </div>
     </div>
 

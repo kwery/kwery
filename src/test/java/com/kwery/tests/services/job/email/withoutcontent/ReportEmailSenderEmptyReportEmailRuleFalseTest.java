@@ -7,6 +7,8 @@ import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.internet.MimeMessage;
 
+import java.util.LinkedList;
+
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -18,7 +20,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 public class ReportEmailSenderEmptyReportEmailRuleFalseTest extends AbstractReportEmailWithoutContentSender {
     @Test
     public void test() throws Exception {
-        getInstance(ReportEmailSender.class).send(jobExecutionModel);
+        getInstance(ReportEmailSender.class).send(jobExecutionModel, new LinkedList<>());
 
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
         assertThat(wiserRule.wiser().getMessages(), hasSize(1));

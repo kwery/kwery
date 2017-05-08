@@ -30,8 +30,11 @@ public class JobDaoUpdateWithDependentsTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoUpdateWithDependentsTest() {
         jobModel0 = jobModelWithoutDependents();
+        jobModel0.setParameterCsv("foo bar moo");
         jobModel1 = jobModelWithoutDependents();
+        jobModel1.setParameterCsv("foo bar moo");
         jobModel2 = jobModelWithoutDependents();
+        jobModel2.setParameterCsv("foo bar moo");
 
         jobDbSetUp(ImmutableList.of(jobModel0, jobModel1, jobModel2));
 

@@ -32,6 +32,8 @@ public class JobDaoGetAllJobsTest extends RepoDashDaoTestBase {
 
         for (int i = 0; i < 2; ++i) {
             jobModel = jobModelWithoutDependents();
+            jobModel.setParameterCsv("foo bar moo");
+
             jobModels.add(jobModel);
 
             idJobModelMap.put(jobModel.getId(), jobModel);

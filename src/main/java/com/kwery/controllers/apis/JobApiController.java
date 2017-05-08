@@ -3,6 +3,7 @@ package com.kwery.controllers.apis;
 import au.com.bytecode.opencsv.CSVReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -69,11 +70,22 @@ public class JobApiController {
     protected final KweryDirectory kweryDirectory;
     protected final CsvReaderFactory csvReaderFactory;
     protected final JobSearchDao jobSearchDao;
+    protected final JobParameterValidator jobParameterValidator;
 
     @Inject
-    public JobApiController(DatasourceDao datasourceDao, JobDao jobDao, JobService jobService, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao,
-                            SqlQueryExecutionDao sqlQueryExecutionDao, JobLabelDao jobLabelDao, JobSearchDao jobSearchDao, KweryDirectory kweryDirectory, Messages messages,
-                            CsvReaderFactory csvReaderFactory) {
+    public JobApiController(DatasourceDao datasourceDao,
+                            JobDao jobDao,
+                            JobService jobService,
+                            JobExecutionDao jobExecutionDao,
+                            SqlQueryDao sqlQueryDao,
+                            SqlQueryExecutionDao sqlQueryExecutionDao,
+                            JobLabelDao jobLabelDao,
+                            JobSearchDao jobSearchDao,
+                            KweryDirectory kweryDirectory,
+                            Messages messages,
+                            CsvReaderFactory csvReaderFactory,
+                            JobParameterValidator jobParameterValidator
+    ) {
         this.datasourceDao = datasourceDao;
         this.jobDao = jobDao;
         this.jobService = jobService;
@@ -85,10 +97,11 @@ public class JobApiController {
         this.messages = messages;
         this.csvReaderFactory = csvReaderFactory;
         this.jobSearchDao = jobSearchDao;
+        this.jobParameterValidator = jobParameterValidator;
     }
 
     @FilterWith(DashRepoSecureFilter.class)
-    public Result saveJob(JobDto jobDto, Context context) {
+    public Result saveJob(JobDto jobDto, Context context) throws IOException {
         boolean isUpdate = jobDto.getId() > 0;
 
         Result json = json();
@@ -128,7 +141,33 @@ public class JobApiController {
             }
         }
 
-        ActionResult actionResult = null;
+        List<JobParameterValidator.Error> parameterErrors = jobParameterValidator.validate(jobDto);
+
+        if (!parameterErrors.isEmpty()) {
+            for (JobParameterValidator.Error error : parameterErrors) {
+                switch (error)  {
+                    case quoteLineEnding:
+                        errorMessages.add(messages.get(JOB_PARAMETER_VALIDATION_ERROR_QUOTE_LINE_ENDING, context, Optional.of(json)).get());
+                        break;
+                    case valueNameCountMismatch:
+                        errorMessages.add(messages.get(JOB_PARAMETER_VALIDATION_ERROR_VALUE_NAME_COUNT_MISMATCH, context, Optional.of(json)).get());
+                        break;
+                    case valuesNotPresent:
+                        errorMessages.add(messages.get(JOB_PARAMETER_VALIDATION_ERROR_VALUES_NOT_PRESENT, context, Optional.of(json)).get());
+                        break;
+                    case parametersNotPresent:
+                        errorMessages.add(messages.get(JOB_PARAMETER_VALIDATION_ERROR_PARAMETERS_NOT_PRESENT, context, Optional.of(json)).get());
+                        break;
+                    case extraParametersPresent:
+                        errorMessages.add(messages.get(JOB_PARAMETER_VALIDATION_ERROR_EXTRA_PARAMETERS_PRESENT, context, Optional.of(json)).get());
+                }
+            }
+        }
+
+        List<String> invalidEmails = jobParameterValidator.getInvalidEmails(jobDto);
+        if (!invalidEmails.isEmpty()) {
+            errorMessages.add(messages.get(JOB_PARAMETER_VALIDATION_ERROR_INVALID_EMAIL, context, Optional.of(json), Joiner.on(" ,").join(invalidEmails)).get());
+        }
 
         if (errorMessages.isEmpty()) {
             JobModel jobModel = jobDtoToJobModel(jobDto);
@@ -482,6 +521,7 @@ public class JobApiController {
         jobModel.setEmails(jobDto.getEmails());
         jobModel.setFailureAlertEmails(jobDto.getFailureAlertEmails());
         jobModel.setJobRuleModel(jobDto.getJobRuleModel());
+        jobModel.setParameterCsv(jobDto.getParameterCsv());
 
         if (jobDto.getLabelIds() != null) {
             jobModel.setLabels(jobDto.getLabelIds().stream().filter(id -> id != null && id > 0).map(jobLabelDao::getJobLabelModelById).collect(toSet()));

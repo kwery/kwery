@@ -31,6 +31,8 @@ public class JobDaoJobFilterTest extends RepoDashDaoTestBase {
     @Before
     public void setUp() {
         jobModel0 = jobModelWithoutDependents();
+        jobModel0.setParameterCsv("foo bar moo");
+
         jobDbSetUp(jobModel0);
 
         Datasource datasource = datasource();
@@ -42,11 +44,15 @@ public class JobDaoJobFilterTest extends RepoDashDaoTestBase {
         jobSqlQueryDbSetUp(jobModel0);
 
         jobModel1 = jobModelWithoutDependents();
+        jobModel1.setParameterCsv("foo bar moo");
+
         jobDbSetUp(jobModel1);
         jobModel1.getSqlQueries().add(sqlQueryModel0);
         jobSqlQueryDbSetUp(jobModel1);
 
         JobModel jobModel2 = jobModelWithoutDependents();
+        jobModel2.setParameterCsv("foo bar moo");
+
         jobDbSetUp(jobModel2);
 
         jobLabelModel = jobLabelModel();

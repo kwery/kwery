@@ -14,6 +14,8 @@ public class JobDaoSaveSqlQueryWithMaxQueryLengthTest extends RepoDashDaoTestBas
     @Test
     public void test() {
         JobModel jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
+
         jobDbSetUp(jobModel);
 
         Datasource datasource = datasource();

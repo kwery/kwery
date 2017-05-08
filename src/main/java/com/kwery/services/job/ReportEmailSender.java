@@ -1,6 +1,7 @@
 package com.kwery.services.job;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -29,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static com.kwery.utils.KweryUtil.fileName;
 
@@ -56,7 +58,7 @@ public class ReportEmailSender {
         this.reportEmailConfigurationDao = reportEmailConfigurationDao;
     }
 
-    public void send(JobExecutionModel jobExecutionModel) {
+    public void send(JobExecutionModel jobExecutionModel, List<String> emails) {
         JobModel jobModel = jobExecutionModel.getJobModel();
 
         String subject = jobModel.getTitle() + " - " + new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(jobExecutionModel.getExecutionStart()));
@@ -135,13 +137,15 @@ public class ReportEmailSender {
                 context.setVariable("reportEmail", reportEmail);
                 kweryMail.setBodyHtml(templateEngine.process("report", context));
 
-
                 //This condition might occur due to email setting rules
                 if (kweryMail.getBodyHtml().equals("")) {
                     kweryMail.setBodyHtml(" "); //Causes exception, hence the hack
                 }
 
                 jobModel.getEmails().forEach(kweryMail::addTo);
+
+                emails.forEach(kweryMail::addTo);
+
                 kweryMail.setAttachments(attachments);
 
                 try {

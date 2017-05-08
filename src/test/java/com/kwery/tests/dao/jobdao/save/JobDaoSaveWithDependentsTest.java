@@ -26,6 +26,8 @@ public class JobDaoSaveWithDependentsTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoSaveTest() {
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
+
         jobModel.setSqlQueries(new LinkedList<>());
 
         jobDbSetUp(jobModel);

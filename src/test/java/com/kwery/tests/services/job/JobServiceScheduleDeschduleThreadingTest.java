@@ -67,6 +67,8 @@ public class JobServiceScheduleDeschduleThreadingTest extends RepoDashTestBase {
 
     protected void scheduleDeschedule() {
         JobModel jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("");
+
         jobModel.setCronExpression("* * * * *");
 
         int id = jobId++;

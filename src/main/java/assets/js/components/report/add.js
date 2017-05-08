@@ -38,6 +38,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.parentReportId = ko.observable(0);
         self.reportEmails = ko.observable("");
         self.failureAlertEmails = ko.observable("");
+        self.parameterCsv = ko.observable("");
 
         self.queries = ko.observableArray([]);
         self.emptyReportNoEmailRule = ko.observable(false);
@@ -82,6 +83,34 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             }
         }, self);
 
+        self.isParameterised = ko.observable(false);
+        $("#parameterCsv").attr("data-validate", false);
+
+        debugger;
+
+        //Checks if sql query is parameterised
+        ko.extenders.parameterisedCheck = function(target) {
+            target.extend({notify: "always"});
+            target.subscribe(function(newValue) {
+                var found = false;
+                ko.utils.arrayForEach(self.queries(), function(query) {
+                    if (query.query().match(/:\S+/g) !== null) {
+                        found = true;
+                    }
+                });
+                self.isParameterised(found);
+            });
+            return target;
+        };
+
+        //Parameter csv field should not be empty if the query is parameterised
+        self.isParameterised.subscribe(function(val){
+            if (val) {
+                $("#parameterCsv").attr("data-validate", true);
+                self.refreshValidation();
+            }
+        }, self);
+
         var Datasource = function(id, label) {
             this.id = id;
             this.label = label;
@@ -90,7 +119,11 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.datasources = ko.observableArray([new Datasource("", ko.i18n("report.save.datasource.select.default"))]);
 
         var Query = function(query, queryTitle, queryLabel, datasourceId, id, emailSettingId, includeInBody, includeAsAttachment, singleResultStyling) {
-            this.query = query;
+            this.query = ko.observable(query).extend({parameterisedCheck: undefined});
+
+            self.isParameterised(query.match(/:\S+/g) !== null);
+
+            //To force parameterised check on first load
             this.queryLabel = queryLabel;
             this.queryTitle = queryTitle;
             this.datasourceId = datasourceId;
@@ -230,6 +263,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                             self.reportName(report.name);
                             self.reportEmails(report.emails.join(", "));
                             self.failureAlertEmails(report.failureAlertEmails.join(", "));
+                            self.parameterCsv(report.parameterCsv);
 
                             if (jobModelHackDto.parentJobModel != null) {
                                 self.scheduleOption("parentReport");
@@ -340,7 +374,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
                 ko.utils.arrayForEach(self.queries(), function(query){
                     queries.push({
-                        query: query.query,
+                        query: query.query(),
                         label: query.queryLabel,
                         title: query.queryTitle,
                         datasourceId: query.datasourceId,
@@ -393,6 +427,12 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                         //execution is enabled
                     }
                 };
+
+                if (!self.isParameterised()) {
+                    report.parameterCsv = "";
+                } else {
+                    report.parameterCsv = self.parameterCsv();
+                }
 
                 if (isUpdate && !isCopy) {
                     report.id = reportId;

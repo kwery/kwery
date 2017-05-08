@@ -97,6 +97,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashTestBase {
 
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
+        jobModel.setParameterCsv(jobDto.getParameterCsv());
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
@@ -138,6 +139,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashTestBase {
         jobModel.setLabels(jobLabelModels);
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
         jobModel.setJobRuleModel(jobRuleModel);
+        jobModel.setParameterCsv(jobDto.getParameterCsv());
 
         for (int i = 0; i < 2; ++i) {
             SqlQueryDto sqlQueryDto = sqlQueryDto();
@@ -171,6 +173,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashTestBase {
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
+        jobModel.setParameterCsv(jobDto.getParameterCsv());
 
         assertThat(jobModel, theSameBeanAs(jobApiController.jobDtoToJobModel(jobDto)));
     }
@@ -189,6 +192,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashTestBase {
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
+        jobModel.setParameterCsv(jobDto.getParameterCsv());
 
         assertThat(jobModel, theSameBeanAs(jobApiController.jobDtoToJobModel(jobDto)));
     }
@@ -207,6 +211,7 @@ public class JobApiControllerJobDtoToJobModelTest extends RepoDashTestBase {
         jobModel.setSqlQueries(new LinkedList<>());
         jobModel.setEmails(new HashSet<>());
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(jobDto.isEmptyReportNoEmailRule())));
+        jobModel.setParameterCsv(jobDto.getParameterCsv());
 
         assertThat(jobModel, theSameBeanAs(jobApiController.jobDtoToJobModel(jobDto)));
     }

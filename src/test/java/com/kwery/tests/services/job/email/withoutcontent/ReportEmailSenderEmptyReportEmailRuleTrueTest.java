@@ -3,6 +3,7 @@ package com.kwery.tests.services.job.email.withoutcontent;
 import com.kwery.services.job.ReportEmailSender;
 import org.junit.Test;
 
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 public class ReportEmailSenderEmptyReportEmailRuleTrueTest extends AbstractReportEmailWithoutContentSender {
     @Test
     public void test() {
-        getInstance(ReportEmailSender.class).send(jobExecutionModel);
+        getInstance(ReportEmailSender.class).send(jobExecutionModel, new LinkedList<>());
 
         try {
             TimeUnit.SECONDS.sleep(10);

@@ -44,6 +44,7 @@ public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {
         jobLabelDbSetUp(jobLabelModel2);
 
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
         jobModel.getLabels().addAll(ImmutableSet.of(jobLabelModel0, jobLabelModel2));
         jobDbSetUp(jobModel);
 

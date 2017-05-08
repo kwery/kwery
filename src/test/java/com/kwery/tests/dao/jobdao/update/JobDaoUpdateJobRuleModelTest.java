@@ -30,6 +30,7 @@ public class JobDaoUpdateJobRuleModelTest extends RepoDashDaoTestBase {
     @Before
     public void setUp() {
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
         jobDbSetUp(jobModel);
 
         jobRuleModel = jobRuleModel();

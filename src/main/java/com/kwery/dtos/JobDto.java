@@ -18,6 +18,7 @@ public class JobDto {
     protected boolean emptyReportNoEmailRule;
     protected Set<String> failureAlertEmails = new HashSet<>();
     protected JobRuleModel jobRuleModel;
+    protected String parameterCsv;
 
     public int getId() {
         return id;
@@ -105,5 +106,13 @@ public class JobDto {
 
     public void setJobRuleModel(JobRuleModel jobRuleModel) {
         this.jobRuleModel = jobRuleModel;
+    }
+
+    public String getParameterCsv() {
+        return parameterCsv;
+    }
+
+    public void setParameterCsv(String parameterCsv) {
+        this.parameterCsv = parameterCsv.trim();
     }
 }

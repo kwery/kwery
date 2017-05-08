@@ -28,11 +28,13 @@ public class JobDaoDeleteJobWithDependentsTest extends RepoDashDaoTestBase {
     public void setUpJobDaoDeleteJobWithDependentsTest() {
         jobModel = jobModelWithoutDependents();
         jobModel.setChildJobs(new HashSet<>());
+        jobModel.setParameterCsv("foo bar moo");
 
         jobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@boo.com"));
 
         JobModel dependentJobModel = jobModelWithoutDependents();
         dependentJobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@boo.com"));
+        dependentJobModel.setParameterCsv("foo bar moo");
 
         jobModel.getChildJobs().add(dependentJobModel);
 

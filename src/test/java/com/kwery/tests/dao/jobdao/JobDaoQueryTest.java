@@ -30,12 +30,18 @@ public class JobDaoQueryTest extends RepoDashDaoTestBase {
     @Before
     public void setUpJobDaoQueryTest() {
         dependentJob0 = jobModelWithoutDependents();
+        dependentJob0.setParameterCsv("foo bar moo");
+
         jobDbSetUp(dependentJob0);
 
         JobModel dependentJob1 = jobModelWithoutDependents();
+        dependentJob1.setParameterCsv("foo bar moo");
+
         jobDbSetUp(dependentJob1);
 
         jobModel = jobModelWithoutDependents();
+        jobModel.setParameterCsv("foo bar moo");
+
         jobModel.setEmails(ImmutableSet.of(randomUUID().toString(), randomUUID().toString()));
         jobModel.setFailureAlertEmails(ImmutableSet.of(randomUUID().toString(), randomUUID().toString()));
         jobModel.getChildJobs().addAll(ImmutableSet.of(dependentJob0, dependentJob1));

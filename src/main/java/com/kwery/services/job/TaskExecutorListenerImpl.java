@@ -9,6 +9,7 @@ import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryExecutionModel;
+import com.kwery.services.job.parameterised.ParameterCsvExtractor;
 import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutor;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
@@ -28,10 +29,18 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
     protected final JobService jobService;
     protected final ReportEmailSender reportEmailSender;
     protected final ReportFailureAlertEmailSender reportFailureAlertEmailSender;
+    protected final ParameterCsvExtractor parameterCsvExtractor;
 
     @Inject
-    public TaskExecutorListenerImpl(JobDao jobDao, JobExecutionDao jobExecutionDao, SqlQueryDao sqlQueryDao, SqlQueryExecutionDao sqlQueryExecutionDao,
-                                    JobService jobService, ReportEmailSender reportEmailSender, ReportFailureAlertEmailSender reportFailureAlertEmailSender) {
+    public TaskExecutorListenerImpl(JobDao jobDao,
+                                    JobExecutionDao jobExecutionDao,
+                                    SqlQueryDao sqlQueryDao,
+                                    SqlQueryExecutionDao sqlQueryExecutionDao,
+                                    JobService jobService,
+                                    ReportEmailSender reportEmailSender,
+                                    ReportFailureAlertEmailSender reportFailureAlertEmailSender,
+                                    ParameterCsvExtractor parameterCsvExtractor
+                                    ) {
         this.jobDao = jobDao;
         this.jobExecutionDao = jobExecutionDao;
         this.sqlQueryDao = sqlQueryDao;
@@ -39,6 +48,7 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
         this.jobService = jobService;
         this.reportEmailSender = reportEmailSender;
         this.reportFailureAlertEmailSender = reportFailureAlertEmailSender;
+        this.parameterCsvExtractor = parameterCsvExtractor;
     }
 
     @Override
@@ -79,7 +89,16 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
                 }
             }
 
-            logger.info("Status of job {} is {}", jobTask.getJobId(), jobExecutionModel.getStatus());
+            int jobId = jobTask.getJobId();
+
+            if (jobId == 0) {
+                jobId = jobTask.getJobModel().getId();
+            }
+
+            logger.info("Status of job {} is {}", jobId, jobExecutionModel.getStatus());
+            if (exception != null) {
+                logger.error("Job {} failed", jobId, exception);
+            }
 
             jobExecutionModel.setExecutionEnd(System.currentTimeMillis());
             jobExecutionModel = jobExecutionDao.save(jobExecutionModel);
@@ -87,12 +106,13 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
             //Should be called only in case of successful Job execution
             if (!executor.isStopped() && exception == null) {
                 //Send email
-                if (!jobExecutionModel.getJobModel().getEmails().isEmpty() && hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
-                    reportEmailSender.send(jobExecutionModel);
+                if ((!jobExecutionModel.getJobModel().getEmails().isEmpty() || jobTask.getParameters().containsKey(ParameterCsvExtractor.JOB_PARAMETER_CSV_EMAIL_HEADER))
+                        && hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
+                    reportEmailSender.send(jobExecutionModel, parameterCsvExtractor.emails(jobTask.getParameters()));
                 }
 
                 //Execute dependent jobs
-                JobModel job = jobDao.getJobById(jobTask.getJobId());
+                JobModel job = jobDao.getJobById(jobId);
 
                 if (!job.getChildJobs().isEmpty()) {
                     if (hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
@@ -126,6 +146,9 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
                 }
 
                 logger.info("Status of sql query id {} execution is {}", sqlQueryTask.getSqlQueryModelId(), model.getStatus());
+                if (exception != null) {
+                    logger.error("Sql query with id {} execution failed", sqlQueryTask.getSqlQueryModelId(), exception);
+                }
 
                 model.setExecutionEnd(System.currentTimeMillis());
                 sqlQueryExecutionDao.save(model);
@@ -164,5 +187,4 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
 
         return false;
     }
-
 }
