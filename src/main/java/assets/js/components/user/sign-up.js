@@ -51,7 +51,7 @@ define(["knockout", "jquery", "text!components/user/sign-up.html", "ajaxutil", "
 
                     originalPassword = self.password();
                 }
-            });
+            }, "getUser");
         }
 
         $("#signUpForm").validator({
@@ -95,7 +95,7 @@ define(["knockout", "jquery", "text!components/user/sign-up.html", "ajaxutil", "
                             self.messages([ko.i18n('sign.up.failure.message', {"0": self.email()})]);
                         }
                     }
-                });
+                }, "userSignUp");
             }
 
             return false;

@@ -1,13 +1,13 @@
 ;((function(){
     define(["jquery", "waitingmodal"], function($, waitingModal){
         return {
-            waitingAjax: function(jqueryAjaxObj) {
+            waitingAjax: function(jqueryAjaxObj, id) {
                 jqueryAjaxObj['beforeSend'] = function() {
-                    waitingModal.show();
+                    waitingModal.show(undefined, id);
                 };
 
                 $.ajax(jqueryAjaxObj).always(function(){
-                    waitingModal.hide();
+                    waitingModal.hide(id);
                 });
             }
         }

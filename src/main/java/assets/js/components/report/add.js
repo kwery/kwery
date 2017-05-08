@@ -128,7 +128,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                 contentType: "application/json",
                 success: function(response) {
                     if (response.jobExecutionDtos.length > 0 && response.jobExecutionDtos[0].status !== 'ONGOING') {
-                        waitingModal.hide();
+                        waitingModal.hide("executeReport");
                         document.location.href = "/#report/" + reportId + "/execution/" + executionId;
                     } else {
                         setTimeout(function(){
@@ -140,7 +140,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         };
 
         self.executeReport = function(reportId) {
-            waitingModal.show(ko.i18n('report.save.generate.message'));
+            waitingModal.show(ko.i18n('report.save.generate.message'), "executeReport");
             $.ajax({
                 url: "/api/job/" + reportId + "/execute",
                 type: "POST",
@@ -152,7 +152,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
             return false;
         };
 
-        waitingModal.show();
+        waitingModal.show(undefined, "getAll");
         $.when(
             $.ajax({
                 url: "/api/datasource/all",
@@ -289,7 +289,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                 }
             })()
         ).always(function(){
-            waitingModal.hide();
+            waitingModal.hide("getAll");
             self.refreshValidation();
 
             //Is this a save and generate report request?
@@ -404,10 +404,10 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                     type: "POST",
                     contentType: "application/json",
                     beforeSend: function(){
-                        waitingModal.show();
+                        waitingModal.show(undefined, "saveReport");
                     },
                     success: function(result) {
-                        waitingModal.hide();
+                        waitingModal.hide("saveReport");
                         if (result.status === "failure") {
                             self.status(result.status);
                             self.messages(result.messages);

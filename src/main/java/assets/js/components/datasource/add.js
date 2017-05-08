@@ -82,7 +82,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                     success: function(response){
                       self.addDatasourceSuccessCb(response, self);
                     }
-                });
+                }, "addDatasource");
             }
 
             return false;
@@ -114,14 +114,14 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
                 self.datasourceType(datasource.type);
                 self.database(datasource.database);
             }
-        })
+        }, "getDatasource");
     };
 
     ViewModel.prototype.addDatasourceSuccessCb = function(result, ref) {
         if (result.status === "success") {
             $.ajax({
                 before: function(){
-                    waitingModal.show();
+                    waitingModal.show(undefined, "addDatasource");
                 },
                 url: "/api/onboarding/next-action",
                 type: "GET",
@@ -137,7 +137,7 @@ define(["knockout", "jquery", "text!components/datasource/add.html", "ajaxutil",
     };
 
     ViewModel.prototype.nextActionCb = function(response, addResponse) {
-        waitingModal.hide();
+        waitingModal.hide("addDatasource");
         switch (response.action) {
             case "ADD_JOB":
                 window.location.href = "/#report/add?onboarding=true&fromDatasource=true";

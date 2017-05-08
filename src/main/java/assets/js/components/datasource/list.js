@@ -29,7 +29,7 @@ define(["knockout", "jquery", "text!components/datasource/list.html", "ajaxutil"
                 });
                 self.datasources(result);
             }
-        });
+        }, "listAllDatasources");
 
         self.delete = function(datasource) {
             ajaxUtil.waitingAjax({
@@ -44,7 +44,7 @@ define(["knockout", "jquery", "text!components/datasource/list.html", "ajaxutil"
                         self.datasources.remove(datasource);
                     }
                 }
-            });
+            }, "deleteDatasource");
         };
 
         return self;

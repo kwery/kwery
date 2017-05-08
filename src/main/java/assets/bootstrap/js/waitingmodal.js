@@ -27,65 +27,43 @@
 
         var $modal;
 
-        //Tracks the time between calling action and the actions taking place post CSS transitions
-        var showCalled = false;
-        var hideCalled = false;
         //Tracks whether modal is open
         var modalShown = false;
 
-        var showQueue = [];
-        var hideQueue = [];
-
         return {
-            show : function(text) {
+            show : function(text, id) {
                 var self = this;
                 //At a time only one modal can exist
                 //Modals do not open or close immediately on call, there is a delay due to the transition effect
-                if (hideCalled === true || showCalled === true || modalShown === true) {
-                    showQueue.push({"show": text});
-                } else {
-                    showCalled = true;
-                    $modal = constructModal(text);
-                    $modal.modal();
-                    $modal.on("hidden.bs.modal", function(){
-                        $(this).remove();
-                        hideCalled = false;
-                        modalShown = false;
-                        //Drain piled up events
-                        if (showQueue.length > 0) {
-                            self.show(showQueue.pop()["show"]);
-                        }
-                    });
-                    $modal.on("shown.bs.modal", function(){
-                        showCalled = false;
-                        modalShown = true;
-                        //Drain piled up events
-                        if (hideQueue.length > 0) {
-                            hideQueue.pop();
-                            self.hide();
-                        }
-                    });
+                //If a modal is already being show, close it before opening a new one
+                if (modalShown === true) {
+                    this._cleanUp();
                 }
+
+                modalShown = true;
+
+                $modal = constructModal(text);
+                $modal.modal();
+                $modal.data("namespace", id);
+
+                $modal.on("hidden.bs.modal", function(){
+                    modalShown = false;
+                    $modal.remove();
+                });
             },
-            hide: function() {
-                if (hideCalled === true || showCalled === true) {
-                    hideQueue.push("hide");
-                } else {
-                    hideCalled = true;
+            hide: function(id) {
+                //Ensure that the modal for which hide has been called is still around
+                if ($modal.data("namespace") === id) {
                     $modal.modal("hide");
                 }
             },
             //For testing
             _cleanUp: function() {
-                $("#kweryModal").removeClass("fade");
+                $modal.removeClass("fade");
                 $modal.off("hidden.bs.modal");
-                $modal.modal("hide");
+                $modal.modal('hide');
+                $(".modal-backdrop").remove();
                 $modal.remove();
-                showCalled = false;
-                hideCalled = false;
-                modalShown = false;
-                showQueue = [];
-                hideQueue = [];
             }
         }
     });

@@ -72,7 +72,7 @@ define(["knockout", "jquery", "repo-dash", "router", "text!components/user/login
                         }
                     }
                 }
-            });
+            }, "userLogin");
         };
         return self;
     }

@@ -63,7 +63,7 @@ define(["knockout", "jquery", "text!components/report/execution-result.html", "a
                     });
                 }
             }
-        });
+        }, "executionResult");
 
         return self;
     }

@@ -26,7 +26,7 @@ define(["knockout", "jquery", "text!components/url-configuration/save.html", "aj
                     self.scheme(window.location.protocol);
                 }
             }
-        });
+        }, "getUrlConfiguration");
 
         $("#urlConfigurationForm").validator({disable: false}).on("submit", function (e) {
             if (!e.isDefaultPrevented()) {
@@ -46,7 +46,7 @@ define(["knockout", "jquery", "text!components/url-configuration/save.html", "aj
                             self.messages([ko.i18n("url.configuration.save.success")]);
                         }
                     }
-                });
+                }, "saveUrlConfiguration");
             }
 
             return false;

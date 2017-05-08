@@ -149,7 +149,7 @@ define(["knockout", "jquery", "text!components/report-label/list.html", "ajaxuti
                 buildLabelTree(jobLabelModelHackDtos);
                 populateDisplayLabels(root, 0);
             }
-        });
+        }, "getAllJobLabels");
         //Label related - end
 
         self.delete = function(displayLabel) {
@@ -164,7 +164,7 @@ define(["knockout", "jquery", "text!components/report-label/list.html", "ajaxuti
                         self.displayLabels.remove(displayLabel);
                     }
                 }
-            });
+            }, "deleteJobLabel");
         };
 
         return self;

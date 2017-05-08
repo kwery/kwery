@@ -23,7 +23,7 @@ define(["knockout", "jquery", "text!components/logo/save.html", "ajaxutil", "wai
                         self.id(reportEmailConfiguration.id);
                     }
                 }
-            });
+            }, "getLogo");
         };
 
         self.getLogo();
@@ -37,7 +37,7 @@ define(["knockout", "jquery", "text!components/logo/save.html", "ajaxutil", "wai
             url: "/api/report-email-configuration/save",
             type: "POST",
             beforeSend: function(){
-                waitingModal.show();
+                waitingModal.show(undefined, "saveLogo");
             },
             data: ko.toJSON({
                 logoUrl: self.logo(),
@@ -46,7 +46,7 @@ define(["knockout", "jquery", "text!components/logo/save.html", "ajaxutil", "wai
             contentType: "application/json"
         }).done(function(actionResult){
             self.submitFormCb(actionResult);
-            waitingModal.hide();
+            waitingModal.hide(undefined, "saveLogo");
         });
 
         return false;

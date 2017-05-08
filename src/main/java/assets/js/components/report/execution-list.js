@@ -167,7 +167,7 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
                         self.messages([ko.i18n("server.error")]);
                     }
                 }
-            });
+            }, "deleteReportExecution");
         };
 
         self.executions = ko.observableArray();
@@ -205,7 +205,7 @@ define(["knockout", "jquery", "text!components/report/execution-list.html", "mom
                         self.totalCount(result.totalCount);
                     }
                 }
-            });
+            }, "getExecutions");
 
         };
         self.updateExecutions();

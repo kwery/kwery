@@ -27,7 +27,7 @@ define(["knockout", "jquery", "text!components/user/add.html", "ajaxutil", "vali
                     self.username(result.username);
                     self.password(result.password);
                 }
-            });
+            }, "getUser");
         }
 
         $("#addUserForm").validator({
@@ -62,7 +62,7 @@ define(["knockout", "jquery", "text!components/user/add.html", "ajaxutil", "vali
                             self.messages(result.messages);
                         }
                     }
-                });
+                }, "addUser");
 
                 return false;
             }

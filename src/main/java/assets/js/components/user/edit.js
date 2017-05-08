@@ -28,7 +28,7 @@ define(["knockout", "jquery", "text!components/user/edit.html", "ajaxutil", "val
                 self.superUser(user.superUser);
                 self.password(user.password);
             }
-        });
+        }, "getUser");
 
         $("#resetForm").validator({
             disable: false
@@ -54,7 +54,7 @@ define(["knockout", "jquery", "text!components/user/edit.html", "ajaxutil", "val
                             self.messages([ko.i18n('user.edit.password.success.message')]);
                         }
                     }
-                });
+                }, "updateUser");
             }
 
             return false;
