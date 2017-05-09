@@ -1,7 +1,6 @@
 package com.kwery.services.job;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -30,13 +29,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import static com.kwery.utils.KweryUtil.fileName;
 
 @Singleton
-public class ReportEmailSender {
-    protected Logger logger = LoggerFactory.getLogger(ReportEmailSender.class);
+public class ReportEmailCreator {
+    protected Logger logger = LoggerFactory.getLogger(ReportEmailCreator.class);
 
     protected CsvToReportEmailSectionConverterFactory csvToReportEmailSectionConverterFactory;
     protected final Provider<KweryMail> kweryMailProvider;
@@ -47,8 +45,8 @@ public class ReportEmailSender {
     protected final ReportEmailConfigurationDao reportEmailConfigurationDao;
 
     @Inject
-    public ReportEmailSender(CsvToReportEmailSectionConverterFactory csvToReportEmailSectionConverterFactory, Provider<KweryMail> kweryMailProvider,
-                             MailService mailService, ReportEmailConfigurationDao reportEmailConfigurationDao, KweryDirectory kweryDirectory, ITemplateEngine templateEngine, Messages messages) {
+    public ReportEmailCreator(CsvToReportEmailSectionConverterFactory csvToReportEmailSectionConverterFactory, Provider<KweryMail> kweryMailProvider,
+                              MailService mailService, ReportEmailConfigurationDao reportEmailConfigurationDao, KweryDirectory kweryDirectory, ITemplateEngine templateEngine, Messages messages) {
         this.kweryMailProvider = kweryMailProvider;
         this.mailService = mailService;
         this.kweryDirectory = kweryDirectory;
@@ -58,7 +56,7 @@ public class ReportEmailSender {
         this.reportEmailConfigurationDao = reportEmailConfigurationDao;
     }
 
-    public void send(JobExecutionModel jobExecutionModel, List<String> emails) {
+    public KweryMail create(JobExecutionModel jobExecutionModel, List<String> emails) {
         JobModel jobModel = jobExecutionModel.getJobModel();
 
         String subject = jobModel.getTitle() + " - " + new SimpleDateFormat("EEE MMM dd yyyy HH:mm").format(new Date(jobExecutionModel.getExecutionStart()));
@@ -148,16 +146,22 @@ public class ReportEmailSender {
 
                 kweryMail.setAttachments(attachments);
 
-                try {
+                return kweryMail;
+
+/*
+try {
                     mailService.send(kweryMail);
                     logger.info("Job id {} and execution id {} email sent to {}", jobModel.getId(), jobExecutionModel.getId(), String.join(", ", jobModel.getEmails()));
                 } catch (Exception e) {
                     logger.error("Exception while trying to send report email for job id {} and execution id {}", jobModel.getId(), jobExecutionModel.getId(), e);
                 }
+                */
             }
         } catch (IOException e) {
             logger.error("Exception while trying to convert result to html for job id {} and execution id {}", jobModel.getId(), jobExecutionModel.getId(), e);
         }
+
+        return null;
     }
 
     private boolean isInsertQuery(SqlQueryExecutionModel sqlQueryExecutionModel) {

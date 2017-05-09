@@ -10,6 +10,8 @@ import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.services.job.parameterised.ParameterCsvExtractor;
+import com.kwery.services.mail.KweryMail;
+import com.kwery.services.mail.MailService;
 import it.sauronsoftware.cron4j.Task;
 import it.sauronsoftware.cron4j.TaskExecutor;
 import it.sauronsoftware.cron4j.TaskExecutorListener;
@@ -27,9 +29,10 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
     protected final SqlQueryDao sqlQueryDao;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;
     protected final JobService jobService;
-    protected final ReportEmailSender reportEmailSender;
+    protected final ReportEmailCreator reportEmailCreator;
     protected final ReportFailureAlertEmailSender reportFailureAlertEmailSender;
     protected final ParameterCsvExtractor parameterCsvExtractor;
+    protected final MailService mailService;
 
     @Inject
     public TaskExecutorListenerImpl(JobDao jobDao,
@@ -37,7 +40,8 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
                                     SqlQueryDao sqlQueryDao,
                                     SqlQueryExecutionDao sqlQueryExecutionDao,
                                     JobService jobService,
-                                    ReportEmailSender reportEmailSender,
+                                    ReportEmailCreator reportEmailCreator,
+                                    MailService mailService,
                                     ReportFailureAlertEmailSender reportFailureAlertEmailSender,
                                     ParameterCsvExtractor parameterCsvExtractor
                                     ) {
@@ -46,24 +50,22 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
         this.sqlQueryDao = sqlQueryDao;
         this.sqlQueryExecutionDao = sqlQueryExecutionDao;
         this.jobService = jobService;
-        this.reportEmailSender = reportEmailSender;
+        this.reportEmailCreator = reportEmailCreator;
         this.reportFailureAlertEmailSender = reportFailureAlertEmailSender;
         this.parameterCsvExtractor = parameterCsvExtractor;
+        this.mailService = mailService;
     }
 
     @Override
     public void executionPausing(TaskExecutor executor) {
-
     }
 
     @Override
     public void executionResuming(TaskExecutor executor) {
-
     }
 
     @Override
     public void executionStopping(TaskExecutor executor) {
-
     }
 
     @Override
@@ -108,7 +110,15 @@ public class TaskExecutorListenerImpl implements TaskExecutorListener {
                 //Send email
                 if ((!jobExecutionModel.getJobModel().getEmails().isEmpty() || jobTask.getParameters().containsKey(ParameterCsvExtractor.JOB_PARAMETER_CSV_EMAIL_HEADER))
                         && hasSqlQueriesExecutedSuccessfully(jobExecutionModel)) {
-                    reportEmailSender.send(jobExecutionModel, parameterCsvExtractor.emails(jobTask.getParameters()));
+                    KweryMail kweryMail = reportEmailCreator.create(jobExecutionModel, parameterCsvExtractor.emails(jobTask.getParameters()));
+                    if (kweryMail != null) {
+                        try {
+                            mailService.send(kweryMail);
+                            logger.info("Job id {} and execution id {} email sent to {}", jobId, jobExecutionModel.getId(), String.join(", ", kweryMail.getTos()));
+                        } catch (Exception e) {
+                            logger.error("Exception while trying to send report email for job id {} and execution id {}", jobId, jobExecutionModel.getId(), e);
+                        }
+                    }
                 }
 
                 //Execute dependent jobs

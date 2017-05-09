@@ -1,6 +1,7 @@
-package com.kwery.tests.services.job.email.withoutcontent;
+package com.kwery.tests.services.job.email.reporteamailcreator.withoutcontent;
 
-import com.kwery.services.job.ReportEmailSender;
+import com.kwery.services.job.ReportEmailCreator;
+import com.kwery.services.mail.KweryMail;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Test;
 import org.subethamail.wiser.WiserMessage;
@@ -20,17 +21,10 @@ import static org.hamcrest.core.IsNull.notNullValue;
 public class ReportEmailSenderEmptyReportEmailRuleFalseTest extends AbstractReportEmailWithoutContentSender {
     @Test
     public void test() throws Exception {
-        getInstance(ReportEmailSender.class).send(jobExecutionModel, new LinkedList<>());
+        KweryMail kweryMail = getInstance(ReportEmailCreator.class).create(jobExecutionModel, new LinkedList<>());
 
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
-        assertThat(wiserRule.wiser().getMessages(), hasSize(1));
-
-        WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);
-
-        MimeMessage mimeMessage = wiserMessage.getMimeMessage();
-        MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
-        assertThat(mimeMessageParser.getHtmlContent(), notNullValue());
-        assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(false));
+        assertThat(kweryMail.getBodyHtml(), notNullValue());
+        assertThat(kweryMail.getAttachments().isEmpty(), is(false));
     }
 
     @Override

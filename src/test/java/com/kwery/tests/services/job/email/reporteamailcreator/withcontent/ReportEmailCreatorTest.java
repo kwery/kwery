@@ -1,11 +1,12 @@
-package com.kwery.tests.services.job.email.withcontent;
+package com.kwery.tests.services.job.email.reporteamailcreator.withcontent;
 
 import com.jayway.jsonassert.impl.matcher.IsCollectionWithSize;
 import com.kwery.models.ReportEmailConfigurationModel;
-import com.kwery.services.job.ReportEmailSender;
+import com.kwery.services.job.ReportEmailCreator;
+import com.kwery.services.mail.KweryMail;
+import com.kwery.services.mail.KweryMailAttachment;
 import com.kwery.tests.services.job.email.EmailHtmlTestUtil;
 import com.kwery.tests.util.TestUtil;
-import org.apache.commons.mail.util.MimeMessageParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,26 +16,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.subethamail.wiser.WiserMessage;
 
-import javax.activation.DataSource;
-import javax.mail.internet.MimeMessage;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.reportEmailConfigurationDbSetUp;
-import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.kwery.tests.util.TestUtil.reportEmailConfigurationModel;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
-public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender {
+public class ReportEmailCreatorTest extends AbstractReportEmailCreatorWithContentTest {
     protected States state;
 
     @Parameters(name = "WithLogo-{0}")
@@ -59,25 +55,17 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
         }
     }
 
-    public ReportEmailSenderTest(States state) {
+    public ReportEmailCreatorTest(States state) {
         this.state = state;
     }
 
     @Test
     public void test() throws Exception {
-        getInstance(ReportEmailSender.class).send(jobExecutionModel, new LinkedList<>());
+        KweryMail kweryMail = getInstance(ReportEmailCreator.class).create(jobExecutionModel, new LinkedList<>());
 
         String expectedSubject = "Test Report - Thu Dec 22 2016 21:29";
 
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
-        assertThat(wiserRule.wiser().getMessages(), hasSize(1));
-
-        WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);
-
-        MimeMessage mimeMessage = wiserMessage.getMimeMessage();
-        MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
-
-        String html = mimeMessageParser.getHtmlContent();
+        String html = kweryMail.getBodyHtml();
 
         assertTitle(0, sqlQueryModel0.getTitle(), html);
 
@@ -104,14 +92,13 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
         String attachmentSkippedWarning = doc.select(".large-attachment-warning-t").get(0).text();
         assertThat(attachmentSkippedWarning, is("P.S. Some reports were not attached as the files were too large."));
 
-        assertThat(mimeMessageParser.getAttachmentList(), IsCollectionWithSize.hasSize(2));
-        assertThat(mimeMessageParser.getSubject(), is(expectedSubject));
+        assertThat(kweryMail.getAttachments(), IsCollectionWithSize.hasSize(2));
+        assertThat(kweryMail.getSubject(), is(expectedSubject));
 
-        DataSource dataSource0 = mimeMessageParser.findAttachmentByName("select-authors-thu-dec-22.csv");
-        assertThat(TestUtil.toString(dataSource0).replaceAll("\r\n", "\n").trim(), is(TestUtil.toString(kweryDirectory.getFile(sqlQueryExecutionModel0.getResultFileName())).trim()));
+        assertThat(kweryMail.getAttachments().stream().map(KweryMailAttachment::getName).collect(toList()), containsInAnyOrder("select-authors-thu-dec-22.csv", "select-books-thu-dec-22.csv"));
 
-        DataSource dataSource1 = mimeMessageParser.findAttachmentByName("select-books-thu-dec-22.csv");
-        assertThat(TestUtil.toString(dataSource1).replaceAll("\r\n", "\n").trim(), is(TestUtil.toString(kweryDirectory.getFile(sqlQueryExecutionModel1.getResultFileName())).trim()));
+        assertThat(TestUtil.toString(kweryMail.getAttachments().get(0).getFile()).replaceAll("\r\n", "\n").trim(), is(TestUtil.toString(kweryDirectory.getFile(sqlQueryExecutionModel0.getResultFileName())).trim()));
+        assertThat(TestUtil.toString(kweryMail.getAttachments().get(1).getFile()).replaceAll("\r\n", "\n").trim(), is(TestUtil.toString(kweryDirectory.getFile(sqlQueryExecutionModel1.getResultFileName())).trim()));
 
         if (state == States.withLogo) {
             assertLogo(html, "https://s3.amazonaws.com/getkwery.com/logo.png");

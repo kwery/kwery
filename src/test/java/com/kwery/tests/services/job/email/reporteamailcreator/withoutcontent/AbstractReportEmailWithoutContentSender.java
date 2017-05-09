@@ -1,4 +1,4 @@
-package com.kwery.tests.services.job.email.withoutcontent;
+package com.kwery.tests.services.job.email.reporteamailcreator.withoutcontent;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -25,9 +25,6 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 
 public abstract class AbstractReportEmailWithoutContentSender extends RepoDashTestBase {
-    @Rule
-    public WiserRule wiserRule = new WiserRule();
-
     SqlQueryModel sqlQueryModel0;
     JobExecutionModel jobExecutionModel;
     SqlQueryExecutionModel sqlQueryExecutionModel0;
@@ -70,9 +67,6 @@ public abstract class AbstractReportEmailWithoutContentSender extends RepoDashTe
         sqlQueryExecutionModel0.setStatus(SqlQueryExecutionModel.Status.SUCCESS);
 
         jobExecutionModel.getSqlQueryExecutionModels().add(sqlQueryExecutionModel0);
-
-        smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
-        emailConfigurationDbSet(wiserRule.emailConfiguration());
     }
 
     public abstract boolean getEmptyReportEmailRule();

@@ -1,4 +1,4 @@
-package com.kwery.tests.services.job.email.withcontent;
+package com.kwery.tests.services.job.email.reporteamailcreator.withcontent;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -10,34 +10,17 @@ import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
-import com.kwery.tests.util.WiserRule;
 import com.kwery.utils.KweryConstant;
-import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
-import org.junit.Rule;
-import org.subethamail.wiser.WiserMessage;
 
-import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
-import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static com.kwery.tests.util.TestUtil.sqlQueryModel;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
 
-public abstract class AbstractReportEmailWithContentSender extends RepoDashTestBase {
-    @Rule
-    public WiserRule wiserRule = new WiserRule();
-
+public abstract class AbstractReportEmailCreatorWithContentTest extends RepoDashTestBase {
     SqlQueryModel sqlQueryModel0;
     SqlQueryModel sqlQueryModel1;
     SqlQueryModel sqlQueryModel2;
@@ -134,22 +117,6 @@ public abstract class AbstractReportEmailWithContentSender extends RepoDashTestB
         File file2 = kweryDirectory.createFile();
         TestUtil.writeCsvOfSize(KweryConstant.SQL_QUERY_RESULT_ATTACHMENT_SIZE_LIMIT + 1024, file2);
         sqlQueryExecutionModel3.setResultFileName(file2.getName());
-
-        smtpConfigurationDbSetUp(wiserRule.smtpConfiguration());
-        emailConfigurationDbSet(wiserRule.emailConfiguration());
-    }
-
-    public void assertMailPresent() throws Exception {
-        await().atMost(TIMEOUT_SECONDS, SECONDS).until(() -> !wiserRule.wiser().getMessages().isEmpty());
-
-        assertThat(wiserRule.wiser().getMessages(), hasSize(1));
-
-        WiserMessage wiserMessage = wiserRule.wiser().getMessages().get(0);
-
-        MimeMessage mimeMessage = wiserMessage.getMimeMessage();
-        MimeMessageParser mimeMessageParser = new MimeMessageParser(mimeMessage).parse();
-        assertThat(mimeMessageParser.getHtmlContent(), notNullValue());
-        assertThat(mimeMessageParser.getAttachmentList().isEmpty(), is(false));
     }
 
     public abstract boolean getEmptyReportEmailRule();

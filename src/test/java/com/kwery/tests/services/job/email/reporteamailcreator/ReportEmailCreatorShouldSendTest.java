@@ -1,8 +1,8 @@
-package com.kwery.tests.services.job.email;
+package com.kwery.tests.services.job.email.reporteamailcreator;
 
 import com.google.common.collect.ImmutableMap;
 import com.kwery.models.JobModel;
-import com.kwery.services.job.ReportEmailSender;
+import com.kwery.services.job.ReportEmailCreator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,12 +12,12 @@ import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ReportEmailSenderShouldSendTest {
-    private ReportEmailSender reportEmailSender;
+public class ReportEmailCreatorShouldSendTest {
+    private ReportEmailCreator reportEmailCreator;
 
     @Before
     public void setUp() {
-        reportEmailSender = new ReportEmailSender(null, null, null, null, null, null, null);
+        reportEmailCreator = new ReportEmailCreator(null, null, null, null, null, null, null);
     }
 
     @Test
@@ -25,21 +25,21 @@ public class ReportEmailSenderShouldSendTest {
         JobModel jobModel = new JobModel();
 
         jobModel.setRules(new HashMap<>());
-        assertThat(reportEmailSender.shouldSend(true, jobModel), is(true));
-        assertThat(reportEmailSender.shouldSend(false, jobModel), is(true));
+        assertThat(reportEmailCreator.shouldSend(true, jobModel), is(true));
+        assertThat(reportEmailCreator.shouldSend(false, jobModel), is(true));
 
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(false)));
-        assertThat(reportEmailSender.shouldSend(true, jobModel), is(true));
-        assertThat(reportEmailSender.shouldSend(false, jobModel), is(true));
+        assertThat(reportEmailCreator.shouldSend(true, jobModel), is(true));
+        assertThat(reportEmailCreator.shouldSend(false, jobModel), is(true));
 
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(true)));
-        assertThat(reportEmailSender.shouldSend(false, jobModel), is(false));
+        assertThat(reportEmailCreator.shouldSend(false, jobModel), is(false));
     }
 
     @Test
     public void testDoNotSend() {
         JobModel jobModel = new JobModel();
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(true)));
-        assertThat(reportEmailSender.shouldSend(true, jobModel), is(true));
+        assertThat(reportEmailCreator.shouldSend(true, jobModel), is(true));
     }
 }
