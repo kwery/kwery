@@ -86,8 +86,6 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         self.isParameterised = ko.observable(false);
         $("#parameterCsv").attr("data-validate", false);
 
-        debugger;
-
         //Checks if sql query is parameterised
         ko.extenders.parameterisedCheck = function(target) {
             target.extend({notify: "always"});
@@ -120,8 +118,9 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
 
         var Query = function(query, queryTitle, queryLabel, datasourceId, id, emailSettingId, includeInBody, includeAsAttachment, singleResultStyling) {
             this.query = ko.observable(query).extend({parameterisedCheck: undefined});
-
-            self.isParameterised(query.match(/:\S+/g) !== null);
+            if (query !== undefined) {
+                self.isParameterised(query.match(/:\S+/g) !== null);
+            }
 
             //To force parameterised check on first load
             this.queryLabel = queryLabel;
