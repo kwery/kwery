@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
+import com.kwery.services.job.JobExecutor;
 import com.kwery.services.job.JobFactory;
 import com.kwery.services.job.JobSchedulerTaskFactory;
 import com.kwery.services.job.parameterised.SqlQueryNormalizerFactory;
@@ -59,7 +60,7 @@ public class Module extends AbstractModule {
         bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);
         bind(LicenseChecker.class);
         //Binding is done so that Ninja can make use of the life cycle methods in this class
-        bind(JobFactory.class);
+        bind(JobExecutor.class);
     }
 
     @Provides
