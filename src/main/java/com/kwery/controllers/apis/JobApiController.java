@@ -28,7 +28,6 @@ import com.kwery.utils.ReportUtil;
 import com.kwery.views.ActionResult;
 import it.sauronsoftware.cron4j.Predictor;
 import it.sauronsoftware.cron4j.SchedulingPattern;
-import it.sauronsoftware.cron4j.TaskExecutor;
 import ninja.Context;
 import ninja.FilterWith;
 import ninja.Result;
@@ -230,8 +229,8 @@ public class JobApiController {
 
     @FilterWith(DashRepoSecureFilter.class)
     public Result executeJob(@PathParam("jobId") int jobId) {
-        TaskExecutor taskExecutor = jobService.launch(jobId);
-        return json().render(ImmutableMap.of("executionId", taskExecutor.getGuid()));
+        List<String> executionIds = jobService.launch(jobId);
+        return json().render(ImmutableMap.of("executionIds", executionIds));
     }
 
     @FilterWith(DashRepoSecureFilter.class)

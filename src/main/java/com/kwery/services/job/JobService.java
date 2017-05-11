@@ -6,15 +6,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.kwery.dao.JobDao;
 import com.kwery.models.JobModel;
-import com.kwery.services.job.parameterised.ParameterisedJobTask;
-import com.kwery.services.job.parameterised.ParameterisedJobTaskFactory;
-import it.sauronsoftware.cron4j.TaskExecutor;
+import com.kwery.services.job.parameterised.ParameterCsvExtractor;
 import ninja.lifecycle.Start;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
@@ -22,41 +20,35 @@ public class JobService {
     protected Logger logger = LoggerFactory.getLogger(JobService.class);
 
     protected final KweryScheduler kweryScheduler;
-    protected final JobTaskFactory jobTaskFactory;
     protected final JobDao jobDao;
-    protected final ParameterisedKweryScheduler parameterisedKweryScheduler;
-    protected final ParameterisedJobTaskFactory parameterisedJobTaskFactory;
-
+    protected final JobSchedulerTaskFactory jobSchedulerTaskFactory;
     //TODO - Needs to be done in a better way
     protected Map<Integer, String> jobIdSchedulerIdMap = new ConcurrentHashMap<>();
+    protected final ParameterCsvExtractor parameterCsvExtractor;
+    protected final JobFactory jobFactory;
+    protected final JobExecutor jobExecutor;
 
     @Inject
-    public JobService(KweryScheduler kweryScheduler, ParameterisedKweryScheduler parameterisedKweryScheduler,
-                      JobTaskFactory jobTaskFactory, ParameterisedJobTaskFactory parameterisedJobTaskFactory, JobDao jobDao) {
+    public JobService(KweryScheduler kweryScheduler,
+                      JobSchedulerTaskFactory jobSchedulerTaskFactory,
+                      ParameterCsvExtractor parameterCsvExtractor,
+                      JobFactory jobFactory,
+                      JobExecutor jobExecutor,
+                      JobDao jobDao) {
         this.kweryScheduler = kweryScheduler;
-        this.parameterisedKweryScheduler = parameterisedKweryScheduler;
-        this.jobTaskFactory = jobTaskFactory;
         this.jobDao = jobDao;
-        this.parameterisedJobTaskFactory = parameterisedJobTaskFactory;
+        this.jobSchedulerTaskFactory = jobSchedulerTaskFactory;
+        this.parameterCsvExtractor = parameterCsvExtractor;
+        this.jobFactory = jobFactory;
+        this.jobExecutor = jobExecutor;
     }
 
     public String schedule(int jobId) {
         logger.info("Scheduling job with id {}", jobId);
         JobModel jobModel = jobDao.getJobById(jobId);
-
-        String schedulerId = "";
-
-        if (jobModel.isParameterised()) {
-            ParameterisedJobTask jobTask = parameterisedJobTaskFactory.create(jobId);
-            schedulerId = parameterisedKweryScheduler.schedule(jobModel.getCronExpression(), jobTask);
-            jobIdSchedulerIdMap.put(jobId, schedulerId);
-        } else {
-            JobTask jobTask = jobTaskFactory.create(jobId);
-            schedulerId = kweryScheduler.schedule(jobModel.getCronExpression(), jobTask);
-            jobIdSchedulerIdMap.put(jobId, schedulerId);
-        }
-
-        return schedulerId;
+        String scheduleId = kweryScheduler.schedule(jobModel.getCronExpression(), jobSchedulerTaskFactory.create(jobId));
+        jobIdSchedulerIdMap.put(jobId, scheduleId);
+        return scheduleId;
     }
 
     @Start
@@ -69,58 +61,52 @@ public class JobService {
         }
     }
 
-    public TaskExecutor launch(int jobId) {
-        logger.info("Launching job with id {}", jobId);
-        if (jobDao.getJobById(jobId).isParameterised()) {
-            return parameterisedKweryScheduler.launch(parameterisedJobTaskFactory.create(jobId));
-        } else {
-            return kweryScheduler.launch(jobTaskFactory.create(jobId));
+    public List<String> launch(int jobId) {
+        JobModel jobModel = jobDao.getJobById(jobId);
+
+        List<Map<String, ?>> parameters = null;
+        try {
+            parameters = parameterCsvExtractor.extract(jobModel.getParameterCsv());
+        } catch (IOException e) {
+            logger.error("Exception while extracting parameters from parameter CSV", e);
+            throw new RuntimeException(e);
         }
+
+        List<String> executionIds = new LinkedList<>();
+
+        if (!parameters.isEmpty()) {
+            for (Map<String, ?> parameter : parameters) {
+                String jobExecutionUuid = UUID.randomUUID().toString();
+                executionIds.add(jobExecutionUuid);
+                Job job = jobFactory.create(jobModel, parameter, jobExecutionUuid);
+                jobExecutor.submit(job);
+            }
+        } else {
+            String jobExecutionUuid = UUID.randomUUID().toString();
+            executionIds.add(jobExecutionUuid);
+            Job job = jobFactory.create(jobModel, new HashMap<>(), jobExecutionUuid);
+            jobExecutor.submit(job);
+        }
+
+        return executionIds;
     }
 
     public boolean stopExecution(String executionId) {
         logger.info("Trying to stop task execution with id {}", executionId);
-
-        boolean found = false;
-
-        for (TaskExecutor taskExecutor : kweryScheduler.getExecutingTasks()) {
-            if (executionId.equals(taskExecutor.getGuid())) {
-                taskExecutor.stop();
-                found = true;
-                logger.info("Task execution with id {} stopped successfully", executionId);
-                break;
-            }
-        }
-
-        if (!found) {
-            for (TaskExecutor taskExecutor : parameterisedKweryScheduler.getExecutingTasks()) {
-                if (executionId.equals(taskExecutor.getGuid())) {
-                    taskExecutor.stop();
-                    found = true;
-                    logger.info("Task execution with id {} stopped successfully", executionId);
-                    break;
-                }
-            }
-        }
-
-        if (!found) {
-            logger.info("Task execution with id {} not found", executionId);
-        }
-
-        return found;
+        return jobExecutor.cancel(executionId);
     }
 
     public void deschedule(int jobId) {
         logger.info("Deleting job with id {}", jobId);
-        String id = jobIdSchedulerIdMap.get(jobId);
 
-        if (id == null) {
+        String scheduleId = jobIdSchedulerIdMap.get(jobId);
+
+        if (scheduleId == null) {
             throw new RuntimeException("Schedule id not found for job id " + jobId);
         }
 
         jobIdSchedulerIdMap.remove(jobId);
-        kweryScheduler.deschedule(id);
-        parameterisedKweryScheduler.deschedule(id);
+        kweryScheduler.deschedule(scheduleId);
     }
 
     @VisibleForTesting

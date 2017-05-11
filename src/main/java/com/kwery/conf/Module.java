@@ -8,10 +8,8 @@ import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.models.SqlQueryModel;
-import com.kwery.services.job.JobTaskFactory;
-import com.kwery.services.job.SchedulerListenerImpl;
-import com.kwery.services.job.TaskExecutorListenerImpl;
-import com.kwery.services.job.parameterised.ParameterisedJobTaskFactory;
+import com.kwery.services.job.JobFactory;
+import com.kwery.services.job.JobSchedulerTaskFactory;
 import com.kwery.services.job.parameterised.SqlQueryNormalizerFactory;
 import com.kwery.services.job.parameterised.SqlQueryParameterExtractorFactory;
 import com.kwery.services.kwerydirectory.KweryDirectoryChecker;
@@ -25,8 +23,6 @@ import com.kwery.utils.CsvReaderFactoryImpl;
 import com.kwery.utils.CsvWriterFactory;
 import com.kwery.utils.CsvWriterFactoryImpl;
 import it.sauronsoftware.cron4j.Scheduler;
-import it.sauronsoftware.cron4j.SchedulerListener;
-import it.sauronsoftware.cron4j.TaskExecutorListener;
 import ninja.utils.NinjaConstant;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -48,21 +44,22 @@ public class Module extends AbstractModule {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     protected void configure() {
-        bind(SchedulerListener.class).to(SchedulerListenerImpl.class);
-        bind(TaskExecutorListener.class).to(TaskExecutorListenerImpl.class);
         install(new FactoryModuleBuilder().build(ResultSetProcessorFactory.class));
         install(new FactoryModuleBuilder().build(PreparedStatementExecutorFactory.class));
-        install(new FactoryModuleBuilder().build(JobTaskFactory.class));
-        install(new FactoryModuleBuilder().build(com.kwery.services.job.SqlQueryTaskFactory.class));
-        install(new FactoryModuleBuilder().build(ParameterisedJobTaskFactory.class));
         install(new FactoryModuleBuilder().build(CsvToReportEmailSectionConverterFactory.class));
         install(new FactoryModuleBuilder().build(SqlQueryNormalizerFactory.class));
         install(new FactoryModuleBuilder().build(SqlQueryParameterExtractorFactory.class));
+
+        install(new FactoryModuleBuilder().build(JobSchedulerTaskFactory.class));
+        install(new FactoryModuleBuilder().build(JobFactory.class));
+
         bind(SearchIndexer.class);
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
         bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);
         bind(LicenseChecker.class);
+        //Binding is done so that Ninja can make use of the life cycle methods in this class
+        bind(JobFactory.class);
     }
 
     @Provides

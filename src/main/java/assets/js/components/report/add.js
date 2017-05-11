@@ -178,7 +178,7 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
                 type: "POST",
                 contentType: "application/json",
                 success: function(executeResponse) {
-                    self.fetchReport(reportId, executeResponse.executionId);
+                    self.fetchReport(reportId, executeResponse.executionIds[0]);
                 }
             });
             return false;

@@ -3,9 +3,7 @@ package com.kwery.services.job;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import it.sauronsoftware.cron4j.Scheduler;
-import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.Task;
-import it.sauronsoftware.cron4j.TaskExecutor;
 import ninja.lifecycle.Dispose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +13,10 @@ public class KweryScheduler {
     protected Logger logger = LoggerFactory.getLogger(KweryScheduler.class);
 
     protected final Scheduler scheduler;
-    protected final SchedulerListener schedulerListener;
 
     @Inject
-    public KweryScheduler(Scheduler scheduler, SchedulerListener listener) {
+    public KweryScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
-        this.schedulerListener = listener;
-
-        this.scheduler.addSchedulerListener(listener);
         this.scheduler.start();
     }
 
@@ -32,14 +26,6 @@ public class KweryScheduler {
 
     public void deschedule(String id) {
         scheduler.deschedule(id);
-    }
-
-    public TaskExecutor launch(Task task) {
-        return scheduler.launch(task);
-    }
-
-    public TaskExecutor[] getExecutingTasks() {
-        return scheduler.getExecutingTasks();
     }
 
     @Dispose

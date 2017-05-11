@@ -76,7 +76,7 @@ define(["knockout", "jquery", "text!components/report/list.html", "ajaxutil", 'w
                         self.messages(["Report generation started"]);
                         waitingModal.hide();
                     } else {
-                        fetchReport(report.id, executeResponse.executionId);
+                        fetchReport(report.id, executeResponse.executionIds[0]);
                     }
                 }
             });
