@@ -132,6 +132,7 @@ public class Job implements Callable<JobExecutionModel> {
                                 //Eat this exception here, if we interrupt the thread as we should, c3p0 connection thread pool gets affected.
                             } catch (ExecutionException e) {
                                 sqlQueryError = true;
+                                updateFailure(sqlQueryExecutionModel.getId(), e);
                                 logger.error("Exception while executing sql query {} with id {} for job {}", query, sqlQuery.getId(), jobModel.getId(), e);
                             }
                         }
@@ -185,6 +186,9 @@ public class Job implements Callable<JobExecutionModel> {
                             } catch (Exception e) {
                                 sqlQueryError = true;
                                 logger.error("Exception while executing sql query {} with id {} for job {}", query, sqlQuery.getId(), jobModel.getId(), e);
+                                if (e instanceof ExecutionException) {
+                                    updateFailure(sqlQueryExecutionModel.getId(), (ExecutionException) e);
+                                }
                             }
                         }
                     }
@@ -312,5 +316,11 @@ public class Job implements Callable<JobExecutionModel> {
 
     public String getJobExecutionId() {
         return jobExecutionId;
+    }
+
+    private void updateFailure(int sqlQueryExecutionId, ExecutionException e) {
+        SqlQueryExecutionModel sqlQueryExecution = sqlQueryExecutionDao.getById(sqlQueryExecutionId);
+        sqlQueryExecution.setExecutionError(e.getCause().getLocalizedMessage());
+        sqlQueryExecutionDao.save(sqlQueryExecution);
     }
 }
