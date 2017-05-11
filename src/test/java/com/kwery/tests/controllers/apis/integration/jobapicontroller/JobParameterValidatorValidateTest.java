@@ -74,7 +74,7 @@ public class JobParameterValidatorValidateTest extends RepoDashTestBase {
         JobDto jobDto = new JobDto();
         String parameterCsv = Joiner.on(System.lineSeparator()).join(
                 ImmutableList.of(
-                        "foo, kwery_email",
+                        "foo, email_csv",
                         "value0,"
                 )
         );
@@ -102,7 +102,7 @@ public class JobParameterValidatorValidateTest extends RepoDashTestBase {
         JobDto jobDto = new JobDto();
         String parameterCsv = Joiner.on(System.lineSeparator()).join(
                 ImmutableList.of(
-                        "foo, bar, kwery_email",
+                        "foo, bar, email_csv",
                         "value0, value1, foo@goo.com"
                 )
         );

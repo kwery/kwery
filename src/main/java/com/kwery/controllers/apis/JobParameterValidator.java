@@ -88,9 +88,7 @@ public class JobParameterValidator {
         List<Map<String, ?>> parameters = parameterCsvExtractor.extract(jobDto.getParameterCsv());
         List<String> emails = new LinkedList<>();
         for (Map<String, ?> parameter : parameters) {
-            if (parameter.containsKey("kwery_email")) {
-                emails.addAll(parameterCsvExtractor.emails(parameter));
-            }
+            emails.addAll(parameterCsvExtractor.emails(parameter));
         }
 
         return emailValidator.filterInvalidEmails(emails);

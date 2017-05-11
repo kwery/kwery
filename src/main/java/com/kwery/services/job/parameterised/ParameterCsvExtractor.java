@@ -10,7 +10,7 @@ import java.io.StringReader;
 import java.util.*;
 
 public class ParameterCsvExtractor {
-    public static final String JOB_PARAMETER_CSV_EMAIL_HEADER = "kwery_email";
+    public static final String JOB_PARAMETER_CSV_EMAIL_HEADER = "email_csv";
 
     public List<Map<String, ?>> extract(String parameterCsv) throws IOException {
         CSVReader csvReader = new CSVReader(new StringReader(parameterCsv));

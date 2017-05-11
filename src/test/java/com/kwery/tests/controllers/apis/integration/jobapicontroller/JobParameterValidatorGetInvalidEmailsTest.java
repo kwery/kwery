@@ -27,7 +27,7 @@ public class JobParameterValidatorGetInvalidEmailsTest extends RepoDashTestBase 
 
         String parameterCsv = Joiner.on(System.lineSeparator()).join(
                 ImmutableList.of(
-                        "header0, kwery_email",
+                        "header0, email_csv",
                         "value0, \"abhi@,foo,abhi@getkwery.com, \"\"abhirama\"\" <abhi@getkwery.com>\""
                 )
         );

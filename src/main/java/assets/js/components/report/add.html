@@ -233,7 +233,8 @@
                                 <li>Subsequent lines should contain values</li>
                                 <li>No need to quote values</li>
                                 <li>If parameter values contain quotes, quotes should be escaped using double quotes, for example ""quoted value""</li>
-                                <li>Email addresses corresponding to each parameter list should have the header kwery_email</li>
+                                <li>If you want to email report corresponding to a set of parameter values, you can do so using email_csv header</li>
+                                <li>If email_csv has multiple emails, you need to quote it as "email1@company1.com, email2@company2.com"</li>
                             </ul>
                             <p>
                                 If report template contains two sql queries
@@ -246,11 +247,19 @@
                                 </code>
                             </p>
 
-                            <h6 class="text-muted">Example Parameter CSV:</h6>
+                            <h6 class="text-muted">Example Parameter CSV with email_csv:</h6>
 <pre>
-id, name, kwery_email
+id, name, email_csv
 1, ram, "user0@company0.com, user1@company1.com"
 2, ""guru"", "user2@company2.com, user3@company3.com"
+3, vinod, user4@company4.com
+</pre>
+                            <h6 class="text-muted">Example Parameter CSV without email_csv:</h6>
+                            <pre>
+id, name
+1, ram
+2, ""guru""
+3, vinod
 </pre>
                         </div>
                     </div>

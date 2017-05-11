@@ -92,7 +92,7 @@ public class ParameterCsvExtractorTest {
     @Test
     public void testEmails() throws IOException {
         Map<String, ?> parameters = ImmutableMap.of(
-                "kwery_email", "purvi@getkwery.com, pavi@getkwery.com,,"
+                "email_csv", "purvi@getkwery.com, pavi@getkwery.com,,"
         );
 
         assertThat(new ParameterCsvExtractor().emails(parameters), containsInAnyOrder("purvi@getkwery.com", "pavi@getkwery.com"));
