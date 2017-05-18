@@ -31,5 +31,11 @@
 
     <logger name="uk.co.jemos.podam" level="ERROR" />
     <logger name="com.mchange" level="ERROR" />
+<!--    <logger name="org.hibernate.resource.jdbc" level="TRACE" />-->
+<!--    <logger name="org.hibernate.engine.transaction.internal.jta.JtaTransaction" level="DEBUG" />-->
+
+<!--    <logger name="org.hibernate.jpa" level="DEBUG" />-->
+
+<!--    <logger name="org.hibernate" level="DEBUG" />-->
 
 </configuration>

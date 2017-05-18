@@ -2,6 +2,7 @@ package com.kwery.tests.services.job;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.kwery.dao.JobDao;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.*;
@@ -52,6 +53,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
 
     protected MailService mailService;
     private KweryDirectory kweryDirectory;
+    protected JobDao jobDao;
 
     @Before
     public void setUpJobServiceJobSetUpAbstractTest() {
@@ -91,6 +93,8 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         jobService = getInstance(JobService.class);
         sqlQueryExecutionDao = getInstance(SqlQueryExecutionDao.class);
         mailService = getInstance(MailService.class);
+
+        jobDao = getInstance(JobDao.class);
 
         kweryDirectory = getInstance(KweryDirectory.class);
     }

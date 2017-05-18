@@ -88,6 +88,10 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         Set<String> alertEmails = ImmutableSet.of("foo@goo.com", "cho@cro.com");
         jobDto.setJobFailureAlertEmails(alertEmails);
 
+        String parameterCsv = "id\n1";
+
+        jobDto.setParameterCsv(parameterCsv);
+
         JobModel expectedJobModel = new JobModel();
         expectedJobModel.setTitle(jobDto.getTitle());
         expectedJobModel.setName(jobDto.getName());
@@ -95,9 +99,10 @@ public class JobApiControllerUpdateJobTest extends AbstractPostLoginApiTest {
         expectedJobModel.setChildJobs(new HashSet<>());
         expectedJobModel.setCronExpression(jobDto.getCronExpression());
         expectedJobModel.setFailureAlertEmails(alertEmails);
+        expectedJobModel.setParameterCsv(parameterCsv);
 
         SqlQueryDto sqlQueryDto = sqlQueryDtoWithoutId();
-        sqlQueryDto.setQuery("select User from mysql.user where User = 'root'");
+        sqlQueryDto.setQuery("select * from foo where id = :id");
         sqlQueryDto.setDatasourceId(datasource1.getId());
         sqlQueryDto.setId(sqlQueryModel.getId());
 

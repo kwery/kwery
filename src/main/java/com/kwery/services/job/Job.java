@@ -55,6 +55,10 @@ public class Job implements Callable<JobExecutionModel> {
     protected final JobService jobService;
     protected final ReportFailureAlertEmailSender reportFailureAlertEmailSender;
 
+    //Hack to prevent Derby lock error - http://apache-database.10148.n7.nabble.com/Identity-column-and-40XL1-error-tc147382.html
+    protected static Object sqlQueryExecutionLock = new Object();
+    protected static Object jobExecutionLock = new Object();
+
     @Inject
     public Job(JobDao jobDao,
                JobExecutionDao jobExecutionDao,
@@ -100,7 +104,7 @@ public class Job implements Callable<JobExecutionModel> {
     public JobExecutionModel call() throws Exception {
         try {
             //Save job execution start
-            logger.info("Job {} with execution id {} execution started", jobModel.getId(), jobExecutionId);
+            logger.info("Job {} with execution id {} and parameters {} execution started", jobModel.getId(), jobExecutionId, parameters);
             JobExecutionModel jobExecutionModel = saveJobExecutionStart();
 
             for (SqlQueryModel sqlQueryModel : jobModel.getSqlQueries()) {
@@ -212,7 +216,11 @@ public class Job implements Callable<JobExecutionModel> {
             }
 
             return jobExecutionModel;
+        } catch (Exception e) {
+            logger.error("Exception while executing job {} with execution id {}", jobModel.getId(), jobExecutionId, e);
+            return null;
         } finally {
+            logger.info("Job {} with execution id {} execution ended", jobModel.getId(), jobExecutionId);
             jobExecutor.deregisterJob(getJobExecutionId());
         }
     }
@@ -226,7 +234,7 @@ public class Job implements Callable<JobExecutionModel> {
                 try {
                     mailService.send(kweryMail);
                     logger.info("Job id {} and execution id {} email sent to {}",
-                            jobId, jobExecutionModel.getId(), String.join(", ", kweryMail.getTos()));
+                            jobId, jobExecutionModel.getExecutionId(), String.join(", ", kweryMail.getTos()));
                 } catch (Exception e) {
                     logger.error("Exception while trying to send report email for job id {} and execution id {}",
                             jobId, jobExecutionModel.getId(), e);
@@ -264,14 +272,16 @@ public class Job implements Callable<JobExecutionModel> {
     }
 
     private SqlQueryExecutionModel saveSqlQueryExecutionStart(JobExecutionModel jobExecutionModel, SqlQueryModel sqlQueryModel, String sqlExecutionId) {
-        SqlQueryExecutionModel sqlQueryExecutionModel = new SqlQueryExecutionModel();
-        sqlQueryExecutionModel.setExecutionId(sqlExecutionId);
-        sqlQueryExecutionModel.setExecutionStart(System.currentTimeMillis());
-        sqlQueryExecutionModel.setSqlQuery(sqlQueryDao.getById(sqlQueryModel.getId()));
-        sqlQueryExecutionModel.setStatus(ONGOING);
-        sqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
-        sqlQueryExecutionDao.save(sqlQueryExecutionModel);
-        return sqlQueryExecutionModel;
+        synchronized (sqlQueryExecutionLock) {
+            SqlQueryExecutionModel sqlQueryExecutionModel = new SqlQueryExecutionModel();
+            sqlQueryExecutionModel.setExecutionId(sqlExecutionId);
+            sqlQueryExecutionModel.setExecutionStart(System.currentTimeMillis());
+            sqlQueryExecutionModel.setSqlQuery(sqlQueryModel);
+            sqlQueryExecutionModel.setStatus(ONGOING);
+            sqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
+            sqlQueryExecutionDao.save(sqlQueryExecutionModel);
+            return sqlQueryExecutionModel;
+        }
     }
 
     private JobExecutionModel saveJobExecutionEnd(int jobExecutionId) {
@@ -305,13 +315,15 @@ public class Job implements Callable<JobExecutionModel> {
     }
 
     private JobExecutionModel saveJobExecutionStart() {
-        JobExecutionModel jobExecutionModel = new JobExecutionModel();
-        jobExecutionModel.setExecutionId(jobExecutionId);
-        jobExecutionModel.setExecutionStart(System.currentTimeMillis());
-        jobExecutionModel.setJobModel(jobModel);
-        jobExecutionModel.setStatus(JobExecutionModel.Status.ONGOING);
-        jobExecutionDao.save(jobExecutionModel);
-        return jobExecutionModel;
+        synchronized (jobExecutionLock) {
+            JobExecutionModel jobExecutionModel = new JobExecutionModel();
+            jobExecutionModel.setExecutionId(jobExecutionId);
+            jobExecutionModel.setExecutionStart(System.currentTimeMillis());
+            jobExecutionModel.setJobModel(jobModel);
+            jobExecutionModel.setStatus(JobExecutionModel.Status.ONGOING);
+            jobExecutionDao.save(jobExecutionModel);
+            return jobExecutionModel;
+        }
     }
 
     public String getJobExecutionId() {

@@ -77,6 +77,7 @@ public class JobService {
         if (!parameters.isEmpty()) {
             for (Map<String, ?> parameter : parameters) {
                 String jobExecutionUuid = UUID.randomUUID().toString();
+                logger.info("Job {} with execution id {} submitted for execution", jobId, jobExecutionUuid);
                 executionIds.add(jobExecutionUuid);
                 Job job = jobFactory.create(jobModel, parameter, jobExecutionUuid);
                 jobExecutor.submit(job);
@@ -85,6 +86,7 @@ public class JobService {
             String jobExecutionUuid = UUID.randomUUID().toString();
             executionIds.add(jobExecutionUuid);
             Job job = jobFactory.create(jobModel, new HashMap<>(), jobExecutionUuid);
+            logger.info("Job {} with execution id {} submitted for execution", jobId, jobExecutionUuid);
             jobExecutor.submit(job);
         }
 

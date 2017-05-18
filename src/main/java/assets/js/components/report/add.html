@@ -217,13 +217,13 @@
                 <br>
 
                 <div data-bind="visible: isParameterised" class="form-group">
-                    <label class="control-label text-muted" for="name">Parameters</label>
+                    <label class="control-label text-muted" for="name">Parameters CSV</label>
                     <a data-toggle="collapse" href="#parameterCsvHelpContent" aria-expanded="false" aria-controls="collapseExample">
                         Help
                     </a>
-                    <textarea data-bind="value: parameterCsv" class="form-control" name="parameterCsv" id="parameterCsv"
+                    <textarea data-bind="value: parameterCsv" class="form-control parameters-csv-f" name="parameterCsv" id="parameterCsv"
                               required></textarea>
-                    <div class="help-block with-errors"></div>
+                    <div class="help-block with-errors parameter-csv-error-f"></div>
 
                     <div id="parameterCsvHelpContent" class="collapse">
                         <div class="well">
