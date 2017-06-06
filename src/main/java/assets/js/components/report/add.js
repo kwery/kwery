@@ -11,6 +11,9 @@ define(["knockout", "jquery", "text!components/report/add.html", "validator", "j
         }
 
         var isUpdate = reportId !== undefined && reportId > 0;
+        self.showCustomTemplate = ko.observable(isUpdate);
+        self.customTemplateUrl = "/#report/" + reportId + "/custom-template";
+
         var isCopy = params.isCopy !== undefined && params.isCopy() === true;
 
         self.status = ko.observable("");

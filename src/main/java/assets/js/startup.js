@@ -121,6 +121,10 @@ define(["jquery", "knockout", "router", "polyglot", "messages", "knockout-projec
         require: "components/logo/save"
     });
 
+    ko.components.register("custom-template-add", {
+        require: "components/report/custom-template"
+    });
+
     ko.applyBindings({route: router.currentRoute});
 
     //Attach polyglot for i18n to ko

@@ -20,4 +20,6 @@ kwery.*.log.gz
 kwery_files
 #Kwery search index
 kwery_search
+#Template files
+kwery_templates
 

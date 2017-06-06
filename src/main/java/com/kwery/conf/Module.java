@@ -1,6 +1,5 @@
 package com.kwery.conf;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -30,9 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,18 +76,17 @@ public class Module extends AbstractModule {
         return new SqlQueryModel();
     }
 
-    @Provides @Singleton
-    protected KweryDirectory kweryDirectory() throws URISyntaxException {
-        File base = null;
+    File createDirectory(String name) throws URISyntaxException {
+        File dir = null;
         //TODO - Is there a better way to do this?
         if (NinjaConstant.MODE_TEST.equals(System.getProperty(NinjaConstant.MODE_KEY_NAME))) {
-            base = Files.createTempDir();
-            File finalBase = base;
+            dir = Files.createTempDir();
+            File finalBase = dir;
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     FileUtils.deleteDirectory(finalBase);
                 } catch (IOException e) {
-                    logger.error("Failed to delete KweryDirectory on shutdown");
+                    logger.error("Failed to delete {} on shutdown", name);
                 }
             }));
         } else {
@@ -97,29 +94,39 @@ public class Module extends AbstractModule {
             String kweryBaseDirectory = System.getProperty("kweryBaseDirectory");
             if (!"".equals(kweryBaseDirectory)) {
                 logger.info("Kwery base directory has been passed through JVM arguments, using that - " + kweryBaseDirectory);
-                base = new File(kweryBaseDirectory, "kwery_files");
+                dir = new File(kweryBaseDirectory, name);
             } else {
                 //Idea is to create the base directory for storing files in the same directory as the one in which Kwery application runs
                 //http://stackoverflow.com/questions/320542/how-to-get-the-path-of-a-running-jar-file
                 //Get the directory from which the jar file running Kwery was started
                 Path path = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-                base = new File(path.toFile(), "kwery-files");
+                dir = new File(path.toFile(), name);
             }
         }
 
-        if (base.exists()) {
-            logger.info("Base directory {} exists", base);
+        if (dir.exists()) {
+            logger.info("Directory {} exists", dir);
         } else {
-            logger.info("Creating base directory {} to stores result files", base);
+            logger.info("Creating directory {}", dir);
 
-            if (!base.mkdir()) {
-                logger.error("Could not create base directory {} to store files", base);
+            if (!dir.mkdir()) {
+                logger.error("Could not create directory {}", dir);
                 logger.error("Kwery shutting down");
                 System.exit(-1);
             }
         }
 
-        return new KweryDirectory(base);
+        return dir;
+    }
+
+    @Provides @Singleton
+    protected TemplateDirectory templateDirectory() throws URISyntaxException {
+        return new TemplateDirectory(createDirectory("kwery_templates"));
+    }
+
+    @Provides @Singleton
+    protected KweryDirectory kweryDirectory() throws URISyntaxException {
+        return new KweryDirectory(createDirectory("kwery_files"));
     }
 
     @Provides @Singleton
@@ -130,12 +137,6 @@ public class Module extends AbstractModule {
     }
 
     private ITemplateResolver htmlTemplateResolver() {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver(getClass().getClassLoader());
-        templateResolver.setPrefix("/emails/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCharacterEncoding(Charsets.UTF_8.displayName());
-        templateResolver.setCacheable(true);
-        return templateResolver;
+        return new StringTemplateResolver();
     }
 }

@@ -1,0 +1,31 @@
+<div class="container">
+    <action-result params="status: status, messages: messages"></action-result>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <span class="h1"><strong data-bind="text: ko.i18n('template.edit.header')"></strong></span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form data-bind="attr:{action: apiUrl}" id="customTemplateForm" enctype="multipart/form-data" method="post" target="postFrame">
+                <div class="form-group">
+                    <label data-bind="text: ko.i18n('template.edit.file')" class="text-muted" for="templateFile"></label>
+                    <input type="file" id="templateFile" name="templateFile" required>
+                    <div class="help-block with-errors url-error-f"></div>
+                </div>
+                <div class="form-group">
+                    <button data-bind="text: ko.i18n('template.edit.save')" type="submit" class="btn btn-lg btn-primary" id="create"></button>
+                    <button data-bind="visible: templatePresent, text: ko.i18n('template.edit.delete')" type="button" class="btn btn-lg btn-primary" id="delete"></button>
+                </div>
+                <div class="form-group" data-bind="visible: templatePresent">
+                    <textarea data-bind="value: templateContent" rows="10" cols="50" id="templateContent"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

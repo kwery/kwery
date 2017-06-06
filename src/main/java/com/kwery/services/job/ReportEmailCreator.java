@@ -1,10 +1,13 @@
 package com.kwery.services.job;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.kwery.conf.KweryDirectory;
+import com.kwery.conf.TemplateDirectory;
 import com.kwery.dao.ReportEmailConfigurationDao;
 import com.kwery.dtos.email.ReportEmail;
 import com.kwery.dtos.email.ReportEmailSection;
@@ -18,6 +21,7 @@ import com.kwery.services.mail.converter.CsvToReportEmailSectionConverterFactory
 import com.kwery.utils.KweryUtil;
 import com.kwery.utils.ReportUtil;
 import ninja.i18n.Messages;
+import org.apache.commons.io.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.ITemplateEngine;
@@ -43,10 +47,18 @@ public class ReportEmailCreator {
     protected final Messages messages;
     protected final ITemplateEngine templateEngine;
     protected final ReportEmailConfigurationDao reportEmailConfigurationDao;
+    protected final TemplateDirectory templateDirectory;
 
     @Inject
-    public ReportEmailCreator(CsvToReportEmailSectionConverterFactory csvToReportEmailSectionConverterFactory, Provider<KweryMail> kweryMailProvider,
-                              MailService mailService, ReportEmailConfigurationDao reportEmailConfigurationDao, KweryDirectory kweryDirectory, ITemplateEngine templateEngine, Messages messages) {
+    public ReportEmailCreator(CsvToReportEmailSectionConverterFactory csvToReportEmailSectionConverterFactory,
+                              Provider<KweryMail> kweryMailProvider,
+                              MailService mailService,
+                              ReportEmailConfigurationDao reportEmailConfigurationDao,
+                              KweryDirectory kweryDirectory,
+                              ITemplateEngine templateEngine,
+                              Messages messages,
+                              TemplateDirectory templateDirectory
+    ) {
         this.kweryMailProvider = kweryMailProvider;
         this.mailService = mailService;
         this.kweryDirectory = kweryDirectory;
@@ -54,6 +66,7 @@ public class ReportEmailCreator {
         this.messages = messages;
         this.templateEngine = templateEngine;
         this.reportEmailConfigurationDao = reportEmailConfigurationDao;
+        this.templateDirectory = templateDirectory;
     }
 
     public KweryMail create(JobExecutionModel jobExecutionModel, List<String> emails) {
@@ -133,7 +146,7 @@ public class ReportEmailCreator {
 
                 Context context = new Context();
                 context.setVariable("reportEmail", reportEmail);
-                kweryMail.setBodyHtml(templateEngine.process("report", context));
+                kweryMail.setBodyHtml(templateEngine.process(getReportTemplate(jobExecutionModel.getJobModel()), context));
 
                 //This condition might occur due to email setting rules
                 if (kweryMail.getBodyHtml().equals("")) {
@@ -147,21 +160,21 @@ public class ReportEmailCreator {
                 kweryMail.setAttachments(attachments);
 
                 return kweryMail;
-
-/*
-try {
-                    mailService.send(kweryMail);
-                    logger.info("Job id {} and execution id {} email sent to {}", jobModel.getId(), jobExecutionModel.getId(), String.join(", ", jobModel.getEmails()));
-                } catch (Exception e) {
-                    logger.error("Exception while trying to send report email for job id {} and execution id {}", jobModel.getId(), jobExecutionModel.getId(), e);
-                }
-                */
             }
         } catch (IOException e) {
             logger.error("Exception while trying to convert result to html for job id {} and execution id {}", jobModel.getId(), jobExecutionModel.getId(), e);
         }
 
         return null;
+    }
+
+    @VisibleForTesting
+    public String getReportTemplate(JobModel jobModel) throws IOException {
+        if ("".equals(jobModel.getTemplate())) {
+            return Resources.toString(Resources.getResource("emails/report.html"), Charsets.UTF_8);
+        } else {
+            return Files.toString(templateDirectory.getTemplate(jobModel.getTemplate()), Charsets.UTF_8);
+        }
     }
 
     private boolean isInsertQuery(SqlQueryExecutionModel sqlQueryExecutionModel) {

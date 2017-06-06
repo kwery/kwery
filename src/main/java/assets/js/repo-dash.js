@@ -42,6 +42,7 @@
                 {url: "report/list/:?q:", auth: true, component: "report-list"},
                 {url: "report/executing", auth: true, component: "report-executing"},
                 {url: "report/cron-help", auth: false, component: "cron-help"},
+                {url: "report/{jobId}/custom-template/:?q:", auth: true, component: "custom-template-add"},
                 {url: "report/{reportId}", auth: true, component: "report-add"},
                 {url: "report/{reportId}/copy", auth: true, component: "report-copy"},
                 {url: "report/{jobId}/execution-list/:?q:", auth: true, component: "report-execution-list"},

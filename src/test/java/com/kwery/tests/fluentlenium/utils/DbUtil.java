@@ -161,6 +161,7 @@ public class DbUtil {
                     .with(JobModel.ID_COLUMN, m.getId())
                     .with(JobModel.CREATED_COLUMN, m.getCreated())
                     .with(JobModel.UPDATED_COLUMN, m.getUpdated())
+                    .with(JobModel.TEMPLATE_COLUMN, m.getTemplate())
                     .add();
         }
 
@@ -478,6 +479,7 @@ public class DbUtil {
                         .column(JobModel.PARAMETER_CSV_COLUMN, jobModel.getParameterCsv())
                         .column(JobModel.CREATED_COLUMN, jobModel.getCreated())
                         .column(JobModel.UPDATED_COLUMN, jobModel.getUpdated())
+                        .column(JobModel.TEMPLATE_COLUMN, jobModel.getTemplate())
                         .end()
                         .build()
         ).launch();

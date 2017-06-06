@@ -231,6 +231,7 @@ public class TestUtil {
         jobModel.setLabels(new HashSet<>());
         jobModel.setJobRuleModel(null);
         jobModel.setParameterCsv("");
+        jobModel.setTemplate(UUID.randomUUID().toString());
         return jobModel;
     }
 

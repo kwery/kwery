@@ -56,8 +56,8 @@ public class Job implements Callable<JobExecutionModel> {
     protected final ReportFailureAlertEmailSender reportFailureAlertEmailSender;
 
     //Hack to prevent Derby lock error - http://apache-database.10148.n7.nabble.com/Identity-column-and-40XL1-error-tc147382.html
-    protected static Object sqlQueryExecutionLock = new Object();
-    protected static Object jobExecutionLock = new Object();
+/*    protected static Object sqlQueryExecutionLock = new Object();
+    protected static Object jobExecutionLock = new Object();*/
 
     @Inject
     public Job(JobDao jobDao,
@@ -272,7 +272,7 @@ public class Job implements Callable<JobExecutionModel> {
     }
 
     private SqlQueryExecutionModel saveSqlQueryExecutionStart(JobExecutionModel jobExecutionModel, SqlQueryModel sqlQueryModel, String sqlExecutionId) {
-        synchronized (sqlQueryExecutionLock) {
+        //synchronized (sqlQueryExecutionLock) {
             SqlQueryExecutionModel sqlQueryExecutionModel = new SqlQueryExecutionModel();
             sqlQueryExecutionModel.setExecutionId(sqlExecutionId);
             sqlQueryExecutionModel.setExecutionStart(System.currentTimeMillis());
@@ -281,7 +281,7 @@ public class Job implements Callable<JobExecutionModel> {
             sqlQueryExecutionModel.setJobExecutionModel(jobExecutionModel);
             sqlQueryExecutionDao.save(sqlQueryExecutionModel);
             return sqlQueryExecutionModel;
-        }
+        //}
     }
 
     private JobExecutionModel saveJobExecutionEnd(int jobExecutionId) {
@@ -315,7 +315,7 @@ public class Job implements Callable<JobExecutionModel> {
     }
 
     private JobExecutionModel saveJobExecutionStart() {
-        synchronized (jobExecutionLock) {
+        //synchronized (jobExecutionLock) {
             JobExecutionModel jobExecutionModel = new JobExecutionModel();
             jobExecutionModel.setExecutionId(jobExecutionId);
             jobExecutionModel.setExecutionStart(System.currentTimeMillis());
@@ -323,7 +323,7 @@ public class Job implements Callable<JobExecutionModel> {
             jobExecutionModel.setStatus(JobExecutionModel.Status.ONGOING);
             jobExecutionDao.save(jobExecutionModel);
             return jobExecutionModel;
-        }
+        //}
     }
 
     public String getJobExecutionId() {

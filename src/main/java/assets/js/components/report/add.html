@@ -265,6 +265,11 @@ id, name
                     </div>
                 </div>
 
+
+                <div data-bind="visible: showCustomTemplate" class="form-group">
+                    <a data-bind="attr: {href: customTemplateUrl}">Add Custom Template</a>
+                </div>
+
                 <button data-bind="text: ko.i18n('report.save.submit')" type="submit" class="btn btn-primary btn-lg f-report-submit"
                         id="create" value="save"></button>
                 <button data-bind="visible: !isParameterised(), text: ko.i18n('report.save.generate.submit'), attr: {'title': ko.i18n('report.save.generate.submit.tooltip')}"

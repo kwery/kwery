@@ -59,6 +59,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     public void setUpJobServiceJobSetUpAbstractTest() {
         jobModel = jobModelWithoutDependents();
         jobModel.setParameterCsv("");
+        jobModel.setTemplate("");
 
         jobModel.setCronExpression("* * * * *");
         jobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));

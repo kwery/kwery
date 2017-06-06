@@ -17,7 +17,7 @@ public class ReportEmailCreatorShouldSendTest {
 
     @Before
     public void setUp() {
-        reportEmailCreator = new ReportEmailCreator(null, null, null, null, null, null, null);
+        reportEmailCreator = new ReportEmailCreator(null, null, null, null, null, null, null, null);
     }
 
     @Test

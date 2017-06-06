@@ -60,6 +60,7 @@ public class JobModel extends AbstractBaseModel {
     public static final String JOB_FAILURE_ALERT_EMAIL_TABLE_EMAIL_COLUMN = "email";
 
     public static final String PARAMETER_CSV_COLUMN = "parameter_csv";
+    public static final String TEMPLATE_COLUMN = "template";
 
     @Column(name = CRON_EXPRESSION_COLUMN)
     @Size(max = 255)
@@ -148,6 +149,10 @@ public class JobModel extends AbstractBaseModel {
     @Column(name = PARAMETER_CSV_COLUMN)
     @Size(max = 32672)
     protected String parameterCsv = "";
+
+    @Column(name = TEMPLATE_COLUMN)
+    @Size(max = 36)
+    protected String template = "";
 
     public String getCronExpression() {
         return cronExpression;
@@ -251,5 +256,13 @@ public class JobModel extends AbstractBaseModel {
 
     public boolean isParameterised() {
         return !"".equals(getParameterCsv());
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
     }
 }
