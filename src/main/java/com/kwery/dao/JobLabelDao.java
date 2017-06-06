@@ -3,10 +3,12 @@ package com.kwery.dao;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobLabelModel;
 import com.kwery.models.JobModel;
 import com.kwery.services.job.JobSearchFilter;
+import org.hibernate.annotations.Synchronize;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -16,6 +18,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+@Singleton
 public class JobLabelDao {
     private final Provider<EntityManager> entityManagerProvider;
     private final JobDao jobDao;
@@ -27,7 +30,7 @@ public class JobLabelDao {
     }
 
     @Transactional
-    public JobLabelModel save(JobLabelModel m) {
+    public synchronized JobLabelModel save(JobLabelModel m) {
         EntityManager e = entityManagerProvider.get();
 
         if (m.getId() != null && m.getId() > 0) {
@@ -40,6 +43,7 @@ public class JobLabelDao {
         //Below is done so that Hibernate search reindexes associated JobModels
         updateAssociatedJobModels(m);
 
+        e.flush();
         return m;
     }
 

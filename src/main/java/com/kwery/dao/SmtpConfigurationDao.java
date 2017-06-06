@@ -2,6 +2,7 @@ package com.kwery.dao;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.SmtpConfiguration;
 
@@ -11,6 +12,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+@Singleton
 public class SmtpConfigurationDao {
     @Inject
     private Provider<EntityManager> entityManagerProvider;

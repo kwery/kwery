@@ -2,6 +2,7 @@ package com.kwery.dao;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.User;
 import org.slf4j.Logger;
@@ -15,8 +16,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+@Singleton
 public class UserDao {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -24,7 +25,7 @@ public class UserDao {
     private Provider<EntityManager> entityManagerProvider;
 
     @Transactional
-    public void save(User u) {
+    public synchronized void save(User u) {
         long now = System.currentTimeMillis();
         u.setCreated(now);
         u.setUpdated(now);
@@ -32,26 +33,6 @@ public class UserDao {
         EntityManager m = entityManagerProvider.get();
         m.persist(u);
         m.flush();
-    }
-
-    @Transactional
-    public User getByUsername(String username) {
-        EntityManager m = entityManagerProvider.get();
-        CriteriaBuilder cb = m.getCriteriaBuilder();
-        CriteriaQuery<User> cq = cb.createQuery(User.class);
-        Root<User> root = cq.from(User.class);
-        cq.where(cb.equal(root.get("username"), username));
-        TypedQuery<User> tq = m.createQuery(cq);
-        List<User> users = tq.getResultList();
-
-        if (users.isEmpty()) {
-            return null;
-        } else {
-            if (users.size() > 1) {
-                throw new AssertionError(String.format("More than one user with user name %s present in users table", username));
-            }
-            return users.get(0);
-        }
     }
 
     @Transactional
@@ -103,7 +84,7 @@ public class UserDao {
     }
 
     @Transactional
-    public User update(User user) {
+    public synchronized User update(User user) {
         user.setUpdated(System.currentTimeMillis());
         user.setCreated(getById(user.getId()).getCreated());
 

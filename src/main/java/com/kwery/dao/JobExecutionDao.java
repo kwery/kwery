@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
@@ -18,12 +19,13 @@ import java.util.List;
 
 import static com.kwery.models.JobExecutionModel.Status.SUCCESS;
 
+@Singleton
 public class JobExecutionDao {
     @Inject
     private Provider<EntityManager> entityManagerProvider;
 
     @Transactional
-    public JobExecutionModel save(JobExecutionModel e) {
+    public synchronized JobExecutionModel save(JobExecutionModel e) {
         EntityManager m = entityManagerProvider.get();
 
         if (e.getId() != null && e.getId() > 0) {
@@ -169,30 +171,6 @@ public class JobExecutionDao {
         for (JobExecutionModel jobExecutionModel : jobExecutionModels) {
             m.remove(jobExecutionModel);
         }
-    }
-
-    @Transactional
-    public List<JobExecutionModel> lastSuccessfulExecution(List<Integer> jobIds) {
-        //TODO - Simplify
-        EntityManager m = entityManagerProvider.get();
-
-        List<JobExecutionModel> jobExecutions = new LinkedList<>();
-
-        for (Integer jobId : jobIds) {
-            JobExecutionModel jobExecutionModel = m.createQuery(
-                    "select e from JobExecutionModel e where e.status = :status and e.jobModel.id = :jobModelId and e.executionEnd is not null order by e.executionEnd desc", JobExecutionModel.class
-
-            ).setParameter("jobModelId", jobId)
-                    .setParameter("status", SUCCESS)
-                    .setMaxResults(1)
-                    .getSingleResult();
-
-            if (jobExecutionModel != null) {
-                jobExecutions.add(jobExecutionModel);
-            }
-        }
-
-        return jobExecutions;
     }
 
     @Transactional

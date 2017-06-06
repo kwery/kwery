@@ -2,6 +2,7 @@ package com.kwery.dao;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.SqlQueryModel;
 
@@ -14,6 +15,7 @@ import javax.persistence.criteria.Root;
 import java.util.LinkedList;
 import java.util.List;
 
+@Singleton
 public class SqlQueryDao {
     protected final Provider<EntityManager> entityManagerProvider;
     protected final SqlQueryExecutionDao sqlQueryExecutionDao;

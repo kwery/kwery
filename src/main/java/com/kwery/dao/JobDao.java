@@ -26,7 +26,7 @@ public class JobDao {
     }
 
     @Transactional
-    public JobModel save(JobModel m) {
+    public synchronized JobModel save(JobModel m) {
         EntityManager e = entityManagerProvider.get();
 
         long now = System.currentTimeMillis();
@@ -34,12 +34,14 @@ public class JobDao {
 
         if (m.getId() != null && m.getId() > 0) {
             m.setCreated(getJobById(m.getId()).getCreated());
-            return e.merge(m);
+            m = e.merge(m);
         } else {
             m.setCreated(now);
             e.persist(m);
-            return m;
         }
+
+        e.flush();
+        return m;
     }
 
     @Transactional
