@@ -12,7 +12,6 @@ import com.kwery.services.job.JobTaskFactory;
 import com.kwery.services.job.SchedulerListenerImpl;
 import com.kwery.services.job.TaskExecutorListenerImpl;
 import com.kwery.services.kwerydirectory.KweryDirectoryChecker;
-import com.kwery.services.license.LicenseChecker;
 import com.kwery.services.mail.converter.CsvToReportEmailSectionConverterFactory;
 import com.kwery.services.scheduler.PreparedStatementExecutorFactory;
 import com.kwery.services.scheduler.ResultSetProcessorFactory;
@@ -56,7 +55,6 @@ public class Module extends AbstractModule {
         bind((KweryDirectoryChecker.class));
         bind(CsvWriterFactory.class).to(CsvWriterFactoryImpl.class);
         bind(CsvReaderFactory.class).to(CsvReaderFactoryImpl.class);
-        bind(LicenseChecker.class);
     }
 
     @Provides
