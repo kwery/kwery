@@ -125,8 +125,6 @@ public class Routes implements ApplicationRoutes {
         router.POST().route(REPORT_EMAIL_CONFIGURATION_SAVE_API).with(ReportEmailConfigurationApiController.class, "saveReportEmailConfiguration");
         router.GET().route(REPORT_EMAIL_CONFIGURATION_GET_API).with(ReportEmailConfigurationApiController.class, "getReportEmailConfiguration");
 
-        router.GET().route(LICENSE_API).with(LicenseApiController.class, "getLicenseDetails");
-
         router.GET().route(MESSAGES_JS).with(MessageApiController.class, "getAllMessages");
         //Api - End
 
