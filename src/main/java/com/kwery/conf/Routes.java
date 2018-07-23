@@ -61,8 +61,6 @@ public class Routes implements ApplicationRoutes {
     public static final String REPORT_EMAIL_CONFIGURATION_SAVE_API = "/api/report-email-configuration/save";
     public static final String REPORT_EMAIL_CONFIGURATION_GET_API = "/api/report-email-configuration/get";
 
-    public static final String LICENSE_API = "/api/license";
-
     public static final String MESSAGES_JS = "/messages.js";
 
     @Override
