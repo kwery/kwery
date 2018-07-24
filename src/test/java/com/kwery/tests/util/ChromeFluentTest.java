@@ -6,7 +6,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.Timeout;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -89,5 +92,22 @@ public class ChromeFluentTest extends FluentTest {
 
     public List<String> getErrorMessages() {
         return $(".f-failure-message p").stream().map(FluentWebElement::text).collect(toList());
+    }
+
+
+    //TODO - Move this out of code
+    @Override
+    public String getWebDriver() {
+        return "chrome";
+    }
+
+    @Override
+    public Capabilities getCapabilities() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        options.addArguments("--disable-gpu");
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("chromeOptions", options);
+        return capabilities;
     }
 }
