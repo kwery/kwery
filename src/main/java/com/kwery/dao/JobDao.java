@@ -2,6 +2,7 @@ package com.kwery.dao;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobModel;
 import com.kwery.services.job.JobSearchFilter;
@@ -15,6 +16,7 @@ import javax.persistence.criteria.Root;
 import java.util.Collection;
 import java.util.List;
 
+@Singleton
 public class JobDao {
     protected final Provider<EntityManager> entityManagerProvider;
     protected final JobExecutionDao jobExecutionDao;
@@ -26,7 +28,7 @@ public class JobDao {
     }
 
     @Transactional
-    public JobModel save(JobModel m) {
+    public synchronized JobModel save(JobModel m) {
         EntityManager e = entityManagerProvider.get();
 
         long now = System.currentTimeMillis();

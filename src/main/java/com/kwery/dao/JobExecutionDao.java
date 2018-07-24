@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
@@ -18,12 +19,13 @@ import java.util.List;
 
 import static com.kwery.models.JobExecutionModel.Status.SUCCESS;
 
+@Singleton
 public class JobExecutionDao {
     @Inject
     private Provider<EntityManager> entityManagerProvider;
 
     @Transactional
-    public JobExecutionModel save(JobExecutionModel e) {
+    public synchronized JobExecutionModel save(JobExecutionModel e) {
         EntityManager m = entityManagerProvider.get();
 
         if (e.getId() != null && e.getId() > 0) {

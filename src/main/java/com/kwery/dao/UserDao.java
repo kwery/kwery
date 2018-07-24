@@ -2,6 +2,7 @@ package com.kwery.dao;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.User;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Singleton
 public class UserDao {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -24,7 +26,7 @@ public class UserDao {
     private Provider<EntityManager> entityManagerProvider;
 
     @Transactional
-    public void save(User u) {
+    public synchronized void save(User u) {
         long now = System.currentTimeMillis();
         u.setCreated(now);
         u.setUpdated(now);
@@ -103,7 +105,7 @@ public class UserDao {
     }
 
     @Transactional
-    public User update(User user) {
+    public synchronized User update(User user) {
         user.setUpdated(System.currentTimeMillis());
         user.setCreated(getById(user.getId()).getCreated());
 
