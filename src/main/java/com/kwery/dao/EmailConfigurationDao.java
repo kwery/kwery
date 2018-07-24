@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.EmailConfiguration;
 import com.kwery.services.EmptyFromEmailException;
@@ -17,6 +18,7 @@ import javax.persistence.criteria.Root;
 import java.util.LinkedList;
 import java.util.List;
 
+@Singleton
 public class EmailConfigurationDao {
     protected final Provider<EntityManager> entityManagerProvider;
     protected final EmailValidator emailValidator;
@@ -32,7 +34,7 @@ public class EmailConfigurationDao {
      * @throws com.kwery.services.EmptyFromEmailException if from email is empty.
      */
     @Transactional
-    public void save(EmailConfiguration emailConfiguration) throws InvalidEmailException {
+    public synchronized void save(EmailConfiguration emailConfiguration) throws InvalidEmailException {
         EntityManager e = entityManagerProvider.get();
 
         sanitiseEmails(emailConfiguration);

@@ -2,6 +2,7 @@ package com.kwery.dao;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.ReportEmailConfigurationModel;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+@Singleton
 public class ReportEmailConfigurationDao {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -24,7 +26,7 @@ public class ReportEmailConfigurationDao {
     }
 
     @Transactional
-    public ReportEmailConfigurationModel save(ReportEmailConfigurationModel m) {
+    public synchronized ReportEmailConfigurationModel save(ReportEmailConfigurationModel m) {
         EntityManager e = entityManagerProvider.get();
 
         long now = System.currentTimeMillis();
