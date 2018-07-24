@@ -2,8 +2,6 @@ package com.kwery.tests.fluentlenium.job.save;
 
 import com.kwery.dtos.JobDto;
 
-import java.util.List;
-
 public class JobForm extends JobDto {
     protected boolean useCronUi;
 

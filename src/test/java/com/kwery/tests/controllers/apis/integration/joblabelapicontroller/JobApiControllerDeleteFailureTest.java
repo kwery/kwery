@@ -54,7 +54,7 @@ public class JobApiControllerDeleteFailureTest extends AbstractPostLoginApiTest 
                         MessageFormat.format(JOBLABELAPICONTROLLER_DELETE_JOB_HAS_LABEL_M, parentJobLabelModel.getLabel()),
                         MessageFormat.format(JOBLABELAPICONTROLLER_DELETE_HAS_CHILDREN_M, parentJobLabelModel.getLabel())
                 )
-                );
+        );
         assertJsonActionResult(response, expected);
     }
 }

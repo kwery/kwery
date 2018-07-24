@@ -48,16 +48,16 @@ public class DbTableAsserter {
                 String[] toCompare = new ArrayList<>(columnsToCompare).toArray(new String[columnsToCompare.size()]);
 
                 actualTable = new SortedTable(actualTable, toCompare);
-                ((SortedTable)actualTable).setUseComparable(true);
+                ((SortedTable) actualTable).setUseComparable(true);
 
                 expectedTable = new SortedTable(new TableWrapper(expectedTable, actualTable.getTableMetaData()), toCompare);
-                ((SortedTable)expectedTable).setUseComparable(true);
+                ((SortedTable) expectedTable).setUseComparable(true);
             } else {
                 actualTable = new SortedTable(actualTable);
-                ((SortedTable)actualTable).setUseComparable(true);
+                ((SortedTable) actualTable).setUseComparable(true);
 
                 expectedTable = new SortedTable(new TableWrapper(expectedTable, actualTable.getTableMetaData()));
-                ((SortedTable)expectedTable).setUseComparable(true);
+                ((SortedTable) expectedTable).setUseComparable(true);
             }
 
             assertEquals(expectedTable, actualTable);

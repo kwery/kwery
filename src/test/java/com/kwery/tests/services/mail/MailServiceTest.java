@@ -3,32 +3,24 @@ package com.kwery.tests.services.mail;
 import com.kwery.models.EmailConfiguration;
 import com.kwery.services.mail.KweryMail;
 import com.kwery.services.mail.MailService;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.WiserRule;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.apache.commons.mail.util.MimeMessageParser;
-import org.hibernate.dialect.unique.DB2UniqueDelegate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.emailConfigurationDbSet;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
-import static com.kwery.tests.util.Messages.EMAIL_TEST_BODY_M;
-import static com.kwery.tests.util.Messages.EMAIL_TEST_SUBJECT_M;
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

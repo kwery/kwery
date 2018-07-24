@@ -293,14 +293,14 @@ public class DbUtil {
 
         if (datasource != null) {
             builder.newRow(Datasource.TABLE)
-                        .with(Datasource.COLUMN_ID, datasource.getId())
-                        .with(COLUMN_LABEL, datasource.getLabel())
-                        .with(COLUMN_PASSWORD, datasource.getPassword())
-                        .with(COLUMN_PORT, datasource.getPort())
-                        .with(COLUMN_TYPE, datasource.getType())
-                        .with(COLUMN_URL, datasource.getUrl())
-                        .with(COLUMN_USERNAME, datasource.getUsername())
-                        .with(COLUMN_DATABASE, datasource.getDatabase())
+                    .with(Datasource.COLUMN_ID, datasource.getId())
+                    .with(COLUMN_LABEL, datasource.getLabel())
+                    .with(COLUMN_PASSWORD, datasource.getPassword())
+                    .with(COLUMN_PORT, datasource.getPort())
+                    .with(COLUMN_TYPE, datasource.getType())
+                    .with(COLUMN_URL, datasource.getUrl())
+                    .with(COLUMN_USERNAME, datasource.getUsername())
+                    .with(COLUMN_DATABASE, datasource.getDatabase())
                     .add();
 
         }
@@ -429,14 +429,14 @@ public class DbUtil {
                 new DataSourceDestination(DbUtil.getDatasource()),
                 insertInto(Datasource.TABLE)
                         .row()
-                            .column(Datasource.COLUMN_ID, datasource.getId())
-                            .column(COLUMN_LABEL, datasource.getLabel())
-                            .column(COLUMN_PASSWORD, datasource.getPassword())
-                            .column(COLUMN_PORT, datasource.getPort())
-                            .column(COLUMN_TYPE, datasource.getType())
-                            .column(COLUMN_URL, datasource.getUrl())
-                            .column(COLUMN_USERNAME, datasource.getUsername())
-                            .column(COLUMN_DATABASE, datasource.getDatabase())
+                        .column(Datasource.COLUMN_ID, datasource.getId())
+                        .column(COLUMN_LABEL, datasource.getLabel())
+                        .column(COLUMN_PASSWORD, datasource.getPassword())
+                        .column(COLUMN_PORT, datasource.getPort())
+                        .column(COLUMN_TYPE, datasource.getType())
+                        .column(COLUMN_URL, datasource.getUrl())
+                        .column(COLUMN_USERNAME, datasource.getUsername())
+                        .column(COLUMN_DATABASE, datasource.getDatabase())
                         .end()
                         .build()
         );
@@ -450,7 +450,7 @@ public class DbUtil {
         }
     }
 
-    public static void sqlQueryDbSetUp(SqlQueryModel sqlQueryModel){
+    public static void sqlQueryDbSetUp(SqlQueryModel sqlQueryModel) {
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),
                 insertInto(SqlQueryModel.SQL_QUERY_TABLE)
@@ -487,9 +487,9 @@ public class DbUtil {
                     new DataSourceDestination(getDatasource()),
                     insertInto(JobModel.JOB_EMAIL_TABLE)
                             .row()
-                                .column(JobModel.JOB_EMAIL_ID_COLUMN, TestUtil.getId(DummyModel.class))
-                                .column(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
-                                .column(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, email)
+                            .column(JobModel.JOB_EMAIL_ID_COLUMN, TestUtil.getId(DummyModel.class))
+                            .column(JobModel.JOB_EMAIL_TABLE_JOB_ID_FK_COLUMN, jobModel.getId())
+                            .column(JobModel.JOB_EMAIL_TABLE_EMAIL_COLUMN, email)
                             .end()
                             .build()
             ).launch();
@@ -574,12 +574,12 @@ public class DbUtil {
                 sequenceOf(
                         insertInto(JobExecutionModel.TABLE)
                                 .row()
-                                    .column(JobExecutionModel.COLUMN_ID, jobExecutionModel.getId())
-                                    .column(JobExecutionModel.COLUMN_EXECUTION_ID, jobExecutionModel.getExecutionId())
-                                    .column(JobExecutionModel.COLUMN_EXECUTION_START, jobExecutionModel.getExecutionStart())
-                                    .column(JobExecutionModel.COLUMN_EXECUTION_END, jobExecutionModel.getExecutionEnd())
-                                    .column(JobExecutionModel.COLUMN_STATUS, jobExecutionModel.getStatus())
-                                    .column(JobExecutionModel.JOB_ID_FK_COLUMN, jobExecutionModel.getJobModel().getId())
+                                .column(JobExecutionModel.COLUMN_ID, jobExecutionModel.getId())
+                                .column(JobExecutionModel.COLUMN_EXECUTION_ID, jobExecutionModel.getExecutionId())
+                                .column(JobExecutionModel.COLUMN_EXECUTION_START, jobExecutionModel.getExecutionStart())
+                                .column(JobExecutionModel.COLUMN_EXECUTION_END, jobExecutionModel.getExecutionEnd())
+                                .column(JobExecutionModel.COLUMN_STATUS, jobExecutionModel.getStatus())
+                                .column(JobExecutionModel.JOB_ID_FK_COLUMN, jobExecutionModel.getJobModel().getId())
                                 .end()
                                 .build()
                 )
@@ -650,9 +650,9 @@ public class DbUtil {
                     sequenceOf(
                             insertInto(JobModel.JOB_JOB_LABEL_TABLE)
                                     .row()
-                                        .column(JobModel.JOB_JOB_LABEL_TABLE_ID_COLUMN, TestUtil.getId(DummyModel.class))
-                                        .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, jobModel.getId())
-                                        .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, jobLabelModel.getId())
+                                    .column(JobModel.JOB_JOB_LABEL_TABLE_ID_COLUMN, TestUtil.getId(DummyModel.class))
+                                    .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_ID_COLUMN, jobModel.getId())
+                                    .column(JobModel.JOB_JOB_LABEL_TABLE_FK_JOB_LABEL_ID_COLUMN, jobLabelModel.getId())
                                     .end()
                                     .build()
                     )
@@ -803,7 +803,7 @@ public class DbUtil {
                 new DataSourceDestination(DbUtil.getDatasource()),
                 sequenceOf(
                         insertInto(
-                               ReportEmailConfigurationModel.REPORT_EMAIL_CONFIGURATION_TABLE
+                                ReportEmailConfigurationModel.REPORT_EMAIL_CONFIGURATION_TABLE
                         ).row()
                                 .column(ReportEmailConfigurationModel.ID_COLUMN, m.getId())
                                 .column(ReportEmailConfigurationModel.LOGO_URL_COLUMN, m.getLogoUrl())

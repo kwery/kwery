@@ -21,7 +21,7 @@ public class ReportSaveFailureAlertEmailDisabledUiTest extends AbstractReportSav
 
     @Parameterized.Parameters(name = "Onboarding{0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true},
                 {false},
         });

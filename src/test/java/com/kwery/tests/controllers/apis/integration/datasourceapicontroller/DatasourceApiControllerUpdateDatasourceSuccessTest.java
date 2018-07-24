@@ -6,7 +6,7 @@ import com.kwery.controllers.apis.DatasourceApiController;
 import com.kwery.models.Datasource;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
@@ -14,17 +14,12 @@ import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.text.MessageFormat;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
+import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
 import static com.kwery.tests.util.Messages.DATASOURCE_UPDATE_SUCCESS_M;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
@@ -34,13 +29,13 @@ import static org.junit.Assert.assertThat;
 //TODO - Validation test cases for update
 public class DatasourceApiControllerUpdateDatasourceSuccessTest extends AbstractPostLoginApiTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    MySQLContainer mysql = new MySQLContainer();
 
     protected Datasource datasource;
 
     @Before
     public void setUpDatasourceApiControllerUpdateDatasourceSuccessTest() {
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mysql, Datasource.Type.MYSQL);
 
         new DbSetup(
                 new DataSourceDestination(DbUtil.getDatasource()),

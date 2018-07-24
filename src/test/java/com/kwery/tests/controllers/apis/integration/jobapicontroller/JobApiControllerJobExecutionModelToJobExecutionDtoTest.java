@@ -32,7 +32,7 @@ public class JobApiControllerJobExecutionModelToJobExecutionDtoTest {
 
         jobExecutionModel.setJobModel(jobModel);
 
-        JobExecutionDto dto = jobApiController .jobExecutionModelToJobExecutionDto(jobExecutionModel);
+        JobExecutionDto dto = jobApiController.jobExecutionModelToJobExecutionDto(jobExecutionModel);
 
         assertThat(dto.getId(), is(jobExecutionModel.getId()));
         assertThat(dto.getStatus(), is(SUCCESS.name()));

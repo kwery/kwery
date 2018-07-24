@@ -33,7 +33,7 @@ public class OnboardingApiControllerPostLoginNextActionApiTest extends AbstractP
 
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {ADD_DATASOURCE},
                 {ADD_JOB},
                 {SHOW_HOME_SCREEN}

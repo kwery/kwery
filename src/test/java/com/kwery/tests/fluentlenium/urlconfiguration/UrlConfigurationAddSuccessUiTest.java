@@ -13,8 +13,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import static com.kwery.models.UrlConfiguration.URL_CONFIGURATION_TABLE;
 import static com.kwery.models.UrlConfiguration.ID_COLUMN;
+import static com.kwery.models.UrlConfiguration.URL_CONFIGURATION_TABLE;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.domainConfigurationTable;
 import static com.kwery.tests.util.TestUtil.domainSettingWithoutId;
 import static org.junit.rules.RuleChain.outerRule;

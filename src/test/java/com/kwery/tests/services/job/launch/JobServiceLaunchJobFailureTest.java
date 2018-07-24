@@ -7,8 +7,6 @@ import org.junit.Test;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.awaitility.Awaitility.waitAtMost;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
 
 public class JobServiceLaunchJobFailureTest extends JobServiceJobSetUpAbstractTest {
     protected boolean mailTest = true;

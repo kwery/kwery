@@ -2,18 +2,15 @@ package com.kwery.tests.controllers.apis.integration.datasourceapicontroller.add
 
 import com.google.common.collect.ImmutableMap;
 import com.kwery.conf.Routes;
-import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.models.Datasource;
+import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static com.google.common.collect.ImmutableList.of;
 import static com.kwery.conf.Routes.ADD_DATASOURCE_API;
-import static com.kwery.tests.util.Messages.LABEL_VALIDATION_M;
-import static com.kwery.tests.util.Messages.PORT_VALIDATION_M;
-import static com.kwery.tests.util.Messages.URL_VALIDATION_M;
-import static com.kwery.tests.util.Messages.USERNAME_VALIDATION_M;
+import static com.kwery.tests.util.Messages.*;
 
 public class AddDatasourceValidationTest extends AbstractPostLoginApiTest {
     public static final ImmutableMap<String, java.util.List<String>> MESSAGES = ImmutableMap.of(

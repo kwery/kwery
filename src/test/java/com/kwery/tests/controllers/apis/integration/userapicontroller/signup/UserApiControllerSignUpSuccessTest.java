@@ -33,7 +33,7 @@ public class UserApiControllerSignUpSuccessTest extends AbstractApiTest {
 
     @Parameters(name = "firstUser{0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true}, {false}
         });
     }

@@ -94,31 +94,31 @@ public class SearchDaoTestFieldPrecedence extends RepoDashDaoTestBase {
         searchFilter.setFirstResult(0);
         List result = jobSearchDao.search(searchFilter);
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), is(inTitle.getId()));
+        assertThat(((JobModel) result.get(0)).getId(), is(inTitle.getId()));
 
         searchFilter.setFirstResult(1);
         result = jobSearchDao.search(searchFilter);
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), is(inName.getId()));
+        assertThat(((JobModel) result.get(0)).getId(), is(inName.getId()));
 
         searchFilter.setFirstResult(2);
         result = jobSearchDao.search(searchFilter);
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), anyOf(equalTo(inJobLabel.getId()), equalTo(inSqlQueryTitle.getId()), equalTo(inSqlQueryLabel.getId())));
+        assertThat(((JobModel) result.get(0)).getId(), anyOf(equalTo(inJobLabel.getId()), equalTo(inSqlQueryTitle.getId()), equalTo(inSqlQueryLabel.getId())));
 
         searchFilter.setFirstResult(3);
         result = jobSearchDao.search(searchFilter);
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), anyOf(equalTo(inJobLabel.getId()), equalTo(inSqlQueryTitle.getId()), equalTo(inSqlQueryLabel.getId())));
+        assertThat(((JobModel) result.get(0)).getId(), anyOf(equalTo(inJobLabel.getId()), equalTo(inSqlQueryTitle.getId()), equalTo(inSqlQueryLabel.getId())));
 
         searchFilter.setFirstResult(4);
         result = jobSearchDao.search(searchFilter);
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), anyOf(equalTo(inJobLabel.getId()), equalTo(inSqlQueryTitle.getId()), equalTo(inSqlQueryLabel.getId())));
+        assertThat(((JobModel) result.get(0)).getId(), anyOf(equalTo(inJobLabel.getId()), equalTo(inSqlQueryTitle.getId()), equalTo(inSqlQueryLabel.getId())));
 
         searchFilter.setFirstResult(5);
         result = jobSearchDao.search(searchFilter);
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), is(inDatasource.getId()));
+        assertThat(((JobModel) result.get(0)).getId(), is(inDatasource.getId()));
     }
 }

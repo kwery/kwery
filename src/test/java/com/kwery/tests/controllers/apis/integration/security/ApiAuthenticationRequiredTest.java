@@ -43,11 +43,11 @@ public class ApiAuthenticationRequiredTest extends NinjaDocTester {
         );
 
         String listSqlQueryExecutionUrl = router.getReverseRoute(
-            SqlQueryApiController.class,
-            "listSqlQueryExecution",
-            ImmutableMap.of(
-                    "sqlQueryId", 1
-            )
+                SqlQueryApiController.class,
+                "listSqlQueryExecution",
+                ImmutableMap.of(
+                        "sqlQueryId", 1
+                )
         );
 
         vos = ImmutableList.of(

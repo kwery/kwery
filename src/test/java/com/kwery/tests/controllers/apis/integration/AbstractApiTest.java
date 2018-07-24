@@ -1,21 +1,21 @@
 package com.kwery.tests.controllers.apis.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mchange.v2.c3p0.C3P0Registry;
 import com.kwery.models.User;
-import ninja.NinjaTest;
 import com.kwery.views.ActionResult;
+import com.mchange.v2.c3p0.C3P0Registry;
+import ninja.NinjaTest;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.kwery.views.ActionResult.Status.failure;
+import static com.kwery.views.ActionResult.Status.success;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static com.kwery.views.ActionResult.Status.failure;
-import static com.kwery.views.ActionResult.Status.success;
 
 public abstract class AbstractApiTest extends NinjaTest {
     protected String getUrl(String path) {

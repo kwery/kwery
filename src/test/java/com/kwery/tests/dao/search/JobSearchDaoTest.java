@@ -78,7 +78,7 @@ public class JobSearchDaoTest extends RepoDashDaoTestBase {
         List result = jobSearchDao.search(searchFilter);
 
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), anyOf(equalTo(jobModel0.getId()), equalTo(jobModel1.getId())));
+        assertThat(((JobModel) result.get(0)).getId(), anyOf(equalTo(jobModel0.getId()), equalTo(jobModel1.getId())));
 
         searchFilter.setFirstResult(1);
         searchFilter.setMaxResults(1);
@@ -86,7 +86,7 @@ public class JobSearchDaoTest extends RepoDashDaoTestBase {
         result = jobSearchDao.search(searchFilter);
 
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), anyOf(equalTo(jobModel0.getId()), equalTo(jobModel1.getId())));
+        assertThat(((JobModel) result.get(0)).getId(), anyOf(equalTo(jobModel0.getId()), equalTo(jobModel1.getId())));
 
         searchFilter.setFirstResult(2);
         searchFilter.setMaxResults(1);

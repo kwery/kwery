@@ -2,6 +2,7 @@ package com.kwery.tests.services.job.launch;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.*;
@@ -9,16 +10,15 @@ import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.tests.util.PostgreSqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
-import com.kwery.conf.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.subethamail.wiser.WiserMessage;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.mail.internet.MimeMessage;
 import java.util.List;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertThat;
 
 public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
     @Rule
-    public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
+    public PostgreSQLContainer postgres = new PostgreSQLContainer();
 
     @Rule
     public WiserRule wiserRule = new WiserRule();
@@ -63,7 +63,7 @@ public class JobServiceLaunchJobPostgreSqlSuccessTest extends RepoDashTestBase {
         jobModel.setCronExpression("* * * * *");
         jobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));
 
-        datasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
+        datasource = TestUtil.datasource(postgres, Datasource.Type.POSTGRESQL);
         datasource.setId(dbId());
 
         datasourceDbSetup(datasource);

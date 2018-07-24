@@ -2,15 +2,12 @@ package com.kwery.tests.services.job.launch.dependets;
 
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobServiceLaunchJobWithDependentsSqlQueryKilledTest extends JobServiceLaunchWithDependentsKilledJobTest {

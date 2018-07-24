@@ -3,14 +3,10 @@ package com.kwery.tests.services.job.schedule;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.tests.services.job.JobServiceJobSetUpAbstractTest;
-import ninja.postoffice.Mail;
-import ninja.postoffice.mock.PostofficeMockImpl;
 import org.junit.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.waitAtMost;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
 
 public class JobServiceScheduleJobSuccessTest extends JobServiceJobSetUpAbstractTest {
     @Test

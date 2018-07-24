@@ -3,7 +3,6 @@ package com.kwery.tests.fluentlenium.reportemailconfiguration;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.RepoDashPage;
 import com.kwery.tests.fluentlenium.job.reportlist.ActionResultComponent;
-import org.fluentlenium.core.annotation.Page;
 import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.hook.wait.Wait;
 

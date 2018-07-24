@@ -13,11 +13,12 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import static com.jayway.jsonassert.impl.matcher.IsCollectionWithSize.hasSize;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
@@ -30,7 +31,7 @@ import static org.junit.Assert.assertThat;
 
 public class JobApiControllerSaveJobChildJobToCronExpressionTest extends AbstractPostLoginApiTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
     private JobModel parentJobModel;
     private SqlQueryModel sqlQueryModel;
     private SqlQueryModel parentSqlQueryModel;
@@ -44,7 +45,7 @@ public class JobApiControllerSaveJobChildJobToCronExpressionTest extends Abstrac
         parentJobModel.setCronExpression("* * * * *");
         jobDbSetUp(parentJobModel);
 
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(DbUtil.dbId());
         datasourceDbSetup(datasource);
 

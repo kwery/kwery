@@ -79,7 +79,7 @@ public class ReportPage extends KweryFluentPage implements RepoDashPage {
     }
 
     public boolean isTableEmpty(int index) {
-       return !el(String.format("table-%d-f th", index)).present() && !el(String.format("table-%d-f tr", index)).present();
+        return !el(String.format("table-%d-f th", index)).present() && !el(String.format("table-%d-f tr", index)).present();
     }
 
     public String getFailureContent(int index) {

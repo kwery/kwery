@@ -11,14 +11,15 @@ import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.JobForm;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     @Page
     ReportUpdatePage page;
@@ -50,7 +51,7 @@ public class ReportUpdateSwitchToChildReportUiTest extends ChromeFluentTest {
 
     @Before
     public void setUp() {
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 

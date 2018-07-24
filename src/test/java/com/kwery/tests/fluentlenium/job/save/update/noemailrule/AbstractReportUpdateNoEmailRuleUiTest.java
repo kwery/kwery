@@ -10,12 +10,13 @@ import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.update.ReportUpdatePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
+import org.testcontainers.containers.MySQLContainer;
 
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
@@ -32,7 +33,7 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     private JobDao jobDao;
     private JobModel jobModel;
@@ -47,7 +48,7 @@ public abstract class AbstractReportUpdateNoEmailRuleUiTest extends ChromeFluent
         jobModel.setRules(ImmutableMap.of(EMPTY_REPORT_NO_EMAIL, String.valueOf(isNoEmailRule())));
         jobDbSetUp(jobModel);
 
-        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        Datasource datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 

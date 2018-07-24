@@ -7,11 +7,12 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.HashMap;
 
@@ -26,7 +27,7 @@ import static org.junit.Assert.assertThat;
 
 public class JobApiControllerDeleteScheduledJobTest extends AbstractPostLoginApiTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     protected JobModel jobModel;
 
@@ -36,7 +37,7 @@ public class JobApiControllerDeleteScheduledJobTest extends AbstractPostLoginApi
         jobModel.setCronExpression("* * * * *");
         jobDbSetUp(jobModel);
 
-        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        Datasource datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(1);
         datasourceDbSetup(datasource);
 

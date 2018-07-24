@@ -1,6 +1,7 @@
 package com.kwery.tests.filters.mocks;
 
 import com.kwery.filters.DashRepoSecureFilter;
+import com.kwery.tests.util.TestSession;
 import ninja.Context;
 import ninja.FilterChain;
 import ninja.Result;
@@ -12,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import com.kwery.tests.util.TestSession;
 
 import static com.kwery.controllers.apis.UserApiController.SESSION_USERNAME_KEY;
 import static org.hamcrest.core.Is.is;

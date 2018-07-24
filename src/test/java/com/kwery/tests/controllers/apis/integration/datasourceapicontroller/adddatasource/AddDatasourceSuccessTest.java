@@ -3,11 +3,12 @@ package com.kwery.tests.controllers.apis.integration.datasourceapicontroller.add
 import com.kwery.dao.DatasourceDao;
 import com.kwery.models.Datasource;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import com.kwery.views.ActionResult;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -20,13 +21,13 @@ import static org.junit.Assert.assertThat;
 
 public class AddDatasourceSuccessTest extends AbstractPostLoginApiTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mysql = new MySQLContainer();
 
     protected Datasource datasource;
 
     @Before
     public void addDatasourceSuccessTestSetup() {
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mysql, Datasource.Type.MYSQL);
     }
 
     @Test

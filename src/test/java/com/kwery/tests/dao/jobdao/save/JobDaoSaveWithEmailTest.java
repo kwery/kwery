@@ -11,7 +11,6 @@ import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 
 import static com.kwery.tests.util.TestUtil.jobModelWithoutIdWithoutDependents;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 

@@ -36,7 +36,7 @@ public class SuperUserEditPage extends KweryFluentPage {
     public void saveSuperUser(boolean superUser) {
         if (el(".super-user-f").withHook(WaitHook.class).selected()) {
             if (!superUser) {
-             el(".super-user-f").click();
+                el(".super-user-f").click();
             }
         } else {
             if (superUser) {

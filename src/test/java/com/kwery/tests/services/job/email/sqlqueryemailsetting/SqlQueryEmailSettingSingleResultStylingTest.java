@@ -36,7 +36,7 @@ public class SqlQueryEmailSettingSingleResultStylingTest extends AbstractSqlQuer
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true},
                 {false},
         });

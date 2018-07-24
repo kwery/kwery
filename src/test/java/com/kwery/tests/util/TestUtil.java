@@ -17,6 +17,9 @@ import com.kwery.utils.CsvWriterFactoryImpl;
 import com.kwery.views.ActionResult;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -513,7 +516,7 @@ public class TestUtil {
         assertThat(response, isJson(allOf(
                 withJsonPath(String.format("$.[%d].jobModel.title", index), is(dto.getJobModel().getTitle())),
                 withJsonPath(String.format("$.[%d].lastExecution", index), is(dto.getLastExecution())),
-                withJsonPath(String.format("$.[%d].nextExecution", index) , is(dto.getNextExecution())),
+                withJsonPath(String.format("$.[%d].nextExecution", index), is(dto.getNextExecution())),
                 withJsonPath(String.format("$.[%d].jobModel.id", index), is(dto.getJobModel().getId())),
                 withJsonPath(String.format("$.[%d].jobModel.name", index), is(dto.getJobModel().getName()))
         )));
@@ -552,7 +555,7 @@ public class TestUtil {
                 withJsonPath("$.id", is(user.getId())),
                 withJsonPath("$.firstName", is(user.getFirstName())),
                 withJsonPath("$.middleName", is(user.getMiddleName())),
-                withJsonPath("$.lastName" , is(user.getLastName())),
+                withJsonPath("$.lastName", is(user.getLastName())),
                 withJsonPath("$.email", is(user.getEmail())),
                 withJsonPath("$.password", is(user.getPassword()))
         )));
@@ -604,5 +607,30 @@ public class TestUtil {
         ReportEmailConfigurationModel m = reportEmailConfigurationModel();
         m.setId(null);
         return m;
+    }
+
+    public static Datasource datasource(JdbcDatabaseContainer container, Datasource.Type type) {
+        Datasource datasource = new Datasource();
+        datasource.setUrl(container.getContainerIpAddress());
+
+        int port;
+        if (type == Datasource.Type.MYSQL) {
+            port = MySQLContainer.MYSQL_PORT;
+        } else {
+            port = PostgreSQLContainer.POSTGRESQL_PORT;
+        }
+        datasource.setPort(container.getMappedPort(port));
+
+        datasource.setUsername(container.getUsername());
+        datasource.setPassword(container.getPassword());
+
+        if (type == Datasource.Type.REDSHIFT || type == Datasource.Type.POSTGRESQL) {
+            datasource.setDatabase(container.getDatabaseName());
+        }
+
+        datasource.setLabel(type.name());
+        datasource.setType(type);
+
+        return datasource;
     }
 }

@@ -3,7 +3,7 @@ package com.kwery.tests.util;
 /**
  * Holds messages present in messages.properties file, this is done to ease testing. All messages present here
  * should have an equivalent entry in messages.properties file.
- *
+ * <p>
  * Convention for key name is to convert the corresponding key in messages.properties to upper case, replace dots
  * with hyphens and append _M. Append _HTML_M if the message is HTML.
  */
@@ -98,7 +98,7 @@ public class Messages {
     public static final String USER_EDIT_PASSWORD_SUCCESS_MESSAGE_M = "Password reset successfully";
     public static final String USER_EDIT_SUPERUSER_SUCCESS_MESSAGE_M = "User saved successfully";
 
-    public static final String  USER_EDIT_SUPERUSER_FAILURE_MESSAGE_M = "Cannot demote from admin, at least one user has to be an admin";
+    public static final String USER_EDIT_SUPERUSER_FAILURE_MESSAGE_M = "Cannot demote from admin, at least one user has to be an admin";
 
     public static final String EMAIL_CONFIGURATION_SMTP_MISSING_M = "Please configure SMTP";
     public static final String EMAIL_CONFIGURATION_SENDER_DETAILS_MISSING_M = "Please configure sender details";

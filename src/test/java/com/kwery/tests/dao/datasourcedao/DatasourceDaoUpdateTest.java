@@ -18,7 +18,7 @@ public class DatasourceDaoUpdateTest extends RepoDashDaoTestBase {
 
 
     @Before
-    public void setUpDatasourceDaoUpdateTest () {
+    public void setUpDatasourceDaoUpdateTest() {
         datasource = datasource();
         datasourceDbSetup(datasource);
 

@@ -59,7 +59,6 @@ public class RepoDashTestBase {
     }
 
 
-
     /**
      * Get the DAO instances ready to use
      *

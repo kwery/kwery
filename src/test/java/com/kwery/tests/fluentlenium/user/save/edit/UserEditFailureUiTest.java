@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.text.MessageFormat;
-import java.util.concurrent.TimeUnit;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.userDbSetUp;
 import static com.kwery.tests.util.Messages.SIGN_UP_FAILURE_MESSAGE_M;

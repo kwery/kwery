@@ -3,13 +3,14 @@ package com.kwery.tests.fluentlenium.datasource;
 import com.kwery.models.Datasource;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     @Page
     protected UpdateDatasourcePage page;
@@ -38,7 +39,7 @@ public class DatasourceMySqlUpdateUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpUpdateDatasourcePageTest() {
-        mySqlDatasource = mysqlDockerRule.getMySqlDocker().datasource();
+        mySqlDatasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         mySqlDatasource.setId(dbId());
         datasourceDbSetup(mySqlDatasource);
 

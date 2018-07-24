@@ -44,12 +44,12 @@ public class SearchDaoTestPhrasePrecedence extends RepoDashDaoTestBase {
         List result = jobSearchDao.search(searchFilter);
 
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), is(jobModel1.getId()));
+        assertThat(((JobModel) result.get(0)).getId(), is(jobModel1.getId()));
 
 
         searchFilter.setFirstResult(1);
         result = jobSearchDao.search(searchFilter);
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), is(jobModel0.getId()));
+        assertThat(((JobModel) result.get(0)).getId(), is(jobModel0.getId()));
     }
 }

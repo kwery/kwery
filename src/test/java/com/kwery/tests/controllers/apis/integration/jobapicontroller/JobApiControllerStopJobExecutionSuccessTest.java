@@ -9,11 +9,12 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.HashMap;
 
@@ -29,7 +30,7 @@ import static org.junit.Assert.assertThat;
 
 public class JobApiControllerStopJobExecutionSuccessTest extends AbstractPostLoginApiTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     protected String executionId;
 
@@ -38,7 +39,7 @@ public class JobApiControllerStopJobExecutionSuccessTest extends AbstractPostLog
         JobModel jobModel = jobModelWithoutDependents();
         jobDbSetUp(jobModel);
 
-        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        Datasource datasource = TestUtil.datasource(Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 
