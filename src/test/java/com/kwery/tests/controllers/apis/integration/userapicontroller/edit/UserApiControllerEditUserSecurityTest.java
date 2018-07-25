@@ -7,7 +7,6 @@ import com.kwery.tests.controllers.apis.integration.AbstractApiTest;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.views.ActionResult;
 import ninja.Router;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -12,11 +12,12 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,14 +27,13 @@ import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
-import static com.kwery.views.ActionResult.Status.success;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLoginApiTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     private Datasource datasource1;
 
@@ -50,7 +50,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         parentJobModel0.setCronExpression("* * * * *");
         jobDbSetUp(parentJobModel0);
 
-        Datasource datasource0 = mysqlDockerRule.getMySqlDocker().datasource();
+        Datasource datasource0 = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource0.setId(dbId());
         datasourceDbSetup(datasource0);
 
@@ -64,7 +64,7 @@ public class JobApiControllerUpdateJobWithDependentsTest extends AbstractPostLog
         parentJobModel0.getEmails().addAll(ImmutableSet.of("foo@bar.com", "goo@boo.com"));
         jobEmailDbSetUp(parentJobModel0);
 
-        datasource1 = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource1 = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource1.setLabel("mysql0");
         datasource1.setId(dbId());
         datasourceDbSetup(datasource1);

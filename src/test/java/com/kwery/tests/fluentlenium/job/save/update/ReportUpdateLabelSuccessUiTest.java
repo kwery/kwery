@@ -8,19 +8,19 @@ import com.kwery.models.*;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
-import static com.kwery.tests.fluentlenium.utils.DbUtil.smtpConfigurationDbSetUp;
 import static com.kwery.tests.util.TestUtil.*;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -34,7 +34,7 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     @Page
     ReportUpdatePage page;
@@ -52,7 +52,7 @@ public class ReportUpdateLabelSuccessUiTest extends ChromeFluentTest {
         jobModel.setCronExpression("* * * * *");
         jobDbSetUp(jobModel);
 
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 

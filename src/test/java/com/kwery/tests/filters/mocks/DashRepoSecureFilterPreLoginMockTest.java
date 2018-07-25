@@ -2,6 +2,8 @@ package com.kwery.tests.filters.mocks;
 
 import com.google.common.base.Optional;
 import com.kwery.filters.DashRepoSecureFilter;
+import com.kwery.tests.util.TestSession;
+import com.kwery.views.ActionResult;
 import ninja.Context;
 import ninja.FilterChain;
 import ninja.Result;
@@ -12,10 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import com.kwery.tests.util.TestSession;
-import com.kwery.views.ActionResult;
 
 import static com.kwery.controllers.MessageKeys.USER_NOT_LOGGED_IN;
+import static com.kwery.views.ActionResult.Status.failure;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -23,7 +24,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static com.kwery.views.ActionResult.Status.failure;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DashRepoSecureFilterPreLoginMockTest {

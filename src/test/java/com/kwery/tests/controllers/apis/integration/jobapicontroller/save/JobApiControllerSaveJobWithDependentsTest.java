@@ -26,7 +26,6 @@ import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.kwery.models.JobModel.Rules.EMPTY_REPORT_NO_EMAIL;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.*;
 import static com.kwery.tests.util.TestUtil.*;
-import static com.kwery.views.ActionResult.Status.success;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

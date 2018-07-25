@@ -11,11 +11,12 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.util.MysqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ import static org.junit.Assert.assertThat;
 
 public class JobApiControllerUpdateJobAddAndRemoveSqlQueriesTest extends AbstractPostLoginApiTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
     private JobModel jobModel;
     private Datasource datasource;
     private JobDao jobDao;
@@ -43,7 +44,7 @@ public class JobApiControllerUpdateJobAddAndRemoveSqlQueriesTest extends Abstrac
         jobModel = jobModelWithoutDependents();
         jobDbSetUp(jobModel);
 
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 

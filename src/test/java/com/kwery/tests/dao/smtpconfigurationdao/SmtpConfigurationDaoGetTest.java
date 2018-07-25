@@ -37,8 +37,8 @@ public class SmtpConfigurationDaoGetTest extends RepoDashDaoTestBase {
     public void testGet() {
         List<SmtpConfiguration> smtpConfigurationList = smtpConfigurationDao.get();
         assertThat(smtpConfigurationList, hasSize(2));
-        assertThat(smtpConfigurationList.get(0) , theSameBeanAs(idDetailMap.get(smtpConfigurationList.get(0).getId())));
-        assertThat(smtpConfigurationList.get(1) , theSameBeanAs(idDetailMap.get(smtpConfigurationList.get(1).getId())));
+        assertThat(smtpConfigurationList.get(0), theSameBeanAs(idDetailMap.get(smtpConfigurationList.get(0).getId())));
+        assertThat(smtpConfigurationList.get(1), theSameBeanAs(idDetailMap.get(smtpConfigurationList.get(1).getId())));
     }
 
     @Test

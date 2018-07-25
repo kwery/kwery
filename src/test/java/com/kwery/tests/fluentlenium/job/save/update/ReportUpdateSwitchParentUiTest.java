@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class ReportUpdateSwitchParentUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     @Rule
     public WiserRule wiserRule = new WiserRule();
@@ -50,7 +51,7 @@ public class ReportUpdateSwitchParentUiTest extends ChromeFluentTest {
 
     @Before
     public void setUp() {
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 

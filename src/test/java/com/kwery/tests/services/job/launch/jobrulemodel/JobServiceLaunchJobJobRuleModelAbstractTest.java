@@ -6,11 +6,12 @@ import com.kwery.models.*;
 import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
+import com.kwery.tests.util.TestUtil;
 import com.kwery.utils.ReportUtil;
 import org.junit.Before;
 import org.junit.Rule;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,14 +26,16 @@ import static org.junit.Assert.assertThat;
 
 public abstract class JobServiceLaunchJobJobRuleModelAbstractTest extends RepoDashTestBase {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
     private JobExecutionDao jobExecutionDao;
 
     protected JobModel jobModel;
     protected JobService jobService;
 
     public abstract String getQuery0();
+
     public abstract String getQuery1();
+
     public abstract String getQuery2();
 
     public abstract JobRuleModel getJobRuleMode();
@@ -43,7 +46,7 @@ public abstract class JobServiceLaunchJobJobRuleModelAbstractTest extends RepoDa
         jobModel.setCronExpression("* * * * *");
         jobDbSetUp(jobModel);
 
-        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        Datasource datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(DbUtil.dbId());
         datasourceDbSetup(datasource);
 

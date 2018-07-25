@@ -3,7 +3,6 @@ package com.kwery.tests.dao.joblabeldao;
 import com.kwery.dao.JobLabelDao;
 import com.kwery.models.JobLabelModel;
 import com.kwery.tests.util.RepoDashDaoTestBase;
-import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

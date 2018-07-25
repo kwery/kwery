@@ -38,7 +38,7 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
 
     @Parameters(name = "WithLogo-{0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {States.withLogo},
                 {States.withoutLogo},
                 {States.emptyLogo}
@@ -114,7 +114,7 @@ public class ReportEmailSenderTest extends AbstractReportEmailWithContentSender 
 
         if (state == States.withLogo) {
             assertLogo(html, "https://s3.amazonaws.com/getkwery.com/logo.png");
-        } else  {
+        } else {
             assertNoLogo(html);
         }
     }

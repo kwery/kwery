@@ -22,7 +22,7 @@ public class DomainConfigurationDao {
     }
 
     @Transactional
-    public UrlConfiguration save(UrlConfiguration setting) {
+    public synchronized UrlConfiguration save(UrlConfiguration setting) {
         EntityManager e = entityManagerProvider.get();
 
         if (setting.getId() != null && setting.getId() > 0) {

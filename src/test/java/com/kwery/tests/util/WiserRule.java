@@ -7,7 +7,7 @@ import ninja.standalone.StandaloneHelper;
 import org.junit.rules.ExternalResource;
 import org.subethamail.wiser.Wiser;
 
-public class WiserRule extends ExternalResource  {
+public class WiserRule extends ExternalResource {
     protected Wiser wiser;
     protected int port = 0;
 

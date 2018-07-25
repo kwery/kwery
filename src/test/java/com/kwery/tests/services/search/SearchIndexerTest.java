@@ -39,6 +39,6 @@ public class SearchIndexerTest extends RepoDashTestBase {
         List result = jobSearchDao.search(searchFilter);
 
         assertThat(result.size(), is(1));
-        assertThat(((JobModel)result.get(0)).getId(), is(jobModel.getId()));
+        assertThat(((JobModel) result.get(0)).getId(), is(jobModel.getId()));
     }
 }

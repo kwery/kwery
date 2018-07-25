@@ -22,7 +22,7 @@ public class ReportSaveSqlQueryEmailSettingUiTest extends AbstractReportSaveUiTe
 
     @Parameters(name = "Onboarding{0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true},
                 {false},
         });

@@ -10,8 +10,6 @@ import java.util.List;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.waitAtMost;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
 
 public class JobServiceScheduleJobKilledTest extends JobServiceJobSetUpAbstractTest {
     protected boolean mailTest = true;

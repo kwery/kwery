@@ -3,6 +3,7 @@ package com.kwery.dao;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
@@ -16,6 +17,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+@Singleton
 public class DatasourceDao {
     private final Provider<EntityManager> entityManagerProvider;
     private final JobDao jobDao;
@@ -29,14 +31,14 @@ public class DatasourceDao {
     }
 
     @Transactional
-    public void save(Datasource d) {
+    public synchronized void save(Datasource d) {
         EntityManager m = entityManagerProvider.get();
         m.persist(d);
         m.flush();
     }
 
     @Transactional
-    public void update(Datasource d) {
+    public synchronized void update(Datasource d) {
         EntityManager m = entityManagerProvider.get();
         m.merge(d);
 

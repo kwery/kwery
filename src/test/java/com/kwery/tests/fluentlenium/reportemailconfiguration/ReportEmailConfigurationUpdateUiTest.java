@@ -2,11 +2,9 @@ package com.kwery.tests.fluentlenium.reportemailconfiguration;
 
 import com.kwery.models.ReportEmailConfigurationModel;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
-import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
-import com.kwery.tests.util.TestUtil;
 import org.dbunit.DatabaseUnitException;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;

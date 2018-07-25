@@ -21,5 +21,5 @@ public class EmailConfigurationDaoSaveNewTest extends RepoDashDaoTestBase {
         EmailConfiguration e = emailConfigurationWithoutId();
         getInstance(EmailConfigurationDao.class).save(e);
         new DbTableAsserterBuilder(TABLE_EMAIL_CONFIGURATION, emailConfigurationTable(e)).build().assertTable();
-     }
+    }
 }

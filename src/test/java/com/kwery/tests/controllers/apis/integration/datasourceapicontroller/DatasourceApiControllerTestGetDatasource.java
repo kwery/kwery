@@ -2,27 +2,20 @@ package com.kwery.tests.controllers.apis.integration.datasourceapicontroller;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.Configuration;
-import com.ninja_squad.dbsetup.DbSetup;
-import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.kwery.controllers.apis.DatasourceApiController;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
+import com.ninja_squad.dbsetup.DbSetup;
+import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.kwery.models.Datasource.COLUMN_ID;
-import static com.kwery.models.Datasource.COLUMN_LABEL;
-import static com.kwery.models.Datasource.COLUMN_PASSWORD;
-import static com.kwery.models.Datasource.COLUMN_PORT;
-import static com.kwery.models.Datasource.COLUMN_TYPE;
-import static com.kwery.models.Datasource.COLUMN_URL;
-import static com.kwery.models.Datasource.COLUMN_USERNAME;
-import static com.kwery.models.Datasource.TABLE;
+import static com.kwery.models.Datasource.*;
 import static com.kwery.models.Datasource.Type.MYSQL;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -46,7 +39,7 @@ public class DatasourceApiControllerTestGetDatasource extends AbstractPostLoginA
                 DatasourceApiController.class,
                 "datasource",
                 ImmutableMap.of(
-                    "datasourceId", 1
+                        "datasourceId", 1
                 )
         );
 

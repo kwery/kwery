@@ -14,11 +14,7 @@ import org.junit.Test;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
-import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
-import static com.kwery.models.EmailConfiguration.COLUMN_ID;
-import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
-import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
+import static com.kwery.models.EmailConfiguration.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 

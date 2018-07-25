@@ -11,6 +11,8 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,7 +31,7 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
 
     @Parameters(name = "Onboarding{0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true},
                 {false},
         });
@@ -41,13 +43,13 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     @Rule
-    public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
+    public PostgreSQLContainer postgres = new PostgreSQLContainer();
 
     @Rule
-    public RedshiftDockerRule redshiftDockerRule = new RedshiftDockerRule();
+    public PostgreSQLContainer redshift = new PostgreSQLContainer();
 
     @Page
     protected DatasourceAddPage page;
@@ -68,7 +70,7 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
 
     @Test
     public void testAddMySqlDatasource() {
-        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        Datasource datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
 
         page.submitForm(datasource);
         page.waitForModalDisappearance();
@@ -84,7 +86,7 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
 
     @Test
     public void testAddPostgreSqlDatasource() {
-        Datasource datasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
+        Datasource datasource = TestUtil.datasource(postgres, Datasource.Type.POSTGRESQL);
         page.submitForm(datasource);
         page.waitForModalDisappearance();
 
@@ -99,7 +101,7 @@ public class DatasourceAddSuccessUiTest extends ChromeFluentTest {
 
     @Test
     public void testAddRedshiftDatasource() {
-        Datasource datasource = redshiftDockerRule.getRedshiftDocker().datasource();
+        Datasource datasource = TestUtil.datasource(redshift, Datasource.Type.REDSHIFT);
         page.submitForm(datasource);
         page.waitForModalDisappearance();
 

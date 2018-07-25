@@ -40,7 +40,7 @@ public abstract class AbstractReportExecutionListUiTest extends ChromeFluentTest
 
     @Parameters(name = "topPagination={0}, bottomPagination={1}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true, false},
                 {false, true}
         });

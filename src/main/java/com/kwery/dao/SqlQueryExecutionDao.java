@@ -3,6 +3,7 @@ package com.kwery.dao;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import com.kwery.models.SqlQueryExecutionModel;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
@@ -17,12 +18,13 @@ import java.util.List;
 
 import static com.kwery.models.SqlQueryExecutionModel.Status.SUCCESS;
 
+@Singleton
 public class SqlQueryExecutionDao {
     @Inject
     private Provider<EntityManager> entityManagerProvider;
 
     @Transactional
-    public void save(SqlQueryExecutionModel e) {
+    public synchronized void save(SqlQueryExecutionModel e) {
         EntityManager m = entityManagerProvider.get();
 
         if (e.getId() != null && e.getId() > 0) {

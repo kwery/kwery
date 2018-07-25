@@ -1,9 +1,6 @@
 package com.kwery.tests.services.job.email;
 
 import com.kwery.services.mail.EmailValidator;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.LinkedList;

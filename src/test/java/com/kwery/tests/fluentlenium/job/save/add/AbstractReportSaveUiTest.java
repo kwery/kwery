@@ -11,12 +11,13 @@ import com.kwery.services.job.JobService;
 import com.kwery.tests.fluentlenium.job.save.ReportSavePage;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.ArrayList;
 
@@ -37,7 +38,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     @Page
     protected ReportSavePage page;
@@ -57,7 +58,7 @@ public abstract class AbstractReportSaveUiTest extends ChromeFluentTest {
             System.setProperty(OnboardingApiController.TEST_ONBOARDING_SYSTEM_KEY, OnboardingApiController.TEST_ONBOARDING_VALUE);
         }
 
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 

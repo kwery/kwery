@@ -36,7 +36,7 @@ public class UserApiControllerSignUpWithSuperUserTest extends AbstractPostLoginA
 
     @Parameters(name = "superUserInDb{0}superUserInRequest{1}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true, true},
                 {false, false},
                 {true, null},

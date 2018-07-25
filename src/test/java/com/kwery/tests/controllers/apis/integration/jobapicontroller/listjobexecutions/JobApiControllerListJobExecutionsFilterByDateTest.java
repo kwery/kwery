@@ -42,7 +42,7 @@ public class JobApiControllerListJobExecutionsFilterByDateTest extends AbstractP
         //Thu Jan 05 03:00:00 IST 2017 - 1483565400000
         //Thu Jan 05 04:00:00 IST 2017 - 1483569000000
 
-        List<Long> epochs = ImmutableList.of(1483558200000L, 1483561800000L,  1483565400000L, 1483569000000L);
+        List<Long> epochs = ImmutableList.of(1483558200000L, 1483561800000L, 1483565400000L, 1483569000000L);
 
         for (Long epoch : epochs) {
             JobExecutionModel jobExecutionModel = jobExecutionModel();

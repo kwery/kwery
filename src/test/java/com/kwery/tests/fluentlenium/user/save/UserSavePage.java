@@ -3,7 +3,6 @@ package com.kwery.tests.fluentlenium.user.save;
 import com.google.common.base.CaseFormat;
 import com.kwery.tests.fluentlenium.KweryFluentPage;
 import com.kwery.tests.fluentlenium.job.reportlist.ActionResultComponent;
-import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.hook.wait.Wait;
 import org.fluentlenium.core.hook.wait.WaitHook;
 

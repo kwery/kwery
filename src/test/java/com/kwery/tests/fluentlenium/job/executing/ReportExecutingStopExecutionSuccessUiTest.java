@@ -11,13 +11,14 @@ import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ import static org.junit.rules.RuleChain.outerRule;
 
 public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     protected NinjaServerRule ninjaServerRule = new NinjaServerRule();
 
@@ -44,7 +45,7 @@ public class ReportExecutingStopExecutionSuccessUiTest extends ChromeFluentTest 
 
     @Before
     public void setUp() {
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 

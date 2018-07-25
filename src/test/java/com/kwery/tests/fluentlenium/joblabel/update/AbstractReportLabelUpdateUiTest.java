@@ -40,5 +40,6 @@ public abstract class AbstractReportLabelUpdateUiTest extends ChromeFluentTest {
     }
 
     public abstract int getReportLabelId();
+
     public abstract String getReportLabel();
 }

@@ -8,8 +8,8 @@ import com.kwery.tests.fluentlenium.job.reportlist.ReportListPage;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,6 +18,7 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +36,7 @@ public class ReportListExecuteNowUiTest extends ChromeFluentTest {
 
     @Parameters(name = "waitingTest={0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true},
                 {false}
         });
@@ -54,12 +55,12 @@ public class ReportListExecuteNowUiTest extends ChromeFluentTest {
     protected ReportListPage page;
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
     private JobModel jobModel;
 
     @Before
     public void setUp() {
-        Datasource datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        Datasource datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(DbUtil.dbId());
         datasourceDbSetup(datasource);
 

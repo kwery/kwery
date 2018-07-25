@@ -13,11 +13,7 @@ import java.sql.SQLException;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.kwery.models.EmailConfiguration.COLUMN_BCC;
-import static com.kwery.models.EmailConfiguration.COLUMN_FROM_EMAIL;
-import static com.kwery.models.EmailConfiguration.COLUMN_ID;
-import static com.kwery.models.EmailConfiguration.COLUMN_REPLY_TO;
-import static com.kwery.models.EmailConfiguration.TABLE_EMAIL_CONFIGURATION;
+import static com.kwery.models.EmailConfiguration.*;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.assertDbState;
 import static com.kwery.tests.util.Messages.EMAIL_CONFIGURATION_SAVED_M;
 import static com.kwery.views.ActionResult.Status.success;

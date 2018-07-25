@@ -2,6 +2,7 @@ package com.kwery.tests.services.job.email.withoutcontent;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.models.JobExecutionModel;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryExecutionModel;
@@ -9,7 +10,6 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.util.RepoDashTestBase;
 import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
-import com.kwery.conf.KweryDirectory;
 import org.junit.Before;
 import org.junit.Rule;
 

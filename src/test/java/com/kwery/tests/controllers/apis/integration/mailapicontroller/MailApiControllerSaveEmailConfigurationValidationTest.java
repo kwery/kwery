@@ -3,7 +3,6 @@ package com.kwery.tests.controllers.apis.integration.mailapicontroller;
 import com.kwery.controllers.apis.MailApiController;
 import com.kwery.models.EmailConfiguration;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.util.Messages;
 import com.kwery.views.ActionResult;
 import ninja.Router;
 import org.junit.Test;

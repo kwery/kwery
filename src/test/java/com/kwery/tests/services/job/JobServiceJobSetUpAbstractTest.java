@@ -2,6 +2,7 @@ package com.kwery.tests.services.job;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.kwery.conf.KweryDirectory;
 import com.kwery.dao.JobExecutionDao;
 import com.kwery.dao.SqlQueryExecutionDao;
 import com.kwery.models.*;
@@ -9,14 +10,14 @@ import com.kwery.services.job.JobExecutionSearchFilter;
 import com.kwery.services.job.JobService;
 import com.kwery.services.mail.MailService;
 import com.kwery.services.scheduler.SqlQueryExecutionSearchFilter;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
+import com.kwery.tests.util.TestUtil;
 import com.kwery.tests.util.WiserRule;
-import com.kwery.conf.KweryDirectory;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.subethamail.wiser.WiserMessage;
+import org.testcontainers.containers.MySQLContainer;
 
 import javax.mail.internet.MimeMessage;
 import java.util.List;
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertThat;
 
 public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     @Rule
     public WiserRule wiserRule = new WiserRule();
@@ -59,7 +60,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         jobModel.setCronExpression("* * * * *");
         jobModel.setEmails(ImmutableSet.of("foo@bar.com", "goo@moo.com"));
 
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
 
         datasourceDbSetup(datasource);
@@ -137,7 +138,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
 
         if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-            assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"User\"", "\"root\"")));
+            assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"0\"", "\"0\"")));
         } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
             assertThat(sqlQueryExecution.getExecutionError(), is("No database selected"));
         } else {
@@ -157,7 +158,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
             assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
 
             if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-                assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"User\"", "\"root\"")));
+                assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"0\"", "\"0\"")));
             } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
                 assertThat(sqlQueryExecution.getExecutionError(), is("No database selected"));
             } else {

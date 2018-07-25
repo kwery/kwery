@@ -11,12 +11,12 @@ import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryEmailSettingModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.tests.controllers.apis.integration.userapicontroller.AbstractPostLoginApiTest;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.TestUtil;
 import ninja.Router;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,14 +29,13 @@ import static com.kwery.tests.fluentlenium.utils.DbUtil.datasourceDbSetup;
 import static com.kwery.tests.fluentlenium.utils.DbUtil.dbId;
 import static com.kwery.tests.util.TestUtil.jobDtoWithoutId;
 import static com.kwery.tests.util.TestUtil.sqlQueryDtoWithoutId;
-import static com.kwery.views.ActionResult.Status.success;
 import static org.exparity.hamcrest.BeanMatchers.theSameBeanAs;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     protected Datasource datasource;
 
@@ -44,7 +43,7 @@ public class JobApiControllerSaveJobTest extends AbstractPostLoginApiTest {
 
     @Before
     public void setUpJobApiControllerSaveJobTest() {
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
         datasourceDbSetup(datasource);
 

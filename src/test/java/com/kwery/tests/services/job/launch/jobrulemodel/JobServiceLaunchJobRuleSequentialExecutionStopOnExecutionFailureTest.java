@@ -9,7 +9,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 public class JobServiceLaunchJobRuleSequentialExecutionStopOnExecutionFailureTest extends JobServiceLaunchJobJobRuleModelAbstractTest {
     @Override
     public String getQuery0() {
-        return "select User from mysql.user where User = 'root'";
+        return "select 0";
     }
 
     @Override
@@ -19,7 +19,7 @@ public class JobServiceLaunchJobRuleSequentialExecutionStopOnExecutionFailureTes
 
     @Override
     public String getQuery2() {
-        return "select User from mysql.user where User = 'root'";
+        return "select 1";
     }
 
     @Override

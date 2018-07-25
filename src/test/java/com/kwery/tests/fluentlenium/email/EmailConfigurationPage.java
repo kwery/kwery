@@ -8,7 +8,6 @@ import org.fluentlenium.core.annotation.PageUrl;
 import org.fluentlenium.core.hook.wait.Wait;
 
 import static com.kwery.tests.util.TestUtil.TIMEOUT_SECONDS;
-import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.fluentlenium.assertj.FluentLeniumAssertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withClass;

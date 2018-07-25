@@ -29,7 +29,7 @@ public class AbstractUserSignUpSetUpUiTest extends ChromeFluentTest {
         if (this.onboardingFlow) {
             System.setProperty(TEST_ONBOARDING_SYSTEM_KEY, TEST_ONBOARDING_VALUE);
             page.setOnboardingFlow(true);
-        }  else {
+        } else {
             page.setOnboardingFlow(false);
         }
         page.go();

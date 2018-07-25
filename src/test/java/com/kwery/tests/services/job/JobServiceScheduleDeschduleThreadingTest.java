@@ -4,11 +4,12 @@ import com.kwery.models.Datasource;
 import com.kwery.models.JobModel;
 import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobService;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.RepoDashTestBase;
+import com.kwery.tests.util.TestUtil;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -23,7 +24,7 @@ import static org.junit.Assert.assertThat;
 
 public class JobServiceScheduleDeschduleThreadingTest extends RepoDashTestBase {
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     protected Datasource datasource;
 
@@ -33,7 +34,7 @@ public class JobServiceScheduleDeschduleThreadingTest extends RepoDashTestBase {
 
     @Before
     public void setUpJobApiControllerDeleteJobTest() {
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(1);
         datasourceDbSetup(datasource);
         jobService = getInstance(JobService.class);
@@ -50,7 +51,8 @@ public class JobServiceScheduleDeschduleThreadingTest extends RepoDashTestBase {
                 try {
                     latch.await();
                     scheduleDeschedule();
-                } catch (InterruptedException ie) { }
+                } catch (InterruptedException ie) {
+                }
             });
         }
         latch.countDown();

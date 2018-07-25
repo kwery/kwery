@@ -50,13 +50,13 @@ public class UserApiControllerListAllApiTest extends AbstractPostSuperUserLoginA
     }
 
     private void assertUser(String response, int index, User user) {
-                assertThat(response, isJson(allOf(
-                        withJsonPath(String.format("$.[%d].id", index), is(user.getId())),
-                        withJsonPath(String.format("$.[%d].firstName", index), is(user.getFirstName())),
-                        withJsonPath(String.format("$.[%d].middleName", index), is(user.getMiddleName())),
-                        withJsonPath(String.format("$.[%d].lastName", index) , is(user.getLastName())),
-                        withJsonPath(String.format("$.[%d].email", index), is(user.getEmail())),
-                        withJsonPath(String.format("$.[%d].password", index), is(""))
+        assertThat(response, isJson(allOf(
+                withJsonPath(String.format("$.[%d].id", index), is(user.getId())),
+                withJsonPath(String.format("$.[%d].firstName", index), is(user.getFirstName())),
+                withJsonPath(String.format("$.[%d].middleName", index), is(user.getMiddleName())),
+                withJsonPath(String.format("$.[%d].lastName", index), is(user.getLastName())),
+                withJsonPath(String.format("$.[%d].email", index), is(user.getEmail())),
+                withJsonPath(String.format("$.[%d].password", index), is(""))
         )));
     }
 }

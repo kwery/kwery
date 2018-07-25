@@ -8,8 +8,6 @@ import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.kwery.tests.util.TestUtil;
 import org.dozer.DozerBeanMapper;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +19,6 @@ import static com.kwery.tests.util.TestUtil.jobLabelModel;
 import static com.kwery.tests.util.TestUtil.jobModelWithoutDependents;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobDaoUpdateLabelTest extends RepoDashDaoTestBase {

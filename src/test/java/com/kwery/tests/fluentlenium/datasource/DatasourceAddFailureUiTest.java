@@ -4,8 +4,8 @@ import com.kwery.controllers.apis.OnboardingApiController;
 import com.kwery.models.Datasource;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
-import com.kwery.tests.util.MysqlDockerRule;
 import com.kwery.tests.util.NinjaServerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,6 +14,7 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +39,7 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
 
     @Parameters(name = "Onboarding{0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {true},
                 {false},
         });
@@ -50,7 +51,7 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public MysqlDockerRule mysqlDockerRule = new MysqlDockerRule();
+    public MySQLContainer mySQLContainer = new MySQLContainer();
 
     @Page
     protected DatasourceAddPage page;
@@ -59,7 +60,7 @@ public class DatasourceAddFailureUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpAddDatasourceFailureTest() {
-        datasource = mysqlDockerRule.getMySqlDocker().datasource();
+        datasource = TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL);
         datasource.setId(dbId());
 
         datasourceDbSetup(datasource);

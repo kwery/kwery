@@ -7,7 +7,6 @@ import com.kwery.services.mail.InvalidEmailException;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.kwery.tests.util.TestUtil;
-import junit.framework.TestCase;
 import org.dbunit.DatabaseUnitException;
 import org.hamcrest.Matchers;
 import org.junit.Assert;

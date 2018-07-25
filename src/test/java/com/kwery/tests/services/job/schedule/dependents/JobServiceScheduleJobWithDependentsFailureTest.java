@@ -7,7 +7,6 @@ import org.junit.Test;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class JobServiceScheduleJobWithDependentsFailureTest extends JobServiceJobSetUpWithDependentsAbstractTest {

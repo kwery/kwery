@@ -4,12 +4,13 @@ import com.kwery.models.Datasource;
 import com.kwery.tests.util.ChromeFluentTest;
 import com.kwery.tests.util.LoginRule;
 import com.kwery.tests.util.NinjaServerRule;
-import com.kwery.tests.util.PostgreSqlDockerRule;
+import com.kwery.tests.util.TestUtil;
 import org.fluentlenium.core.annotation.Page;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
     public RuleChain ruleChain = RuleChain.outerRule(ninjaServerRule).around(new LoginRule(ninjaServerRule, this));
 
     @Rule
-    public PostgreSqlDockerRule postgreSqlDockerRule = new PostgreSqlDockerRule();
+    public PostgreSQLContainer postgres = new PostgreSQLContainer();
 
     @Page
     protected UpdateDatasourcePage page;
@@ -38,7 +39,7 @@ public class DatasourcePostgreSqlUpdateUiTest extends ChromeFluentTest {
 
     @Before
     public void setUpUpdateDatasourcePageTest() {
-        postgreSqlDatasource = postgreSqlDockerRule.getPostgreSqlDocker().datasource();
+        postgreSqlDatasource = TestUtil.datasource(postgres, Datasource.Type.POSTGRESQL);
         postgreSqlDatasource.setId(dbId());
         datasourceDbSetup(postgreSqlDatasource);
 

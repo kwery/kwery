@@ -2,12 +2,10 @@ package com.kwery.tests.dao.reportemailconfigurationdao;
 
 import com.kwery.dao.ReportEmailConfigurationDao;
 import com.kwery.models.ReportEmailConfigurationModel;
-import com.kwery.tests.fluentlenium.utils.DbTableAsserter;
 import com.kwery.tests.fluentlenium.utils.DbTableAsserter.DbTableAsserterBuilder;
 import com.kwery.tests.fluentlenium.utils.DbUtil;
 import com.kwery.tests.util.RepoDashDaoTestBase;
 import com.kwery.tests.util.TestUtil;
-import com.mysql.cj.jdbc.ha.ReplicationConnectionGroupManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.dbunit.DatabaseUnitException;
 import org.junit.Before;

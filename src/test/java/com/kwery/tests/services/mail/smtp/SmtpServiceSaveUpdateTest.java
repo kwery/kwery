@@ -19,7 +19,7 @@ public class SmtpServiceSaveUpdateTest extends RepoDashTestBase {
     private SmtpConfiguration smtpConfiguration;
 
     @Before
-    public void setUpSmtpServiceSaveUpdateTest () {
+    public void setUpSmtpServiceSaveUpdateTest() {
         smtpConfiguration = smtpConfiguration();
         smtpConfigurationDbSetUp(smtpConfiguration);
         smtpService = getInstance(SmtpService.class);
