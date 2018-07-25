@@ -25,6 +25,6 @@ public class JobServiceLaunchJobWithDependentsSuccessTest extends JobServiceJobS
 
     @Override
     protected String getQuery() {
-        return "select User from mysql.user where User = 'root'";
+        return "select 1";
     }
 }

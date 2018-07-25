@@ -40,14 +40,14 @@ public class ResultSetToCsvWriterTest extends RepoDashTestBase {
     @Test
     public void test() throws Exception {
         Connection connection = datasourceService.connection(TestUtil.datasource(mySQLContainer, Datasource.Type.MYSQL));
-        String sql = "select User as `Foo Bar Moo`, max_questions from mysql.user where User = 'root'";
+        String sql = "select \"foo\", \"bar\"";
         PreparedStatement p = connection.prepareStatement(sql);
         ResultSet resultSet = p.executeQuery();
         File file = temporaryFolder.newFile();
         ResultSetToCsvWriter resultSetToCsvWriter = new ResultSetToCsvWriter(new CsvWriterFactoryImpl(), resultSet, file);
         resultSetToCsvWriter.write();
 
-        String expected = String.join(System.lineSeparator(), ImmutableList.of("\"Foo Bar Moo\",\"max_questions\"", "\"root\",\"0\"")) + System.lineSeparator();
+        String expected = String.join(System.lineSeparator(), ImmutableList.of("\"foo\",\"bar\"", "\"foo\",\"bar\"")) + System.lineSeparator();
 
         assertThat(Files.toString(file, Charsets.UTF_8), is(expected));
     }

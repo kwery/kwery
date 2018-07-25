@@ -138,7 +138,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
         assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
 
         if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-            assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"User\"", "\"root\"")));
+            assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"0\"", "\"0\"")));
         } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
             assertThat(sqlQueryExecution.getExecutionError(), is("No database selected"));
         } else {
@@ -158,7 +158,7 @@ public abstract class JobServiceJobSetUpAbstractTest extends RepoDashTestBase {
             assertThat(sqlQueryExecution.getSqlQuery().getId(), is(sqlQueryId));
 
             if (status == SqlQueryExecutionModel.Status.SUCCESS) {
-                assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"User\"", "\"root\"")));
+                assertThat(kweryDirectory.getContent(sqlQueryExecution.getResultFileName()), is(String.join(System.lineSeparator(), "\"0\"", "\"0\"")));
             } else if (status == SqlQueryExecutionModel.Status.FAILURE) {
                 assertThat(sqlQueryExecution.getExecutionError(), is("No database selected"));
             } else {

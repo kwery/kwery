@@ -25,6 +25,6 @@ public class JobServiceScheduleJobWithDependentsSuccessTest extends JobServiceJo
 
     @Override
     protected String getQuery() {
-        return "select User from mysql.user where User = 'root'";
+        return "select 0";
     }
 }
