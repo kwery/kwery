@@ -11,6 +11,7 @@ import com.kwery.models.SqlQueryModel;
 import com.kwery.services.job.JobSearchFilter;
 
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -49,7 +50,7 @@ public class DatasourceDao {
 
             JobSearchFilter filter = new JobSearchFilter();
             filter.setSqlQueryIds(ImmutableSet.of(sqlQueryModel.getId()));
-            for (JobModel jobModel : jobDao.filterJobs(filter)) {
+            for (JobModel jobModel : jobDao.filterJobs(filter, FlushModeType.COMMIT)) {
                 jobModel.getSqlQueries().removeIf(sqlQueryModel1 -> sqlQueryModel1.getId().equals(sqlQueryModel.getId()));
                 jobModel.getSqlQueries().add(sqlQueryModel);
                 jobDao.save(jobModel);
