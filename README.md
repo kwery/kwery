@@ -25,6 +25,3 @@ Accessing Kwery's database through `ij`:
 1.  Run `connect 'jdbc:derby:kwery_db';`.
 
 > Please ensure you know what you are doing, you might end up deleting data inadvertantly and prevent Kwery for starting  again.
-
-
-

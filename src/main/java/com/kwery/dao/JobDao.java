@@ -8,6 +8,7 @@ import com.kwery.models.JobModel;
 import com.kwery.services.job.JobSearchFilter;
 
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -87,8 +88,15 @@ public class JobDao {
         return allQuery.getResultList();
     }
 
+
     @Transactional
     public List<JobModel> filterJobs(JobSearchFilter filter) {
+        return filterJobs(filter, null);
+    }
+
+    //FlushModeType has been added as a hacky fix to resolve the bug - https://github.com/kwery/kwery/issues/10
+    @Transactional
+    public List<JobModel> filterJobs(JobSearchFilter filter, FlushModeType flushModeType) {
         EntityManager m = entityManagerProvider.get();
 
         CriteriaBuilder cb = m.getCriteriaBuilder();
@@ -108,6 +116,10 @@ public class JobDao {
         //We need this because updated can be null, which is a remnant from the days where we did not have these columns
         Expression<Object> updatedExpression = cb.selectCase().when(cb.isNull(jobModel.get("updated")), 0).otherwise(jobModel.get("updated"));
         cq.orderBy(cb.desc(updatedExpression), cb.desc(jobModel.get("id")));
+
+        if (flushModeType != null) {
+            m.setFlushMode(flushModeType);
+        }
 
         if (filter.getPageNo() != null && filter.getResultCount() != null) {
             return m.createQuery(cq)
