@@ -29,11 +29,6 @@
         <appender-ref ref="APPENDER" />
     </root>
 
-
-    <logger name="org.hibernate.SQL" level="DEBUG" />
-
-    <logger name="org.hibernate.type" level="TRACE" />
-
     <logger name="uk.co.jemos.podam" level="ERROR" />
     <logger name="com.mchange" level="ERROR" />
 
